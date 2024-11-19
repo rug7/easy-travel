@@ -2,7 +2,9 @@ import React from 'react'
 
 function Header() {
   return (
-    <div>Big head lol</div>
+    <div>
+      <img src='/logo.svg'/>
+    </div>
   )
 }
 
