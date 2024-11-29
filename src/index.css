@@ -133,3 +133,33 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+/* Tailwind classes already handle most of this, but you can add custom styles if needed */
+/* Enhanced video styling */
+video {
+  border-radius: 16px; /* More rounded corners */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Elevated shadow effect */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+video:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+}
+
+/* Header navigation styling */
+header img, header .logo-text {
+  cursor: pointer; /* Make it obvious that the logo is clickable */
+  transition: opacity 0.3s ease;
+}
+
+header img:hover, header .logo-text:hover {
+  opacity: 0.8; /* Slight dimming effect on hover */
+}
+
+/* Add space between header elements */
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Space between the logo and text */
+}
+

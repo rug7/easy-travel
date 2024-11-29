@@ -1,19 +1,14 @@
-import { useState } from 'react'
-import './App.css'
-import { Button } from './components/ui/button'
-import Hero from './components/custom/Hero'
+import React from 'react';
+import Hero from './components/custom/Hero';
+import HowItWorks from './components/custom/HowItWorks';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-    
-    {/* Hero */}
-    <Hero/>
-      
+      <Hero />
+      <HowItWorks />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -9,9 +9,7 @@ function Header() {
         <span className="text-xl font-bold text-gray-800">Easy Travel</span>
       </div>
       <div className="flex space-x-4">
-        <a href="#features" className="text-gray-600 hover:text-gray-800">Features</a>
-        <a href="#pricing" className="text-gray-600 hover:text-gray-800">Pricing</a>
-        <a href="#contact" className="text-gray-600 hover:text-gray-800">Contact Us</a>
+      
         <Button className="bg-blue-600 text-white hover:bg-blue-700">Sign In</Button>
       </div>
     </div>

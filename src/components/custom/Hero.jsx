@@ -15,17 +15,18 @@ function Hero() {
           Effortlessly plan personalized journeys with destinations, activities, and budgets tailored to your preferences. Your dream trip is just a few clicks away.
         </p>
         <div className="space-x-4">
-          {/* Fixed "Plan Your Trip Now" button */}
           <button
-            className="px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg shadow-md hover:bg-blue-700 hover:text-white"
+            className="px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg shadow-md hover:bg-blue-700"
           >
             Plan Your Trip Now
           </button>
-
-          {/* "See How It Works" button */}
           <button
             className="px-6 py-3 bg-white text-blue-600 text-lg font-medium rounded-lg shadow-md hover:bg-gray-100"
-            onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => {
+              document
+                .getElementById('how-it-works')
+                .scrollIntoView({ behavior: 'smooth' });
+            }}
           >
             See How It Works
           </button>
