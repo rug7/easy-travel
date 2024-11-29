@@ -50,6 +50,7 @@ function Hero() {
           autoplay={{ delay: 4000, disableOnInteraction: false }}
           pagination={{ clickable: true }}
           navigation
+          loop={true}
           className="h-screen"
         >
           <SwiperSlide>
@@ -82,6 +83,50 @@ function Hero() {
               <div className="absolute inset-0 bg-black bg-opacity-50"></div>
               <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
                 <h2 className="text-5xl font-bold">Tailored Journeys for You</h2>
+              </div>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
+            <div
+              className="h-screen bg-cover bg-center"
+              style={{ backgroundImage: "url('/slide4.jpg')" }}
+            >
+              <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+              <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
+                <h2 className="text-5xl font-bold">Explore Hidden Gems Worldwide</h2>
+              </div>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
+            <div
+              className="h-screen bg-cover bg-center"
+              style={{ backgroundImage: "url('/slide5.jpg')" }}
+            >
+              <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+              <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
+                <h2 className="text-5xl font-bold">Journey to the Heart of Nature</h2>
+              </div>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
+            <div
+              className="h-screen bg-cover bg-center"
+              style={{ backgroundImage: "url('/slide6.jpg')" }}
+            >
+              <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+              <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
+                <h2 className="text-5xl font-bold">Create Memories That Last Forever</h2>
+              </div>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
+            <div
+              className="h-screen bg-cover bg-center"
+              style={{ backgroundImage: "url('/slide7.jpg')" }}
+            >
+              <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+              <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
+                <h2 className="text-5xl font-bold">Travel Smart, Travel Easy</h2>
               </div>
             </div>
           </SwiperSlide>
