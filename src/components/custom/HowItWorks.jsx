@@ -3,17 +3,19 @@ import React from 'react';
 function HowItWorks() {
   return (
     <div id="how-it-works" className="p-8 bg-gray-100 text-center">
-      <h2 className="text-3xl font-bold mb-4">How It Works</h2>
-      <p className="text-lg mb-4">
-        Watch this short video tutorial to learn how to use Easy Travel.
+      <h2 className="text-4xl font-bold mb-6">How It Works</h2>
+      <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
+        Watch this short video tutorial to learn how to use Easy Travel and get started with planning your dream trip effortlessly.
       </p>
-      <video
-        src="/chicken-video.mp4" // Use the relative path from the public folder
-        controls
-        className="w-full max-w-3xl mx-auto rounded shadow-lg"
-      >
-        Your browser does not support the video tag.
-      </video>
+      <div className="video-container relative mx-auto max-w-4xl">
+        <video
+          src="/chicken-video.mp4" // Replace this with the correct video file path
+          controls
+          className="rounded-lg shadow-lg w-full aspect-video"
+        >
+          Your browser does not support the video tag.
+        </video>
+      </div>
     </div>
   );
 }
