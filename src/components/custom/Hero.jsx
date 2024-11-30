@@ -23,12 +23,12 @@ function Hero() {
           </p>
           <div className="space-x-4">
             <button
-              className="px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg shadow-md hover:bg-blue-700"
+              className="px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-full shadow-md hover:bg-blue-700"
             >
               Plan Your Trip Now
             </button>
             <button
-              className="px-6 py-3 bg-white text-blue-600 text-lg font-medium rounded-lg shadow-md hover:bg-gray-100"
+              className="px-6 py-3 bg-white text-blue-600 text-lg font-medium rounded-full shadow-md hover:bg-gray-100"
               onClick={() => {
                 document
                   .getElementById('how-it-works')

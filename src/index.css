@@ -120,3 +120,23 @@ header {
     font-size: 1rem; /* Adjust text size */
   }
 }
+
+/* Button styles */
+/* Default button styling */
+button {
+  background-color: #1a73e8; /* Default blue */
+  color: white; /* Default text color */
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover animation */
+}
+
+/* Hover effect */
+button:hover {
+  transform: scale(1.05); /* Slightly bigger */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+

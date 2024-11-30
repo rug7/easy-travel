@@ -9,17 +9,26 @@ import Header from './components/custom/Header';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: (
+      <>
+        <Header /> {/* Place the Header here */}
+        <App />
+      </>
+    ),
   },
   {
     path: '/create-trip',
-    element: <CreateTrip />,
+    element: (
+      <>
+        <Header /> {/* Include Header for other routes as well */}
+        <CreateTrip />
+      </>
+    ),
   },
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Header/>
     <RouterProvider router={router} />
   </StrictMode>
 );
