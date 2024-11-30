@@ -4,50 +4,53 @@
 
 /* Root Variables */
 :root {
-  --background: #2c2f33; /* Unified dark gray for background */
-  --foreground: #ffffff; /* Unified white for text */
+  --background: #2c2f33; 
+  --foreground: #ffffff;
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* Body Background */
 body {
-  background-color: var(--background); /* Unified background for the entire page */
+  background-color: var(--background); 
 }
 
 /* Hero Container */
 .hero-container {
-  @apply relative bg-[var(--background)]; /* Unified background */
+  @apply relative bg-[var(--background)]; 
 }
 
 .hero-container .swiper {
-  @apply h-screen; /* Full height for images */
-  background-color: var(--background); /* Fallback color for any gaps */
+  @apply h-screen; 
+  background-color: var(--background);
 }
 
 .hero-container .swiper-slide {
-  @apply bg-cover bg-center rounded-lg; /* Consistent styling for images */
-  background-color: #2c2f33; /* Match the page background color */
+  @apply bg-cover bg-center rounded-lg; 
+  background-color: #2c2f33; 
 }
 
 .hero-container .swiper-slide::after {
-  @apply absolute inset-0 bg-gradient-to-t from-black/30 to-transparent; /* Subtle shadow */
+  @apply absolute inset-0 bg-gradient-to-t from-black/30 to-transparent;
 }
 
 /* How It Works Section */
 #how-it-works {
-  @apply bg-[var(--background)] text-center relative scroll-mt-20; /* Matching background and scroll margin */
+  @apply bg-[var(--background)] text-center relative scroll-mt-20; 
+  border-radius: 18px;
 }
 
 /* Video Styling */
 .video-container video {
-  @apply w-full max-h-[400px] rounded-lg shadow-md; /* Consistent rounded corners */
+  @apply w-full max-h-[400px] rounded-lg shadow-sm; 
+  border-radius: 12px;
+
 }
 
 .video-container video:hover {
-  @apply scale-105 shadow-lg; /* Subtle hover effect */
+  @apply scale-105 shadow-md; 
+  border-radius: 12px;
+
 }
 
-/* Buttons */
 button {
   @apply px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-full shadow-md;
 }

@@ -4,6 +4,8 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+import Footer from './Footer'; // Adjust the path based on your file structure
+
 
 function Hero() {
   return (
@@ -66,7 +68,7 @@ function Hero() {
           ].map((slide, index) => (
             <SwiperSlide key={index}>
               <div
-                className="h-full max-w-[90%] mx-auto bg-cover bg-center rounded-2xl overflow-hidden" // Adjusted for smaller width
+                className="h-full max-w-[94%] mx-auto bg-cover bg-center rounded-2xl overflow-hidden" // Adjusted for smaller width
                 style={{
                   backgroundImage: `url(${slide.image})`,
                   backgroundColor: 'var(--background)', // Match the background color
@@ -93,11 +95,11 @@ function Hero() {
         <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
           Watch this short video tutorial to learn how to use Easy Travel and get started with planning your dream trip effortlessly.
         </p>
-        <div className="video-container relative mx-auto max-w-4xl">
+        <div className="video-container relative mx-auto max-w-2xl">
           <video
             src="/chicken-video.mp4"
             controls
-            className="rounded-lg shadow-lg w-full aspect-video"
+            className="rounded-lg shadow-md w-full max-h-[400px]"
           >
             Your browser does not support the video tag.
           </video>
@@ -106,6 +108,7 @@ function Hero() {
 
       {/* Fade-Out Effect */}
       <div className="h-16 bg-gradient-to-t from-[var(--background)] to-transparent"></div>
+      <Footer />
     </div>
   );
 }
