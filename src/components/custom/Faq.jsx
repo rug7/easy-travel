@@ -46,16 +46,31 @@ function Faq() {
         {faqData.map((faq, index) => (
           <div
             key={index}
-            className="border-b border-gray-600 py-4 cursor-pointer"
-            onClick={() => toggleFAQ(index)}
+            className="border-b border-gray-600 py-4"
           >
-            <div className="flex justify-between items-center">
+            {/* Question */}
+            <div
+              className="flex justify-between items-center cursor-pointer"
+              onClick={() => toggleFAQ(index)}
+            >
               <h3 className="text-lg font-semibold">{faq.question}</h3>
-              <span>{openIndex === index ? '▼' : '▶'}</span> {/* Arrow icons */}
+              <span
+                className={`transform transition-transform duration-300 ${
+                  openIndex === index ? 'rotate-90' : ''
+                }`}
+              >
+                ▶
+              </span>
             </div>
-            {openIndex === index && (
+
+            {/* Answer with Slide Animation */}
+            <div
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                openIndex === index ? 'max-h-screen' : 'max-h-0'
+              }`}
+            >
               <p className="text-gray-400 mt-2">{faq.answer}</p>
-            )}
+            </div>
           </div>
         ))}
       </div>

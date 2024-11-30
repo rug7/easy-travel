@@ -2,7 +2,7 @@ import React from 'react';
 
 function Footer() {
   return (
-    <footer className="bg-[var(--background)] text-[var(--foreground)] py-8">
+    <footer className="bg-[var(--background)] text-[var(--foreground)] py-8 mt-8 border-t border-gray-700 pt-4 text-center">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Section with Logo and Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">

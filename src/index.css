@@ -58,3 +58,6 @@ button {
 button:hover {
   @apply bg-blue-700;
 }
+.overflow-hidden {
+  transition: max-height 0.001s ease-in-out;
+}
