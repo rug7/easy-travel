@@ -5,6 +5,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import Footer from './Footer'; // Adjust the path based on your file structure
+import Faq from './Faq';
 
 
 function Hero() {
@@ -106,6 +107,7 @@ function Hero() {
         </div>
       </div>
 
+      <Faq />
       {/* Fade-Out Effect */}
       <div className="h-16 bg-gradient-to-t from-[var(--background)] to-transparent"></div>
       <Footer />
