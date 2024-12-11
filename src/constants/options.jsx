@@ -1,3 +1,5 @@
+import SunnyImage from '../assets/sunny.jpeg'
+
 export const SelectTravelsList = [
     {
       id: 1,
@@ -49,6 +51,82 @@ export const SelectTravelsList = [
       icon: '💎',
     },
   ];
+  
+  export const WeatherOptions = [
+    {
+      id: 1,
+      title: 'Warm',
+      desc: 'Sunny and pleasant temperatures',
+      image: SunnyImage,
+    },
+    {
+      id: 2,
+      title: 'Cold',
+      desc: 'Snowy or chilly climates',
+      image: SunnyImage,
+    },
+    {
+      id: 3,
+      title: 'Moderate',
+      desc: 'Mild and comfortable weather',
+      image: SunnyImage,
+    },
+  ];
+  
+  export const ActivityOptions = [
+    {
+      id: 1,
+      title: 'Adventure',
+      desc: 'Hiking, rafting, and more!',
+      icon: '🏞️',
+    },
+    {
+      id: 2,
+      title: 'Relaxation',
+      desc: 'Spa, beaches, and serenity',
+      icon: '🛀',
+    },
+    {
+      id: 3,
+      title: 'Cultural',
+      desc: 'Museums, art, and local traditions',
+      icon: '🏛️',
+    },
+    {
+      id: 4,
+      title: 'Nature',
+      desc: 'Forests, mountains, and lakes',
+      icon: '🌲',
+    },
+  ];
+  
+  export const SightseeingOptions = [
+    {
+      id: 1,
+      title: 'Beaches',
+      desc: 'Relax by the sea',
+      icon: '🏖️',
+    },
+    {
+      id: 2,
+      title: 'Mountains',
+      desc: 'Explore high peaks',
+      icon: '🏔️',
+    },
+    {
+      id: 3,
+      title: 'Cities',
+      desc: 'Urban exploration',
+      icon: '🏙️',
+    },
+    {
+      id: 4,
+      title: 'Countryside',
+      desc: 'Peaceful rural getaways',
+      icon: '🌄',
+    },
+  ];
+  
   
   export const AI_PROMPT = `Generate Travel Plan for a user based on the following criteria: destination, budget, number of people, and preferences.`;
   

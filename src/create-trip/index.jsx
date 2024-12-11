@@ -1,6 +1,11 @@
-import { SelectBudgetOptions } from "@/constants/options";
 import React, { useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import {
+  SelectBudgetOptions,
+  WeatherOptions,
+  ActivityOptions,
+  SightseeingOptions,
+} from "@/constants/options";
 
 function CreateTrip() {
   const [place, setPlace] = useState(null);
@@ -41,70 +46,66 @@ function CreateTrip() {
           </div>
         </div>
 
-        {/* Show additional questions if "No Idea" is clicked */}
+        {/* Additional Questions */}
         {showMoreQuestions && (
           <div className="space-y-6">
             <h3 className="text-2xl font-bold text-white">
               Let's narrow it down for you!
             </h3>
 
-            {/* Weather Question */}
+            {/* Weather */}
             <div>
               <p className="text-lg font-medium text-gray-200 mb-3">
                 What kind of weather do you prefer?
               </p>
-              <div className="flex space-x-4">
-                <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                  Warm
-                </button>
-                <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                  Cold
-                </button>
-                <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                  Moderate
-                </button>
+              <div className="grid grid-cols-3 gap-5">
+                {WeatherOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    className="w-48 h-48 rounded-lg bg-cover bg-center text-white font-bold shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300"
+                    style={{
+                      backgroundImage: `url(${option.image})`, // Set the background image dynamically
+                    }}
+                  >
+                    <div className="bg-black/50 rounded-md px-3 py-1 text-center">
+                      {option.title}
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Activities Question */}
+            {/* Activities */}
             <div>
               <p className="text-lg font-medium text-gray-200 mb-3">
-                What type of activities do you want to do?
+                What type of activities do you prefer?
               </p>
-              <div className="flex flex-wrap gap-4">
-                <button className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
-                  Adventure
-                </button>
-                <button className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
-                  Relaxation
-                </button>
-                <button className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
-                  Cultural
-                </button>
-                <button className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
-                  Nature
-                </button>
+              <div className="grid grid-cols-2 gap-5">
+                {ActivityOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    className="p-4 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+                  >
+                    {option.icon} {option.title}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* What to See Question */}
+            {/* Sightseeing */}
             <div>
               <p className="text-lg font-medium text-gray-200 mb-3">
                 What would you like to see in your destination?
               </p>
-              <div className="flex flex-wrap gap-4">
-                <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                  Beaches
-                </button>
-                <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                  Mountains
-                </button>
-                <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                  Cities
-                </button>
-                <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                  Countryside
-                </button>
+              <div className="grid grid-cols-2 gap-5">
+                {SightseeingOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    className="p-4 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  >
+                    {option.icon} {option.title}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -115,10 +116,10 @@ function CreateTrip() {
           <h2 className="text-xl font-bold text-white mb-2">
             How many days are you planning on staying?
           </h2>
-          <input 
+          <input
             type="number"
             className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg"
-            placeholder="Enter number of days "
+            placeholder="Enter number of days"
           />
         </div>
 
@@ -127,13 +128,16 @@ function CreateTrip() {
           <h3 className="text-xl font-bold text-white mb-2">
             What is your budget?
           </h3>
-          <div className="grid grid-cols-3 gap-5 mt-5">
-            {SelectBudgetOptions.map((item,index)=>(
-              <div key={index} className="p-4 border rounded-lg hover:shadow-lg">
+          <div className="grid grid-cols-3 gap-5">
+            {SelectBudgetOptions.map((item) => (
+              <div
+                key={item.id}
+                className="p-4 border rounded-lg hover:shadow-lg bg-gray-700 text-white"
+              >
                 <h2 className="text-4xl">{item.icon}</h2>
-                <h2 className="font-bold text-white mb-2 text-lg">{item.title}</h2>
-                <h2 className="text-sm text-gray-500">{item.desc}</h2>
-                </div>
+                <h2 className="font-bold mb-2 text-lg">{item.title}</h2>
+                <p className="text-sm text-gray-400">{item.desc}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -150,8 +154,8 @@ function CreateTrip() {
           />
         </div>
 
-        {/* Generate Trip Button */}
-        <div className="text-center mt-6">
+        {/* Generate Trip */}
+        <div className="text-center">
           <button className="px-8 py-3 bg-blue-600 text-white font-bold text-lg rounded-lg hover:bg-blue-700">
             Generate Trip
           </button>
