@@ -176,39 +176,36 @@ function CreateTrip() {
 
       {/* Date Range Picker */}
       <div className="flex-1">
-  <button
-    onClick={() => handleToggle("dates")}
-    className={`px-4 py-2 rounded-full text-white font-bold ${
-      useDates ? "bg-blue-600" : "bg-gray-600"
-    }`}
-  >
-    Pick Dates
-  </button>
-  <div
-    className={`w-full ${
-      useDates ? "block" : "hidden"
-    } mt-3`}
-  >
-    <DatePicker
-      selected={startDate}
-      onChange={(update) => {
-        setStartDate(update[0]);
-        setEndDate(update[1]);
-      }}
-      startDate={startDate}
-      endDate={endDate}
-      dateFormat={"dd/MM/yyyy"}
-      selectsRange
-      placeholderText="Select start and end date"
-      className="w-full px-4 py-2 bg-gray-700 text-white rounded-full"
-      isClearable
-    />
-  </div>
-</div>
-
+        <button
+          onClick={() => handleToggle("dates")}
+          className={`px-4 py-2 rounded-full text-white font-bold ${
+            useDates ? "bg-blue-600" : "bg-gray-600"
+          }`}
+        >
+          Pick Dates
+        </button>
+        <div className={`w-full mt-3 ${!useDates ? "opacity-50" : ""}`}>
+          <DatePicker
+            selected={startDate}
+            onChange={(update) => {
+              setStartDate(update[0]);
+              setEndDate(update[1]);
+            }}
+            startDate={startDate}
+            endDate={endDate}
+            dateFormat={"dd/MM/yyyy"}
+            selectsRange
+            placeholderText="Select start and end date"
+            className={`w-full px-4 py-2 bg-gray-700 text-white rounded-full`}
+            isClearable
+            disabled={!useDates}
+          />
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
 
 
         {/* Budget */}
