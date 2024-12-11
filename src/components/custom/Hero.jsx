@@ -6,6 +6,7 @@ import 'swiper/css/navigation';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import Footer from './Footer'; // Adjust the path based on your file structure
 import Faq from './Faq';
+import { Link } from 'react-router-dom';
 
 
 function Hero() {
@@ -26,9 +27,11 @@ function Hero() {
             Effortlessly plan personalized journeys with destinations, activities, and budgets tailored to your preferences. Your dream trip is just a few clicks away.
           </p>
           <div className="space-x-4">
+            <Link to={'/create-trip'}>
             <button className="px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-full shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105">
               Plan Your Trip Now
             </button>
+            </Link>
             <button
               className="px-6 py-3 bg-white text-blue-600 text-lg font-medium rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105"
               onClick={() => {
