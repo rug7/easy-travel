@@ -48,79 +48,79 @@ function CreateTrip() {
 
         {/* Additional Questions */}
         {showMoreQuestions && (
-  <div className="space-y-10">
-    <h3 className="text-2xl font-bold text-white text-center">
-      Let's narrow it down for you!
-    </h3>
+          <div className="space-y-10">
+            <h3 className="text-2xl font-bold text-white text-center">
+              Let's narrow it down for you!
+            </h3>
 
-    {/* Weather */}
-    <div>
-      <p className="text-lg font-medium text-gray-200 mb-4 text-center">
-        What kind of weather do you prefer?
-      </p>
-      <div className="grid grid-cols-3 gap-6 justify-items-center">
-        {WeatherOptions.map((option) => (
-          <button
-            key={option.id}
-            className="w-36 h-36 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
-            style={{
-              backgroundImage: `url(${option.image})`,
-            }}
-          >
-            <div className="absolute inset-0 bg-black/40 rounded-xl"></div>
-            <span className="absolute bottom-2 left-2 right-2 text-center text-white font-semibold text-sm bg-black/60 rounded-md py-1 px-2">
-              {option.title}
-            </span>
-          </button>
-        ))}
-      </div>
-    </div>
+            {/* Weather */}
+            <div>
+              <p className="text-lg font-medium text-gray-200 mb-4 text-center">
+                What kind of weather do you prefer?
+              </p>
+              <div className="grid grid-cols-3 gap-6 justify-items-center">
+                {WeatherOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    className="w-36 h-36 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    style={{
+                      backgroundImage: `url(${option.image})`,
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-black/40 rounded-xl"></div>
+                    <span className="absolute bottom-2 left-2 right-2 text-center text-white font-semibold text-sm bg-black/60 rounded-md py-1 px-2">
+                      {option.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* Activities */}
-<div>
-  <p className="text-lg font-medium text-gray-200 mb-4 text-center">
-    What type of activities do you prefer?
-  </p>
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
-    {ActivityOptions.map((option) => (
-      <button
-        key={option.id}
-        className="w-36 h-36 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
-        style={{
-          backgroundImage: `url(${option.image})`, // Use images dynamically
-        }}
-      >
-        <div className="absolute inset-0 bg-black/40 rounded-xl"></div>
-        <span className="absolute bottom-2 left-2 right-2 text-center text-white font-semibold text-sm bg-black/60 rounded-md py-1 px-2">
-          {option.title}
-        </span>
-      </button>
-    ))}
-  </div>
-</div>
+            <div>
+              <p className="text-lg font-medium text-gray-200 mb-4 text-center">
+                What type of activities do you prefer?
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
+                {ActivityOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    className="w-36 h-36 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    style={{
+                      backgroundImage: `url(${option.image})`, // Use images dynamically
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-black/40 rounded-xl"></div>
+                    <span className="absolute bottom-2 left-2 right-2 text-center text-white font-semibold text-sm bg-black/60 rounded-md py-1 px-2">
+                      {option.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* Sightseeing */}
-<div>
-  <p className="text-lg font-medium text-gray-200 mb-4 text-center">
-    What would you like to see in your destination?
-  </p>
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
-    {SightseeingOptions.map((option) => (
-      <button
-        key={option.id}
-        className="w-36 h-36 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
-        style={{
-          backgroundImage: `url(${option.image})`, // Use images dynamically
-        }}
-      >
-        <div className="absolute inset-0 bg-black/40 rounded-xl"></div>
-        <span className="absolute bottom-2 left-2 right-2 text-center text-white font-semibold text-sm bg-black/60 rounded-md py-1 px-2">
-          {option.title}
-        </span>
-      </button>
-    ))}
-  </div>
-</div>
+            <div>
+              <p className="text-lg font-medium text-gray-200 mb-4 text-center">
+                What would you like to see in your destination?
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
+                {SightseeingOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    className="w-36 h-36 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    style={{
+                      backgroundImage: `url(${option.image})`, // Use images dynamically
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-black/40 rounded-xl"></div>
+                    <span className="absolute bottom-2 left-2 right-2 text-center text-white font-semibold text-sm bg-black/60 rounded-md py-1 px-2">
+                      {option.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
