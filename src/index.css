@@ -55,9 +55,9 @@ button {
   @apply px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-full shadow-md;
 }
 
-button:hover {
+/* button:hover {
   @apply bg-blue-700;
-}
+} */
 .overflow-hidden {
   transition: max-height 0.001s ease-in-out;
 }
