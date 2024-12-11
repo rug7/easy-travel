@@ -1,4 +1,8 @@
 import SunnyImage from '../assets/sunny.jpeg'
+import ColdImage from '../assets/snowy.jpg'
+import ModerateImage from '../assets/modern.jpeg'
+
+
 
 export const SelectTravelsList = [
     {
@@ -63,13 +67,13 @@ export const SelectTravelsList = [
       id: 2,
       title: 'Cold',
       desc: 'Snowy or chilly climates',
-      image: SunnyImage,
+      image: ColdImage,
     },
     {
       id: 3,
       title: 'Moderate',
       desc: 'Mild and comfortable weather',
-      image: SunnyImage,
+      image: ModerateImage,
     },
   ];
   
