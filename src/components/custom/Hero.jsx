@@ -107,8 +107,18 @@ function Hero() {
           >
             Your browser does not support the video tag.
           </video>
+          
         </div>
+        
       </div>
+      <div className='text-center'>
+      <Link to={'/create-trip'}>
+            <button className="px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-full shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105">
+              Plan Your Trip Now
+            </button>
+            </Link>
+      </div>
+      
 
       <Faq />
       {/* Fade-Out Effect */}

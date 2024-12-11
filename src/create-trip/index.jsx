@@ -145,67 +145,71 @@ function CreateTrip() {
         )}
 
         {/* Number of Days */}
-       <div>
-      <h2 className="text-xl font-bold text-white mb-4">
-        How many days are you planning on staying?
-      </h2>
-      <div className="bg-gray-800 p-4 rounded-lg shadow-lg space-y-4">
-        {/* Toggle Buttons */}
-        <div className="flex justify-between items-center">
-          <button
-            onClick={() => handleToggle("days")}
-            className={`px-4 py-2 rounded-full text-white font-bold ${
-              !useDates ? "bg-blue-600" : "bg-gray-600"
-            }`}
-          >
-            Number of Days
-          </button>
-          <button
-            onClick={() => handleToggle("dates")}
-            className={`px-4 py-2 rounded-full text-white font-bold ${
-              useDates ? "bg-blue-600" : "bg-gray-600"
-            }`}
-          >
-            Pick Dates
-          </button>
-        </div>
-
-        {/* Input for Number of Days */}
-        {!useDates && (
-          <div className="flex flex-col">
-            <label className="text-gray-200 mb-2">Enter number of days:</label>
-            <input
-              type="number"
-              value={numDays}
-              onChange={(e) => setNumDays(e.target.value)}
-              placeholder="Number of days"
-              className="w-full px-4 py-2 bg-gray-700 text-white rounded-full"
-            />
-          </div>
-        )}
-
-        {/* Date Range Picker */}
-        {useDates && (
-          <div className="flex flex-col">
-            <label className="text-gray-200 mb-2">Select date range:</label>
-            <DatePicker
-              selected={startDate}
-              onChange={(update) => {
-                setStartDate(update[0]);
-                setEndDate(update[1]);
-              }}
-              startDate={startDate}
-              endDate={endDate}
-              dateFormat={"dd/MM/yyyy"}
-              selectsRange
-              placeholderText="Select start and end date"
-              className="w-full px-4 py-2 bg-gray-700 text-white rounded-full"
-              isClearable
-            />
-          </div>
-        )}
+        <div>
+  <h2 className="text-xl font-bold text-white mb-4">
+    How many days are you planning on staying?
+  </h2>
+  <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+    {/* Flex container for inputs */}
+    <div className="flex gap-6">
+      {/* Number of Days Input */}
+      <div className="flex-1">
+        <button
+          onClick={() => handleToggle("days")}
+          className={`px-4 py-2 rounded-full text-white font-bold ${
+            !useDates ? "bg-blue-600" : "bg-gray-600"
+          }`}
+        >
+          Number of Days
+        </button>
+        <input
+          type="number"
+          value={numDays}
+          onChange={(e) => setNumDays(e.target.value)}
+          placeholder="Number of days"
+          className={`w-full px-4 py-2 bg-gray-700 text-white rounded-full mt-3 ${
+            useDates ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={useDates}
+        />
       </div>
+
+      {/* Date Range Picker */}
+      <div className="flex-1">
+  <button
+    onClick={() => handleToggle("dates")}
+    className={`px-4 py-2 rounded-full text-white font-bold ${
+      useDates ? "bg-blue-600" : "bg-gray-600"
+    }`}
+  >
+    Pick Dates
+  </button>
+  <div
+    className={`w-full ${
+      useDates ? "block" : "hidden"
+    } mt-3`}
+  >
+    <DatePicker
+      selected={startDate}
+      onChange={(update) => {
+        setStartDate(update[0]);
+        setEndDate(update[1]);
+      }}
+      startDate={startDate}
+      endDate={endDate}
+      dateFormat={"dd/MM/yyyy"}
+      selectsRange
+      placeholderText="Select start and end date"
+      className="w-full px-4 py-2 bg-gray-700 text-white rounded-full"
+      isClearable
+    />
+  </div>
+</div>
+
     </div>
+  </div>
+</div>
+
 
         {/* Budget */}
         <div>
