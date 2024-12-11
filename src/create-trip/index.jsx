@@ -24,27 +24,30 @@ function CreateTrip() {
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-6 flex flex-col gap-9">
         {/* Destination Section */}
         <div>
-          <h3 className="text-xl font-bold text-white mb-2">
-            Where do you want to go?
-          </h3>
-          <div className="flex items-center space-x-4">
-            <GooglePlacesAutocomplete
-              apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
-              selectProps={{
-                value: place,
-                onChange: (v) => setPlace(v),
-                placeholder: "Enter a destination...",
-              }}
-              className="flex-grow"
-            />
-            <button
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              onClick={() => setShowMoreQuestions(!showMoreQuestions)}
-            >
-              No Idea
-            </button>
-          </div>
-        </div>
+  <h3 className="text-xl font-bold text-white mb-4">
+    Where do you want to go?
+  </h3>
+  <div className="flex items-center justify-between">
+    <div className="w-4/5"> {/* 80% of the width */}
+      <GooglePlacesAutocomplete
+        apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
+        selectProps={{
+          value: place,
+          onChange: (v) => setPlace(v),
+          placeholder: "Enter a destination...",
+        }}
+      />
+    </div>
+    <button
+      className="ml-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-300"
+      onClick={() => setShowMoreQuestions(!showMoreQuestions)}
+    >
+      Help Me Decide
+    </button>
+  </div>
+</div>
+
+
 
         {/* Additional Questions */}
         {showMoreQuestions && (
