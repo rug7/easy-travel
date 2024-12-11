@@ -1,33 +1,34 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App.jsx';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import CreateTrip from './create-trip';
-import Header from './components/custom/Header';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App.jsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import CreateTrip from "./create-trip";
+import Header from "./components/custom/Header";
+import { LanguageProvider } from "./context/LanguageContext"; // Correct import
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: (
-      <>
-        <Header /> {/* Place the Header here */}
+      <LanguageProvider>
+        <Header />
         <App />
-      </>
+      </LanguageProvider>
     ),
   },
   {
-    path: '/create-trip',
+    path: "/create-trip",
     element: (
-      <>
-        <Header /> {/* Include Header for other routes as well */}
+      <LanguageProvider>
+        <Header />
         <CreateTrip />
-      </>
+      </LanguageProvider>
     ),
   },
 ]);
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>
