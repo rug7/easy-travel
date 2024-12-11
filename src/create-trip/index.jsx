@@ -1,3 +1,4 @@
+import { SelectBudgetOptions } from "@/constants/options";
 import React, { useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 
@@ -126,11 +127,15 @@ function CreateTrip() {
           <h3 className="text-xl font-bold text-white mb-2">
             What is your budget?
           </h3>
-          <input
-            type="number"
-            className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg"
-            placeholder="Enter budget in USD"
-          />
+          <div className="grid grid-cols-3 gap-5 mt-5">
+            {SelectBudgetOptions.map((item,index)=>(
+              <div key={index} className="p-4 border rounded-lg hover:shadow-lg">
+                <h2 className="text-4xl">{item.icon}</h2>
+                <h2 className="font-bold text-white mb-2 text-lg">{item.title}</h2>
+                <h2 className="text-sm text-gray-500">{item.desc}</h2>
+                </div>
+            ))}
+          </div>
         </div>
 
         {/* Number of People */}
