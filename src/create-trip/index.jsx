@@ -184,7 +184,11 @@ function CreateTrip() {
         >
           Pick Dates
         </button>
-        <div className={`w-full mt-3 ${!useDates ? "opacity-50" : ""}`}>
+        <div
+          className={`mt-3 ${
+            !useDates ? "opacity-50 pointer-events-none" : ""
+          }`}
+        >
           <DatePicker
             selected={startDate}
             onChange={(update) => {
@@ -196,7 +200,7 @@ function CreateTrip() {
             dateFormat={"dd/MM/yyyy"}
             selectsRange
             placeholderText="Select start and end date"
-            className={`w-full px-4 py-2 bg-gray-700 text-white rounded-full`}
+            className="w-full px-4 py-2 bg-gray-700 text-white rounded-full shadow-md"
             isClearable
             disabled={!useDates}
           />
@@ -205,6 +209,7 @@ function CreateTrip() {
     </div>
   </div>
 </div>
+
 
 
 
