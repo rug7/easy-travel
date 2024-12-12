@@ -22,7 +22,7 @@ function Header() {
         <select
           value={language}
           onChange={(e) => changeLanguage(e.target.value)}
-          className="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          className="bg-gray-100 text-gray-800 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600  hover:text-gray-800 hover:scale-105 transition-all"
         >
           <option value="en">English</option>
           <option value="he">עברית</option>
