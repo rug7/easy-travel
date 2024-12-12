@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   SelectBudgetOptions,
   WeatherOptions,
@@ -14,35 +15,36 @@ function CreateTrip() {
   const [showMoreQuestions, setShowMoreQuestions] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [useDates, setUseDates] = useState(false); // Toggle between number of days or date picker
+  const [useDates, setUseDates] = useState(false); 
   const [numDays, setNumDays] = useState("");
+  const { translate } = useLanguage(); 
+
 
   const handleToggle = (option) => {
     if (option === "dates") {
       setUseDates(true);
-      setNumDays(""); // Clear number of days if switching to date picker
+      setNumDays(""); 
     } else {
       setUseDates(false);
       setStartDate(null);
-      setEndDate(null); // Clear dates if switching to number of days
+      setEndDate(null); 
     }
   };
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">
       <h2 className="font-bold text-4xl text-white text-center mb-6">
-        Tell Us Your Travel Preferences
+      {translate("createTripTitle")}
       </h2>
       <p className="text-gray-300 text-xl text-center mb-10">
-        Just provide some basic information, and our trip planner will generate
-        a customized itinerary based on your preferences.
+      {translate("createTripDescription")}
       </p>
 
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-6 flex flex-col gap-9">
         {/* Destination Section */}
         <div>
           <h3 className="text-xl font-bold text-white mb-4">
-            Where do you want to go?
+          {translate("destinationTitle")}
           </h3>
           <div className="flex items-center justify-between">
             <div className="w-4/5"> {/* 80% of the width */}
@@ -59,7 +61,7 @@ function CreateTrip() {
               className="ml-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-300"
               onClick={() => setShowMoreQuestions(!showMoreQuestions)}
             >
-              Help Me Decide
+              {translate("helpMeDecide")}
             </button>
           </div>
         </div>
@@ -70,13 +72,13 @@ function CreateTrip() {
         {showMoreQuestions && (
           <div className="space-y-10">
             <h3 className="text-2xl font-bold text-white text-center">
-              Let's narrow it down for you!
+            {translate("narrowDown")}
             </h3>
 
             {/* Weather */}
             <div>
               <p className="text-lg font-medium text-gray-200 mb-4 text-center">
-                What kind of weather do you prefer?
+              {translate("weatherPreference")}
               </p>
               <div className="grid grid-cols-3 gap-6 justify-items-center">
                 {WeatherOptions.map((option) => (
@@ -99,7 +101,7 @@ function CreateTrip() {
             {/* Activities */}
             <div>
               <p className="text-lg font-medium text-gray-200 mb-4 text-center">
-                What type of activities do you prefer?
+              {translate("activitiesPreference")}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
                 {ActivityOptions.map((option) => (
@@ -122,7 +124,7 @@ function CreateTrip() {
             {/* Sightseeing */}
             <div>
               <p className="text-lg font-medium text-gray-200 mb-4 text-center">
-                What would you like to see in your destination?
+              {translate("sightseeingPreference")}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
                 {SightseeingOptions.map((option) => (
@@ -147,7 +149,7 @@ function CreateTrip() {
         {/* Number of Days */}
         <div>
   <h2 className="text-xl font-bold text-white mb-4">
-    How many days are you planning on staying?
+  {translate("daysPlanningTitle")}
   </h2>
   <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
     {/* Flex container for inputs */}
@@ -160,7 +162,7 @@ function CreateTrip() {
             !useDates ? "bg-blue-600" : "bg-gray-600"
           }`}
         >
-          Number of Days
+          {translate("numberOfDays")}
         </button>
         <input
           type="number"
@@ -182,7 +184,7 @@ function CreateTrip() {
             useDates ? "bg-blue-600" : "bg-gray-600"
           }`}
         >
-          Pick Dates
+          {translate("pickDates")}
         </button>
         <div
           className={`mt-3 ${
@@ -216,7 +218,7 @@ function CreateTrip() {
         {/* Budget */}
         <div>
           <h3 className="text-xl font-bold text-white mb-2">
-            What is your budget?
+          {translate("budgetTitle")}
           </h3>
           <div className="grid grid-cols-3 gap-5">
             {SelectBudgetOptions.map((item) => (
@@ -235,7 +237,7 @@ function CreateTrip() {
         {/* Number of People */}
         <div>
           <h3 className="text-xl font-bold text-white mb-2">
-            How many people are you traveling with?
+          {translate("peopleTraveling")}
           </h3>
           <input
             type="number"
@@ -247,7 +249,7 @@ function CreateTrip() {
         {/* Generate Trip */}
         <div className="text-center">
           <button className="px-8 py-3 bg-blue-600 text-white font-bold text-lg rounded-lg hover:bg-blue-700">
-            Generate Trip
+          {translate("generateTrip")}
           </button>
         </div>
       </div>
