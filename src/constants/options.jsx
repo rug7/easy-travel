@@ -1,6 +1,8 @@
 import SunnyImage from '../assets/sunny.jpeg'
 import ColdImage from '../assets/snowy.jpg'
 import ModerateImage from '../assets/modern.jpeg'
+import { useLanguage } from "@/context/LanguageContext";
+
 
 
 

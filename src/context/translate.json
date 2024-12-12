@@ -28,7 +28,37 @@
     "pickDates": "Pick Dates",
     "budgetTitle": "What is your budget?",
     "peopleTraveling": "How many people are you traveling with?",
-    "generateTrip": "Generate Trip"
+    "generateTrip": "Generate Trip",
+    "enterDestination": "Enter a destination...",
+      "startEndDate": "Select start and end date",
+      "travelOptions": [
+        { "title": "Just Me", "desc": "A sole traveler in exploration", "people": "1 Person" },
+        { "title": "A Couple", "desc": "Two travelers in tandem", "people": "2 People" },
+        { "title": "Family", "desc": "A group of fun-loving adventurers", "people": "3 to 5 People" },
+        { "title": "Friends", "desc": "A bunch of thrill-seekers", "people": "5 to 10 People" }
+      ],
+      "budgetOptions": [
+        { "title": "Cheap", "desc": "Stay conscious of costs" },
+        { "title": "Moderate", "desc": "Keep costs on the average side" },
+        { "title": "Luxury", "desc": "Don't worry about cost" }
+      ],
+      "weatherOptions": [
+        { "title": "Warm", "desc": "Sunny and pleasant temperatures" },
+        { "title": "Cold", "desc": "Snowy or chilly climates" },
+        { "title": "Moderate", "desc": "Mild and comfortable weather" }
+      ],
+      "activityOptions": [
+        { "title": "Adventure", "desc": "Hiking, rafting, and more!" },
+        { "title": "Relaxation", "desc": "Spa, beaches, and serenity" },
+        { "title": "Cultural", "desc": "Museums, art, and local traditions" },
+        { "title": "Nature", "desc": "Forests, mountains, and lakes" }
+      ],
+      "sightseeingOptions": [
+        { "title": "Beaches", "desc": "Relax by the sea" },
+        { "title": "Mountains", "desc": "Explore high peaks" },
+        { "title": "Cities", "desc": "Urban exploration" },
+        { "title": "Countryside", "desc": "Peaceful rural getaways" }
+      ]
   },
   "he": {
     "heroTitle": "ההרפתקה הבאה שלך ממתינה",
@@ -59,7 +89,37 @@
     "pickDates": "בחרו תאריכים",
     "budgetTitle": "מה התקציב שלכם?",
     "peopleTraveling": "כמה אנשים מטיילים אתכם?",
-    "generateTrip": "צור מסלול"
+    "generateTrip": "צור מסלול",
+    "enterDestination": "הזן יעד...",
+      "startEndDate": "בחר תאריכים התחלה וסיום",
+      "travelOptions": [
+        { "title": "רק אני", "desc": "מטייל יחיד בחקירה", "people": "אדם אחד" },
+        { "title": "זוג", "desc": "שני מטיילים יחד", "people": "שני אנשים" },
+        { "title": "משפחה", "desc": "קבוצה של הרפתקנים שמחים", "people": "3 עד 5 אנשים" },
+        { "title": "חברים", "desc": "חבורה של מחפשי ריגושים", "people": "5 עד 10 אנשים" }
+      ],
+      "budgetOptions": [
+        { "title": "זול", "desc": "הישאר מודע לעלויות" },
+        { "title": "מתון", "desc": "שמור על עלויות ממוצעות" },
+        { "title": "יוקרה", "desc": "אל תדאג לגבי עלות" }
+      ],
+      "weatherOptions": [
+        { "title": "חם", "desc": "טמפרטורות נעימות ושמש" },
+        { "title": "קר", "desc": "מזג אוויר קר או מושלג" },
+        { "title": "מתון", "desc": "מזג אוויר נעים ונוח" }
+      ],
+      "activityOptions": [
+        { "title": "הרפתקה", "desc": "טיולים, רפטינג ועוד!" },
+        { "title": "רגיעה", "desc": "ספא, חופים ושלווה" },
+        { "title": "תרבותי", "desc": "מוזיאונים, אמנות ומסורות מקומיות" },
+        { "title": "טבע", "desc": "יערות, הרים ואגמים" }
+      ],
+      "sightseeingOptions": [
+        { "title": "חופים", "desc": "רוגע ליד הים" },
+        { "title": "הרים", "desc": "חקור פסגות גבוהות" },
+        { "title": "ערים", "desc": "חקירת ערים אורבניות" },
+        { "title": "כפר", "desc": "מילוט כפרי ושקט" }
+      ]
   },
   "es": {
     "heroTitle": "Tu próxima aventura te espera",
@@ -90,7 +150,37 @@
     "pickDates": "Seleccionar fechas",
     "budgetTitle": "¿Cuál es tu presupuesto?",
     "peopleTraveling": "¿Cuántas personas viajan contigo?",
-    "generateTrip": "Generar viaje"
+    "generateTrip": "Generar viaje",
+    "enterDestination": "Introduce un destino...",
+    "startEndDate": "Selecciona fechas de inicio y fin",
+    "travelOptions": [
+      { "title": "Solo Yo", "desc": "Un viajero explorador", "people": "1 Persona" },
+      { "title": "Una Pareja", "desc": "Dos viajeros en tándem", "people": "2 Personas" },
+      { "title": "Familia", "desc": "Un grupo de aventureros divertidos", "people": "3 a 5 Personas" },
+      { "title": "Amigos", "desc": "Un grupo de buscadores de emociones", "people": "5 a 10 Personas" }
+    ],
+    "budgetOptions": [
+      { "title": "Barato", "desc": "Mantén el control de los costos" },
+      { "title": "Moderado", "desc": "Costos medios" },
+      { "title": "Lujo", "desc": "Sin preocuparte por el costo" }
+    ],
+    "weatherOptions": [
+      { "title": "Cálido", "desc": "Temperaturas agradables y soleadas" },
+      { "title": "Frío", "desc": "Climas fríos o nevados" },
+      { "title": "Moderado", "desc": "Clima cómodo y templado" }
+    ],
+    "activityOptions": [
+      { "title": "Aventura", "desc": "Senderismo, rafting y más!" },
+      { "title": "Relajación", "desc": "Spa, playas y tranquilidad" },
+      { "title": "Cultural", "desc": "Museos, arte y tradiciones locales" },
+      { "title": "Naturaleza", "desc": "Bosques, montañas y lagos" }
+    ],
+    "sightseeingOptions": [
+      { "title": "Playas", "desc": "Relájate junto al mar" },
+      { "title": "Montañas", "desc": "Explora altas cumbres" },
+      { "title": "Ciudades", "desc": "Exploración urbana" },
+      { "title": "Campo", "desc": "Escapadas rurales y tranquilas" }
+    ]
   },
   "pt": {
     "heroTitle": "Sua próxima aventura espera por você",
@@ -121,7 +211,37 @@
     "pickDates": "Escolher datas",
     "budgetTitle": "Qual é o seu orçamento?",
     "peopleTraveling": "Quantas pessoas estão viajando com você?",
-    "generateTrip": "Gerar viagem"
+    "generateTrip": "Gerar viagem",
+    "enterDestination": "Insira um destino...",
+      "startEndDate": "Selecione datas de início e término",
+      "travelOptions": [
+        { "title": "Apenas eu", "desc": "Um viajante explorador", "people": "1 Pessoa" },
+        { "title": "Um Casal", "desc": "Dois viajantes em tandem", "people": "2 Pessoas" },
+        { "title": "Família", "desc": "Um grupo de aventureiros divertidos", "people": "3 a 5 Pessoas" },
+        { "title": "Amigos", "desc": "Um grupo de caçadores de emoções", "people": "5 a 10 Pessoas" }
+      ],
+      "budgetOptions": [
+        { "title": "Barato", "desc": "Mantenha os custos sob controle" },
+        { "title": "Moderado", "desc": "Custos médios" },
+        { "title": "Luxo", "desc": "Não se preocupe com o custo" }
+      ],
+      "weatherOptions": [
+        { "title": "Quente", "desc": "Temperaturas agradáveis e ensolaradas" },
+        { "title": "Frio", "desc": "Climas frios ou nevados" },
+        { "title": "Moderado", "desc": "Clima confortável e ameno" }
+      ],
+      "activityOptions": [
+        { "title": "Aventura", "desc": "Caminhadas, rafting e mais!" },
+        { "title": "Relaxamento", "desc": "Spa, praias e serenidade" },
+        { "title": "Cultural", "desc": "Museus, arte e tradições locais" },
+        { "title": "Natureza", "desc": "Florestas, montanhas e lagos" }
+      ],
+      "sightseeingOptions": [
+        { "title": "Praias", "desc": "Relaxe à beira-mar" },
+        { "title": "Montanhas", "desc": "Explore altos picos" },
+        { "title": "Cidades", "desc": "Exploração urbana" },
+        { "title": "Campo", "desc": "Escapadelas rurais e tranquilas" }
+      ]
   },
   "fr": {
     "heroTitle": "Votre prochaine aventure vous attend",
@@ -152,7 +272,37 @@
     "pickDates": "Choisissez des dates",
     "budgetTitle": "Quel est votre budget?",
     "peopleTraveling": "Combien de personnes voyagent avec vous?",
-    "generateTrip": "Générer un voyage"
+    "generateTrip": "Générer un voyage",
+    "enterDestination": "Entrez une destination...",
+    "startEndDate": "Sélectionnez les dates de début et de fin",
+      "travelOptions": [
+        { "title": "Juste moi", "desc": "Un voyageur solitaire en exploration", "people": "1 Personne" },
+        { "title": "Un Couple", "desc": "Deux voyageurs en tandem", "people": "2 Personnes" },
+        { "title": "Famille", "desc": "Un groupe d'aventuriers joyeux", "people": "3 à 5 Personnes" },
+        { "title": "Amis", "desc": "Un groupe d'amateurs de sensations fortes", "people": "5 à 10 Personnes" }
+      ],
+      "budgetOptions": [
+        { "title": "Bon marché", "desc": "Restez conscient des coûts" },
+        { "title": "Modéré", "desc": "Coûts moyens" },
+        { "title": "Luxe", "desc": "Ne vous inquiétez pas du coût" }
+      ],
+      "weatherOptions": [
+        { "title": "Chaud", "desc": "Températures agréables et ensoleillées" },
+        { "title": "Froid", "desc": "Climats froids ou enneigés" },
+        { "title": "Modéré", "desc": "Climat doux et confortable" }
+      ],
+      "activityOptions": [
+        { "title": "Aventure", "desc": "Randonnée, rafting et plus!" },
+        { "title": "Relaxation", "desc": "Spa, plages et sérénité" },
+        { "title": "Culturel", "desc": "Musées, art et traditions locales" },
+        { "title": "Nature", "desc": "Forêts, montagnes et lacs" }
+      ],
+      "sightseeingOptions": [
+        { "title": "Plages", "desc": "Détendez-vous au bord de la mer" },
+        { "title": "Montagnes", "desc": "Explorez les hauts sommets" },
+        { "title": "Villes", "desc": "Exploration urbaine" },
+        { "title": "Campagne", "desc": "Évasions rurales et paisibles" }
+      ]
   },
   "it": {
     "heroTitle": "La tua prossima avventura ti aspetta",
@@ -183,6 +333,36 @@
     "pickDates": "Scegli le date",
     "budgetTitle": "Qual è il tuo budget?",
     "peopleTraveling": "Quante persone viaggiano con te?",
-    "generateTrip": "Genera viaggio"
+    "generateTrip": "Genera viaggio",
+    "enterDestination": "Inserisci una destinazione...",
+    "startEndDate": "Seleziona date di inizio e fine",
+    "travelOptions": [
+      { "title": "Solo io", "desc": "Un viaggiatore solitario in esplorazione", "people": "1 Persona" },
+      { "title": "Una Coppia", "desc": "Due viaggiatori in tandem", "people": "2 Persone" },
+      { "title": "Famiglia", "desc": "Un gruppo di avventurieri gioiosi", "people": "3 a 5 Persone" },
+      { "title": "Amici", "desc": "Un gruppo di cercatori di emozioni", "people": "5 a 10 Persone" }
+    ],
+    "budgetOptions": [
+      { "title": "Economico", "desc": "Tieni d'occhio i costi" },
+      { "title": "Moderato", "desc": "Costi medi" },
+      { "title": "Lusso", "desc": "Non preoccuparti dei costi" }
+    ],
+    "weatherOptions": [
+      { "title": "Caldo", "desc": "Temperature piacevoli e soleggiate" },
+      { "title": "Freddo", "desc": "Climi freddi o nevosi" },
+      { "title": "Moderato", "desc": "Clima mite e confortevole" }
+    ],
+    "activityOptions": [
+      { "title": "Avventura", "desc": "Escursionismo, rafting e altro!" },
+      { "title": "Rilassamento", "desc": "Spa, spiagge e serenità" },
+      { "title": "Culturale", "desc": "Musei, arte e tradizioni locali" },
+      { "title": "Natura", "desc": "Foreste, montagne e laghi" }
+    ],
+    "sightseeingOptions": [
+      { "title": "Spiagge", "desc": "Rilassati in riva al mare" },
+      { "title": "Montagne", "desc": "Esplora alte vette" },
+      { "title": "Città", "desc": "Esplorazione urbana" },
+      { "title": "Campagna", "desc": "Fughe rurali e tranquille" }
+    ]
   }
 }

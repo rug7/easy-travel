@@ -53,7 +53,7 @@ function CreateTrip() {
                 selectProps={{
                   value: place,
                   onChange: (v) => setPlace(v),
-                  placeholder: "Enter a destination...",
+                  placeholder: translate("enterDestination"),
                 }}
               />
             </div>
@@ -168,7 +168,7 @@ function CreateTrip() {
           type="number"
           value={numDays}
           onChange={(e) => setNumDays(e.target.value)}
-          placeholder="Number of days"
+          placeholder={translate("numberOfDays")}
           className={`w-full px-4 py-2 bg-gray-700 text-white rounded-full mt-3 ${
             useDates ? "opacity-50 cursor-not-allowed" : ""
           }`}
@@ -201,7 +201,7 @@ function CreateTrip() {
             endDate={endDate}
             dateFormat={"dd/MM/yyyy"}
             selectsRange
-            placeholderText="Select start and end date"
+            placeholderText={translate("startEndDate")}
             className="w-full px-4 py-2 bg-gray-700 text-white rounded-full shadow-md"
             isClearable
             disabled={!useDates}
