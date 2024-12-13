@@ -61,3 +61,14 @@ button {
 .overflow-hidden {
   transition: max-height 0.001s ease-in-out;
 }
+/* RTL text alignment */
+.rtl-text {
+  direction: rtl;
+  text-align: right;
+}
+
+/* LTR text alignment (default) */
+.ltr-text {
+  direction: ltr;
+  text-align: left;
+}

@@ -5,15 +5,19 @@ import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreateTrip from "./create-trip";
 import Header from "./components/custom/Header";
-import { LanguageProvider } from "./context/LanguageContext"; // Correct import
+import { LanguageProvider, useLanguage } from "./context/LanguageContext"; // Correct import
+
+// Wrapper Component for Direction Handling
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <LanguageProvider>
-        <Header />
-        <App />
+          <Header />
+          {/* <AppWrapper> */}
+          <App />
+        {/* </AppWrapper> */}
       </LanguageProvider>
     ),
   },
@@ -21,8 +25,10 @@ const router = createBrowserRouter([
     path: "/create-trip",
     element: (
       <LanguageProvider>
-        <Header />
-        <CreateTrip />
+        {/* <AppWrapper> */}
+          <Header />
+          <CreateTrip />
+        {/* </AppWrapper> */}
       </LanguageProvider>
     ),
   },

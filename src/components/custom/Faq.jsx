@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-
 
 function Faq() {
   const [openIndex, setOpenIndex] = useState(null);
-    const { translate } = useLanguage(); 
-  
+  const { translate, language } = useLanguage();
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -14,8 +12,7 @@ function Faq() {
   const faqData = [
     {
       question: translate("faqQuestion1"),
-      answer:
-      translate("faqAnswer1"),
+      answer: translate("faqAnswer1"),
     },
     {
       question: translate("faqQuestion2"),
@@ -35,34 +32,42 @@ function Faq() {
     },
   ];
 
+  const isRTL = language === "he";
+
   return (
-    <div className="flex flex-wrap p-8 bg-[var(--background)] text-[var(--foreground)]">
+    <div
+      className="flex flex-wrap p-8 bg-[var(--background)] text-[var(--foreground)]"
+      style={{ direction: isRTL ? "rtl" : "ltr" }}
+    >
       {/* Left Section */}
       <div className="w-full md:w-1/3 mb-6 md:mb-0">
         <h2 className="text-4xl font-bold mb-4">
-        {translate("faqTitle")}
+          {translate("faqTitle")}
         </h2>
         <p className="text-lg text-gray-400">
-        {translate("faqDescription")}
+          {translate("faqDescription")}
         </p>
       </div>
 
       {/* Right Section */}
       <div className="w-full md:w-2/3">
         {faqData.map((faq, index) => (
-          <div
-            key={index}
-            className="border-b border-gray-600 py-4"
-          >
+          <div key={index} className="border-b border-gray-600 py-4">
             {/* Question */}
             <div
               className="flex justify-between items-center cursor-pointer"
               onClick={() => toggleFAQ(index)}
             >
-              <h3 className="text-lg font-semibold">{faq.question}</h3>
+              <h3
+                className={`text-lg font-semibold ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
+              >
+                {faq.question}
+              </h3>
               <span
                 className={`transform transition-transform duration-300 ${
-                  openIndex === index ? 'rotate-90' : ''
+                  openIndex === index ? "rotate-90" : ""
                 }`}
               >
                 ▶
@@ -72,10 +77,16 @@ function Faq() {
             {/* Answer with Slide Animation */}
             <div
               className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                openIndex === index ? 'max-h-screen' : 'max-h-0'
+                openIndex === index ? "max-h-screen" : "max-h-0"
               }`}
             >
-              <p className="text-gray-400 mt-2">{faq.answer}</p>
+              <p
+                className={`text-gray-400 mt-2 ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
+              >
+                {faq.answer}
+              </p>
             </div>
           </div>
         ))}

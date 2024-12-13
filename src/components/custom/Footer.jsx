@@ -1,6 +1,9 @@
 import React from 'react';
+import { useLanguage } from "@/context/LanguageContext";
 
 function Footer() {
+      const { translate } = useLanguage(); 
+  
   return (
     <footer className="bg-[var(--background)] text-[var(--foreground)] py-8 mt-8 border-t border-gray-700 pt-4 text-center">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,26 +21,26 @@ function Footer() {
 
           {/* Get Started Links */}
           <div className="text-center">
-            <h3 className="text-lg font-bold mb-4">Get Started</h3>
+            <h3 className="text-lg font-bold mb-4">{translate("footerGetStarted")}</h3>
             <ul className="space-y-2">
               <li>
                 <a href="/portugal" className="hover:underline">
-                  Planning a trip to Portugal
+                {translate("footerGetStartedLink1")}
                 </a>
               </li>
               <li>
                 <a href="/japan" className="hover:underline">
-                  Planning a trip to Japan
+                {translate("footerGetStartedLink2")}
                 </a>
               </li>
               <li>
                 <a href="/korea" className="hover:underline">
-                  Planning a trip to Korea
+                {translate("footerGetStartedLink3")}
                 </a>
               </li>
               <li>
                 <a href="/maldives" className="hover:underline">
-                  Planning a trip to Maldives
+                {translate("footerGetStartedLink4")}
                 </a>
               </li>
             </ul>
@@ -45,26 +48,26 @@ function Footer() {
 
           {/* Resources Links */}
           <div className="text-center">
-            <h3 className="text-lg font-bold mb-4">Resources</h3>
+            <h3 className="text-lg font-bold mb-4">{translate("footerResources")}</h3>
             <ul className="space-y-2">
               <li>
                 <a href="/contact" className="hover:underline">
-                  Contact
+                {translate("footerResourcesLink1")}
                 </a>
               </li>
               <li>
                 <a href="/blog" className="hover:underline">
-                  Blog
+                {translate("footerResourcesLink2")}
                 </a>
               </li>
               <li>
                 <a href="/twitter" className="hover:underline">
-                  Twitter
+                {translate("footerResourcesLink3")}
                 </a>
               </li>
               <li>
                 <a href="/privacy-policy" className="hover:underline">
-                  Privacy Policy
+                {translate("footerResourcesLink4")}
                 </a>
               </li>
             </ul>

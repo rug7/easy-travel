@@ -6,7 +6,7 @@ import { useLanguage } from "@/context/LanguageContext";
 
 function Header() {
   const { language, changeLanguage , translate } = useLanguage();
-
+  
   return (
     <div className="p-4 shadow-md justify-between flex items-center px-10 bg-white fixed top-0 left-0 right-0 z-50">
       <div className="flex items-center">

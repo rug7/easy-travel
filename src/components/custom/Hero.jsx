@@ -10,7 +10,9 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from "@/context/LanguageContext"; // Import the language context
 
 function Hero() {
-  const { translate } = useLanguage(); // Get the translate function
+  const { translate ,language} = useLanguage(); // Get the translate function
+  const isRTL = language === "he";
+
 
   return (
     <div>
@@ -25,7 +27,7 @@ function Hero() {
           <h1 className="text-5xl font-bold text-white mb-4">
             {translate("heroTitle")}
           </h1>
-          <p className="text-lg text-gray-300 max-w-2xl mb-6">
+          <p className="text-lg text-gray-300 max-w-2xl mb-6"style={{ direction: isRTL ? "rtl" : "ltr" }}>
             {translate("heroDescription")}
           </p>
           <div className="space-x-4">
