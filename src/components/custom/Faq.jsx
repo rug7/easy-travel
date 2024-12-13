@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { useLanguage } from "@/context/LanguageContext";
+
 
 function Faq() {
   const [openIndex, setOpenIndex] = useState(null);
+    const { translate } = useLanguage(); 
+  
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -9,25 +13,25 @@ function Faq() {
 
   const faqData = [
     {
-      question: 'What is Easy Travel?',
+      question: translate("faqQuestion1"),
       answer:
-        'Easy Travel is your personal travel planner, offering tailored itineraries and travel suggestions based on your preferences.',
+      translate("faqAnswer1"),
     },
     {
-      question: 'Is Easy Travel free to use?',
-      answer: 'Yes, Easy Travel is completely free to use!',
+      question: translate("faqQuestion2"),
+      answer: translate("faqAnswer2"),
     },
     {
-      question: 'Can I adjust my travel itinerary?',
-      answer: 'Absolutely! Easy Travel allows you to fully customize your itinerary to match your needs.',
+      question: translate("faqQuestion3"),
+      answer: translate("faqAnswer3"),
     },
     {
-      question: 'How do I get started?',
-      answer: 'Click the "Plan Your Trip Now" button above to start planning your personalized journey.',
+      question: translate("faqQuestion4"),
+      answer: translate("faqAnswer4"),
     },
     {
-      question: 'Where can I receive support for Easy Travel?',
-      answer: 'You can reach our support team by visiting our Contact page or sending us an email at support@easytravel.com.',
+      question: translate("faqQuestion5"),
+      answer: translate("faqAnswer5"),
     },
   ];
 
@@ -35,9 +39,11 @@ function Faq() {
     <div className="flex flex-wrap p-8 bg-[var(--background)] text-[var(--foreground)]">
       {/* Left Section */}
       <div className="w-full md:w-1/3 mb-6 md:mb-0">
-        <h2 className="text-4xl font-bold mb-4">FAQs</h2>
+        <h2 className="text-4xl font-bold mb-4">
+        {translate("faqTitle")}
+        </h2>
         <p className="text-lg text-gray-400">
-          Have questions about Easy Travel? Find the answers to our most frequently asked questions here.
+        {translate("faqDescription")}
         </p>
       </div>
 
