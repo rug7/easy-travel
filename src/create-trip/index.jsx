@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { useLanguage } from "@/context/LanguageContext";
-import {
-  SelectBudgetOptions,
-  WeatherOptions,
-  ActivityOptions,
-  SightseeingOptions,
-} from "@/constants/options";
+import { getTranslatedOptions } from "@/constants/options";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -18,6 +13,15 @@ function CreateTrip() {
   const [useDates, setUseDates] = useState(false); 
   const [numDays, setNumDays] = useState("");
   const { translate } = useLanguage(); 
+   // Retrieve translated options
+   const {
+    SelectTravelsList,
+    SelectBudgetOptions,
+    WeatherOptions,
+    ActivityOptions,
+    SightseeingOptions,
+    AI_PROMPT,
+  } = getTranslatedOptions(translate);
 
 
   const handleToggle = (option) => {
