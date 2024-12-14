@@ -270,11 +270,18 @@ function CreateTrip() {
           <h3 className="text-xl font-bold text-white mb-2">
             {translate("peopleTraveling")}
           </h3>
-          <input
-            type="number"
-            className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg"
-            placeholder="Enter number of people"
-          />
+          <div className="grid grid-cols-4 gap-5">
+            {SelectTravelsList.map((item) => (
+              <div
+                key={item.id}
+                className="p-4 border rounded-lg hover:shadow-lg bg-gray-700 text-white"
+              >
+                <h2 className="text-4xl">{item.icon}</h2>
+                <h2 className="font-bold mb-2 text-lg">{item.title}</h2>
+                <p className="text-sm text-gray-400">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Generate Trip */}
