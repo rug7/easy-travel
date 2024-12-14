@@ -37,7 +37,7 @@ const SelectableOptions = ({
                 </svg>
               </div>
             )}
-            <span className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center text-white font-semibold text-sm bg-black/50 rounded-full py-1 px-3">
+            <span className="absolute bottom-0 left-0 w-full text-center text-white font-semibold text-sm bg-black/65 rounded-b-xl py-1.5">
               {option.title}
             </span>
           </button>
