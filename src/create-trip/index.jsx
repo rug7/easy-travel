@@ -12,7 +12,8 @@ function CreateTrip() {
   const [endDate, setEndDate] = useState(null);
   const [useDates, setUseDates] = useState(false); 
   const [numDays, setNumDays] = useState("");
-  const { translate } = useLanguage(); 
+  const { translate,language } = useLanguage(); 
+  const isRTL = language === "he";
    // Retrieve translated options
    const {
     SelectTravelsList,
@@ -37,14 +38,14 @@ function CreateTrip() {
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">
-      <h2 className="font-bold text-4xl text-white text-center mb-6">
+      <h2 className="font-bold text-4xl text-white text-center mb-6"style={{ direction: isRTL ? "rtl" : "ltr" }}>
       {translate("createTripTitle")}
       </h2>
-      <p className="text-gray-300 text-xl text-center mb-10">
+      <p className="text-gray-300 text-xl text-center mb-10"style={{ direction: isRTL ? "rtl" : "ltr" }}>
       {translate("createTripDescription")}
       </p>
 
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-6 flex flex-col gap-9">
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-6 flex flex-col gap-9"style={{ direction: isRTL ? "rtl" : "ltr" }}>
         {/* Destination Section */}
         <div>
           <h3 className="text-xl font-bold text-white mb-4">
