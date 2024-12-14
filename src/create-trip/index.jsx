@@ -36,6 +36,32 @@ function CreateTrip() {
       setEndDate(null);
     }
   };
+  const [selectedWeather, setSelectedWeather] = useState([]);
+  const [selectedActivities, setSelectedActivities] = useState([]);
+  const [selectedSightseeing, setSelectedSightseeing] = useState([]);
+
+  const handleSelect = (id, category) => {
+    switch (category) {
+      case "weather":
+        setSelectedWeather((prev) =>
+          prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+        break;
+      case "activities":
+        setSelectedActivities((prev) =>
+          prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+        break;
+      case "sightseeing":
+        setSelectedSightseeing((prev) =>
+          prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">
@@ -74,7 +100,6 @@ function CreateTrip() {
 
 
 
-        {/* Additional Questions */}
         {showMoreQuestions && (
           <div className="space-y-10">
             <h3 className="text-2xl font-bold text-white text-center">
@@ -90,10 +115,12 @@ function CreateTrip() {
                 {WeatherOptions.map((option) => (
                   <button
                     key={option.id}
-                    className="w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    className={`w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl ${selectedWeather.includes(option.id) ? "ring-2 ring-blue-500" : ""
+                      }`}
                     style={{
                       backgroundImage: `url(${option.image})`,
                     }}
+                    onClick={() => handleSelect(option.id, "weather")}
                   >
                     <div className="absolute inset-0 bg-black/30 rounded-xl"></div>
                     <span className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center text-white font-semibold text-sm bg-black/50 rounded-full py-1 px-3">
@@ -113,10 +140,12 @@ function CreateTrip() {
                 {ActivityOptions.map((option) => (
                   <button
                     key={option.id}
-                    className="w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    className={`w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl ${selectedActivities.includes(option.id) ? "ring-2 ring-blue-500" : ""
+                      }`}
                     style={{
                       backgroundImage: `url(${option.image})`, // Use images dynamically
                     }}
+                    onClick={() => handleSelect(option.id, "activities")}
                   >
                     <div className="absolute inset-0 bg-black/40 rounded-xl"></div>
                     <span className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center text-white font-semibold text-sm bg-black/50 rounded-full py-1 px-3">
@@ -136,10 +165,12 @@ function CreateTrip() {
                 {SightseeingOptions.map((option) => (
                   <button
                     key={option.id}
-                    className="w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    className={`w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl ${selectedSightseeing.includes(option.id) ? "ring-2 ring-blue-500" : ""
+                      }`}
                     style={{
                       backgroundImage: `url(${option.image})`, // Use images dynamically
                     }}
+                    onClick={() => handleSelect(option.id, "sightseeing")}
                   >
                     <div className="absolute inset-0 bg-black/40 rounded-xl"></div>
                     <span className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center text-white font-semibold text-sm bg-black/50 rounded-full py-1 px-3">
@@ -151,6 +182,7 @@ function CreateTrip() {
             </div>
           </div>
         )}
+
 
         {/* Number of Days */}
         <div>
