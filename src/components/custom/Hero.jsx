@@ -84,7 +84,7 @@ function Hero() {
               >
                 <div className="absolute inset-0  bg-opacity-40"></div>
                 <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
-                  <h2 className="text-3xl font-bold bg-black/35 rounded-full py-1 px-3">{slide.text}</h2>
+                  <h2 className="text-3xl font-bold rounded-full py-1 px-3">{slide.text}</h2>
                 </div>
               </div>
             </SwiperSlide>
