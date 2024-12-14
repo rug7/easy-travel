@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element: (
       <LanguageProvider>
           <Header />
-          {/* <AppWrapper> */}
+          {/* <AppWrapper>   */}
           <App />
         {/* </AppWrapper> */}
       </LanguageProvider>
