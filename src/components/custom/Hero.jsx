@@ -97,10 +97,10 @@ function Hero() {
         id="how-it-works"
         className="p-8 bg-[var(--background)] text-center relative scroll-mt-20" // Adjust scroll margin
       >
-        <h2 className="text-4xl font-bold mb-6 text-[var(--foreground)]">
+        <h2 className="text-4xl font-bold mb-6 text-[var(--foreground)]"style={{ direction: isRTL ? "rtl" : "ltr" }}>
           {translate("howItWorksTitle")}
         </h2>
-        <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto"style={{ direction: isRTL ? "rtl" : "ltr" }}>
           {translate("videoDescription")}
         </p>
         <div className="video-container relative mx-auto max-w-2xl">
