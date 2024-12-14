@@ -10,12 +10,12 @@ function CreateTrip() {
   const [showMoreQuestions, setShowMoreQuestions] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [useDates, setUseDates] = useState(false); 
+  const [useDates, setUseDates] = useState(false);
   const [numDays, setNumDays] = useState("");
-  const { translate,language } = useLanguage(); 
+  const { translate, language } = useLanguage();
   const isRTL = language === "he";
-   // Retrieve translated options
-   const {
+  // Retrieve translated options
+  const {
     SelectTravelsList,
     SelectBudgetOptions,
     WeatherOptions,
@@ -28,28 +28,28 @@ function CreateTrip() {
   const handleToggle = (option) => {
     if (option === "dates") {
       setUseDates(true);
-      setNumDays(""); 
+      setNumDays("");
     } else {
       setUseDates(false);
       setStartDate(null);
-      setEndDate(null); 
+      setEndDate(null);
     }
   };
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">
-      <h2 className="font-bold text-4xl text-white text-center mb-6"style={{ direction: isRTL ? "rtl" : "ltr" }}>
-      {translate("createTripTitle")}
+      <h2 className="font-bold text-4xl text-white text-center mb-6" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+        {translate("createTripTitle")}
       </h2>
-      <p className="text-gray-300 text-xl text-center mb-10"style={{ direction: isRTL ? "rtl" : "ltr" }}>
-      {translate("createTripDescription")}
+      <p className="text-gray-300 text-xl text-center mb-10" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+        {translate("createTripDescription")}
       </p>
 
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-6 flex flex-col gap-9"style={{ direction: isRTL ? "rtl" : "ltr" }}>
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-6 flex flex-col gap-9" style={{ direction: isRTL ? "rtl" : "ltr" }}>
         {/* Destination Section */}
         <div>
           <h3 className="text-xl font-bold text-white mb-4">
-          {translate("destinationTitle")}
+            {translate("destinationTitle")}
           </h3>
           <div className="flex items-center justify-between">
             <div className="w-4/5"> {/* 80% of the width */}
@@ -63,7 +63,7 @@ function CreateTrip() {
               />
             </div>
             <button
-              className="ml-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-300"
+              className="px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-300"
               onClick={() => setShowMoreQuestions(!showMoreQuestions)}
             >
               {translate("helpMeDecide")}
@@ -77,13 +77,13 @@ function CreateTrip() {
         {showMoreQuestions && (
           <div className="space-y-10">
             <h3 className="text-2xl font-bold text-white text-center">
-            {translate("narrowDown")}
+              {translate("narrowDown")}
             </h3>
 
             {/* Weather */}
             <div>
               <p className="text-lg font-medium text-gray-200 mb-4 text-center">
-              {translate("weatherPreference")}
+                {translate("weatherPreference")}
               </p>
               <div className="grid grid-cols-3 gap-6 justify-items-center">
                 {WeatherOptions.map((option) => (
@@ -106,7 +106,7 @@ function CreateTrip() {
             {/* Activities */}
             <div>
               <p className="text-lg font-medium text-gray-200 mb-4 text-center">
-              {translate("activitiesPreference")}
+                {translate("activitiesPreference")}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
                 {ActivityOptions.map((option) => (
@@ -129,7 +129,7 @@ function CreateTrip() {
             {/* Sightseeing */}
             <div>
               <p className="text-lg font-medium text-gray-200 mb-4 text-center">
-              {translate("sightseeingPreference")}
+                {translate("sightseeingPreference")}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
                 {SightseeingOptions.map((option) => (
@@ -153,69 +153,67 @@ function CreateTrip() {
 
         {/* Number of Days */}
         <div>
-  <h2 className="text-xl font-bold text-white mb-4">
-  {translate("daysPlanningTitle")}
-  </h2>
-  <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
-    {/* Flex container for inputs */}
-    <div className="flex gap-6">
-      {/* Number of Days Input */}
-      <div className="flex-1">
-        <button
-          onClick={() => handleToggle("days")}
-          className={`px-4 py-2 rounded-full text-white font-bold ${
-            !useDates ? "bg-blue-600" : "bg-gray-600"
-          }`}
-        >
-          {translate("numberOfDays")}
-        </button>
-        <input
-          type="number"
-          value={numDays}
-          onChange={(e) => setNumDays(e.target.value)}
-          placeholder={translate("numberOfDays")}
-          className={`w-full px-4 py-2 bg-gray-700 text-white rounded-full mt-3 ${
-            useDates ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={useDates}
-        />
-      </div>
+          <h2 className="text-xl font-bold text-white mb-4">
+            {translate("daysPlanningTitle")}
+          </h2>
+          <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+            {/* Flex container for inputs */}
+            <div className="flex gap-6">
+              {/* Number of Days Input */}
+              <div className="flex-1">
+                <button
+                  onClick={() => handleToggle("days")}
+                  className={`px-4 py-2 rounded-full text-white font-bold ${!useDates ? "bg-blue-600" : "bg-gray-600"
+                    }`}
+                >
+                  {translate("numberOfDays")}
+                </button>
+                <input
+                  type="number"
+                  value={numDays}
+                  onChange={(e) => setNumDays(e.target.value)}
+                  placeholder={translate("numberOfDays")}
+                  className={`w-full px-4 py-2 bg-gray-700 text-white rounded-full mt-3 ${useDates ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  disabled={useDates}
+                />
+              </div>
 
-      {/* Date Range Picker */}
-      <div className="flex-1">
-        <button
-          onClick={() => handleToggle("dates")}
-          className={`px-4 py-2 rounded-full text-white font-bold ${
-            useDates ? "bg-blue-600" : "bg-gray-600"
-          }`}
-        >
-          {translate("pickDates")}
-        </button>
-        <div
-          className={`mt-3 ${
-            !useDates ? "opacity-50 pointer-events-none" : ""
-          }`}
-        >
-          <DatePicker
-            selected={startDate}
-            onChange={(update) => {
-              setStartDate(update[0]);
-              setEndDate(update[1]);
-            }}
-            startDate={startDate}
-            endDate={endDate}
-            dateFormat={"dd/MM/yyyy"}
-            selectsRange
-            placeholderText={translate("startEndDate")}
-            className="w-full px-4 py-2 bg-gray-700 text-white rounded-full shadow-md"
-            isClearable
-            disabled={!useDates}
-          />
+              {/* Date Range Picker */}
+              <div className="flex-1">
+                <button
+                  onClick={() => handleToggle("dates")}
+                  className={`px-4 py-2 rounded-full text-white font-bold ${useDates ? "bg-blue-600" : "bg-gray-600"
+                    }`}
+                >
+                  {translate("pickDates")}
+                </button>
+                <div
+                  className={`mt-3 ${!useDates ? "opacity-50 pointer-events-none" : ""}`}
+                >
+                  {/* Apply flex-1 class for equal width */}
+
+                  <DatePicker
+                    selected={startDate}
+                    onChange={(update) => {
+                      setStartDate(update[0]);
+                      setEndDate(update[1]);
+                    }}
+                    startDate={startDate}
+                    endDate={endDate}
+                    dateFormat={"dd/MM/yyyy"}
+                    selectsRange
+                    placeholderText={translate("startEndDate")}
+                    className="w-full px-4 py-2 bg-gray-700 text-white rounded-full shadow-md"
+                    isClearable
+                    disabled={!useDates}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 
 
@@ -223,7 +221,7 @@ function CreateTrip() {
         {/* Budget */}
         <div>
           <h3 className="text-xl font-bold text-white mb-2">
-          {translate("budgetTitle")}
+            {translate("budgetTitle")}
           </h3>
           <div className="grid grid-cols-3 gap-5">
             {SelectBudgetOptions.map((item) => (
@@ -242,7 +240,7 @@ function CreateTrip() {
         {/* Number of People */}
         <div>
           <h3 className="text-xl font-bold text-white mb-2">
-          {translate("peopleTraveling")}
+            {translate("peopleTraveling")}
           </h3>
           <input
             type="number"
@@ -254,7 +252,7 @@ function CreateTrip() {
         {/* Generate Trip */}
         <div className="text-center">
           <button className="px-8 py-3 bg-blue-600 text-white font-bold text-lg rounded-lg hover:bg-blue-700">
-          {translate("generateTrip")}
+            {translate("generateTrip")}
           </button>
         </div>
       </div>

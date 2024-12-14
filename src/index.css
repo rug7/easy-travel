@@ -72,3 +72,7 @@ button {
   direction: ltr;
   text-align: left;
 }
+
+.react-datepicker-wrapper {
+width: 100%;
+}
