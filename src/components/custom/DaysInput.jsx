@@ -35,7 +35,7 @@ const DaysInput = ({
           <div className="flex-1">
             <button
               onClick={() => handleToggle("days")}
-              className={`px-4 py-2 rounded-full text-white font-bold ${
+              className={`px-4 py-2 rounded-full text-white font-bold hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ${
                 !useDates ? "bg-blue-600" : "bg-gray-600"
               }`}
             >
@@ -57,7 +57,7 @@ const DaysInput = ({
           <div className="flex-1">
             <button
               onClick={() => handleToggle("dates")}
-              className={`px-4 py-2 rounded-full text-white font-bold ${
+              className={`px-4 py-2 rounded-full text-white font-bold hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ${
                 useDates ? "bg-blue-600" : "bg-gray-600"
               }`}
             >
