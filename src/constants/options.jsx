@@ -1,6 +1,6 @@
 import SunnyImage from '../assets/sunny.jpeg';
 import ColdImage from '../assets/snowy.jpg';
-import ModerateImage from '../assets/modern.jpeg';
+import ModerateImage from '/moderate1.jpg';
 import AdventureImage from '/adventure.jpeg';
 import RelaxationImage from '/relaxation.jpeg';
 import CulturalImage from '/cultural.jpeg';
