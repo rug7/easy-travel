@@ -76,7 +76,7 @@ function Hero() {
           ].map((slide, index) => (
             <SwiperSlide key={index}>
               <div
-                className="h-full max-w-[94%] mx-auto bg-cover bg-center rounded-2xl overflow-hidden " // Adjusted for smaller width
+                className="h-[90%] max-w-[94%] mx-auto bg-cover bg-center rounded-2xl overflow-hidden " // Adjusted for smaller width
                 style={{
                   backgroundImage: `url(${slide.image})`,
                   backgroundColor: 'var(--background) ', // Match the background color

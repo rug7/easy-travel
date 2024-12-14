@@ -85,11 +85,11 @@ function CreateTrip() {
               <p className="text-lg font-medium text-gray-200 mb-4 text-center">
                 {translate("weatherPreference")}
               </p>
-              <div className="grid grid-cols-3 gap-6 justify-items-center">
+              <div className="grid grid-cols-3 gap-4">
                 {WeatherOptions.map((option) => (
                   <button
                     key={option.id}
-                    className="w-36 h-36 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    className="w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl"
                     style={{
                       backgroundImage: `url(${option.image})`,
                     }}
@@ -108,11 +108,11 @@ function CreateTrip() {
               <p className="text-lg font-medium text-gray-200 mb-4 text-center">
                 {translate("activitiesPreference")}
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 ">
                 {ActivityOptions.map((option) => (
                   <button
                     key={option.id}
-                    className="w-36 h-36 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    className="w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl"
                     style={{
                       backgroundImage: `url(${option.image})`, // Use images dynamically
                     }}
@@ -131,11 +131,11 @@ function CreateTrip() {
               <p className="text-lg font-medium text-gray-200 mb-4 text-center">
                 {translate("sightseeingPreference")}
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 ">
                 {SightseeingOptions.map((option) => (
                   <button
                     key={option.id}
-                    className="w-36 h-36 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    className="w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl"
                     style={{
                       backgroundImage: `url(${option.image})`, // Use images dynamically
                     }}
@@ -189,7 +189,7 @@ function CreateTrip() {
                   {translate("pickDates")}
                 </button>
                 <div
-                  className={`mt-3 ${!useDates ? "opacity-50 pointer-events-none" : ""}`}
+                  className={`mt-3 ${!useDates ? "opacity-70 cursor-not-allowed" : ""}`}
                 >
                   {/* Apply flex-1 class for equal width */}
 
@@ -213,11 +213,6 @@ function CreateTrip() {
             </div>
           </div>
         </div>
-
-
-
-
-
         {/* Budget */}
         <div>
           <h3 className="text-xl font-bold text-white mb-2">
