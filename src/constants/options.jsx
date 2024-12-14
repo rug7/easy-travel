@@ -2,6 +2,8 @@ import SunnyImage from '../assets/sunny.jpeg';
 import ColdImage from '../assets/snowy.jpg';
 import ModerateImage from '../assets/modern.jpeg';
 import AdventureImage from '/adventure.jpeg';
+import RelaxationImage from '/relaxation.jpeg';
+
 
 
 export const getTranslatedOptions = (translate) => {
@@ -29,7 +31,7 @@ export const getTranslatedOptions = (translate) => {
       id: index + 1,
       title: item.title,
       desc: item.desc,
-      image: [AdventureImage, "🛀", "🏛️", "🌲"][index],
+      image: [AdventureImage, RelaxationImage, "🏛️", "🌲"][index],
     })),
     SightseeingOptions: translate("sightseeingOptions").map((item, index) => ({
       id: index + 1,
