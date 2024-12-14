@@ -98,8 +98,6 @@ function CreateTrip() {
           </div>
         </div>
 
-
-
         {showMoreQuestions && (
           <div className="space-y-10">
             <h3 className="text-2xl font-bold text-white text-center">
