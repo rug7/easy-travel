@@ -8,7 +8,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import { getTranslatedOptions } from "@/constants/options";
 
 function CreateTrip() {
-  // State management
   const [place, setPlace] = useState(null);
   const [showMoreQuestions, setShowMoreQuestions] = useState(false);
   const [startDate, setStartDate] = useState(null);
@@ -51,6 +50,11 @@ function CreateTrip() {
       default:
         break;
     }
+  };
+  const handleBudgetSelect = (id) => {
+    setSelectedBudgets((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
   };
 
   return (
@@ -120,7 +124,12 @@ function CreateTrip() {
         />
 
         {/* Budget */}
-        <BudgetOptions options={SelectBudgetOptions} translate={translate} />
+        <BudgetOptions
+      options={SelectBudgetOptions}
+      selectedOptions={SelectBudgetOptions}
+      onSelect={handleBudgetSelect}
+      translate={(key) => key} // Dummy translate function
+    />
 
         {/* Number of People */}
         <PeopleInput options={SelectTravelsList} translate={translate} />

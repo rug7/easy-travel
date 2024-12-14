@@ -12,12 +12,6 @@ import CountrySideImage from '/country.jpeg';
 
 
 
-
-
-
-
-
-
 export const getTranslatedOptions = (translate) => {
   return {
     SelectTravelsList: translate("travelOptions").map((item, index) => ({
