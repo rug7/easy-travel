@@ -6,6 +6,8 @@ import RelaxationImage from '/relaxation.jpeg';
 import CulturalImage from '/cultural.jpeg';
 import NatureImage from '/nature.jpeg';
 import BeachImage from '/beach.jpeg';
+import MountainImage from '/mountain.jpeg';
+
 
 
 
@@ -43,7 +45,7 @@ export const getTranslatedOptions = (translate) => {
       id: index + 1,
       title: item.title,
       desc: item.desc,
-      image: [BeachImage, "🏔️", "🏙️", "🌄"][index],
+      image: [BeachImage, MountainImage, "🏙️", "🌄"][index],
     })),
     AI_PROMPT: translate(
       "Generate Travel Plan for a user based on the following criteria: destination, budget, number of people, and preferences."
