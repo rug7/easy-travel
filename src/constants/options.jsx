@@ -9,6 +9,12 @@ import BeachImage from '/beach.jpeg';
 import MountainImage from '/mountain.jpeg';
 import CitiesImage from '/city.jpeg';
 import CountrySideImage from '/country.jpeg';
+import ModerateBudgetImage from '/moderate2.jpg';
+import CheapBudgetImage from '/cheap2.jpg';
+import LuxuryBudgetImage from '/luxury1.jpg';
+
+
+
 
 
 
@@ -25,7 +31,7 @@ export const getTranslatedOptions = (translate) => {
       id: index + 1,
       title: item.title,
       desc: item.desc,
-      icon: ["💵", "💰", "💎"][index],
+      image: [CheapBudgetImage, ModerateBudgetImage, LuxuryBudgetImage][index],
     })),
     WeatherOptions: translate("weatherOptions").map((item, index) => ({
       id: index + 1,

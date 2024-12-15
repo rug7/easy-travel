@@ -47,7 +47,7 @@ const DaysInput = ({
               onChange={(e) => setNumDays(e.target.value)}
               placeholder={translate("numberOfDays")}
               className={`w-full px-4 py-2 bg-gray-700 text-white rounded-full mt-3 ${
-                useDates ? "opacity-50 cursor-not-allowed" : ""
+                useDates ? "opacity-35 cursor-not-allowed" : ""
               }`}
               disabled={useDates}
             />
@@ -65,7 +65,7 @@ const DaysInput = ({
             </button>
             <div
               className={`mt-3 ${
-                !useDates ? "opacity-70 cursor-not-allowed" : ""
+                !useDates ? "opacity-35 cursor-not-allowed" : ""
               }`}
             >
               <DatePicker

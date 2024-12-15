@@ -2,21 +2,22 @@ import React from "react";
 
 const BudgetOptions = ({ options, selectedOptions, onSelect, translate }) => (
   <div>
-    <h3 className="text-xl font-bold text-white mb-2">
+    <h3 className="text-xl font-bold text-white mb-4 text-center">
       {translate("budgetTitle")}
     </h3>
-    <div className="grid grid-cols-3 gap-5">
+    <div className="grid grid-cols-3 gap-4">
       {options.map((item) => (
         <button
           key={item.id}
-          className={`p-4 border rounded-lg bg-gray-700 text-white relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl ${
-            selectedOptions.includes(item.id) ? "ring-2 ring-blue-500" : ""
-          }`}
+          className={`w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl`}
+          style={{
+            backgroundImage: `url(${item.image})`, // Use image for the background
+          }}
           onClick={() => onSelect(item.id)}
         >
           {/* Checkmark overlay */}
           {selectedOptions.includes(item.id) && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-12 w-12 text-white"
@@ -31,9 +32,9 @@ const BudgetOptions = ({ options, selectedOptions, onSelect, translate }) => (
               </svg>
             </div>
           )}
-          <h2 className="text-4xl">{item.icon}</h2>
-          <h2 className="font-bold mb-2 text-lg">{item.title}</h2>
-          <p className="text-sm text-gray-400">{item.desc}</p>
+          <span className="absolute bottom-0 left-0 w-full text-center text-white font-semibold text-sm bg-black/65 rounded-b-xl py-1.5">
+            {item.title}
+          </span>
         </button>
       ))}
     </div>
