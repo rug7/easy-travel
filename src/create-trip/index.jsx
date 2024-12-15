@@ -90,6 +90,7 @@ function CreateTrip() {
           setPlace={setPlace}
           translate={translate}
           onToggle={() => setShowMoreQuestions(!showMoreQuestions)}
+          onInputClick={() => setShowMoreQuestions(false)}
         />
 
         {/* Additional Questions */}

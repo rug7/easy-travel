@@ -1,10 +1,10 @@
 import React from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 
-const DestinationInput = ({ place, setPlace, translate, onToggle }) => {
+const DestinationInput = ({ place, setPlace, translate, onToggle, onInputClick }) => {
   const handleHelpMeDecide = () => {
     setPlace(null); // Clear the input field
-    onToggle();     // Call the onToggle function passed as a prop
+    onToggle();     // Toggle the showMoreQuestions state
   };
 
   return (
@@ -20,6 +20,7 @@ const DestinationInput = ({ place, setPlace, translate, onToggle }) => {
               value: place,
               onChange: (v) => setPlace(v),
               placeholder: translate("enterDestination"),
+              onMenuOpen: () => onInputClick(), // Close additional options when the input is clicked
             }}
           />
         </div>
