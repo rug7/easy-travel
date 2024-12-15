@@ -14,7 +14,9 @@ import CheapBudgetImage from '/cheap2.jpg';
 import LuxuryBudgetImage from '/luxury1.jpg';
 import SoloImage from '/solo.jpg';
 import CoupleImage from '/couple.jpg';
-import FamilyImage from '/family.jpg' 
+import FamilyImage from '/family.jpg';
+import FriendsImage from '/friends2.jpg'; 
+
 
 
 
@@ -28,7 +30,7 @@ export const getTranslatedOptions = (translate) => {
       id: index + 1,
       title: item.title,
       desc: item.desc,
-      image: [SoloImage, CoupleImage, FamilyImage, "⛵"][index],
+      image: [SoloImage, CoupleImage, FamilyImage, FriendsImage][index],
       people: item.people,
     })),
     SelectBudgetOptions: translate("budgetOptions").map((item, index) => ({
