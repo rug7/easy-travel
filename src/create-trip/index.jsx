@@ -129,11 +129,14 @@ function CreateTrip() {
         options={SelectBudgetOptions}
         selectedOptions={SelectBudgetOptions}
         onSelect={handleBudgetSelect}
-        translate={(key) => key} // Dummy translate function
+        
     />
 
         {/* Number of People */}
-        <PeopleInput options={SelectTravelsList} translate={translate} />
+        <PeopleInput title={translate("peopleTraveling")}
+        options={SelectTravelsList}
+        selectedOptions={SelectTravelsList}
+        onSelect={handleBudgetSelect} />
 
         {/* Generate Trip */}
         <div className="text-center">
