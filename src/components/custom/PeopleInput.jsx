@@ -13,7 +13,7 @@ const PeopleInput = ({ options, selectedOptions, onSelect, title }) => {
           <button
             key={item.id}
             className={`w-full h-48 rounded-xl bg-cover bg-center relative shadow-lg transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl ${
-              selectedOptions.includes(item.id) ? "ring-2 ring-blue-500" : ""
+              selectedOptions.includes(item.id) ? "" : ""
             }`}
             style={{
               backgroundImage: `url(${item.image})`,

@@ -29,6 +29,9 @@ function CreateTrip() {
   const [selectedWeather, setSelectedWeather] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [selectedSightseeing, setSelectedSightseeing] = useState([]);
+  const [selectedBudgets, setSelectedBudgets] = useState([]);
+  const [selectedPeople, setSelectedPeople] = useState([]);
+
 
   const handleSelect = (id, category) => {
     switch (category) {
@@ -47,16 +50,21 @@ function CreateTrip() {
           prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
         );
         break;
+        case "budget":
+        setSelectedBudgets((prev) =>
+          prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+        break;
+        case "people":
+        setSelectedPeople((prev) =>
+          prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+        break;
       default:
         break;
     }
   };
-  const handleBudgetSelect = (id) => {
-    setSelectedBudgets((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
-
+  
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">
       <h2
@@ -127,16 +135,16 @@ function CreateTrip() {
         <BudgetOptions
         title={translate("budgetTitle")}
         options={SelectBudgetOptions}
-        selectedOptions={SelectBudgetOptions}
-        onSelect={handleBudgetSelect}
+        selectedOptions={selectedBudgets}
+        onSelect={(id) => handleSelect(id, "budget")}
         
     />
 
         {/* Number of People */}
         <PeopleInput title={translate("peopleTraveling")}
         options={SelectTravelsList}
-        selectedOptions={SelectTravelsList}
-        onSelect={handleBudgetSelect} />
+        selectedOptions={selectedPeople}
+        onSelect={(id) => handleSelect(id, "people")} />
 
         {/* Generate Trip */}
         <div className="text-center">
