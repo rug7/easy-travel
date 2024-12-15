@@ -148,7 +148,7 @@ function CreateTrip() {
 
         {/* Generate Trip */}
         <div className="text-center">
-          <button className="px-8 py-3 bg-blue-600 text-white font-bold text-lg rounded-lg hover:bg-blue-700">
+          <button className="px-8 py-3 bg-blue-600 text-white font-bold text-lg rounded-lfull hover:bg-blue-700 hover:scale-105 duration-500">
             {translate("generateTrip")}
           </button>
         </div>

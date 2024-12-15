@@ -2,7 +2,7 @@ import React from "react";
 
 const BudgetOptions = ({ options, selectedOptions = [], onSelect, title }) => (
   <div>
-    <h3 className="text-xl font-bold text-white mb-4 text-center">{title}</h3>
+    <h3 className="text-2xl font-semibold  text-white mb-4 text-center">{title}</h3>
     <div className="grid grid-cols-3 gap-4">
       {options.map((item) => (
         <button

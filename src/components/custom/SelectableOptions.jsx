@@ -9,7 +9,7 @@ const SelectableOptions = ({
 }) => {
   return (
     <div>
-      <p className="text-lg font-bold text-gray-200 mb-4 text-center">{title}</p>
+      <p className="text-2xl font-semibold text-gray-200 mb-4 text-center">{title}</p>
       <div className={`grid ${gridCols} gap-4`}>
         {options.map((option) => (
           <button

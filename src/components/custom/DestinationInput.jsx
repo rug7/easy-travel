@@ -18,7 +18,7 @@ const DestinationInput = ({ place, setPlace, translate, onToggle }) => (
         />
       </div>
       <button
-        className="px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-300"
+        className="px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-500"
         onClick={onToggle}
       >
         {translate("helpMeDecide")}
