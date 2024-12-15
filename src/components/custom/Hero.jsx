@@ -68,7 +68,7 @@ function Hero() {
           {[
             { image: '/slide1.jpg', text: translate('slide1') },
             { image: '/slide2.jpg', text: translate('slide2') },
-            { image: '/slide3.jpg', text: translate('slide3') },
+            { image: '/slide9.jpg', text: translate('slide3') },
             { image: '/slide4.jpg', text: translate('slide4') },
             { image: '/slide5.jpg', text: translate('slide5') },
             { image: '/slide6.jpg', text: translate('slide6') },

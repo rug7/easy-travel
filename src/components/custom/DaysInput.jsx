@@ -1,5 +1,6 @@
 import React from "react";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const DaysInput = ({
   translate,
@@ -15,11 +16,11 @@ const DaysInput = ({
   const handleToggle = (option) => {
     if (option === "dates") {
       setUseDates(true);
-      setNumDays("");
+      setNumDays(""); // Reset number input
     } else {
       setUseDates(false);
       setStartDate(null);
-      setEndDate(null);
+      setEndDate(null); // Reset date input
     }
   };
 
@@ -29,14 +30,13 @@ const DaysInput = ({
         {translate("daysPlanningTitle")}
       </h2>
       <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
-        {/* Flex container for inputs */}
-        <div className="flex gap-6">
+        <div className="flex flex-col md:flex-row gap-6">
           {/* Number of Days Input */}
           <div className="flex-1">
             <button
               onClick={() => handleToggle("days")}
-              className={`px-4 py-2 rounded-full text-white font-bold hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ${
-                !useDates ? "bg-blue-600" : "bg-gray-600"
+              className={`px-4 py-2 rounded-full text-white font-bold transition-all duration-300 ${
+                !useDates ? "bg-blue-600 scale-105 shadow-md" : "bg-gray-600"
               }`}
             >
               {translate("numberOfDays")}
@@ -46,8 +46,8 @@ const DaysInput = ({
               value={numDays}
               onChange={(e) => setNumDays(e.target.value)}
               placeholder={translate("numberOfDays")}
-              className={`w-full px-4 py-2 bg-gray-700 text-white rounded-full mt-3 ${
-                useDates ? "opacity-35 cursor-not-allowed" : ""
+              className={`w-full px-4 py-2 mt-3 bg-gray-700 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                useDates ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={useDates}
             />
@@ -57,17 +57,13 @@ const DaysInput = ({
           <div className="flex-1">
             <button
               onClick={() => handleToggle("dates")}
-              className={`px-4 py-2 rounded-full text-white font-bold hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ${
-                useDates ? "bg-blue-600" : "bg-gray-600"
+              className={`px-4 py-2 rounded-full text-white font-bold transition-all duration-300 ${
+                useDates ? "bg-blue-600 scale-105 shadow-md" : "bg-gray-600"
               }`}
             >
               {translate("pickDates")}
             </button>
-            <div
-              className={`mt-3 ${
-                !useDates ? "opacity-35 cursor-not-allowed" : ""
-              }`}
-            >
+            <div className="mt-3">
               <DatePicker
                 selected={startDate}
                 onChange={(update) => {
@@ -76,10 +72,12 @@ const DaysInput = ({
                 }}
                 startDate={startDate}
                 endDate={endDate}
-                dateFormat={"dd/MM/yyyy"}
+                dateFormat="dd/MM/yyyy"
                 selectsRange
                 placeholderText={translate("startEndDate")}
-                className="w-full px-4 py-2 bg-gray-700 text-white rounded-full shadow-md"
+                className={`w-full px-4 py-2 bg-gray-700 text-white rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                  !useDates ? "opacity-50 cursor-not-allowed" : ""
+                }`}
                 isClearable
                 disabled={!useDates}
               />
