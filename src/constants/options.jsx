@@ -12,6 +12,9 @@ import CountrySideImage from '/country.jpeg';
 import ModerateBudgetImage from '/moderate2.jpg';
 import CheapBudgetImage from '/cheap2.jpg';
 import LuxuryBudgetImage from '/luxury1.jpg';
+import SoloImage from '/solo.jpg';
+import CoupleImage from '/couple.jpg';
+
 
 
 
@@ -24,7 +27,7 @@ export const getTranslatedOptions = (translate) => {
       id: index + 1,
       title: item.title,
       desc: item.desc,
-      icon: ["🧍", "🍷", "🏡", "⛵"][index],
+      image: [SoloImage, CoupleImage, "🏡", "⛵"][index],
       people: item.people,
     })),
     SelectBudgetOptions: translate("budgetOptions").map((item, index) => ({
