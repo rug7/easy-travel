@@ -125,10 +125,11 @@ function CreateTrip() {
 
         {/* Budget */}
         <BudgetOptions
-      options={SelectBudgetOptions}
-      selectedOptions={SelectBudgetOptions}
-      onSelect={handleBudgetSelect}
-      translate={(key) => key} // Dummy translate function
+        title={translate("budgetTitle")}
+        options={SelectBudgetOptions}
+        selectedOptions={SelectBudgetOptions}
+        onSelect={handleBudgetSelect}
+        translate={(key) => key} // Dummy translate function
     />
 
         {/* Number of People */}
