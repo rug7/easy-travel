@@ -1,5 +1,10 @@
 {
   "en": {
+    
+    "pleaseCompletePreferences": "Please complete all preferences before generating suggestions",
+    "pleaseSelectDestination": "Please select a destination or use Help Me Decide",
+    "pleaseCompleteAllFields": "Please complete all required fields",
+    
     "heroTitle": "Your Next Adventure Awaits",
     "heroDescription": "Effortlessly plan personalized journeys with destinations, activities, and budgets tailored to your preferences. Your dream trip is just a few clicks away.",
     "planTripButton": "Plan Your Trip Now",

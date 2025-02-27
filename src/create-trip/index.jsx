@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DestinationInput from "@/components/custom/DestinationInput";
 import DaysInput from "@/components/custom/DaysInput";
 import SelectableOptions from "@/components/custom/SelectableOptions";
@@ -6,6 +6,7 @@ import BudgetOptions from "@/components/custom/BudgetOptions";
 import PeopleInput from "@/components/custom/PeopleInput";
 import { useLanguage } from "@/context/LanguageContext";
 import { getTranslatedOptions } from "@/constants/options";
+import { toast } from "sonner";
 
 function CreateTrip() {
   const [place, setPlace] = useState(null);
@@ -17,6 +18,28 @@ function CreateTrip() {
   const { translate, language } = useLanguage();
   const isRTL = language === "he";
 
+  const [selectedWeather, setSelectedWeather] = useState([]);
+  const [selectedActivities, setSelectedActivities] = useState([]);
+  const [selectedSightseeing, setSelectedSightseeing] = useState([]);
+  const [selectedBudgets, setSelectedBudgets] = useState([]);
+  const [selectedPeople, setSelectedPeople] = useState([]);
+
+   const [tripData, setTripData] = useState({
+    destination: null,
+    numberOfDays: "",
+    dateRange: {
+      start: null,
+      end: null,
+    },
+    budget: "",
+    travelGroup: "",
+    preferences: {
+      weather: [],
+      activities: [],
+      sightseeing: [],
+    }
+  });
+
   const {
     SelectTravelsList,
     SelectBudgetOptions,
@@ -25,13 +48,120 @@ function CreateTrip() {
     SightseeingOptions,
   } = getTranslatedOptions(translate);
 
-  // Selection states
-  const [selectedWeather, setSelectedWeather] = useState([]);
-  const [selectedActivities, setSelectedActivities] = useState([]);
-  const [selectedSightseeing, setSelectedSightseeing] = useState([]);
-  const [selectedBudgets, setSelectedBudgets] = useState([]);
-  const [selectedPeople, setSelectedPeople] = useState([]);
+  useEffect(() => {
+    console.log("Current Form Data:", {
+      destination: place,
+      days: numDays,
+      budget: selectedBudgets,
+      people: selectedPeople,
+      weather: selectedWeather,
+      activities: selectedActivities,
+      sightseeing: selectedSightseeing
+    });
+  }, [place, numDays, selectedBudgets, selectedPeople, selectedWeather, selectedActivities, selectedSightseeing]);
 
+
+  const generateTrip = async (destination) => {
+    // Modified validation
+    if (!numDays || selectedBudgets.length === 0 || selectedPeople.length === 0) {
+      toast.error(translate("pleaseCompleteAllFields"));
+      return;
+    }
+
+    // If we're in "Help Me Decide" mode and have preferences but no destination yet, that's OK
+    if (!destination && !showMoreQuestions) {
+      toast.error(translate("pleaseSelectDestination"));
+      return;
+    }
+
+    const aiRequestData = {
+      destination: destination?.value?.description || "AI_SUGGEST",
+      numberOfDays: useDates ? null : numDays,
+      dateRange: useDates ? {
+        startDate: startDate,
+        endDate: endDate
+      } : null,
+      budget: selectedBudgets[0],
+      travelGroup: selectedPeople[0],
+      preferences: {
+        weather: selectedWeather,
+        activities: selectedActivities,
+        sightseeing: selectedSightseeing,
+      }
+    };
+
+    console.log("Sending to AI:", aiRequestData); // Debug log
+
+    try {
+      const response = await fetch('/api/generate-trip', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(aiRequestData)
+      });
+
+      const data = await response.json();
+      console.log("AI Response:", data); // Debug log
+      
+      if (response.ok) {
+        toast.success(translate("tripGeneratedSuccess"));
+        // Handle successful response
+      } else {
+        toast.error(translate("errorGeneratingTrip"));
+      }
+    } catch (error) {
+      console.error('Error generating trip:', error);
+      toast.error(translate("errorGeneratingTrip"));
+    }
+  };
+
+  const handleHelpMeDecide = async () => {
+    if (!selectedWeather.length || !selectedActivities.length || !selectedSightseeing.length || 
+        !selectedBudgets.length || !selectedPeople.length || !numDays) {
+      toast.error(translate("pleaseCompletePreferences"));
+      return;
+    }
+
+    const preferences = {
+      weather: selectedWeather,
+      activities: selectedActivities,
+      sightseeing: selectedSightseeing,
+      budget: selectedBudgets[0],
+      travelGroup: selectedPeople[0],
+      numberOfDays: numDays
+    };
+
+    try {
+      const response = await fetch('/api/gemini/suggest-destination', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(preferences)
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        const suggestedPlace = {
+          label: data.destination,
+          value: {
+            description: data.destination,
+            place_id: data.placeId
+          }
+        };
+        setPlace(suggestedPlace);
+        // Generate trip with the suggested place
+        generateTrip(suggestedPlace);
+      } else {
+        toast.error(translate("errorSuggestingDestination"));
+      }
+    } catch (error) {
+      console.error('Error suggesting destination:', error);
+      toast.error(translate("errorSuggestingDestination"));
+    }
+  };
 
   const handleSelect = (id, category) => {
     switch (category) {
@@ -86,11 +216,18 @@ function CreateTrip() {
       >
         {/* Destination Section */}
         <DestinationInput
-          place={place}
-          setPlace={setPlace}
-          translate={translate}
-          onToggle={() => setShowMoreQuestions(!showMoreQuestions)}
-          onInputClick={() => setShowMoreQuestions(false)}
+           place={place}
+           setPlace={setPlace}
+           translate={translate}
+           onToggle={() => setShowMoreQuestions(!showMoreQuestions)}
+           onInputClick={() => setShowMoreQuestions(false)}
+           selectedWeather={selectedWeather}
+           selectedActivities={selectedActivities}
+           selectedSightseeing={selectedSightseeing}
+           selectedBudgets={selectedBudgets}
+           selectedPeople={selectedPeople}
+           onHelpMeDecide={handleHelpMeDecide}
+
         />
 
         {/* Additional Questions */}
@@ -149,7 +286,9 @@ function CreateTrip() {
 
         {/* Generate Trip */}
         <div className="text-center">
-          <button className="px-8 py-3 bg-blue-600 text-white font-bold text-lg rounded-lfull hover:bg-blue-700 hover:scale-105 duration-500">
+          <button 
+           onClick={() => generateTrip(place)}  
+          className="px-8 py-3 bg-blue-600 text-white font-bold text-lg rounded-lfull hover:bg-blue-700 hover:scale-105 duration-500">
             {translate("generateTrip")}
           </button>
         </div>
