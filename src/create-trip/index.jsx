@@ -5,7 +5,7 @@ import SelectableOptions from "@/components/custom/SelectableOptions";
 import BudgetOptions from "@/components/custom/BudgetOptions";
 import PeopleInput from "@/components/custom/PeopleInput";
 import { useLanguage } from "@/context/LanguageContext";
-import { getTranslatedOptions } from "@/constants/options";
+import { AI_PROMPT, getTranslatedOptions } from "@/constants/options";
 import { toast } from "sonner";
 
 function CreateTrip() {
@@ -73,6 +73,16 @@ function CreateTrip() {
       toast.error(translate("pleaseSelectDestination"));
       return;
     }
+    const getBudgetText = (budgetId) => {
+      const budget = SelectBudgetOptions.find(b => b.id === parseInt(budgetId));
+      return budget?.title || 'Moderate'; // Default to Moderate if not found
+    };
+  
+    const getPeopleText = (peopleId) => {
+      const people = SelectTravelsList.find(p => p.id === parseInt(peopleId));
+      return people?.title || 'Family'; // Default to Family if not found
+    };
+
 
     const aiRequestData = {
       destination: destination?.value?.description || "AI_SUGGEST",
@@ -81,8 +91,8 @@ function CreateTrip() {
         startDate: startDate,
         endDate: endDate
       } : null,
-      budget: selectedBudgets[0],
-      travelGroup: selectedPeople[0],
+      budget: getBudgetText(selectedBudgets[0]),
+      travelGroup: getPeopleText(selectedPeople[0]),
       preferences: {
         weather: selectedWeather,
         activities: selectedActivities,
@@ -90,7 +100,16 @@ function CreateTrip() {
       }
     };
 
-    console.log("Sending to AI:", aiRequestData); // Debug log
+    const FINAL_PROMPT = AI_PROMPT
+    .replace('{location}', destination?.value?.description)
+    .replace('{totalDays}', numDays)
+    .replace('{traveler}', getPeopleText(selectedPeople[0]))
+    .replace('{budget}', getBudgetText(selectedBudgets[0]))
+    .replace('{totalDays}', numDays);
+
+  console.log("Final Prompt:", FINAL_PROMPT); // This will show the formatted prompt
+
+  console.log("Sending to AI:", aiRequestData);
 
     try {
       const response = await fetch('/api/generate-trip', {
@@ -114,6 +133,7 @@ function CreateTrip() {
       console.error('Error generating trip:', error);
       toast.error(translate("errorGeneratingTrip"));
     }
+
   };
 
   const handleHelpMeDecide = async () => {
