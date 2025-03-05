@@ -63,96 +63,8 @@ function CreateTrip() {
 
 
   const generateTrip = async (destination) => {
-    if (!destination) {
-      toast.error(translate("pleaseSelectDestination"));
-      return;
-    }
-  
     if (!numDays || selectedBudgets.length === 0 || selectedPeople.length === 0) {
       toast.error(translate("pleaseCompleteAllFields"));
-      return;
-    }
-  
-    const getBudgetText = (budgetId) => {
-      const budget = SelectBudgetOptions.find(b => b.id === parseInt(budgetId));
-      return budget?.title || 'Moderate';
-    };
-  
-    const getPeopleText = (peopleId) => {
-      const people = SelectTravelsList.find(p => p.id === parseInt(peopleId));
-      return people?.title || 'Family';
-    };
-  
-    try {
-      const promptText = `Create a detailed travel itinerary for ${destination.value.description} for ${numDays} days.
-      Travelers: ${getPeopleText(selectedPeople[0])}
-      Budget Level: ${getBudgetText(selectedBudgets[0])}
-  
-      Important pricing guidelines:
-      - For budget level "${getBudgetText(selectedBudgets[0])}", provide specific price ranges
-      - Hotel prices should be per night in local currency and USD
-      - Activity prices should be per person in local currency and USD
-      - For free activities, specifically state "Free"
-      - For paid activities, provide exact or estimated prices
-      - Do not use vague terms like "Variable" or "Varies"
-  
-      Provide a detailed itinerary in the following JSON format:
-      {
-        "trip": {
-          "destination": "${destination.value.description}",
-          "duration": "${numDays} days",
-          "travelers": "${getPeopleText(selectedPeople[0])}",
-          "budget": "${getBudgetText(selectedBudgets[0])}",
-          "currency": "Local Currency Code (e.g., USD, EUR, JPY)"
-        },
-        "hotels": [
-          {
-            "name": "",
-            "address": "",
-            "priceRange": "100-150 USD per night",
-            "rating": 4.5,
-            "description": "",
-            "coordinates": {
-              "latitude": 0.0,
-              "longitude": 0.0
-            }
-          }
-        ],
-        "itinerary": {
-          "day1": [
-            {
-              "activity": "",
-              "duration": "2 hours",
-              "bestTime": "Morning (9:00 AM - 11:00 AM)",
-              "price": "Free" or "25 USD per person",
-              "description": "",
-              "coordinates": {
-                "latitude": 0.0,
-                "longitude": 0.0
-              }
-            }
-          ]
-        }
-      }`;
-  
-      const result = await chatSession.sendMessage([{ text: promptText }]);
-      const response = await result.response.text();
-      const jsonResponse = JSON.parse(response);
-      
-      setTripData(jsonResponse);
-      console.log(jsonResponse);
-      toast.success(translate("tripGeneratedSuccess"));
-  
-    } catch (error) {
-      console.error('Error generating trip:', error);
-      toast.error(translate("errorGeneratingTrip"));
-    }
-  };
-
-  const handleHelpMeDecide = async () => {
-    if (!selectedWeather.length || !selectedActivities.length || !selectedSightseeing.length || 
-        !selectedBudgets.length || !selectedPeople.length || !numDays) {
-      toast.error(translate("pleaseCompletePreferences"));
       return;
     }
   
@@ -185,46 +97,117 @@ function CreateTrip() {
     };
   
     try {
-      const promptText = `As a travel expert, suggest a perfect destination based on the following preferences:
+      let finalDestination = destination;
   
-      Trip Duration: ${numDays} days
-      Travel Group: ${getPeopleText(selectedPeople[0])}
-      Budget Level: ${getBudgetText(selectedBudgets[0])}
-      
-      Preferences:
-      - Weather: ${getWeatherPreferences()}
-      - Desired Activities: ${getActivityPreferences()}
-      - Preferred Sightseeing: ${getSightseeingPreferences()}
+      // If no destination is selected but preferences are set, get an AI suggestion first
+      if (!destination && showMoreQuestions) {
+        const suggestionPrompt = `As a travel expert, suggest a perfect destination based on the following preferences:
+          Trip Duration: ${numDays} days
+          Travel Group: ${getPeopleText(selectedPeople[0])}
+          Budget Level: ${getBudgetText(selectedBudgets[0])}
+          
+          Preferences:
+          - Weather: ${getWeatherPreferences()}
+          - Desired Activities: ${getActivityPreferences()}
+          - Preferred Sightseeing: ${getSightseeingPreferences()}
   
-      Based on these preferences, suggest a destination. Respond ONLY with a JSON object in this exact format:
-      {
-        "destination": "Name of the city",
-        "country": "Country name",
-        "reasoning": "Brief explanation why this matches the preferences",
-        "highlights": ["highlight1", "highlight2", "highlight3"]
-      }`;
+          Respond ONLY with a JSON object in this exact format:
+          {
+            "destination": "Name of the city",
+            "country": "Country name",
+            "reasoning": "Brief explanation why this matches the preferences"
+          }`;
   
-      const result = await chatSession.sendMessage([{ text: promptText }]);
+        const suggestionResult = await chatSession.sendMessage([{ text: suggestionPrompt }]);
+        const suggestionResponse = await suggestionResult.response.text();
+        const suggestionData = JSON.parse(suggestionResponse);
+  
+        finalDestination = {
+          value: {
+            description: `${suggestionData.destination}, ${suggestionData.country}`,
+            reasoning: suggestionData.reasoning
+          }
+        };
+  
+        toast.success(`Suggesting destination: ${suggestionData.destination}, ${suggestionData.country}`);
+      }
+  
+      // Now generate the trip itinerary
+      const itineraryPrompt = `Create a detailed travel itinerary for ${finalDestination.value.description} for ${numDays} days.
+        Travelers: ${getPeopleText(selectedPeople[0])}
+        Budget Level: ${getBudgetText(selectedBudgets[0])}
+  
+        Important pricing guidelines:
+        - For budget level "${getBudgetText(selectedBudgets[0])}", provide specific price ranges
+        - Hotel prices should be per night in local currency and USD
+        - Activity prices should be per person in local currency and USD
+        - For free activities, specifically state "Free"
+        - For paid activities, provide exact or estimated prices
+        - Do not use vague terms like "Variable" or "Varies"
+  
+        Provide a detailed itinerary in the following JSON format:
+        {
+          "trip": {
+            "destination": "${finalDestination.value.description}",
+            "duration": "${numDays} days",
+            "travelers": "${getPeopleText(selectedPeople[0])}",
+            "budget": "${getBudgetText(selectedBudgets[0])}",
+            "currency": "Local Currency Code (e.g., USD, EUR, JPY)"
+          },
+          "hotels": [
+            {
+              "name": "",
+              "address": "",
+              "priceRange": "100-150 USD per night",
+              "rating": 4.5,
+              "description": "",
+              "coordinates": {
+                "latitude": 0.0,
+                "longitude": 0.0
+              }
+            }
+          ],
+          "itinerary": {
+            "day1": [
+              {
+                "activity": "",
+                "duration": "2 hours",
+                "bestTime": "Morning (9:00 AM - 11:00 AM)",
+                "price": "25 USD per person",
+                "description": "",
+                "coordinates": {
+                  "latitude": 0.0,
+                  "longitude": 0.0
+                }
+              }
+            ]
+          }
+        }`;
+  
+      const result = await chatSession.sendMessage([{ text: itineraryPrompt }]);
       const response = await result.response.text();
-      const suggestionData = JSON.parse(response);
-  
-      const suggestedPlace = {
-        label: `${suggestionData.destination}, ${suggestionData.country}`,
-        value: {
-          description: `${suggestionData.destination}, ${suggestionData.country}`,
-          reasoning: suggestionData.reasoning,
-          highlights: suggestionData.highlights
-        }
-      };
-  
-      // Only update the place state and show the suggestion
-      setPlace(suggestedPlace);
-      toast.success(`Suggested Destination: ${suggestedPlace.label}. Click Generate Trip to create an itinerary.`);
+      const jsonResponse = JSON.parse(response);
+      
+      setTripData(jsonResponse);
+      console.log(jsonResponse);
+      toast.success(translate("tripGeneratedSuccess"));
   
     } catch (error) {
-      console.error('Error suggesting destination:', error);
-      toast.error(translate("errorSuggestingDestination"));
+      console.error('Error generating trip:', error);
+      toast.error(translate("errorGeneratingTrip"));
     }
+  };
+
+  const handleHelpMeDecide = async () => {
+    if (!selectedWeather.length || !selectedActivities.length || !selectedSightseeing.length || 
+        !selectedBudgets.length || !selectedPeople.length || !numDays) {
+      toast.error(translate("pleaseCompletePreferences"));
+      return;
+    }
+  
+    // Just set showMoreQuestions to true to show the preference options
+    setShowMoreQuestions(true);
+    toast.success(translate("preferencesCollected"));
   };
 
   const handleSelect = (id, category) => {
