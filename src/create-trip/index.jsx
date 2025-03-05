@@ -9,6 +9,69 @@ import { AI_PROMPT, getTranslatedOptions } from "@/constants/options";
 import { toast } from "sonner";
 import { chatSession } from "@/service/AIModal";
 
+const generateDayItineraries = (numDays) => {
+  let template = '';
+  for (let i = 1; i <= numDays; i++) {
+    template += `"day${i}": [
+      {
+        "activity": "Morning Activity",
+        "duration": "2-3 hours",
+        "bestTime": "9:00 AM - 12:00 PM",
+        "price": "",
+        "description": "",
+        "travelTime": "",
+        "coordinates": {
+          "latitude": 0,
+          "longitude": 0
+        },
+        "imageUrl": "",
+        "bookingLinks": {
+          "official": "",
+          "tripadvisor": "",
+          "googleMaps": ""
+        }
+      },
+      {
+        "activity": "Afternoon Activity",
+        "duration": "2-3 hours",
+        "bestTime": "2:00 PM - 5:00 PM",
+        "price": "",
+        "description": "",
+        "travelTime": "",
+        "coordinates": {
+          "latitude": 0,
+          "longitude": 0
+        },
+        "imageUrl": "",
+        "bookingLinks": {
+          "official": "",
+          "tripadvisor": "",
+          "googleMaps": ""
+        }
+      },
+      {
+        "activity": "Evening Activity",
+        "duration": "2-3 hours",
+        "bestTime": "7:00 PM - 10:00 PM",
+        "price": "",
+        "description": "",
+        "travelTime": "",
+        "coordinates": {
+          "latitude": 0,
+          "longitude": 0
+        },
+        "imageUrl": "",
+        "bookingLinks": {
+          "official": "",
+          "tripadvisor": "",
+          "googleMaps": ""
+        }
+      }
+    ]${i < numDays ? ',' : ''}`;
+  }
+  return template;
+};
+
 function CreateTrip() {
   const [place, setPlace] = useState(null);
   const [showMoreQuestions, setShowMoreQuestions] = useState(false);
@@ -136,113 +199,75 @@ function CreateTrip() {
       }
   
       // Generate the trip itinerary
-      const itineraryPrompt = `Create a detailed travel itinerary for ${finalDestination.value.description} for ${numDays} days.
-  Travelers: ${getPeopleText(selectedPeople[0])}
-  Budget Level: ${getBudgetText(selectedBudgets[0])}
+      const basePrompt = `Create a detailed travel itinerary for ${finalDestination.value.description} for ${numDays} days.
+Travelers: ${getPeopleText(selectedPeople[0])}
+Budget Level: ${getBudgetText(selectedBudgets[0])}
 
-  Important guidelines:
-  - Provide at least 3 hotel options with different price ranges
-  - Include at least 3 activities per day
-  - For budget level "${getBudgetText(selectedBudgets[0])}", provide specific price ranges
-  - Hotel prices should be per night in local currency and USD
-  - Activity prices should be per person in local currency and USD
-  - For free activities, specifically state "Free"
-  - For paid activities, provide exact or estimated prices
-  - Do not use vague terms like "Variable" or "Varies"
-  - Ensure activities are properly spread throughout the day (morning, afternoon, evening)
-  - Consider travel time between activities
+Respond with a JSON object exactly matching this structure:
 
-  Provide a detailed itinerary in the following JSON format:
-  {
-    "trip": {
-      "destination": "${finalDestination.value.description}",
-      "duration": "${numDays} days",
-      "travelers": "${getPeopleText(selectedPeople[0])}",
-      "budget": "${getBudgetText(selectedBudgets[0])}",
-      "currency": "Local Currency Code (e.g., USD, EUR, JPY)"
-    },
-    "hotels": [
-      {
-        "name": "Hotel Name",
-        "address": "Full Address",
-        "priceRange": "100-150 USD per night",
-        "rating": 4.5,
-        "description": "Detailed hotel description",
-        "amenities": ["WiFi", "Pool", "Restaurant", etc],
-        "coordinates": {
-          "latitude": 0.0,
-          "longitude": 0.0
-        }
+{
+  "trip": {
+    "destination": "${finalDestination.value.description}",
+    "duration": "${numDays} days",
+    "travelers": "${getPeopleText(selectedPeople[0])}",
+    "budget": "${getBudgetText(selectedBudgets[0])}",
+    "currency": "USD"
+  },
+  "hotels": [
+    {
+      "name": "",
+      "address": "",
+      "priceRange": "",
+      "rating": 0,
+      "description": "",
+      "amenities": ["WiFi", "Pool", "Restaurant"],
+      "coordinates": {
+        "latitude": 0,
+        "longitude": 0
+      },
+      "imageUrl": "",
+      "bookingLinks": {
+        "booking": "",
+        "skyscanner": "",
+        "tripadvisor": "",
+        "googleMaps": ""
       }
-    ],
-    "itinerary": {
-      "day1": [
-        {
-          "activity": "Morning Activity Name",
-          "duration": "2 hours",
-          "bestTime": "9:00 AM - 11:00 AM",
-          "price": "25 USD per person",
-          "description": "Detailed activity description",
-          "travelTime": "20 minutes from previous location",
-          "coordinates": {
-            "latitude": 0.0,
-            "longitude": 0.0
-          }
-        },
-        {
-          "activity": "Afternoon Activity Name",
-          "duration": "3 hours",
-          "bestTime": "2:00 PM - 5:00 PM",
-          "price": "Free",
-          "description": "Detailed activity description",
-          "travelTime": "15 minutes from previous location",
-          "coordinates": {
-            "latitude": 0.0,
-            "longitude": 0.0
-          }
-        },
-        {
-          "activity": "Evening Activity Name",
-          "duration": "2 hours",
-          "bestTime": "7:00 PM - 9:00 PM",
-          "price": "80 USD per person",
-          "description": "Detailed activity description",
-          "travelTime": "25 minutes from previous location",
-          "coordinates": {
-            "latitude": 0.0,
-            "longitude": 0.0
-          }
-        }
-      ]
     }
+  ],
+  "itinerary": {
+    ${generateDayItineraries(parseInt(numDays))}
   }
+}`;
 
-  Requirements for hotels:
-  1. Must include at least 3 different hotels
-  2. Hotels should be in different price ranges (budget, moderate, luxury)
-  3. Each hotel should have a complete description and list of amenities
-  4. Include accurate price ranges in both local currency and USD
-  5. Provide exact location coordinates
+const guidelines = `
 
-  Requirements for daily activities:
-  1. Must include at least 3 activities per day
-  2. Activities should be spread throughout the day (morning, afternoon, evening)
-  3. Include travel time between activities
-  4. Provide specific price information for each activity
-  5. Include detailed descriptions and practical information
-  6. Consider the selected budget level when suggesting activities
+Guidelines:
+- Each day MUST have exactly 3 activities (morning, afternoon, and evening)
+- Activities should be properly spaced throughout the day
+- Each activity must include all specified fields
+- All activities must have real, accessible URLs for images and booking
+- Include specific pricing and timing for each activity
+- Consider travel time between locations
+- Ensure activities match the selected budget level
+- Activities should be varied and not repetitive across days
 
-  Please ensure all prices are current and activities are appropriate for ${getPeopleText(selectedPeople[0])} travelers with a ${getBudgetText(selectedBudgets[0])} budget.`;
-      
-      console.log(itineraryPrompt);
-      const result = await chatSession.sendMessage([{ text: itineraryPrompt }]);
+Remember to provide a complete itinerary for all ${numDays} days with 3 activities per day.`;
+
+const fullPrompt = basePrompt + guidelines;
+
+const result = await chatSession.sendMessage([{ text: fullPrompt }]);
       const response = await result.response.text();
       const jsonResponse = JSON.parse(response);
       
+      // Validate the response
+      if (!jsonResponse.itinerary || Object.keys(jsonResponse.itinerary).length !== parseInt(numDays)) {
+        throw new Error('Invalid itinerary: missing days');
+      }
+
       setTripData(jsonResponse);
       console.log(jsonResponse);
       toast.success(translate("tripGeneratedSuccess"));
-  
+
     } catch (error) {
       console.error('Error generating trip:', error);
       toast.error(translate("errorGeneratingTrip"));
