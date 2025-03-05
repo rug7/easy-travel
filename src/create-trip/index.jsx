@@ -63,14 +63,13 @@ function CreateTrip() {
 
 
   const generateTrip = async (destination) => {
-    // Validation checks
-    if (!numDays || selectedBudgets.length === 0 || selectedPeople.length === 0) {
-      toast.error(translate("pleaseCompleteAllFields"));
+    if (!destination) {
+      toast.error(translate("pleaseSelectDestination"));
       return;
     }
   
-    if (!destination && !showMoreQuestions) {
-      toast.error(translate("pleaseSelectDestination"));
+    if (!numDays || selectedBudgets.length === 0 || selectedPeople.length === 0) {
+      toast.error(translate("pleaseCompleteAllFields"));
       return;
     }
   
@@ -85,112 +84,65 @@ function CreateTrip() {
     };
   
     try {
-      const promptText = `Create a detailed travel itinerary with the following details:
-        Destination: ${destination?.value?.description}
-        Duration: ${numDays} days
-        Travelers: ${getPeopleText(selectedPeople[0])}
-        Budget: ${getBudgetText(selectedBudgets[0])}
+      const promptText = `Create a detailed travel itinerary for ${destination.value.description} for ${numDays} days.
+      Travelers: ${getPeopleText(selectedPeople[0])}
+      Budget Level: ${getBudgetText(selectedBudgets[0])}
   
-        Please provide:
-        1. A list of recommended hotels including:
-           - Name
-           - Address
-           - Price range
-           - Rating (out of 5)
-           - Brief description
-           - Location coordinates
-           - Hotel image URL (use real URLs from booking.com, hotels.com, or similar travel websites)
-           - Hotel website URL
+      Important pricing guidelines:
+      - For budget level "${getBudgetText(selectedBudgets[0])}", provide specific price ranges
+      - Hotel prices should be per night in local currency and USD
+      - Activity prices should be per person in local currency and USD
+      - For free activities, specifically state "Free"
+      - For paid activities, provide exact or estimated prices
+      - Do not use vague terms like "Variable" or "Varies"
   
-        2. A day-by-day itinerary including:
-           - Attractions/activities
-           - Visit duration
-           - Best time to visit
-           - Ticket prices
-           - Brief descriptions
-           - Location coordinates
-           - Attraction image URL (use real URLs from TripAdvisor, official websites, or similar travel websites)
-           - Official website URL if available
-  
-        Please provide the response in valid JSON format with the following structure:
-        {
-          "trip": {
-            "destination": "",
-            "duration": "",
-            "travelers": "",
-            "budget": ""
-          },
-          "hotels": [
+      Provide a detailed itinerary in the following JSON format:
+      {
+        "trip": {
+          "destination": "${destination.value.description}",
+          "duration": "${numDays} days",
+          "travelers": "${getPeopleText(selectedPeople[0])}",
+          "budget": "${getBudgetText(selectedBudgets[0])}",
+          "currency": "Local Currency Code (e.g., USD, EUR, JPY)"
+        },
+        "hotels": [
+          {
+            "name": "",
+            "address": "",
+            "priceRange": "100-150 USD per night",
+            "rating": 4.5,
+            "description": "",
+            "coordinates": {
+              "latitude": 0.0,
+              "longitude": 0.0
+            }
+          }
+        ],
+        "itinerary": {
+          "day1": [
             {
-              "name": "",
-              "address": "",
-              "priceRange": "",
-              "rating": 0.0,
+              "activity": "",
+              "duration": "2 hours",
+              "bestTime": "Morning (9:00 AM - 11:00 AM)",
+              "price": "Free" or "25 USD per person",
               "description": "",
               "coordinates": {
                 "latitude": 0.0,
                 "longitude": 0.0
-              },
-              "imageUrl": "",
-              "websiteUrl": ""
-            }
-          ],
-          "itinerary": {
-            "day1": [
-              {
-                "activity": "",
-                "duration": "",
-                "bestTime": "",
-                "price": "",
-                "description": "",
-                "coordinates": {
-                  "latitude": 0.0,
-                  "longitude": 0.0
-                },
-                "imageUrl": "",
-                "websiteUrl": ""
               }
-            ]
-          }
+            }
+          ]
         }
+      }`;
   
-        Important:
-        1. For hotel images, use real URLs from popular hotel booking websites
-        2. For attraction images, use real URLs from travel websites or official attraction websites
-        3. Ensure all URLs are accessible and lead to actual images
-        4. Include high-quality images that showcase the locations well
-        5. Provide complete URLs (starting with https://)
-        6. For coordinates, use precise numerical values
-        7. Ensure all prices are current and in local currency
-        8. Make sure all website URLs are functional and official`;
-  
-      // Send message to Gemini with the correct format
-      const result = await chatSession.sendMessage([
-        {
-          text: promptText
-        }
-      ]);
-  
+      const result = await chatSession.sendMessage([{ text: promptText }]);
       const response = await result.response.text();
+      const jsonResponse = JSON.parse(response);
       
-      try {
-        const jsonResponse = JSON.parse(response);
-        console.log("Trip Plan:", jsonResponse);
-        
-        // Optional: Validate URLs before setting state
-        const validateUrls = async (data) => {
-          // Add URL validation logic here if needed
-          return data;
-        };
+      setTripData(jsonResponse);
+      console.log(jsonResponse);
+      toast.success(translate("tripGeneratedSuccess"));
   
-        const validatedResponse = await validateUrls(jsonResponse);
-        setTripData(validatedResponse);
-        
-        toast.success(translate("tripGeneratedSuccess"));
-      } catch (parseError) {
-        console.error("Error parsing response:", parseError);
-        toast.error(translate("errorParsingResponse"));
-      }
     } catch (error) {
       console.error('Error generating trip:', error);
       toast.error(translate("errorGeneratingTrip"));
@@ -203,41 +155,72 @@ function CreateTrip() {
       toast.error(translate("pleaseCompletePreferences"));
       return;
     }
-
-    const preferences = {
-      weather: selectedWeather,
-      activities: selectedActivities,
-      sightseeing: selectedSightseeing,
-      budget: selectedBudgets[0],
-      travelGroup: selectedPeople[0],
-      numberOfDays: numDays
+  
+    const getBudgetText = (budgetId) => {
+      const budget = SelectBudgetOptions.find(b => b.id === parseInt(budgetId));
+      return budget?.title || 'Moderate';
     };
-
+  
+    const getPeopleText = (peopleId) => {
+      const people = SelectTravelsList.find(p => p.id === parseInt(peopleId));
+      return people?.title || 'Family';
+    };
+  
+    const getWeatherPreferences = () => {
+      return selectedWeather.map(id => 
+        WeatherOptions.find(w => w.id === id)?.title
+      ).join(", ");
+    };
+  
+    const getActivityPreferences = () => {
+      return selectedActivities.map(id => 
+        ActivityOptions.find(a => a.id === id)?.title
+      ).join(", ");
+    };
+  
+    const getSightseeingPreferences = () => {
+      return selectedSightseeing.map(id => 
+        SightseeingOptions.find(s => s.id === id)?.title
+      ).join(", ");
+    };
+  
     try {
-      const response = await fetch('/api/gemini/suggest-destination', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(preferences)
-      });
-
-      const data = await response.json();
+      const promptText = `As a travel expert, suggest a perfect destination based on the following preferences:
+  
+      Trip Duration: ${numDays} days
+      Travel Group: ${getPeopleText(selectedPeople[0])}
+      Budget Level: ${getBudgetText(selectedBudgets[0])}
       
-      if (response.ok) {
-        const suggestedPlace = {
-          label: data.destination,
-          value: {
-            description: data.destination,
-            place_id: data.placeId
-          }
-        };
-        setPlace(suggestedPlace);
-        // Generate trip with the suggested place
-        generateTrip(suggestedPlace);
-      } else {
-        toast.error(translate("errorSuggestingDestination"));
-      }
+      Preferences:
+      - Weather: ${getWeatherPreferences()}
+      - Desired Activities: ${getActivityPreferences()}
+      - Preferred Sightseeing: ${getSightseeingPreferences()}
+  
+      Based on these preferences, suggest a destination. Respond ONLY with a JSON object in this exact format:
+      {
+        "destination": "Name of the city",
+        "country": "Country name",
+        "reasoning": "Brief explanation why this matches the preferences",
+        "highlights": ["highlight1", "highlight2", "highlight3"]
+      }`;
+  
+      const result = await chatSession.sendMessage([{ text: promptText }]);
+      const response = await result.response.text();
+      const suggestionData = JSON.parse(response);
+  
+      const suggestedPlace = {
+        label: `${suggestionData.destination}, ${suggestionData.country}`,
+        value: {
+          description: `${suggestionData.destination}, ${suggestionData.country}`,
+          reasoning: suggestionData.reasoning,
+          highlights: suggestionData.highlights
+        }
+      };
+  
+      // Only update the place state and show the suggestion
+      setPlace(suggestedPlace);
+      toast.success(`Suggested Destination: ${suggestedPlace.label}. Click Generate Trip to create an itinerary.`);
+  
     } catch (error) {
       console.error('Error suggesting destination:', error);
       toast.error(translate("errorSuggestingDestination"));
@@ -261,14 +244,16 @@ function CreateTrip() {
           prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
         );
         break;
-        case "budget":
-        setSelectedBudgets((prev) =>
-          prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      case "budget":
+      // Single selection for budget
+        setSelectedBudgets((prev) => 
+          prev.includes(id) ? [] : [id]
         );
         break;
-        case "people":
-        setSelectedPeople((prev) =>
-          prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      case "people":
+      // Single selection for people
+        setSelectedPeople((prev) => 
+          prev.includes(id) ? [] : [id]
         );
         break;
       default:
@@ -363,7 +348,9 @@ function CreateTrip() {
         <PeopleInput title={translate("peopleTraveling")}
         options={SelectTravelsList}
         selectedOptions={selectedPeople}
-        onSelect={(id) => handleSelect(id, "people")} />
+        onSelect={(id) => handleSelect(id, "people")} 
+
+        />
 
         {/* Generate Trip */}
         <div className="text-center">
