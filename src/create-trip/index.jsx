@@ -137,56 +137,104 @@ function CreateTrip() {
   
       // Generate the trip itinerary
       const itineraryPrompt = `Create a detailed travel itinerary for ${finalDestination.value.description} for ${numDays} days.
-        Travelers: ${getPeopleText(selectedPeople[0])}
-        Budget Level: ${getBudgetText(selectedBudgets[0])}
-  
-        Important pricing guidelines:
-        - For budget level "${getBudgetText(selectedBudgets[0])}", provide specific price ranges
-        - Hotel prices should be per night in local currency and USD
-        - Activity prices should be per person in local currency and USD
-        - For free activities, specifically state "Free"
-        - For paid activities, provide exact or estimated prices
-        - Do not use vague terms like "Variable" or "Varies"
-  
-        Provide a detailed itinerary in the following JSON format:
+  Travelers: ${getPeopleText(selectedPeople[0])}
+  Budget Level: ${getBudgetText(selectedBudgets[0])}
+
+  Important guidelines:
+  - Provide at least 3 hotel options with different price ranges
+  - Include at least 3 activities per day
+  - For budget level "${getBudgetText(selectedBudgets[0])}", provide specific price ranges
+  - Hotel prices should be per night in local currency and USD
+  - Activity prices should be per person in local currency and USD
+  - For free activities, specifically state "Free"
+  - For paid activities, provide exact or estimated prices
+  - Do not use vague terms like "Variable" or "Varies"
+  - Ensure activities are properly spread throughout the day (morning, afternoon, evening)
+  - Consider travel time between activities
+
+  Provide a detailed itinerary in the following JSON format:
+  {
+    "trip": {
+      "destination": "${finalDestination.value.description}",
+      "duration": "${numDays} days",
+      "travelers": "${getPeopleText(selectedPeople[0])}",
+      "budget": "${getBudgetText(selectedBudgets[0])}",
+      "currency": "Local Currency Code (e.g., USD, EUR, JPY)"
+    },
+    "hotels": [
+      {
+        "name": "Hotel Name",
+        "address": "Full Address",
+        "priceRange": "100-150 USD per night",
+        "rating": 4.5,
+        "description": "Detailed hotel description",
+        "amenities": ["WiFi", "Pool", "Restaurant", etc],
+        "coordinates": {
+          "latitude": 0.0,
+          "longitude": 0.0
+        }
+      }
+    ],
+    "itinerary": {
+      "day1": [
         {
-          "trip": {
-            "destination": "${finalDestination.value.description}",
-            "duration": "${numDays} days",
-            "travelers": "${getPeopleText(selectedPeople[0])}",
-            "budget": "${getBudgetText(selectedBudgets[0])}",
-            "currency": "Local Currency Code (e.g., USD, EUR, JPY)"
-          },
-          "hotels": [
-            {
-              "name": "",
-              "address": "",
-              "priceRange": "100-150 USD per night",
-              "rating": 4.5,
-              "description": "",
-              "coordinates": {
-                "latitude": 0.0,
-                "longitude": 0.0
-              }
-            }
-          ],
-          "itinerary": {
-            "day1": [
-              {
-                "activity": "",
-                "duration": "2 hours",
-                "bestTime": "Morning (9:00 AM - 11:00 AM)",
-                "price": "25 USD per person",
-                "description": "",
-                "coordinates": {
-                  "latitude": 0.0,
-                  "longitude": 0.0
-                }
-              }
-            ]
+          "activity": "Morning Activity Name",
+          "duration": "2 hours",
+          "bestTime": "9:00 AM - 11:00 AM",
+          "price": "25 USD per person",
+          "description": "Detailed activity description",
+          "travelTime": "20 minutes from previous location",
+          "coordinates": {
+            "latitude": 0.0,
+            "longitude": 0.0
           }
-        }`;
-  
+        },
+        {
+          "activity": "Afternoon Activity Name",
+          "duration": "3 hours",
+          "bestTime": "2:00 PM - 5:00 PM",
+          "price": "Free",
+          "description": "Detailed activity description",
+          "travelTime": "15 minutes from previous location",
+          "coordinates": {
+            "latitude": 0.0,
+            "longitude": 0.0
+          }
+        },
+        {
+          "activity": "Evening Activity Name",
+          "duration": "2 hours",
+          "bestTime": "7:00 PM - 9:00 PM",
+          "price": "80 USD per person",
+          "description": "Detailed activity description",
+          "travelTime": "25 minutes from previous location",
+          "coordinates": {
+            "latitude": 0.0,
+            "longitude": 0.0
+          }
+        }
+      ]
+    }
+  }
+
+  Requirements for hotels:
+  1. Must include at least 3 different hotels
+  2. Hotels should be in different price ranges (budget, moderate, luxury)
+  3. Each hotel should have a complete description and list of amenities
+  4. Include accurate price ranges in both local currency and USD
+  5. Provide exact location coordinates
+
+  Requirements for daily activities:
+  1. Must include at least 3 activities per day
+  2. Activities should be spread throughout the day (morning, afternoon, evening)
+  3. Include travel time between activities
+  4. Provide specific price information for each activity
+  5. Include detailed descriptions and practical information
+  6. Consider the selected budget level when suggesting activities
+
+  Please ensure all prices are current and activities are appropriate for ${getPeopleText(selectedPeople[0])} travelers with a ${getBudgetText(selectedBudgets[0])} budget.`;
+      
+      console.log(itineraryPrompt);
       const result = await chatSession.sendMessage([{ text: itineraryPrompt }]);
       const response = await result.response.text();
       const jsonResponse = JSON.parse(response);
