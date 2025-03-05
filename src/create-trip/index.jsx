@@ -7,6 +7,7 @@ import PeopleInput from "@/components/custom/PeopleInput";
 import { useLanguage } from "@/context/LanguageContext";
 import { AI_PROMPT, getTranslatedOptions } from "@/constants/options";
 import { toast } from "sonner";
+import { chatSession } from "@/service/AIModal";
 
 function CreateTrip() {
   const [place, setPlace] = useState(null);
@@ -62,78 +63,138 @@ function CreateTrip() {
 
 
   const generateTrip = async (destination) => {
-    // Modified validation
+    // Validation checks
     if (!numDays || selectedBudgets.length === 0 || selectedPeople.length === 0) {
       toast.error(translate("pleaseCompleteAllFields"));
       return;
     }
-
-    // If we're in "Help Me Decide" mode and have preferences but no destination yet, that's OK
+  
     if (!destination && !showMoreQuestions) {
       toast.error(translate("pleaseSelectDestination"));
       return;
     }
+  
     const getBudgetText = (budgetId) => {
       const budget = SelectBudgetOptions.find(b => b.id === parseInt(budgetId));
-      return budget?.title || 'Moderate'; // Default to Moderate if not found
+      return budget?.title || 'Moderate';
     };
   
     const getPeopleText = (peopleId) => {
       const people = SelectTravelsList.find(p => p.id === parseInt(peopleId));
-      return people?.title || 'Family'; // Default to Family if not found
+      return people?.title || 'Family';
     };
-
-
-    const aiRequestData = {
-      destination: destination?.value?.description || "AI_SUGGEST",
-      numberOfDays: useDates ? null : numDays,
-      dateRange: useDates ? {
-        startDate: startDate,
-        endDate: endDate
-      } : null,
-      budget: getBudgetText(selectedBudgets[0]),
-      travelGroup: getPeopleText(selectedPeople[0]),
-      preferences: {
-        weather: selectedWeather,
-        activities: selectedActivities,
-        sightseeing: selectedSightseeing,
-      }
-    };
-
-    const FINAL_PROMPT = AI_PROMPT
-    .replace('{location}', destination?.value?.description)
-    .replace('{totalDays}', numDays)
-    .replace('{traveler}', getPeopleText(selectedPeople[0]))
-    .replace('{budget}', getBudgetText(selectedBudgets[0]))
-    .replace('{totalDays}', numDays);
-
-  console.log("Final Prompt:", FINAL_PROMPT); // This will show the formatted prompt
-
-  console.log("Sending to AI:", aiRequestData);
-
+  
     try {
-      const response = await fetch('/api/generate-trip', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(aiRequestData)
-      });
-
-      const data = await response.json();
-      console.log("AI Response:", data); // Debug log
+      const promptText = `Create a detailed travel itinerary with the following details:
+        Destination: ${destination?.value?.description}
+        Duration: ${numDays} days
+        Travelers: ${getPeopleText(selectedPeople[0])}
+        Budget: ${getBudgetText(selectedBudgets[0])}
+  
+        Please provide:
+        1. A list of recommended hotels including:
+           - Name
+           - Address
+           - Price range
+           - Rating (out of 5)
+           - Brief description
+           - Location coordinates
+           - Hotel image URL (use real URLs from booking.com, hotels.com, or similar travel websites)
+           - Hotel website URL
+  
+        2. A day-by-day itinerary including:
+           - Attractions/activities
+           - Visit duration
+           - Best time to visit
+           - Ticket prices
+           - Brief descriptions
+           - Location coordinates
+           - Attraction image URL (use real URLs from TripAdvisor, official websites, or similar travel websites)
+           - Official website URL if available
+  
+        Please provide the response in valid JSON format with the following structure:
+        {
+          "trip": {
+            "destination": "",
+            "duration": "",
+            "travelers": "",
+            "budget": ""
+          },
+          "hotels": [
+            {
+              "name": "",
+              "address": "",
+              "priceRange": "",
+              "rating": 0.0,
+              "description": "",
+              "coordinates": {
+                "latitude": 0.0,
+                "longitude": 0.0
+              },
+              "imageUrl": "",
+              "websiteUrl": ""
+            }
+          ],
+          "itinerary": {
+            "day1": [
+              {
+                "activity": "",
+                "duration": "",
+                "bestTime": "",
+                "price": "",
+                "description": "",
+                "coordinates": {
+                  "latitude": 0.0,
+                  "longitude": 0.0
+                },
+                "imageUrl": "",
+                "websiteUrl": ""
+              }
+            ]
+          }
+        }
+  
+        Important:
+        1. For hotel images, use real URLs from popular hotel booking websites
+        2. For attraction images, use real URLs from travel websites or official attraction websites
+        3. Ensure all URLs are accessible and lead to actual images
+        4. Include high-quality images that showcase the locations well
+        5. Provide complete URLs (starting with https://)
+        6. For coordinates, use precise numerical values
+        7. Ensure all prices are current and in local currency
+        8. Make sure all website URLs are functional and official`;
+  
+      // Send message to Gemini with the correct format
+      const result = await chatSession.sendMessage([
+        {
+          text: promptText
+        }
+      ]);
+  
+      const response = await result.response.text();
       
-      if (response.ok) {
+      try {
+        const jsonResponse = JSON.parse(response);
+        console.log("Trip Plan:", jsonResponse);
+        
+        // Optional: Validate URLs before setting state
+        const validateUrls = async (data) => {
+          // Add URL validation logic here if needed
+          return data;
+        };
+  
+        const validatedResponse = await validateUrls(jsonResponse);
+        setTripData(validatedResponse);
+        
         toast.success(translate("tripGeneratedSuccess"));
-        // Handle successful response
-      } else {
-        toast.error(translate("errorGeneratingTrip"));
+      } catch (parseError) {
+        console.error("Error parsing response:", parseError);
+        toast.error(translate("errorParsingResponse"));
       }
     } catch (error) {
       console.error('Error generating trip:', error);
       toast.error(translate("errorGeneratingTrip"));
     }
-
   };
 
   const handleHelpMeDecide = async () => {
