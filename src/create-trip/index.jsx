@@ -99,7 +99,7 @@ function CreateTrip() {
     try {
       let finalDestination = destination;
   
-      // If no destination is selected but preferences are set, get an AI suggestion first
+      // If no destination is selected but preferences are set, get an AI suggestion
       if (!destination && showMoreQuestions) {
         const suggestionPrompt = `As a travel expert, suggest a perfect destination based on the following preferences:
           Trip Duration: ${numDays} days
@@ -130,9 +130,12 @@ function CreateTrip() {
         };
   
         toast.success(`Suggesting destination: ${suggestionData.destination}, ${suggestionData.country}`);
+      } else if (!destination) {
+        toast.error(translate("pleaseSelectDestination"));
+        return;
       }
   
-      // Now generate the trip itinerary
+      // Generate the trip itinerary
       const itineraryPrompt = `Create a detailed travel itinerary for ${finalDestination.value.description} for ${numDays} days.
         Travelers: ${getPeopleText(selectedPeople[0])}
         Budget Level: ${getBudgetText(selectedBudgets[0])}
@@ -199,15 +202,15 @@ function CreateTrip() {
   };
 
   const handleHelpMeDecide = async () => {
-    if (!selectedWeather.length || !selectedActivities.length || !selectedSightseeing.length || 
-        !selectedBudgets.length || !selectedPeople.length || !numDays) {
-      toast.error(translate("pleaseCompletePreferences"));
-      return;
-    }
+    // if (!selectedWeather.length || !selectedActivities.length || !selectedSightseeing.length || 
+    //     !selectedBudgets.length || !selectedPeople.length || !numDays) {
+    //   toast.error(translate("pleaseCompletePreferences"));
+    //   return;
+    // }
   
     // Just set showMoreQuestions to true to show the preference options
     setShowMoreQuestions(true);
-    toast.success(translate("preferencesCollected"));
+    // toast.success(translate("preferencesCollected"));
   };
 
   const handleSelect = (id, category) => {
@@ -265,17 +268,11 @@ function CreateTrip() {
       >
         {/* Destination Section */}
         <DestinationInput
-           place={place}
-           setPlace={setPlace}
-           translate={translate}
-           onToggle={() => setShowMoreQuestions(!showMoreQuestions)}
-           onInputClick={() => setShowMoreQuestions(false)}
-           selectedWeather={selectedWeather}
-           selectedActivities={selectedActivities}
-           selectedSightseeing={selectedSightseeing}
-           selectedBudgets={selectedBudgets}
-           selectedPeople={selectedPeople}
-           onHelpMeDecide={handleHelpMeDecide}
+            place={place}
+            setPlace={setPlace}
+            translate={translate}
+            onToggle={handleHelpMeDecide}
+            onInputClick={() => setShowMoreQuestions(false)}
 
         />
 
