@@ -9,6 +9,7 @@ import { AI_PROMPT, getTranslatedOptions } from "@/constants/options";
 import { toast } from "sonner";
 import { chatSession } from "@/service/AIModal";
 
+
 const generateDayItineraries = (numDays) => {
   let template = '';
   for (let i = 1; i <= numDays; i++) {
@@ -70,6 +71,51 @@ const generateDayItineraries = (numDays) => {
     ]${i < numDays ? ',' : ''}`;
   }
   return template;
+};
+const validateItinerary = (jsonResponse, numDays) => {
+  // Check if itinerary exists
+  if (!jsonResponse.itinerary) {
+    throw new Error('Missing itinerary in response');
+  }
+
+  // Check number of days
+  const days = Object.keys(jsonResponse.itinerary).length;
+  if (days !== parseInt(numDays)) {
+    throw new Error(`Expected ${numDays} days, but got ${days}`);
+  }
+
+  // Check each day has exactly 3 activities with complete information
+  for (let i = 1; i <= numDays; i++) {
+    const dayKey = `day${i}`;
+    const dayActivities = jsonResponse.itinerary[dayKey];
+
+    // Check if day exists and has activities
+    if (!dayActivities || !Array.isArray(dayActivities)) {
+      throw new Error(`Invalid activities for ${dayKey}`);
+    }
+
+    // Check number of activities
+    if (dayActivities.length !== 3) {
+      throw new Error(`${dayKey} should have exactly 3 activities`);
+    }
+
+    // Check each activity has required fields
+    dayActivities.forEach((activity, index) => {
+      const timeOfDay = index === 0 ? 'Morning' : index === 1 ? 'Afternoon' : 'Evening';
+      if (!activity.activity || activity.activity === '') {
+        throw new Error(`Missing activity name for ${dayKey} ${timeOfDay}`);
+      }
+      if (!activity.duration || activity.duration === '') {
+        throw new Error(`Missing duration for ${dayKey} ${timeOfDay}`);
+      }
+      if (!activity.description || activity.description === '') {
+        throw new Error(`Missing description for ${dayKey} ${timeOfDay}`);
+      }
+      // Add more field validations as needed
+    });
+  }
+
+  return jsonResponse;
 };
 
 function CreateTrip() {
@@ -242,16 +288,17 @@ Respond with a JSON object exactly matching this structure:
 const guidelines = `
 
 Guidelines:
-- Each day MUST have exactly 3 activities (morning, afternoon, and evening)
-- Activities should be properly spaced throughout the day
-- Each activity must include all specified fields
-- All activities must have real, accessible URLs for images and booking
-- Include specific pricing and timing for each activity
-- Consider travel time between locations
-- Ensure activities match the selected budget level
-- Activities should be varied and not repetitive across days
+- Provide at least 3 hotel suggestions with complete details including name, address, price range, rating, description, amenities, coordinates, image URL, and booking links.
+- Each day MUST have exactly 3 activities (morning, afternoon, and evening) with complete details including activity name, duration, best time, price, description, travel time, coordinates, image URL, and booking links.
+- Activities should be properly spaced throughout the day.
+- Each activity must include all specified fields.
+- All activities must have real, accessible URLs for images and booking.
+- Include specific pricing and timing for each activity.
+- Consider travel time between locations.
+- Ensure activities match the selected budget level.
+- Activities should be varied and not repetitive across days.
 
-Remember to provide a complete itinerary for all ${numDays} days with 3 activities per day.`;
+Remember to provide a complete itinerary for all ${numDays} days with at least 3 activities per day and at least 3 hotel suggestions.`;
 
 const fullPrompt = basePrompt + guidelines;
 
@@ -262,6 +309,9 @@ const result = await chatSession.sendMessage([{ text: fullPrompt }]);
       // Validate the response
       if (!jsonResponse.itinerary || Object.keys(jsonResponse.itinerary).length !== parseInt(numDays)) {
         throw new Error('Invalid itinerary: missing days');
+      }
+      if (!jsonResponse.hotels || jsonResponse.hotels.length < 3) {
+        throw new Error('Invalid hotels: less than 3 hotels provided');
       }
 
       setTripData(jsonResponse);
