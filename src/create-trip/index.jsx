@@ -205,6 +205,74 @@ function CreateTrip() {
       ).join(", ");
     };
   
+    const generateActivitiesForDay = async (dayNumber, destination, budget, travelers) => {
+      const activityPrompt = `Create activities for day ${dayNumber} in ${destination} for travelers with a ${budget} budget.
+  Travelers: ${travelers}
+  
+  Respond with a JSON array exactly matching this structure:
+  
+  [
+    {
+      "activity": "Morning Activity",
+      "duration": "2-3 hours",
+      "bestTime": "9:00 AM - 12:00 PM",
+      "price": "",
+      "description": "",
+      "travelTime": "",
+      "coordinates": {
+        "latitude": 0,
+        "longitude": 0
+      },
+      "imageUrl": "",
+      "bookingLinks": {
+        "official": "",
+        "tripadvisor": "",
+        "googleMaps": ""
+      }
+    },
+    {
+      "activity": "Afternoon Activity",
+      "duration": "2-3 hours",
+      "bestTime": "2:00 PM - 5:00 PM",
+      "price": "",
+      "description": "",
+      "travelTime": "",
+      "coordinates": {
+        "latitude": 0,
+        "longitude": 0
+      },
+      "imageUrl": "",
+      "bookingLinks": {
+        "official": "",
+        "tripadvisor": "",
+        "googleMaps": ""
+      }
+    },
+    {
+      "activity": "Evening Activity",
+      "duration": "2-3 hours",
+      "bestTime": "7:00 PM - 10:00 PM",
+      "price": "",
+      "description": "",
+      "travelTime": "",
+      "coordinates": {
+        "latitude": 0,
+        "longitude": 0
+      },
+      "imageUrl": "",
+      "bookingLinks": {
+        "official": "",
+        "tripadvisor": "",
+        "googleMaps": ""
+      }
+    }
+  ]`;
+  
+      const result = await chatSession.sendMessage([{ text: activityPrompt }]);
+      const response = await result.response.text();
+      return JSON.parse(response);
+    };
+  
     try {
       let finalDestination = destination;
   
@@ -246,65 +314,64 @@ function CreateTrip() {
   
       // Generate the trip itinerary
       const basePrompt = `Create a detailed travel itinerary for ${finalDestination.value.description} for ${numDays} days.
-Travelers: ${getPeopleText(selectedPeople[0])}
-Budget Level: ${getBudgetText(selectedBudgets[0])}
-
-Respond with a JSON object exactly matching this structure:
-
-{
-  "trip": {
-    "destination": "${finalDestination.value.description}",
-    "duration": "${numDays} days",
-    "travelers": "${getPeopleText(selectedPeople[0])}",
-    "budget": "${getBudgetText(selectedBudgets[0])}",
-    "currency": "USD"
-  },
-  "hotels": [
-    {
-      "name": "",
-      "address": "",
-      "priceRange": "",
-      "rating": 0,
-      "description": "",
-      "amenities": ["WiFi", "Pool", "Restaurant"],
-      "coordinates": {
-        "latitude": 0,
-        "longitude": 0
-      },
-      "imageUrl": "",
-      "bookingLinks": {
-        "booking": "",
-        "skyscanner": "",
-        "tripadvisor": "",
-        "googleMaps": ""
+  Travelers: ${getPeopleText(selectedPeople[0])}
+  Budget Level: ${getBudgetText(selectedBudgets[0])}
+  
+  Respond with a JSON object exactly matching this structure:
+  
+  {
+    "trip": {
+      "destination": "${finalDestination.value.description}",
+      "duration": "${numDays} days",
+      "travelers": "${getPeopleText(selectedPeople[0])}",
+      "budget": "${getBudgetText(selectedBudgets[0])}",
+      "currency": "USD"
+    },
+    "hotels": [
+      {
+        "name": "",
+        "address": "",
+        "priceRange": "",
+        "rating": 0,
+        "description": "",
+        "amenities": ["WiFi", "Pool", "Restaurant"],
+        "coordinates": {
+          "latitude": 0,
+          "longitude": 0
+        },
+        "imageUrl": "",
+        "bookingLinks": {
+          "booking": "",
+          "skyscanner": "",
+          "tripadvisor": "",
+          "googleMaps": ""
+        }
       }
+    ],
+    "itinerary": {
+      ${generateDayItineraries(parseInt(numDays))}
     }
-  ],
-  "itinerary": {
-    ${generateDayItineraries(parseInt(numDays))}
-  }
-}`;
-
-const guidelines = `
-
-Guidelines:
-- Provide at least 3 hotel suggestions with complete details including name, address, price range, rating, description, amenities, coordinates, image URL, and booking links.
-- Each day MUST have exactly 3 activities (morning, afternoon, and evening) with complete details including activity name, duration, best time, price, description, travel time, coordinates, image URL, and booking links.
-- Activities should be properly spaced throughout the day.
-- Each activity must include all specified fields.
-- All activities must have real, accessible URLs for images and booking.
-- Include specific pricing and timing for each activity.
-- Consider travel time between locations.
-- Ensure activities match the selected budget level.
-- Activities should be varied and not repetitive across days.
-
-Remember to provide a complete itinerary for all ${numDays} days with at least 3 activities per day and at least 3 hotel suggestions.`;
-
-const fullPrompt = basePrompt + guidelines;
-
-const result = await chatSession.sendMessage([{ text: fullPrompt }]);
+  }`;
+  
+  const guidelines = `
+  
+  Guidelines:
+  - Provide at least 3 hotel suggestions with complete details including name, address, price range, rating, description, amenities, coordinates, image URL, and booking links.
+  - Each day MUST have at least 1 activity (preferably 3) with complete details including activity name, duration, best time, price, description, travel time, coordinates, image URL, and booking links.
+  - Activities should be properly spaced throughout the day.
+  - All activities must have real, accessible URLs for images and booking.
+  - Include specific pricing and timing for each activity.
+  - Consider travel time between locations.
+  - Ensure activities match the selected budget level.
+  - Activities should be varied and not repetitive across days.
+  
+  Remember to provide a complete itinerary for all ${numDays} days with at least 1 activity per day and at least 3 hotel suggestions.`;
+  
+  const fullPrompt = basePrompt + guidelines;
+  
+  const result = await chatSession.sendMessage([{ text: fullPrompt }]);
       const response = await result.response.text();
-      const jsonResponse = JSON.parse(response);
+      let jsonResponse = JSON.parse(response);
       
       // Validate the response
       if (!jsonResponse.itinerary || Object.keys(jsonResponse.itinerary).length !== parseInt(numDays)) {
@@ -313,11 +380,27 @@ const result = await chatSession.sendMessage([{ text: fullPrompt }]);
       if (!jsonResponse.hotels || jsonResponse.hotels.length < 3) {
         throw new Error('Invalid hotels: less than 3 hotels provided');
       }
-
+  
+      // Check for missing activities and retry for those days
+      for (let i = 1; i <= numDays; i++) {
+        const dayKey = `day${i}`;
+        if (!jsonResponse.itinerary[dayKey] || jsonResponse.itinerary[dayKey].length === 0) {
+          console.log(`Retrying activity generation for ${dayKey}`);
+          jsonResponse.itinerary[dayKey] = await generateActivitiesForDay(
+            i,
+            finalDestination.value.description,
+            getBudgetText(selectedBudgets[0]),
+            getPeopleText(selectedPeople[0])
+          );
+        } else if (jsonResponse.itinerary[dayKey].length < 3) {
+          console.warn(`Warning: ${dayKey} has fewer than 3 activities`);
+        }
+      }
+  
       setTripData(jsonResponse);
       console.log(jsonResponse);
       toast.success(translate("tripGeneratedSuccess"));
-
+  
     } catch (error) {
       console.error('Error generating trip:', error);
       toast.error(translate("errorGeneratingTrip"));
