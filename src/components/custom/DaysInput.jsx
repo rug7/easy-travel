@@ -24,6 +24,21 @@ const DaysInput = ({
     }
   };
 
+  const handleDateChange = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+
+    // Calculate the number of days if both start and end dates are selected
+    if (start && end) {
+      const timeDiff = end.getTime() - start.getTime();
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end dates
+      setNumDays(daysDiff.toString());
+    } else {
+      setNumDays("");
+    }
+  };
+
   return (
     <div>
       <h2 className="text-xl font-bold text-white mb-4">
@@ -66,10 +81,7 @@ const DaysInput = ({
             <div className="mt-3">
               <DatePicker
                 selected={startDate}
-                onChange={(update) => {
-                  setStartDate(update[0]);
-                  setEndDate(update[1]);
-                }}
+                onChange={handleDateChange}
                 startDate={startDate}
                 endDate={endDate}
                 dateFormat="dd/MM/yyyy"
