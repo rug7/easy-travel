@@ -134,6 +134,8 @@ function CreateTrip() {
   const [selectedBudgets, setSelectedBudgets] = useState([]);
   const [selectedPeople, setSelectedPeople] = useState([]);
 
+  const [openDialog,setOpenDialog]=useState(false);
+
    const [tripData, setTripData] = useState({
     destination: null,
     numberOfDays: "",
@@ -172,6 +174,13 @@ function CreateTrip() {
 
 
   const generateTrip = async (destination) => {
+
+    const user= localStorage.getItem('user');
+    if(!user){
+      setOpenDialog(true);
+      return
+    }
+
     if (!numDays || selectedBudgets.length === 0 || selectedPeople.length === 0) {
       toast.error(translate("pleaseCompleteAllFields"));
       return;
