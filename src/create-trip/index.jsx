@@ -391,6 +391,23 @@ const generateActivitiesForDay = async (dayNumber, destination, budget, traveler
   }
 };
 
+const validateResponse = (response) => {
+  // Remove any non-JSON content
+  const jsonStart = response.indexOf('{');
+  const jsonEnd = response.lastIndexOf('}');
+  if (jsonStart === -1 || jsonEnd === -1) return null;
+  
+  const jsonString = response.substring(jsonStart, jsonEnd + 1);
+  try {
+    return JSON.parse(jsonString);
+  } catch (error) {
+    console.error("Validation failed:", error);
+    return null;
+  }
+};
+
+
+
 function CreateTrip() {
   const [place, setPlace] = useState(null);
   const [showMoreQuestions, setShowMoreQuestions] = useState(false);
@@ -483,25 +500,68 @@ function CreateTrip() {
         return JSON.parse(str);
       } catch (e) {
         // If direct parsing fails, try cleaning
-        const cleanStr = str
+        let cleanStr = str
           .replace(/```json/g, '')
           .replace(/```/g, '')
+          // Remove all non-printable characters
+          .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
+          // Remove all unicode quotes
+          .replace(/[\u2018\u2019\u201C\u201D]/g, '"')
+          // Replace multiple spaces with single space
+          .replace(/\s+/g, ' ')
+          // Remove line breaks and tabs
+          .replace(/[\n\r\t]/g, '')
           .trim();
   
-        // Try to find JSON object or array
-        const match = cleanStr.match(/(\{[\s\S]*\}|$$[\s\S]*$$)/);
-        if (match) {
-          return JSON.parse(match[0]);
+        // Try to find the JSON object
+        const matches = cleanStr.match(/\{(?:[^{}]|{[^{}]*})*\}/g);
+        if (matches) {
+          // Try each matched object
+          for (const match of matches) {
+            try {
+              const parsed = JSON.parse(match);
+              if (parsed && typeof parsed === 'object') {
+                return parsed;
+              }
+            } catch (err) {
+              continue;
+            }
+          }
         }
   
-        // If no JSON found, throw error
-        throw new Error('No valid JSON found in response');
+        // Try to find a JSON array
+        const arrayMatch = cleanStr.match(/\[(?:[^$$$$]|$$.*?$$)*\]/g);
+        if (arrayMatch) {
+          try {
+            return JSON.parse(arrayMatch[0]);
+          } catch (err) {
+            console.error('Array parsing failed:', err);
+          }
+        }
+  
+        // If all else fails, try to extract anything that looks like JSON
+        const jsonLike = cleanStr.match(/{[\s\S]*}/);
+        if (jsonLike) {
+          try {
+            // Additional cleaning for common issues
+            const finalAttempt = jsonLike[0]
+              .replace(/,\s*}/g, '}') // Remove trailing commas
+              .replace(/,\s*]/g, ']')
+              .replace(/([{,]\s*)(\w+):/g, '$1"$2":') // Ensure property names are quoted
+              .replace(/:\s*'([^']*)'/g, ':"$1"') // Replace single quotes with double quotes
+              .replace(/\\/g, '\\\\'); // Escape backslashes
+  
+            return JSON.parse(finalAttempt);
+          } catch (err) {
+            console.error('Final parsing attempt failed:', err);
+          }
+        }
       }
     } catch (error) {
       console.error("JSON Parse Error:", error);
       console.log("Problematic string:", str);
-      return null;
     }
+    return null;
   };
 
 
@@ -589,10 +649,6 @@ function CreateTrip() {
       toast.error(translate("pleaseSelectDestination"));
       return;
     } else {
-      // Validate direct destination input
-      if (!destination.value || !destination.value.description) {
-        throw new Error('Invalid destination format');
-      }
       finalDestination = {
         value: {
           description: destination.value.description,
@@ -611,11 +667,15 @@ function CreateTrip() {
   Travelers: ${getPeopleText(selectedPeople[0])}
   Budget Level: ${getBudgetText(selectedBudgets[0])}
 
-  IMPORTANT: Your response must be a valid JSON object. Do not include any additional text, markdown formatting, or explanations outside the JSON structure.
-
-  
-  Respond with a JSON object exactly matching this structure:
-  
+    CRITICAL INSTRUCTIONS:
+    1. Response MUST be ONLY valid JSON
+    2. NO markdown, NO text outside JSON
+    3. NO explanations or comments
+    4. Property names MUST be in double quotes
+    5. String values MUST be in double quotes
+    6. NO trailing commas
+    7. NO single quotes
+    
   {
     "trip": {
       "destination": "${finalDestination.value.description}",
@@ -673,22 +733,14 @@ function CreateTrip() {
       if (!jsonResponse) {
         // If parsing failed, try to clean and retry
         console.log("Initial parsing failed, attempting to clean response");
-        
-        // Remove any markdown formatting if present
-        const cleanResponse = response
-        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
-        .replace(/\n/g, ' ')
-        .replace(/\r/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-          
-        jsonResponse = safeJSONParse(cleanResponse);
+          jsonResponse = validateResponse(response);
+
         
         if (!jsonResponse) {
           throw new Error('Failed to parse AI response after cleaning');
         }
       }
-      
+
       if (!jsonResponse.trip || !jsonResponse.hotels || !jsonResponse.itinerary) {
         throw new Error('Invalid response structure');
       }
@@ -774,30 +826,7 @@ function CreateTrip() {
       generateTrip();
     })
   }
-  const generateTripWithRetry = async (destination, maxRetries = 3) => {
-  let attempts = 0;
-  while (attempts < maxRetries) {
-    try {
-      setIsGenerating(true);
-      const result = await generateTrip(destination);
-      if (result) {
-        setIsGenerating(false);
-        return result;
-      }
-      throw new Error('Invalid response');
-    } catch (error) {
-      attempts++;
-      console.error(`Attempt ${attempts} failed:`, error);
-      if (attempts === maxRetries) {
-        toast.error(translate("maxRetriesReached"));
-        setIsGenerating(false);
-        return null;
-      }
-      // Wait longer between retries
-      await new Promise(resolve => setTimeout(resolve, 2000 * attempts));
-    }
-  }
-};
+
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">
