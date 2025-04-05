@@ -105,7 +105,7 @@ const validateItinerary = async (jsonResponse, numDays, destination, getBudgetTe
     const dayActivities = jsonResponse.itinerary[dayKey];
 
     // If activities are missing or invalid, generate new ones
-    if (!dayActivities || !Array.isArray(dayActivities) || dayActivities.length !== 3) {
+    if (!dayActivities || !Array.isArray(dayActivities) || dayActivities.length === 0) {
       console.log(`Generating activities for ${dayKey}`);
       try {
         jsonResponse.itinerary[dayKey] = await generateActivitiesForDay(
@@ -192,7 +192,8 @@ const generateActivitiesForDay = async (dayNumber, destination, budget, traveler
     Travelers: ${travelers}
     
     IMPORTANT: Respond ONLY with a valid JSON array. No additional text or formatting.
-    
+    Return 1-4 activities for the day, optimizing for quality over quantity.
+
     The response must exactly match this structure:
     [
       {
@@ -287,31 +288,41 @@ const generateActivitiesForDay = async (dayNumber, destination, budget, traveler
     }
 
     // Ensure we have exactly 3 activities
-    if (activities.length !== 3) {
-      console.warn(`Expected 3 activities for day ${dayNumber}, got ${activities.length}`);
-      // Pad or trim the array to exactly 3 activities
-      while (activities.length < 3) {
-        activities.push({
-          activity: `Additional Activity ${activities.length + 1}`,
-          duration: "2-3 hours",
-          bestTime: "Flexible",
-          price: "",
-          description: "Flexible time for personal exploration",
-          travelTime: "",
-          coordinates: { latitude: 0, longitude: 0 },
-          imageUrl: "",
-          bookingLinks: { official: "", tripadvisor: "", googleMaps: "" }
-        });
-      }
-      activities = activities.slice(0, 3);
+    if (activities.length === 0) {
+      console.warn(`No activities for day ${dayNumber}, adding default activity`);
+      activities = [{
+        activity: "Day Exploration",
+        duration: "2-3 hours",
+        bestTime: "9:00 AM - 12:00 PM",
+        price: "",
+        description: "Flexible time for exploration",
+        travelTime: "",
+        coordinates: { latitude: 0, longitude: 0 },
+        imageUrl: "",
+        bookingLinks: { official: "", tripadvisor: "", googleMaps: "" }
+      }];
+    } else if (activities.length > 4) {
+      console.warn(`Too many activities for day ${dayNumber}, trimming to 4`);
+      activities = activities.slice(0, 4);
     }
 
     // Validate each activity
     activities = activities.map((activity, index) => {
-      const timeSlot = index === 0 ? "Morning" : index === 1 ? "Afternoon" : "Evening";
-      const defaultTime = index === 0 ? "9:00 AM - 12:00 PM" : 
-                         index === 1 ? "2:00 PM - 5:00 PM" : 
-                         "7:00 PM - 10:00 PM";
+      let timeSlot, defaultTime;
+      if (activities.length === 1) {
+        timeSlot = "Full Day";
+        defaultTime = "9:00 AM - 5:00 PM";
+      } else if (activities.length === 2) {
+        timeSlot = index === 0 ? "Morning" : "Evening";
+        defaultTime = index === 0 ? "9:00 AM - 2:00 PM" : "3:00 PM - 8:00 PM";
+      } else {
+        timeSlot = index === 0 ? "Morning" : 
+                   index === 1 ? "Afternoon" : 
+                   "Evening";
+        defaultTime = index === 0 ? "9:00 AM - 12:00 PM" : 
+                     index === 1 ? "2:00 PM - 5:00 PM" : 
+                     "7:00 PM - 10:00 PM";
+      }
 
       // Ensure all required fields exist with valid values
       const validatedActivity = {
@@ -652,7 +663,6 @@ function CreateTrip() {
       finalDestination = {
         value: {
           description: destination.value.description,
-          // Add any other necessary properties
         }
       };
     }
