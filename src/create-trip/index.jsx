@@ -26,66 +26,28 @@ import axios from "axios";
 
 
 const generateDayItineraries = (numDays) => {
-  let template = '';
-  for (let i = 1; i <= numDays; i++) {
-    template += `"day${i}": [
-      {
-        "activity": "Morning Activity",
-        "duration": "2-3 hours",
-        "bestTime": "9:00 AM - 12:00 PM",
-        "price": "",
-        "description": "",
-        "travelTime": "",
-        "coordinates": {
-          "latitude": 0,
-          "longitude": 0
-        },
-        "imageUrl": "",
-        "bookingLinks": {
-          "official": "",
-          "tripadvisor": "",
-          "googleMaps": ""
-        }
-      },
-      {
-        "activity": "Afternoon Activity",
-        "duration": "2-3 hours",
-        "bestTime": "2:00 PM - 5:00 PM",
-        "price": "",
-        "description": "",
-        "travelTime": "",
-        "coordinates": {
-          "latitude": 0,
-          "longitude": 0
-        },
-        "imageUrl": "",
-        "bookingLinks": {
-          "official": "",
-          "tripadvisor": "",
-          "googleMaps": ""
-        }
-      },
-      {
-        "activity": "Evening Activity",
-        "duration": "2-3 hours",
-        "bestTime": "7:00 PM - 10:00 PM",
-        "price": "",
-        "description": "",
-        "travelTime": "",
-        "coordinates": {
-          "latitude": 0,
-          "longitude": 0
-        },
-        "imageUrl": "",
-        "bookingLinks": {
-          "official": "",
-          "tripadvisor": "",
-          "googleMaps": ""
-        }
-      }
-    ]${i < numDays ? ',' : ''}`;
-  }
-  return template;
+  const activityTemplate = {
+    activity: "Activity",
+    duration: "2-3 hours",
+    bestTime: "",
+    price: "",
+    description: "",
+    travelTime: "",
+    coordinates: {
+      latitude: 0,
+      longitude: 0
+    },
+    imageUrl: "",
+    bookingLinks: {
+      official: "",
+      tripadvisor: "",
+      googleMaps: ""
+    }
+  };
+
+  return `"itinerary": {
+    ${Array.from({ length: numDays }, (_, i) => `"day${i + 1}": []`).join(',')}
+  }`;
 };
 const validateItinerary = async (jsonResponse, numDays, destination, getBudgetText, getPeopleText, selectedBudgets, selectedPeople, generateActivitiesForDay,setGenerationProgress  ) => {
   console.log('Starting itinerary validation...');
@@ -760,15 +722,29 @@ function CreateTrip() {
         }
       }
     ],
-    "itinerary": {
-      ${generateDayItineraries(parseInt(numDays))}
-    }
+     ${generateDayItineraries(parseInt(numDays))}
   }`;
   
   const guidelines = `
   
   Guidelines:
   - Provide at least 3 hotel suggestions with complete details including name, address, price range, rating, description, amenities, coordinates, image URL, and booking links.
+  - Each day's activities should follow this structure:
+  {
+    "activity": "Name of activity",
+    "duration": "2-3 hours",
+    "bestTime": "Time slot (e.g., 9:00 AM - 12:00 PM)",
+    "price": "Price in USD",
+    "description": "Detailed description",
+    "travelTime": "Travel time from previous location",
+    "coordinates": {"latitude": 0, "longitude": 0},
+    "imageUrl": "URL to activity image",
+    "bookingLinks": {
+      "official": "Official website URL",
+      "tripadvisor": "TripAdvisor URL",
+      "googleMaps": "Google Maps URL"
+    }
+  }
   - Each day MUST have at least 1 activity (preferably 3) with complete details including activity name, duration, best time, price, description, travel time, coordinates, image URL, and booking links.
   - Activities should be properly spaced throughout the day.
   - All activities must have real, accessible URLs for images and booking.
@@ -801,7 +777,7 @@ let jsonResponse = {
 for (let i = 1; i <= parseInt(numDays); i++) {
   jsonResponse.itinerary[`day${i}`] = [];
 }
-
+    console.log(fullPrompt);
   // First, get hotels using the original prompt structure
   const result = await chatSession.sendMessage([{ text: fullPrompt }]);
   const response = await result.response.text();
@@ -859,7 +835,7 @@ for (let i = 1; i <= parseInt(numDays); i++) {
         selectedBudgets,
         selectedPeople,
         generateActivitiesForDay,
-        setGenerationProgress 
+        setGenerationProgress
       );
   
       setTripData(jsonResponse);
@@ -934,6 +910,8 @@ for (let i = 1; i <= parseInt(numDays); i++) {
       generateTrip();
     })
   }
+
+  const SaveAiTrip=(tripData)
 
 
   return (
