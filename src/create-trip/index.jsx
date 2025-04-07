@@ -87,106 +87,145 @@ const generateDayItineraries = (numDays) => {
   }
   return template;
 };
-const validateItinerary = async (jsonResponse, numDays, destination, getBudgetText, getPeopleText, selectedBudgets, selectedPeople, generateActivitiesForDay ) => {
-  // Check if itinerary exists
-  if (!jsonResponse.itinerary) {
-    throw new Error('Missing itinerary in response');
+const validateItinerary = async (jsonResponse, numDays, destination, getBudgetText, getPeopleText, selectedBudgets, selectedPeople, generateActivitiesForDay,setGenerationProgress  ) => {
+  console.log('Starting itinerary validation...');
+
+  // Initialize itinerary if it doesn't exist or is empty
+  if (!jsonResponse.itinerary || Object.keys(jsonResponse.itinerary).length === 0) {
+    jsonResponse.itinerary = {};
+    for (let i = 1; i <= numDays; i++) {
+      jsonResponse.itinerary[`day${i}`] = [];
+    }
   }
 
-  // Check number of days
-  const days = Object.keys(jsonResponse.itinerary).length;
-  if (days !== parseInt(numDays)) {
-    throw new Error(`Expected ${numDays} days, but got ${days}`);
-  }
-
-  // Process each day's activities
+  // Process each day sequentially
   for (let i = 1; i <= numDays; i++) {
     const dayKey = `day${i}`;
-    const dayActivities = jsonResponse.itinerary[dayKey];
+    console.log(`Processing ${dayKey}...`);
 
-    // If activities are missing or invalid, generate new ones
-    if (!dayActivities || !Array.isArray(dayActivities) || dayActivities.length === 0) {
+    try {
+      // Generate new activities for this day
       console.log(`Generating activities for ${dayKey}`);
-      try {
-        jsonResponse.itinerary[dayKey] = await generateActivitiesForDay(
-          i,
-          destination.value.description,
-          getBudgetText(selectedBudgets[0]),
-          getPeopleText(selectedPeople[0])
-        );
-      } catch (error) {
-        console.error(`Error generating activities for ${dayKey}:`, error);
-        // Use default activities as fallback
-        jsonResponse.itinerary[dayKey] = [
-          {
-            activity: "Morning Exploration",
-            duration: "2-3 hours",
-            bestTime: "9:00 AM - 12:00 PM",
-            price: "",
-            description: `Morning exploration in ${destination.value.description}`,
-            travelTime: "",
-            coordinates: { latitude: 0, longitude: 0 },
-            imageUrl: "",
-            bookingLinks: { official: "", tripadvisor: "", googleMaps: "" }
+      const activities = await generateActivitiesForDay(
+        i,
+        destination.value.description,
+        getBudgetText(selectedBudgets[0]),
+        getPeopleText(selectedPeople[0])
+      );
+
+      // Update the itinerary immediately for this day
+      jsonResponse.itinerary[dayKey] = activities;
+
+      // Log the activities right after they're generated
+      console.group(`✅ Day ${i} Activities Generated:`);
+      activities.forEach((activity, index) => {
+        const timeIcon = index === 0 ? '🌅' : index === 1 ? '☀️' : '🌙';
+        console.group(`${timeIcon} Activity ${index + 1}:`);
+        console.log(`📍 Name: ${activity.activity}`);
+        console.log(`⏰ Time: ${activity.bestTime}`);
+        console.log(`⌛ Duration: ${activity.duration}`);
+        console.log(`💰 Price: ${activity.price}`);
+        console.log(`📝 Description: ${activity.description}`);
+        console.groupEnd();
+      });
+      console.groupEnd();
+
+      // Validate each activity's required fields
+      jsonResponse.itinerary[dayKey] = activities.map((activity, index) => {
+        const timeOfDay = index === 0 ? 'Morning' : index === 1 ? 'Afternoon' : 'Evening';
+        return {
+          activity: activity.activity || `${timeOfDay} Activity`,
+          duration: activity.duration || "2-3 hours",
+          bestTime: activity.bestTime || (
+            index === 0 ? "9:00 AM - 12:00 PM" :
+            index === 1 ? "2:00 PM - 5:00 PM" :
+            "7:00 PM - 10:00 PM"
+          ),
+          price: activity.price || "",
+          description: activity.description || `${timeOfDay} exploration time`,
+          travelTime: activity.travelTime || "",
+          coordinates: {
+            latitude: Number(activity.coordinates?.latitude) || 0,
+            longitude: Number(activity.coordinates?.longitude) || 0
           },
-          {
-            activity: "Afternoon Activity",
-            duration: "2-3 hours",
-            bestTime: "2:00 PM - 5:00 PM",
-            price: "",
-            description: `Afternoon activity in ${destination.value.description}`,
-            travelTime: "",
-            coordinates: { latitude: 0, longitude: 0 },
-            imageUrl: "",
-            bookingLinks: { official: "", tripadvisor: "", googleMaps: "" }
-          },
-          {
-            activity: "Evening Experience",
-            duration: "2-3 hours",
-            bestTime: "7:00 PM - 10:00 PM",
-            price: "",
-            description: `Evening experience in ${destination.value.description}`,
-            travelTime: "",
-            coordinates: { latitude: 0, longitude: 0 },
-            imageUrl: "",
-            bookingLinks: { official: "", tripadvisor: "", googleMaps: "" }
+          imageUrl: activity.imageUrl || "",
+          bookingLinks: {
+            official: activity.bookingLinks?.official || "",
+            tripadvisor: activity.bookingLinks?.tripadvisor || "",
+            googleMaps: activity.bookingLinks?.googleMaps || ""
           }
-        ];
-      }
+        };
+      });
+
+    } catch (error) {
+      console.error(`Error generating activities for ${dayKey}:`, error);
+      // Use default activities as fallback
+      jsonResponse.itinerary[dayKey] = [
+        {
+          activity: "Morning Exploration",
+          duration: "2-3 hours",
+          bestTime: "9:00 AM - 12:00 PM",
+          price: "",
+          description: `Morning exploration in ${destination.value.description}`,
+          travelTime: "",
+          coordinates: { latitude: 0, longitude: 0 },
+          imageUrl: "",
+          bookingLinks: { official: "", tripadvisor: "", googleMaps: "" }
+        },
+        {
+          activity: "Afternoon Activity",
+          duration: "2-3 hours",
+          bestTime: "2:00 PM - 5:00 PM",
+          price: "",
+          description: `Afternoon activity in ${destination.value.description}`,
+          travelTime: "",
+          coordinates: { latitude: 0, longitude: 0 },
+          imageUrl: "",
+          bookingLinks: { official: "", tripadvisor: "", googleMaps: "" }
+        },
+        {
+          activity: "Evening Experience",
+          duration: "2-3 hours",
+          bestTime: "7:00 PM - 10:00 PM",
+          price: "",
+          description: `Evening experience in ${destination.value.description}`,
+          travelTime: "",
+          coordinates: { latitude: 0, longitude: 0 },
+          imageUrl: "",
+          bookingLinks: { official: "", tripadvisor: "", googleMaps: "" }
+        }
+      ];
+
+      // Log the fallback activities
+      console.group(`⚠️ Day ${i} Fallback Activities:`);
+      jsonResponse.itinerary[dayKey].forEach((activity, index) => {
+        const timeIcon = index === 0 ? '🌅' : index === 1 ? '☀️' : '🌙';
+        console.group(`${timeIcon} Activity ${index + 1}:`);
+        console.log(`📍 Name: ${activity.activity}`);
+        console.log(`⏰ Time: ${activity.bestTime}`);
+        console.log(`⌛ Duration: ${activity.duration}`);
+        console.log(`💰 Price: ${activity.price}`);
+        console.log(`📝 Description: ${activity.description}`);
+        console.groupEnd();
+      });
+      console.groupEnd();
     }
 
-    // Validate each activity's required fields
-    jsonResponse.itinerary[dayKey] = jsonResponse.itinerary[dayKey].map((activity, index) => {
-      const timeOfDay = index === 0 ? 'Morning' : index === 1 ? 'Afternoon' : 'Evening';
-      return {
-        activity: activity.activity || `${timeOfDay} Activity`,
-        duration: activity.duration || "2-3 hours",
-        bestTime: activity.bestTime || (
-          index === 0 ? "9:00 AM - 12:00 PM" :
-          index === 1 ? "2:00 PM - 5:00 PM" :
-          "7:00 PM - 10:00 PM"
-        ),
-        price: activity.price || "",
-        description: activity.description || `${timeOfDay} exploration time`,
-        travelTime: activity.travelTime || "",
-        coordinates: {
-          latitude: Number(activity.coordinates?.latitude) || 0,
-          longitude: Number(activity.coordinates?.longitude) || 0
-        },
-        imageUrl: activity.imageUrl || "",
-        bookingLinks: {
-          official: activity.bookingLinks?.official || "",
-          tripadvisor: activity.bookingLinks?.tripadvisor || "",
-          googleMaps: activity.bookingLinks?.googleMaps || ""
-        }
-      };
-    });
+    // Update progress
+    setGenerationProgress(prev => ({
+      currentDay: i,
+      totalDays: numDays
+    }));
   }
 
+  console.log('✅ Itinerary validation complete');
   return jsonResponse;
 };
 
 const generateActivitiesForDay = async (dayNumber, destination, budget, travelers) => {
+  console.group(`🔄 Generating Day ${dayNumber} Activities`);
+  console.time(`Day ${dayNumber} Generation`);
+
   try {
     const activityPrompt = `Create activities for day ${dayNumber} in ${destination} for travelers with a ${budget} budget.
     Travelers: ${travelers}
@@ -261,26 +300,24 @@ const generateActivitiesForDay = async (dayNumber, destination, budget, traveler
       .replace(/```/g, '')
       .trim();
 
-    let activities;
-    try {
-      // Try to parse the cleaned response
-      activities = JSON.parse(cleanResponse);
-    } catch (parseError) {
-      console.error(`JSON Parse Error for day ${dayNumber}:`, parseError);
+      let activities = JSON.parse(cleanResponse);
+      console.log(`✅ Day ${dayNumber} activities parsed successfully:`, activities);
+
+
+      // Log activities as soon as they're generated
+      console.group(`✅ Day ${dayNumber} Activities:`);
+      activities.forEach((activity, index) => {
+        const timeIcon = index === 0 ? '🌅' : index === 1 ? '☀️' : '🌙';
+        console.group(`${timeIcon} Activity ${index + 1}:`);
+        console.log(`📍 Name: ${activity.activity}`);
+        console.log(`⏰ Time: ${activity.bestTime}`);
+        console.log(`⌛ Duration: ${activity.duration}`);
+        console.log(`💰 Price: ${activity.price}`);
+        console.log(`📝 Description: ${activity.description}`);
+        console.groupEnd();
+      });
+      console.groupEnd();
       
-      // Try to extract JSON array if wrapped in other content
-      const arrayMatch = cleanResponse.match(/$$[\s\S]*$$/);
-      if (arrayMatch) {
-        try {
-          activities = JSON.parse(arrayMatch[0]);
-        } catch (secondaryParseError) {
-          console.error('Secondary parse attempt failed:', secondaryParseError);
-          throw new Error('Failed to parse activities JSON');
-        }
-      } else {
-        throw new Error('No valid JSON array found in response');
-      }
-    }
 
     // Validate the activities array
     if (!Array.isArray(activities)) {
@@ -358,10 +395,14 @@ const generateActivitiesForDay = async (dayNumber, destination, budget, traveler
       return validatedActivity;
     });
 
+    console.timeEnd(`Day ${dayNumber} Generation`);
+    console.groupEnd();
     return activities;
 
   } catch (error) {
     console.error(`Error generating activities for day ${dayNumber}:`, error);
+    console.timeEnd(`Day ${dayNumber} Generation`);
+    console.groupEnd();
     
     // Return default activities if something goes wrong
     return [
@@ -437,6 +478,10 @@ function CreateTrip() {
 
   const [openDialog,setOpenDialog]=useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState({
+    currentDay: 0,
+    totalDays: 0
+  });
 
    const [tripData, setTripData] = useState({
     destination: null,
@@ -655,7 +700,7 @@ function CreateTrip() {
         }
       };
   
-      toast.success(`Suggesting destination: ${suggestionData.destination}, ${suggestionData.country}`);
+      toast.success(`Suggested destination: ${suggestionData.destination}, ${suggestionData.country}`);
     } else if (!destination) {
       toast.error(translate("pleaseSelectDestination"));
       return;
@@ -735,24 +780,73 @@ function CreateTrip() {
   Remember to provide a complete itinerary for all ${numDays} days with at least 1 activity per day and at least 3 hotel suggestions.`;
   
   const fullPrompt = basePrompt + guidelines;
-  
-      const result = await chatSession.sendMessage([{ text: fullPrompt }]);
-      const response = await result.response.text();
-      let jsonResponse = safeJSONParse(response);
+
+setIsGenerating(true);
+console.log('Starting trip generation...');
+
+// Initialize base structure with your original prompt structure
+let jsonResponse = {
+  trip: {
+    destination: finalDestination.value.description,
+    duration: `${numDays} days`,
+    travelers: getPeopleText(selectedPeople[0]),
+    budget: getBudgetText(selectedBudgets[0]),
+    currency: "USD"
+  },
+  hotels: [],
+  itinerary: {}
+};
+
+// Initialize empty itinerary structure
+for (let i = 1; i <= parseInt(numDays); i++) {
+  jsonResponse.itinerary[`day${i}`] = [];
+}
+
+  // First, get hotels using the original prompt structure
+  const result = await chatSession.sendMessage([{ text: fullPrompt }]);
+  const response = await result.response.text();
+  const initialResponse = safeJSONParse(response);
+
+  if (initialResponse?.hotels) {
+    console.log('✅ Hotels generated:', initialResponse.hotels);
+    jsonResponse.hotels = initialResponse.hotels;
+    setTripData(prev => ({ ...prev, hotels: initialResponse.hotels }));
+  }
+
+  // Now generate activities day by day
+  console.log('Generating daily activities...');
+  setGenerationProgress({ currentDay: 0, totalDays: parseInt(numDays) });
+
+
+      console.log('Initial response:', jsonResponse); // Add this to see what we're getting
 
       if (!jsonResponse) {
         // If parsing failed, try to clean and retry
         console.log("Initial parsing failed, attempting to clean response");
           jsonResponse = validateResponse(response);
+          console.log('Cleaned response:', jsonResponse); // Add this to see cleaned response
+        }
 
         
-        if (!jsonResponse) {
-          throw new Error('Failed to parse AI response after cleaning');
-        }
-      }
+        // Initialize structure if missing
+    if (!jsonResponse || !jsonResponse.trip || !jsonResponse.hotels || !jsonResponse.itinerary) {
+      console.log('Creating base structure');
+      jsonResponse = {
+        trip: {
+          destination: finalDestination.value.description,
+          duration: `${numDays} days`,
+          travelers: getPeopleText(selectedPeople[0]),
+          budget: getBudgetText(selectedBudgets[0]),
+          currency: "USD"
+        },
+        hotels: [],
+        itinerary: {}
+      };
+    }
+      
 
-      if (!jsonResponse.trip || !jsonResponse.hotels || !jsonResponse.itinerary) {
-        throw new Error('Invalid response structure');
+      if (!jsonResponse.itinerary) {
+        jsonResponse.itinerary = {};
       }
       
       // Validate the response
@@ -764,7 +858,8 @@ function CreateTrip() {
         getPeopleText,
         selectedBudgets,
         selectedPeople,
-        generateActivitiesForDay
+        generateActivitiesForDay,
+        setGenerationProgress 
       );
   
       setTripData(jsonResponse);
@@ -774,6 +869,9 @@ function CreateTrip() {
     } catch (error) {
       console.error('Error generating trip:', error);
       toast.error(translate("errorGeneratingTrip"));
+    }
+    finally {
+      setIsGenerating(false);
     }
   };
 
