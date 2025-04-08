@@ -11,6 +11,8 @@ import { chatSession } from "@/service/AIModal";
 import { FcGoogle } from "react-icons/fc";
 import { Button } from "@/components/ui/button";
 import { IoClose } from "react-icons/io5";
+// import { getAirportCode, isValidAirportCode } from './airportCodes';
+
 import {
   Dialog,
   DialogContent,
@@ -23,7 +25,180 @@ import {
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
+const formatDuration = (isoDuration) => {
+  // Remove 'PT' and split into hours and minutes
+  const duration = isoDuration.replace('PT', '');
+  const hours = duration.match(/(\d+)H/)?.[1] || '0';
+  const minutes = duration.match(/(\d+)M/)?.[1] || '0';
+  return `${hours}h ${minutes}m`;
+};
 
+// Add this helper function to format price
+const formatPrice = (price) => {
+  return `$${parseFloat(price).toFixed(2)}`;
+};
+
+
+const getAirportCodeFromAI = async (destination) => {
+  // Internal helper function for parsing JSON
+  const parseAIResponse = (str) => {
+    try {
+      // First try direct parsing
+      return JSON.parse(str);
+    } catch (e) {
+      // If direct parsing fails, try cleaning the string
+      try {
+        const cleanStr = str
+          .replace(/```json/g, '')
+          .replace(/```/g, '')
+          .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
+          .replace(/[\u2018\u2019\u201C\u201D]/g, '"')
+          .replace(/\s+/g, ' ')
+          .replace(/[\n\r\t]/g, '')
+          .trim();
+
+        // Try to find and parse JSON object
+        const match = cleanStr.match(/\{[\s\S]*\}/);
+        if (match) {
+          return JSON.parse(match[0]);
+        }
+      } catch (err) {
+        console.error('Failed to parse AI response:', err);
+      }
+    }
+    return null;
+  };
+
+  try {
+    const prompt = `For the destination "${destination}", provide the main airport code(s) in IATA format.
+    IMPORTANT: Respond ONLY with a valid JSON object containing the airport information.
+    
+    Example response format for Krakow, Poland:
+    {
+      "city": "Krakow",
+      "region": null,
+      "country": "Poland",
+      "airports": [
+        {
+          "code": "KRK",
+          "name": "John Paul II International Airport Kraków-Balice",
+          "main": true,
+          "city": "Krakow"
+        }
+      ],
+      "recommended": "KRK"
+    }
+
+    For regions or areas, provide the nearest major airport.
+    Ensure the IATA code is correct and the airport is currently operational.`;
+
+    const result = await chatSession.sendMessage([{ text: prompt }]);
+    const response = await result.response.text();
+    const data = parseAIResponse(response);
+
+    if (!data) {
+      console.error('Failed to parse AI response for airport code');
+      return null;
+    }
+
+    if (!data.airports || !data.airports.length) {
+      console.error('No airports found in AI response');
+      return null;
+    }
+
+    // Use the recommended airport code if provided, otherwise use the first main airport or the first airport
+    const airportCode = data.recommended || 
+                       data.airports.find(airport => airport.main)?.code || 
+                       data.airports[0].code;
+
+    console.log('Successfully found airport code:', {
+      code: airportCode,
+      city: data.city,
+      country: data.country
+    });
+
+    return {
+      code: airportCode,
+      city: data.city,
+      region: data.region,
+      country: data.country,
+      allAirports: data.airports
+    };
+  } catch (error) {
+    console.error('Error in getAirportCodeFromAI:', error);
+    return null;
+  }
+};
+
+
+// Helper function to get all airport codes for a cit
+
+// Validate airport code
+export const isValidAirportCode = (code) => {
+  return typeof code === 'string' && code.length === 3 && /^[A-Z]{3}$/.test(code);
+};
+
+
+const formatDate = (date) => {
+  if (!date) return null;
+  const d = new Date(date);
+  return d.toISOString().split('T')[0];
+};
+
+const fetchFlights = async (origin, destination, departureDate, returnDate) => {
+  try {
+    if (!origin || !destination) {
+      throw new Error('Origin and destination are required');
+    }
+
+    const formattedDepartureDate = formatDate(departureDate);
+    const formattedReturnDate = formatDate(returnDate);
+
+    if (!formattedDepartureDate || !formattedReturnDate) {
+      throw new Error('Invalid dates');
+    }
+
+    // Get token
+    const tokenResponse = await axios.post(
+      'https://test.api.amadeus.com/v1/security/oauth2/token',
+      new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: import.meta.env.VITE_AMADEUS_CLIENT_ID,
+        client_secret: import.meta.env.VITE_AMADEUS_CLIENT_SECRET
+      }).toString(),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    );
+
+    const accessToken = tokenResponse.data.access_token;
+
+    // Updated search parameters - removed nonStop requirement
+    const searchParams = {
+      originLocationCode: origin,
+      destinationLocationCode: destination,
+      departureDate: formattedDepartureDate,
+      returnDate: formattedReturnDate,
+      adults: 1,
+      currencyCode: 'USD',
+      max: 5
+    };
+
+    const response = await axios.get('https://test.api.amadeus.com/v2/shopping/flight-offers', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      },
+      params: searchParams
+    });
+
+    return response.data.data;
+  } catch (error) {
+    console.error('Flight API Error:', error);
+    throw error;
+  }
+};
 
 const generateDayItineraries = (numDays) => {
   const activityTemplate = {
@@ -78,19 +253,19 @@ const validateItinerary = async (jsonResponse, numDays, destination, getBudgetTe
       // Update the itinerary immediately for this day
       jsonResponse.itinerary[dayKey] = activities;
 
-      // Log the activities right after they're generated
-      console.group(`✅ Day ${i} Activities Generated:`);
-      activities.forEach((activity, index) => {
-        const timeIcon = index === 0 ? '🌅' : index === 1 ? '☀️' : '🌙';
-        console.group(`${timeIcon} Activity ${index + 1}:`);
-        console.log(`📍 Name: ${activity.activity}`);
-        console.log(`⏰ Time: ${activity.bestTime}`);
-        console.log(`⌛ Duration: ${activity.duration}`);
-        console.log(`💰 Price: ${activity.price}`);
-        console.log(`📝 Description: ${activity.description}`);
-        console.groupEnd();
-      });
-      console.groupEnd();
+      // // Log the activities right after they're generated
+      // console.group(`✅ Day ${i} Activities Generated:`);
+      // activities.forEach((activity, index) => {
+      //   const timeIcon = index === 0 ? '🌅' : index === 1 ? '☀️' : '🌙';
+      //   console.group(`${timeIcon} Activity ${index + 1}:`);
+      //   console.log(`📍 Name: ${activity.activity}`);
+      //   console.log(`⏰ Time: ${activity.bestTime}`);
+      //   console.log(`⌛ Duration: ${activity.duration}`);
+      //   console.log(`💰 Price: ${activity.price}`);
+      //   console.log(`📝 Description: ${activity.description}`);
+      //   console.groupEnd();
+      // });
+      // console.groupEnd();
 
       // Validate each activity's required fields
       jsonResponse.itinerary[dayKey] = activities.map((activity, index) => {
@@ -445,7 +620,7 @@ function CreateTrip() {
     totalDays: 0
   });
 
-   const [tripData, setTripData] = useState({
+  const [tripData, setTripData] = useState({
     destination: null,
     numberOfDays: "",
     dateRange: {
@@ -458,6 +633,10 @@ function CreateTrip() {
       weather: [],
       activities: [],
       sightseeing: [],
+    },
+    flights: {
+      outbound: [],
+      return: []
     }
   });
 
@@ -678,6 +857,8 @@ function CreateTrip() {
     if (!finalDestination?.value?.description) {
       throw new Error('Invalid destination format');
     }
+
+    
   
       // Generate the trip itinerary
       const basePrompt = `Create a detailed travel itinerary for ${finalDestination.value.description} for ${numDays} days.
@@ -769,9 +950,129 @@ let jsonResponse = {
     budget: getBudgetText(selectedBudgets[0]),
     currency: "USD"
   },
+  flights: {
+    outbound: [],
+    return: []
+  },
   hotels: [],
   itinerary: {}
 };
+
+
+try {
+
+  const destinationInput = finalDestination.value.description;
+  console.log('Searching flights for:', destinationInput);
+  
+  // Get airport code from AI
+  const airportInfo = await getAirportCodeFromAI(destinationInput);
+  
+  if (!airportInfo || !airportInfo.code) {
+    console.warn(`No airport code found for ${destinationInput}, skipping flight search`);
+    jsonResponse.flights = {
+      outbound: [],
+      return: []
+    };
+    return;
+  }
+
+  console.log('Airport Information:', {
+    code: airportInfo.code,
+    city: airportInfo.city,
+    country: airportInfo.country
+  });
+
+  let flightData = null;
+  try {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const returnDate = new Date(tomorrow);
+    returnDate.setDate(returnDate.getDate() + parseInt(numDays));
+
+    flightData = await fetchFlights(
+      'TLV',
+      airportInfo.code,
+      tomorrow,
+      returnDate
+    );
+  } catch (flightError) {
+    console.warn('Flight search failed:', flightError);
+    // Continue with empty flights array rather than throwing
+    jsonResponse.flights = {
+      outbound: [],
+      return: []
+    };
+    return;
+  }
+
+  if (flightData && flightData.length > 0) {
+    jsonResponse.flights = {
+      outbound: flightData.map(offer => {
+        const segments = offer.itineraries[0].segments;
+        const firstSegment = segments[0];
+        const lastSegment = segments[segments.length - 1];
+        
+        return {
+          airline: offer.validatingAirlineCodes[0],
+          stops: segments.length - 1, // Number of stops
+          departure: {
+            airport: firstSegment.departure.iataCode,
+            time: firstSegment.departure.at.split('T')[1],
+            date: firstSegment.departure.at.split('T')[0]
+          },
+          arrival: {
+            airport: lastSegment.arrival.iataCode,
+            time: lastSegment.arrival.at.split('T')[1],
+            date: lastSegment.arrival.at.split('T')[0]
+          },
+          duration: formatDuration(offer.itineraries[0].duration),
+          price: formatPrice(offer.price.total),
+          bookingLink: `https://www.kayak.com/flights/${firstSegment.departure.iataCode}-${lastSegment.arrival.iataCode}/${firstSegment.departure.at.split('T')[0]}`
+        };
+      }),
+      return: flightData
+        .filter(offer => offer.itineraries[1])
+        .map(offer => {
+          const segments = offer.itineraries[1].segments;
+          const firstSegment = segments[0];
+          const lastSegment = segments[segments.length - 1];
+          
+          return {
+            airline: offer.validatingAirlineCodes[0],
+            stops: segments.length - 1, // Number of stops
+            departure: {
+              airport: firstSegment.departure.iataCode,
+              time: firstSegment.departure.at.split('T')[1],
+              date: firstSegment.departure.at.split('T')[0]
+            },
+            arrival: {
+              airport: lastSegment.arrival.iataCode,
+              time: lastSegment.arrival.at.split('T')[1],
+              date: lastSegment.arrival.at.split('T')[0]
+            },
+            duration: formatDuration(offer.itineraries[1].duration),
+            price: formatPrice(offer.price.total),
+            bookingLink: `https://www.kayak.com/flights/${firstSegment.departure.iataCode}-${lastSegment.arrival.iataCode}/${firstSegment.departure.at.split('T')[0]}`
+          };
+        })
+    };
+  } else {
+    console.warn('No flights found, using empty flight data');
+    jsonResponse.flights = {
+      outbound: [],
+      return: []
+    };
+    console.log('✅ Flights fetched successfully:', jsonResponse.flights);
+
+  }
+
+} catch (error) {
+  console.warn('Could not fetch flight data, falling back to AI suggestions:', error);
+  jsonResponse.flights = {
+    outbound: [],
+    return: []
+  };
+}
 
 // Initialize empty itinerary structure
 for (let i = 1; i <= parseInt(numDays); i++) {
@@ -843,6 +1144,7 @@ for (let i = 1; i <= parseInt(numDays); i++) {
       toast.success(translate("tripGeneratedSuccess"));
   
     } catch (error) {
+      console.warn('Could not fetch flight data, falling back to AI suggestions:', error);
       console.error('Error generating trip:', error);
       toast.error(translate("errorGeneratingTrip"));
     }
