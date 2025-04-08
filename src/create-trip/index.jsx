@@ -38,6 +38,95 @@ const formatPrice = (price) => {
   return `$${parseFloat(price).toFixed(2)}`;
 };
 
+const processFlightOffers = (flightData, isRoundTrip = true) => {
+  // Helper function to calculate total trip cost
+  const getTripCost = (offer) => parseFloat(offer.price.total);
+
+  // Helper function to calculate total duration
+  const getTotalDuration = (itinerary) => {
+    return itinerary.segments.reduce((total, segment) => {
+      const duration = segment.duration || '0H';
+      const hours = parseInt(duration.match(/(\d+)H/)?.[1] || '0');
+      const minutes = parseInt(duration.match(/(\d+)M/)?.[1] || '0');
+      return total + (hours * 60) + minutes;
+    }, 0);
+  };
+
+  // Sort and categorize flights
+  const categorizedFlights = flightData.reduce((acc, offer) => {
+    const cost = getTripCost(offer);
+    const outboundDuration = getTotalDuration(offer.itineraries[0]);
+    const returnDuration = isRoundTrip && offer.itineraries[1] ? 
+      getTotalDuration(offer.itineraries[1]) : 0;
+    const totalDuration = outboundDuration + returnDuration;
+
+    // Update categories based on criteria
+    if (!acc.cheapest || cost < getTripCost(acc.cheapest)) {
+      acc.cheapest = offer;
+    }
+    if (!acc.quickest || totalDuration < (getTotalDuration(acc.quickest.itineraries[0]) + 
+      (isRoundTrip ? getTotalDuration(acc.quickest.itineraries[1]) : 0))) {
+      acc.quickest = offer;
+    }
+    // "Best" is usually a balance of price and duration
+    const score = (cost / 1000) + (totalDuration / 60); // Lower score is better
+    if (!acc.best || score < acc.bestScore) {
+      acc.best = offer;
+      acc.bestScore = score;
+    }
+
+    return acc;
+  }, { cheapest: null, best: null, quickest: null, bestScore: Infinity });
+
+  // Format flight options
+  const formatFlightOption = (offer, category) => {
+    if (!offer) return null;
+
+    const outbound = offer.itineraries[0];
+    const return_ = isRoundTrip ? offer.itineraries[1] : null;
+    const firstSegment = outbound.segments[0];
+    const lastSegment = outbound.segments[outbound.segments.length - 1];
+
+    const formatSegment = (segments) => {
+      const first = segments[0];
+      const last = segments[segments.length - 1];
+      return {
+        departure: {
+          airport: first.departure.iataCode,
+          time: first.departure.at.split('T')[1],
+          date: first.departure.at.split('T')[0]
+        },
+        arrival: {
+          airport: last.arrival.iataCode,
+          time: last.arrival.at.split('T')[1],
+          date: last.arrival.at.split('T')[0]
+        },
+        stops: segments.length - 1,
+        stopLocations: segments.slice(0, -1).map(seg => seg.arrival.iataCode),
+        duration: formatDuration(segments.reduce((total, seg) => total + seg.duration, '')),
+      };
+    };
+
+    return {
+      category,
+      airline: offer.validatingAirlineCodes[0],
+      price: formatPrice(offer.price.total),
+      pricePerPerson: formatPrice(offer.price.total / offer.travelerPricings.length),
+      outbound: formatSegment(outbound.segments),
+      return: return_ ? formatSegment(return_.segments) : null,
+      bookingLink: isRoundTrip ?
+        `https://www.kayak.com/flights/${firstSegment.departure.iataCode}-${lastSegment.arrival.iataCode}/${firstSegment.departure.at.split('T')[0]}/${return_.segments[0].departure.at.split('T')[0]}` :
+        `https://www.kayak.com/flights/${firstSegment.departure.iataCode}-${lastSegment.arrival.iataCode}/${firstSegment.departure.at.split('T')[0]}`
+    };
+  };
+
+  return {
+    cheapest: formatFlightOption(categorizedFlights.cheapest, 'cheapest'),
+    best: formatFlightOption(categorizedFlights.best, 'best'),
+    quickest: formatFlightOption(categorizedFlights.quickest, 'quickest')
+  };
+};
+
 
 const getAirportCodeFromAI = async (destination) => {
   // Internal helper function for parsing JSON
@@ -635,8 +724,16 @@ function CreateTrip() {
       sightseeing: [],
     },
     flights: {
-      outbound: [],
-      return: []
+      roundTrip: {
+        cheapest: null,
+        best: null,
+        quickest: null
+      },
+      oneWay: {
+        cheapest: null,
+        best: null,
+        quickest: null
+      }
     }
   });
 
@@ -1006,62 +1103,28 @@ try {
   }
 
   if (flightData && flightData.length > 0) {
+    
+    const roundTripOptions = processFlightOffers(
+      flightData.filter(offer => offer.itineraries.length === 2),
+      true
+    );
+  
+    // Process one-way options
+    const oneWayOptions = processFlightOffers(
+      flightData.filter(offer => offer.itineraries.length === 1),
+      false
+    );
+  
     jsonResponse.flights = {
-      outbound: flightData.map(offer => {
-        const segments = offer.itineraries[0].segments;
-        const firstSegment = segments[0];
-        const lastSegment = segments[segments.length - 1];
-        
-        return {
-          airline: offer.validatingAirlineCodes[0],
-          stops: segments.length - 1, // Number of stops
-          departure: {
-            airport: firstSegment.departure.iataCode,
-            time: firstSegment.departure.at.split('T')[1],
-            date: firstSegment.departure.at.split('T')[0]
-          },
-          arrival: {
-            airport: lastSegment.arrival.iataCode,
-            time: lastSegment.arrival.at.split('T')[1],
-            date: lastSegment.arrival.at.split('T')[0]
-          },
-          duration: formatDuration(offer.itineraries[0].duration),
-          price: formatPrice(offer.price.total),
-          bookingLink: `https://www.kayak.com/flights/${firstSegment.departure.iataCode}-${lastSegment.arrival.iataCode}/${firstSegment.departure.at.split('T')[0]}`
-        };
-      }),
-      return: flightData
-        .filter(offer => offer.itineraries[1])
-        .map(offer => {
-          const segments = offer.itineraries[1].segments;
-          const firstSegment = segments[0];
-          const lastSegment = segments[segments.length - 1];
-          
-          return {
-            airline: offer.validatingAirlineCodes[0],
-            stops: segments.length - 1, // Number of stops
-            departure: {
-              airport: firstSegment.departure.iataCode,
-              time: firstSegment.departure.at.split('T')[1],
-              date: firstSegment.departure.at.split('T')[0]
-            },
-            arrival: {
-              airport: lastSegment.arrival.iataCode,
-              time: lastSegment.arrival.at.split('T')[1],
-              date: lastSegment.arrival.at.split('T')[0]
-            },
-            duration: formatDuration(offer.itineraries[1].duration),
-            price: formatPrice(offer.price.total),
-            bookingLink: `https://www.kayak.com/flights/${firstSegment.departure.iataCode}-${lastSegment.arrival.iataCode}/${firstSegment.departure.at.split('T')[0]}`
-          };
-        })
+      roundTrip: roundTripOptions,
+      oneWay: oneWayOptions
     };
   } else {
-    console.warn('No flights found, using empty flight data');
     jsonResponse.flights = {
-      outbound: [],
-      return: []
+      roundTrip: { cheapest: null, best: null, quickest: null },
+      oneWay: { cheapest: null, best: null, quickest: null }
     };
+  
     console.log('✅ Flights fetched successfully:', jsonResponse.flights);
 
   }
