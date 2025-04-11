@@ -39,92 +39,167 @@ const formatPrice = (price) => {
 };
 
 const processFlightOffers = (flightData, isRoundTrip = true) => {
-  // Helper function to calculate total trip cost
-  const getTripCost = (offer) => parseFloat(offer.price.total);
-
-  // Helper function to calculate total duration
-  const getTotalDuration = (itinerary) => {
-    return itinerary.segments.reduce((total, segment) => {
-      const duration = segment.duration || '0H';
-      const hours = parseInt(duration.match(/(\d+)H/)?.[1] || '0');
-      const minutes = parseInt(duration.match(/(\d+)M/)?.[1] || '0');
-      return total + (hours * 60) + minutes;
-    }, 0);
-  };
-
-  // Sort and categorize flights
-  const categorizedFlights = flightData.reduce((acc, offer) => {
-    const cost = getTripCost(offer);
-    const outboundDuration = getTotalDuration(offer.itineraries[0]);
-    const returnDuration = isRoundTrip && offer.itineraries[1] ? 
-      getTotalDuration(offer.itineraries[1]) : 0;
-    const totalDuration = outboundDuration + returnDuration;
-
-    // Update categories based on criteria
-    if (!acc.cheapest || cost < getTripCost(acc.cheapest)) {
-      acc.cheapest = offer;
-    }
-    if (!acc.quickest || totalDuration < (getTotalDuration(acc.quickest.itineraries[0]) + 
-      (isRoundTrip ? getTotalDuration(acc.quickest.itineraries[1]) : 0))) {
-      acc.quickest = offer;
-    }
-    // "Best" is usually a balance of price and duration
-    const score = (cost / 1000) + (totalDuration / 60); // Lower score is better
-    if (!acc.best || score < acc.bestScore) {
-      acc.best = offer;
-      acc.bestScore = score;
-    }
-
-    return acc;
-  }, { cheapest: null, best: null, quickest: null, bestScore: Infinity });
-
-  // Format flight options
-  const formatFlightOption = (offer, category) => {
-    if (!offer) return null;
-
-    const outbound = offer.itineraries[0];
-    const return_ = isRoundTrip ? offer.itineraries[1] : null;
-    const firstSegment = outbound.segments[0];
-    const lastSegment = outbound.segments[outbound.segments.length - 1];
-
-    const formatSegment = (segments) => {
-      const first = segments[0];
-      const last = segments[segments.length - 1];
-      return {
-        departure: {
-          airport: first.departure.iataCode,
-          time: first.departure.at.split('T')[1],
-          date: first.departure.at.split('T')[0]
-        },
-        arrival: {
-          airport: last.arrival.iataCode,
-          time: last.arrival.at.split('T')[1],
-          date: last.arrival.at.split('T')[0]
-        },
-        stops: segments.length - 1,
-        stopLocations: segments.slice(0, -1).map(seg => seg.arrival.iataCode),
-        duration: formatDuration(segments.reduce((total, seg) => total + seg.duration, '')),
-      };
-    };
-
+  // Early return if no flight data
+  if (!flightData || !flightData.length) {
+    console.log('No flight data available to process');
     return {
-      category,
-      airline: offer.validatingAirlineCodes[0],
-      price: formatPrice(offer.price.total),
-      pricePerPerson: formatPrice(offer.price.total / offer.travelerPricings.length),
-      outbound: formatSegment(outbound.segments),
-      return: return_ ? formatSegment(return_.segments) : null,
-      bookingLink: isRoundTrip ?
-        `https://www.kayak.com/flights/${firstSegment.departure.iataCode}-${lastSegment.arrival.iataCode}/${firstSegment.departure.at.split('T')[0]}/${return_.segments[0].departure.at.split('T')[0]}` :
-        `https://www.kayak.com/flights/${firstSegment.departure.iataCode}-${lastSegment.arrival.iataCode}/${firstSegment.departure.at.split('T')[0]}`
+      cheapest: null,
+      best: null,
+      quickest: null
     };
+  }
+
+  // Log initial data for debugging
+  console.log(`Processing ${flightData.length} flights, isRoundTrip: ${isRoundTrip}`);
+
+  // Filter valid flights based on round-trip or one-way
+  const validFlights = flightData.filter(offer => {
+    const hasValidOutbound = offer.itineraries && offer.itineraries[0];
+    const hasValidReturn = isRoundTrip ? offer.itineraries && offer.itineraries[1] : true;
+    const hasValidPrice = offer.price && !isNaN(parseFloat(offer.price.total));
+    return hasValidOutbound && hasValidReturn && hasValidPrice;
+  });
+
+  console.log(`Found ${validFlights.length} valid flights`);
+
+  if (validFlights.length === 0) {
+    return {
+      cheapest: null,
+      best: null,
+      quickest: null
+    };
+  }
+
+  // Sort by price
+  const byPrice = [...validFlights].sort((a, b) => 
+    parseFloat(a.price.total) - parseFloat(b.price.total)
+  );
+
+  // Sort by duration
+  const byDuration = [...validFlights].sort((a, b) => {
+    const getTotalDuration = (offer) => {
+      return offer.itineraries.reduce((total, itinerary) => {
+        const duration = itinerary.duration;
+        const hours = parseInt(duration.match(/(\d+)H/)?.[1] || '0');
+        const minutes = parseInt(duration.match(/(\d+)M/)?.[1] || '0');
+        return total + (hours * 60) + minutes;
+      }, 0);
+    };
+    return getTotalDuration(a) - getTotalDuration(b);
+  });
+
+  // Calculate best option (balance of price and duration)
+  const byScore = [...validFlights].sort((a, b) => {
+    const getScore = (offer) => {
+      const price = parseFloat(offer.price.total);
+      const duration = offer.itineraries.reduce((total, itinerary) => {
+        const hours = parseInt(itinerary.duration.match(/(\d+)H/)?.[1] || '0');
+        const minutes = parseInt(itinerary.duration.match(/(\d+)M/)?.[1] || '0');
+        return total + (hours * 60) + minutes;
+      }, 0);
+      return (price / 1000) + (duration / 60);
+    };
+    return getScore(a) - getScore(b);
+  });
+
+  const formatFlight = (offer) => {
+    if (!offer) return null;
+  
+    try {
+      const outbound = offer.itineraries[0];
+      const return_ = isRoundTrip ? offer.itineraries[1] : null;
+      const cabin = offer.travelerPricings[0].fareDetailsBySegment[0].cabin;
+  
+      // Generate booking links with cabin class and proper dates
+      const generateBookingLinks = (dep, arr, depDate, retDate = null) => {
+        const cabinParam = cabin.toLowerCase();
+        const formattedDepDate = depDate.split('T')[0];
+        const formattedRetDate = retDate ? retDate.split('T')[0] : null;
+        const isRoundTrip = !!retDate;
+  
+        return {
+          kayak: isRoundTrip
+            ? `https://www.kayak.com/flights/${dep}-${arr}/${formattedDepDate}/${formattedRetDate}?sort=bestflight_a&fs=cabin=${cabinParam}`
+            : `https://www.kayak.com/flights/${dep}-${arr}/${formattedDepDate}?sort=bestflight_a&fs=cabin=${cabinParam}`,
+          momondo: isRoundTrip
+            ? `https://www.momondo.com/flight-search/${dep}-${arr}/${formattedDepDate}/${formattedRetDate}?cabinclass=${cabinParam}`
+            : `https://www.momondo.com/flight-search/${dep}-${arr}/${formattedDepDate}?cabinclass=${cabinParam}`,
+          google: isRoundTrip
+            ? `https://www.google.com/travel/flights?q=Flights%20to%20${arr}%20from%20${dep}%20on%20${formattedDepDate}%20through%20${formattedRetDate}%20${cabinParam}`
+            : `https://www.google.com/travel/flights?q=Flights%20to%20${arr}%20from%20${dep}%20on%20${formattedDepDate}%20${cabinParam}`
+        };
+      };
+  
+      // Format flight details
+      const formatFlightSegment = (segments) => {
+        return {
+          departure: {
+            airport: segments[0].departure.iataCode,
+            time: segments[0].departure.at.split('T')[1],
+            date: segments[0].departure.at.split('T')[0]
+          },
+          arrival: {
+            airport: segments[segments.length - 1].arrival.iataCode,
+            time: segments[segments.length - 1].arrival.at.split('T')[1],
+            date: segments[segments.length - 1].arrival.at.split('T')[0]
+          },
+          duration: segments.reduce((total, seg) => total + seg.duration, ''),
+          stops: segments.length - 1,
+          stopLocations: segments.slice(0, -1).map(seg => ({
+            airport: seg.arrival.iataCode,
+            duration: seg.duration
+          }))
+        };
+      };
+  
+      const outboundSegment = formatFlightSegment(outbound.segments);
+      const returnSegment = return_ ? formatFlightSegment(return_.segments) : null;
+  
+      return {
+        airline: offer.validatingAirlineCodes[0],
+        price: formatPrice(offer.price.total),
+        pricePerPerson: formatPrice(offer.price.total / offer.travelerPricings.length),
+        class: cabin,
+        outbound: {
+          ...outboundSegment,
+          bookingLinks: generateBookingLinks(
+            outboundSegment.departure.airport,
+            outboundSegment.arrival.airport,
+            outbound.segments[0].departure.at,
+            return_?.segments[0].departure.at
+          )
+        },
+        return: returnSegment ? {
+          ...returnSegment,
+          bookingLinks: generateBookingLinks(
+            returnSegment.departure.airport,
+            returnSegment.arrival.airport,
+            return_.segments[0].departure.at
+          )
+        } : null,
+        totalDuration: formatDuration(
+          outbound.duration + (return_ ? return_.duration : '')
+        ),
+        totalStops: outbound.segments.length - 1 + (return_ ? return_.segments.length - 1 : 0)
+      };
+    } catch (error) {
+      console.error('Error formatting flight:', error);
+      console.error('Problematic offer:', offer);
+      return null;
+    }
   };
 
-  return {
-    cheapest: formatFlightOption(categorizedFlights.cheapest, 'cheapest'),
-    best: formatFlightOption(categorizedFlights.best, 'best'),
-    quickest: formatFlightOption(categorizedFlights.quickest, 'quickest')
+  // Format and return results
+  const results = {
+    cheapest: formatFlight(byPrice[0]),
+    best: formatFlight(byScore[0]),
+    quickest: formatFlight(byDuration[0])
   };
+
+  // Log results for debugging
+  console.log('Processed flight options:', results);
+
+  return results;
 };
 
 
@@ -219,22 +294,58 @@ const getAirportCodeFromAI = async (destination) => {
   }
 };
 
-
-// Helper function to get all airport codes for a cit
-
 // Validate airport code
 export const isValidAirportCode = (code) => {
   return typeof code === 'string' && code.length === 3 && /^[A-Z]{3}$/.test(code);
+};
+const validateHotels = (hotels, budget) => {
+  if (!hotels || !Array.isArray(hotels) || hotels.length === 0) {
+    return generateDefaultHotels(budget);
+  }
+
+  return hotels.map(hotel => ({
+    name: hotel.name || "Hotel name not available",
+    address: hotel.address || "Address not available",
+    priceRange: hotel.priceRange || getPriceRangeForBudget(budget),
+    rating: hotel.rating || 0,
+    description: hotel.description || "Description not available",
+    amenities: hotel.amenities || ["WiFi"],
+    coordinates: {
+      latitude: Number(hotel.coordinates?.latitude) || 0,
+      longitude: Number(hotel.coordinates?.longitude) || 0
+    },
+    imageUrl: hotel.imageUrl || "",
+    bookingLinks: {
+      booking: `https://www.booking.com/search.html?ss=${encodeURIComponent(hotel.name)}`,
+      tripadvisor: `https://www.tripadvisor.com/Search?q=${encodeURIComponent(hotel.name)}`,
+      googleMaps: `https://www.google.com/maps/search/${encodeURIComponent(hotel.name)}`
+    }
+  }));
 };
 
 
 const formatDate = (date) => {
   if (!date) return null;
-  const d = new Date(date);
-  return d.toISOString().split('T')[0];
+  
+  try {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) {
+      throw new Error('Invalid date');
+    }
+    
+    // Format as YYYY-MM-DD
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return null;
+  }
 };
 
-const fetchFlights = async (origin, destination, departureDate, returnDate) => {
+const fetchFlights = async (origin, destination, departureDate, returnDate, budget) => {
   try {
     if (!origin || !destination) {
       throw new Error('Origin and destination are required');
@@ -247,7 +358,11 @@ const fetchFlights = async (origin, destination, departureDate, returnDate) => {
       throw new Error('Invalid dates');
     }
 
-    // Get token
+    // Determine travel class based on budget
+    const travelClass = budget?.toLowerCase() === 'luxury' ? 'FIRST' : 
+                       budget?.toLowerCase() === 'premium' ? 'BUSINESS' : 
+                       'ECONOMY';
+
     const tokenResponse = await axios.post(
       'https://test.api.amadeus.com/v1/security/oauth2/token',
       new URLSearchParams({
@@ -264,7 +379,6 @@ const fetchFlights = async (origin, destination, departureDate, returnDate) => {
 
     const accessToken = tokenResponse.data.access_token;
 
-    // Updated search parameters - removed nonStop requirement
     const searchParams = {
       originLocationCode: origin,
       destinationLocationCode: destination,
@@ -272,7 +386,8 @@ const fetchFlights = async (origin, destination, departureDate, returnDate) => {
       returnDate: formattedReturnDate,
       adults: 1,
       currencyCode: 'USD',
-      max: 5
+      max: 50, // Increase to get more options
+      travelClass: travelClass
     };
 
     const response = await axios.get('https://test.api.amadeus.com/v2/shopping/flight-offers', {
@@ -313,7 +428,7 @@ const generateDayItineraries = (numDays) => {
     ${Array.from({ length: numDays }, (_, i) => `"day${i + 1}": []`).join(',')}
   }`;
 };
-const validateItinerary = async (jsonResponse, numDays, destination, getBudgetText, getPeopleText, selectedBudgets, selectedPeople, generateActivitiesForDay,setGenerationProgress  ) => {
+const validateItinerary = async (jsonResponse, numDays, destination, getBudgetText, getPeopleText, selectedBudgets, selectedPeople, generateActivitiesForDay,setGenerationProgress,preferences  ) => {
   console.log('Starting itinerary validation...');
 
   // Initialize itinerary if it doesn't exist or is empty
@@ -331,12 +446,14 @@ const validateItinerary = async (jsonResponse, numDays, destination, getBudgetTe
 
     try {
       // Generate new activities for this day
-      console.log(`Generating activities for ${dayKey}`);
+      
+      console.log(`Generating activities for ${dayKey} with preferences:`, preferences);
       const activities = await generateActivitiesForDay(
         i,
         destination.value.description,
         getBudgetText(selectedBudgets[0]),
-        getPeopleText(selectedPeople[0])
+        getPeopleText(selectedPeople[0]),
+        preferences
       );
 
       // Update the itinerary immediately for this day
@@ -448,16 +565,31 @@ const validateItinerary = async (jsonResponse, numDays, destination, getBudgetTe
   return jsonResponse;
 };
 
-const generateActivitiesForDay = async (dayNumber, destination, budget, travelers) => {
+const generateActivitiesForDay = async (dayNumber, destination, budget, travelers,preferences) => {
   console.group(`🔄 Generating Day ${dayNumber} Activities`);
   console.time(`Day ${dayNumber} Generation`);
 
   try {
-    const activityPrompt = `Create activities for day ${dayNumber} in ${destination} for travelers with a ${budget} budget.
-    Travelers: ${travelers}
+    // Check if preferences exist and provide defaults if not
+    const weatherPref = preferences?.weather || '';
+    const activitiesPref = preferences?.activities || '';
+    const sightseeingPref = preferences?.sightseeing || '';
+
+    const activityPrompt = `Create activities for day ${dayNumber} in ${destination}.
+    Trip Details:
+    - Travelers: ${travelers}
+    - Budget: ${budget}
+    - Weather Preference: ${weatherPref}
+    - Activity Types: ${activitiesPref}
+    - Sightseeing Interests: ${sightseeingPref}
     
-    IMPORTANT: Respond ONLY with a valid JSON array. No additional text or formatting.
-    Return 1-4 activities for the day, optimizing for quality over quantity.
+    IMPORTANT: Activities MUST match the preferences above.
+    For example, if preferences include beaches and warm weather, include beach activities, water sports, etc.
+    If preferences include adventure, include activities like hiking, climbing, water sports, etc.
+    
+    Return 3-4 activities that specifically match these preferences.
+    Each activity must be realistic and available in ${destination}.
+    Include actual prices, locations, and booking links.
 
     The response must exactly match this structure:
     [
@@ -737,6 +869,9 @@ function CreateTrip() {
     }
   });
 
+  const [isAISelected, setIsAISelected] = useState(false);
+
+
   const {
     SelectTravelsList,
     SelectBudgetOptions,
@@ -955,12 +1090,41 @@ function CreateTrip() {
       throw new Error('Invalid destination format');
     }
 
+    const preferences = {
+      weather: getWeatherPreferences(),
+      activities: getActivityPreferences(),
+      sightseeing: getSightseeingPreferences()
+    };
+    
+    // Get budget and travelers
+    const budget = getBudgetText(selectedBudgets[0]);
+    const travelers = getPeopleText(selectedPeople[0]);
+
     
   
       // Generate the trip itinerary
       const basePrompt = `Create a detailed travel itinerary for ${finalDestination.value.description} for ${numDays} days.
-  Travelers: ${getPeopleText(selectedPeople[0])}
-  Budget Level: ${getBudgetText(selectedBudgets[0])}
+Trip Details:
+- Travelers: ${travelers}
+- Budget: ${budget}
+- Weather Preference: ${preferences.weather}
+- Desired Activities: ${preferences.activities}
+- Sightseeing Interests: ${preferences.sightseeing}
+
+The hotels MUST:
+- Match the specified budget level (${budget})
+- Be located near preferred activities
+- Have real names, addresses, and accurate prices
+- Include actual booking links
+- Have realistic ratings and amenities
+- Be currently operational properties
+
+The activities MUST:
+- Match ALL specified preferences
+- Be available during the selected season
+- Include accurate pricing and timing
+- Have valid booking links
+- Be geographically accurate for ${finalDestination.value.description}
 
     CRITICAL INSTRUCTIONS:
     1. Response MUST be ONLY valid JSON
@@ -975,8 +1139,8 @@ function CreateTrip() {
     "trip": {
       "destination": "${finalDestination.value.description}",
       "duration": "${numDays} days",
-      "travelers": "${getPeopleText(selectedPeople[0])}",
-      "budget": "${getBudgetText(selectedBudgets[0])}",
+      "travelers": "${travelers}",
+      "budget": "${budget}",
       "currency": "USD"
     },
     "hotels": [
@@ -1081,16 +1245,37 @@ try {
 
   let flightData = null;
   try {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const returnDate = new Date(tomorrow);
-    returnDate.setDate(returnDate.getDate() + parseInt(numDays));
+    // Use the selected dates if available, otherwise calculate from tomorrow
+    let departureDate, returnDate;
+      
+    if (useDates && startDate && endDate) {
+      // Use selected dates if date picker is active
+      departureDate = new Date(startDate);
+      returnDate = new Date(endDate);
+    } else {
+      // Calculate dates based on numDays if using number input
+      departureDate = new Date();
+      departureDate.setDate(departureDate.getDate() + 1); // Start from tomorrow
+      
+      returnDate = new Date(departureDate);
+      returnDate.setDate(returnDate.getDate() + parseInt(numDays) - 1); // -1 because we count the start day
+    }
+
+    // Ensure dates are properly formatted
+    const formattedDepartureDate = formatDate(departureDate);
+    const formattedReturnDate = formatDate(returnDate);
+
+    console.log('Flight Search Dates:', {
+      departure: formattedDepartureDate,
+      return: formattedReturnDate
+    });
 
     flightData = await fetchFlights(
       'TLV',
       airportInfo.code,
-      tomorrow,
-      returnDate
+      formattedDepartureDate,
+      formattedReturnDate,
+      getBudgetText(selectedBudgets[0]) // Pass budget level
     );
   } catch (flightError) {
     console.warn('Flight search failed:', flightError);
@@ -1104,26 +1289,28 @@ try {
 
   if (flightData && flightData.length > 0) {
     
-    const roundTripOptions = processFlightOffers(
-      flightData.filter(offer => offer.itineraries.length === 2),
-      true
-    );
+    console.log(`Found ${flightData.length} total flights`);
   
-    // Process one-way options
-    const oneWayOptions = processFlightOffers(
-      flightData.filter(offer => offer.itineraries.length === 1),
-      false
-    );
+  // Separate round-trip and one-way flights
+  const roundTripFlights = flightData.filter(offer => offer.itineraries.length === 2);
+  const oneWayFlights = flightData.filter(offer => offer.itineraries.length === 1);
   
-    jsonResponse.flights = {
-      roundTrip: roundTripOptions,
-      oneWay: oneWayOptions
-    };
-  } else {
-    jsonResponse.flights = {
-      roundTrip: { cheapest: null, best: null, quickest: null },
-      oneWay: { cheapest: null, best: null, quickest: null }
-    };
+  console.log(`Round-trip flights: ${roundTripFlights.length}`);
+  console.log(`One-way flights: ${oneWayFlights.length}`);
+
+  jsonResponse.flights = {
+    roundTrip: processFlightOffers(roundTripFlights, true),
+    oneWay: processFlightOffers(oneWayFlights, false)
+  };
+
+  console.log('✅✅ Processed flights:', jsonResponse.flights);
+} else {
+  console.log('No flights found');
+  jsonResponse.flights = {
+    roundTrip: { cheapest: null, best: null, quickest: null },
+    oneWay: { cheapest: null, best: null, quickest: null }
+  };
+
   
     console.log('✅ Flights fetched successfully:', jsonResponse.flights);
 
@@ -1148,9 +1335,8 @@ for (let i = 1; i <= parseInt(numDays); i++) {
   const initialResponse = safeJSONParse(response);
 
   if (initialResponse?.hotels) {
-    console.log('✅ Hotels generated:', initialResponse.hotels);
-    jsonResponse.hotels = initialResponse.hotels;
-    setTripData(prev => ({ ...prev, hotels: initialResponse.hotels }));
+    jsonResponse.hotels = validateHotels(initialResponse.hotels, getBudgetText(selectedBudgets[0]));
+
   }
 
   // Now generate activities day by day
@@ -1199,7 +1385,8 @@ for (let i = 1; i <= parseInt(numDays); i++) {
         selectedBudgets,
         selectedPeople,
         generateActivitiesForDay,
-        setGenerationProgress
+        setGenerationProgress,
+        preferences 
       );
   
       setTripData(jsonResponse);
@@ -1224,8 +1411,8 @@ for (let i = 1; i <= parseInt(numDays); i++) {
     // }
   
     // Just set showMoreQuestions to true to show the preference options
+    setIsAISelected(!isAISelected);
     setShowMoreQuestions(true);
-    // toast.success(translate("preferencesCollected"));
   };
 
   const handleSelect = (id, category) => {
@@ -1278,7 +1465,6 @@ for (let i = 1; i <= parseInt(numDays); i++) {
 
   const SaveAiTrip=(tripData)
 
-
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">
       <h2
@@ -1300,39 +1486,37 @@ for (let i = 1; i <= parseInt(numDays); i++) {
       >
         {/* Destination Section */}
         <DestinationInput
-            place={place}
-            setPlace={setPlace}
-            translate={translate}
-            onToggle={handleHelpMeDecide}
-            onInputClick={() => setShowMoreQuestions(false)}
-
+          place={place}
+          setPlace={setPlace}
+          translate={translate}
+          onToggle={handleHelpMeDecide}
+          onInputClick={() => setShowMoreQuestions(false)}
+          isAISelected={isAISelected}
         />
 
         {/* Additional Questions */}
-        {showMoreQuestions && (
-          <div className="space-y-10">
-            <SelectableOptions
-              title={translate("weatherPreference")}
-              options={WeatherOptions}
-              selectedOptions={selectedWeather}
-              onSelect={(id) => handleSelect(id, "weather")}
-            />
-            <SelectableOptions
-              title={translate("activitiesPreference")}
-              options={ActivityOptions}
-              selectedOptions={selectedActivities}
-              onSelect={(id) => handleSelect(id, "activities")}
-              gridCols="grid-cols-2 md:grid-cols-4"
-            />
-            <SelectableOptions
-              title={translate("sightseeingPreference")}
-              options={SightseeingOptions}
-              selectedOptions={selectedSightseeing}
-              onSelect={(id) => handleSelect(id, "sightseeing")}
-              gridCols="grid-cols-2 md:grid-cols-4"
-            />
-          </div>
-        )}
+        <div className="space-y-10">
+          <SelectableOptions
+            title={translate("weatherPreference")}
+            options={WeatherOptions}
+            selectedOptions={selectedWeather}
+            onSelect={(id) => handleSelect(id, "weather")}
+          />
+          <SelectableOptions
+            title={translate("activitiesPreference")}
+            options={ActivityOptions}
+            selectedOptions={selectedActivities}
+            onSelect={(id) => handleSelect(id, "activities")}
+            gridCols="grid-cols-2 md:grid-cols-4"
+          />
+          <SelectableOptions
+            title={translate("sightseeingPreference")}
+            options={SightseeingOptions}
+            selectedOptions={selectedSightseeing}
+            onSelect={(id) => handleSelect(id, "sightseeing")}
+            gridCols="grid-cols-2 md:grid-cols-4"
+          />
+        </div>
 
         {/* Number of Days */}
         <DaysInput

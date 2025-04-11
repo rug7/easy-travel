@@ -26,6 +26,15 @@ const DaysInput = ({
 
   const handleDateChange = (dates) => {
     const [start, end] = dates;
+    
+    // Set the time to the start of the day (midnight) to ensure consistent calculations
+    if (start) {
+      start.setHours(0, 0, 0, 0);
+    }
+    if (end) {
+      end.setHours(0, 0, 0, 0);
+    }
+
     setStartDate(start);
     setEndDate(end);
 
