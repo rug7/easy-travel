@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -13,21 +13,55 @@ const DaysInput = ({
   endDate,
   setEndDate,
 }) => {
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  // Get number of days in selected month
+  const getDaysInMonth = (month, year) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const generateRandomDates = (month, year, days) => {
+    if (!days) return;
+    
+    const daysInMonth = getDaysInMonth(month, year);
+    const maxStartDay = daysInMonth - parseInt(days) + 1;
+    const randomStartDay = Math.floor(Math.random() * maxStartDay) + 1;
+    
+    // Create dates at midnight UTC to avoid timezone issues
+    const start = new Date(Date.UTC(year, month, randomStartDay));
+    const end = new Date(Date.UTC(year, month, randomStartDay + parseInt(days) - 1));
+    
+    setStartDate(start);
+    setEndDate(end);
+  
+    console.log('Generated Dates:', {
+      start: start.toISOString(),
+      end: end.toISOString(),
+    });
+  };
+
   const handleToggle = (option) => {
     if (option === "dates") {
       setUseDates(true);
-      setNumDays(""); // Reset number input
+      setNumDays("");
+      setStartDate(null);
+      setEndDate(null);
     } else {
       setUseDates(false);
       setStartDate(null);
-      setEndDate(null); // Reset date input
+      setEndDate(null);
     }
   };
 
   const handleDateChange = (dates) => {
     const [start, end] = dates;
     
-    // Set the time to the start of the day (midnight) to ensure consistent calculations
     if (start) {
       start.setHours(0, 0, 0, 0);
     }
@@ -38,13 +72,28 @@ const DaysInput = ({
     setStartDate(start);
     setEndDate(end);
 
-    // Calculate the number of days if both start and end dates are selected
     if (start && end) {
       const timeDiff = end.getTime() - start.getTime();
-      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end dates
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
       setNumDays(daysDiff.toString());
     } else {
       setNumDays("");
+    }
+  };
+
+  const handleMonthChange = (e) => {
+    const newMonth = parseInt(e.target.value);
+    setSelectedMonth(newMonth);
+    if (numDays) {
+      generateRandomDates(newMonth, selectedYear, numDays);
+    }
+  };
+
+  const handleDaysChange = (e) => {
+    const days = e.target.value;
+    setNumDays(days);
+    if (days) {
+      generateRandomDates(selectedMonth, selectedYear, days);
     }
   };
 
@@ -55,7 +104,7 @@ const DaysInput = ({
       </h2>
       <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
         <div className="flex flex-col md:flex-row gap-6">
-          {/* Number of Days Input */}
+          {/* Number of Days and Month Selection */}
           <div className="flex-1">
             <button
               onClick={() => handleToggle("days")}
@@ -65,16 +114,40 @@ const DaysInput = ({
             >
               {translate("numberOfDays")}
             </button>
+            <div className="flex gap-2 mt-3">
             <input
-              type="number"
-              value={numDays}
-              onChange={(e) => setNumDays(e.target.value)}
-              placeholder={translate("numberOfDays")}
-              className={`w-full px-4 py-2 mt-3 bg-gray-700 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                useDates ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={useDates}
-            />
+                type="number"
+                value={numDays}
+                onChange={handleDaysChange}
+                placeholder={translate("numberOfDays")}
+                className={`flex-1 px-4 py-2 bg-gray-700 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                  useDates ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={useDates}
+                min="1"
+                max={getDaysInMonth(selectedMonth, selectedYear)}
+              />
+              <select
+                value={selectedMonth}
+                onChange={handleMonthChange}
+                className={`flex-1 px-4 py-2 bg-gray-700 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                  useDates ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={useDates}
+              >
+                {months.map((month, index) => (
+                  <option key={index} value={index}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              
+            </div>
+            {startDate && !useDates && (
+              <p className="text-gray-300 mt-2 text-sm">
+                {`${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`}
+              </p>
+            )}
           </div>
 
           {/* Date Range Picker */}

@@ -338,7 +338,6 @@ const formatFlightSegment = (segments) => {
   }
 };
 
-
 const formatDate = (date) => {
   if (!date) return null;
   
@@ -353,12 +352,15 @@ const formatDate = (date) => {
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     
-    return `${year}-${month}-${day}`;
+    const formattedDate = `${year}-${month}-${day}`;
+    console.log('Formatted date:', formattedDate); // Debug log
+    return formattedDate;
   } catch (error) {
     console.error('Date formatting error:', error);
     return null;
   }
 };
+
 const safeJSONParse = (str) => {
   try {
     // First try direct parsing
@@ -1488,26 +1490,18 @@ try {
   });
 
   let flightData = null;
+  let successfulAirport = null;
+
   try {
     // Use the selected dates if available, otherwise calculate from tomorrow
-    let departureDate, returnDate;
-      
-    if (useDates && startDate && endDate) {
-      // Use selected dates if date picker is active
-      departureDate = new Date(startDate);
-      returnDate = new Date(endDate);
-    } else {
-      // Calculate dates based on numDays if using number input
-      departureDate = new Date();
-      departureDate.setDate(departureDate.getDate() + 1); // Start from tomorrow
-      
-      returnDate = new Date(departureDate);
-      returnDate.setDate(returnDate.getDate() + parseInt(numDays) - 1); // -1 because we count the start day
+    if (!startDate || !endDate) {
+      throw new Error('No dates selected');
     }
 
+
     // Ensure dates are properly formatted
-    const formattedDepartureDate = formatDate(departureDate);
-    const formattedReturnDate = formatDate(returnDate);
+    const formattedDepartureDate = formatDate(startDate);
+    const formattedReturnDate = formatDate(endDate);
 
     console.log('Flight Search Dates:', {
       departure: formattedDepartureDate,
