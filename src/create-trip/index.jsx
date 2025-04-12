@@ -35,7 +35,14 @@ const formatDuration = (isoDuration) => {
 
 // Add this helper function to format price
 const formatPrice = (price) => {
-  return `$${parseFloat(price).toFixed(2)}`;
+  if (!price) return "$0.00";
+  // Convert to number and round to 2 decimal places
+  const numPrice = parseFloat(price);
+  // Format with commas for thousands and fixed 2 decimal places
+  return `$${numPrice.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })}`;
 };
 
 const processFlightOffers = (flightData, isRoundTrip = true) => {
@@ -70,10 +77,6 @@ const processFlightOffers = (flightData, isRoundTrip = true) => {
     };
   }
 
-  // Sort by price
-  const byPrice = [...validFlights].sort((a, b) => 
-    parseFloat(a.price.total) - parseFloat(b.price.total)
-  );
 
   // Sort by duration
   const byDuration = [...validFlights].sort((a, b) => {
@@ -109,6 +112,10 @@ const processFlightOffers = (flightData, isRoundTrip = true) => {
       const outbound = offer.itineraries[0];
       const return_ = isRoundTrip ? offer.itineraries[1] : null;
       const cabin = offer.travelerPricings[0].fareDetailsBySegment[0].cabin;
+      // Get total price from the offer
+      const totalPrice = parseFloat(offer.price.total);
+      // Get price per person
+      const pricePerPerson = totalPrice / offer.travelerPricings.length;
   
   
       const outboundSegment = formatFlightSegment(outbound.segments);
@@ -116,8 +123,9 @@ const processFlightOffers = (flightData, isRoundTrip = true) => {
   
       return {
         airline: offer.validatingAirlineCodes[0],
-        price: formatPrice(offer.price.total),
-        pricePerPerson: formatPrice(offer.price.total / offer.travelerPricings.length),
+        price: formatPrice(totalPrice),
+        pricePerPerson: formatPrice(pricePerPerson),
+        rawPrice: totalPrice, // Add raw price for sorting
         class: cabin,
         outbound: {
           ...outboundSegment,
@@ -155,16 +163,25 @@ const processFlightOffers = (flightData, isRoundTrip = true) => {
     }
   };
 
+ // Sort by actual numeric prices
+  const byPrice = [...validFlights].sort((a, b) => 
+    parseFloat(a.price.total) - parseFloat(b.price.total)
+  );
+
   // Format and return results
   const results = {
     cheapest: formatFlight(byPrice[0], 'cheapest'),
     best: formatFlight(byScore[0], 'best'),
     quickest: formatFlight(byDuration[0], 'quickest'),
-    all: flightData.map(offer => formatFlight(offer, 'cheapest')) // Default to cheapest for all flights
+    all: validFlights.map(offer => formatFlight(offer, 'cheapest')) // Default to cheapest for all flights
   };
 
-  // Log results for debugging
-  console.log('Processed flight options:', results);
+  // Log the actual prices for verification
+  console.log('Price comparison:', {
+    cheapest: results.cheapest?.rawPrice,
+    best: results.best?.rawPrice,
+    quickest: results.quickest?.rawPrice
+  });
 
   return results;
 };
@@ -342,63 +359,154 @@ const formatDate = (date) => {
     return null;
   }
 };
-
-const fetchFlights = async (origin, destination, departureDate, returnDate, tripType, seatClass) => {
+const safeJSONParse = (str) => {
   try {
-    if (!origin || !destination) {
-      throw new Error('Origin and destination are required');
-    }
+    // First try direct parsing
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      // If direct parsing fails, try cleaning
+      let cleanStr = str
+        .replace(/```json/g, '')
+        .replace(/```/g, '')
+        // Remove all non-printable characters
+        .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
+        // Remove all unicode quotes
+        .replace(/[\u2018\u2019\u201C\u201D]/g, '"')
+        // Replace multiple spaces with single space
+        .replace(/\s+/g, ' ')
+        // Remove line breaks and tabs
+        .replace(/[\n\r\t]/g, '')
+        .trim();
 
-    const formattedDepartureDate = formatDate(departureDate);
-    const formattedReturnDate = formatDate(returnDate);
-
-    if (!formattedDepartureDate || !formattedReturnDate) {
-      throw new Error('Invalid dates');
-    }
-
-    const tokenResponse = await axios.post(
-      'https://test.api.amadeus.com/v1/security/oauth2/token',
-      new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: import.meta.env.VITE_AMADEUS_CLIENT_ID,
-        client_secret: import.meta.env.VITE_AMADEUS_CLIENT_SECRET
-      }).toString(),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+      // Try to find the JSON object
+      const matches = cleanStr.match(/\{(?:[^{}]|{[^{}]*})*\}/g);
+      if (matches) {
+        // Try each matched object
+        for (const match of matches) {
+          try {
+            const parsed = JSON.parse(match);
+            if (parsed && typeof parsed === 'object') {
+              return parsed;
+            }
+          } catch (err) {
+            continue;
+          }
         }
       }
-    );
 
-    const accessToken = tokenResponse.data.access_token;
+      // Try to find a JSON array
+      const arrayMatch = cleanStr.match(/\[(?:[^$$$$]|$$.*?$$)*\]/g);
+      if (arrayMatch) {
+        try {
+          return JSON.parse(arrayMatch[0]);
+        } catch (err) {
+          console.error('Array parsing failed:', err);
+        }
+      }
 
-    const searchParams = {
-      originLocationCode: origin,
-      destinationLocationCode: destination,
-      departureDate: formattedDepartureDate,
-      adults: 1,
-      currencyCode: 'USD',
-      max: 50,
-      travelClass: seatClass // Use the passed seatClass
-    };
+      // If all else fails, try to extract anything that looks like JSON
+      const jsonLike = cleanStr.match(/{[\s\S]*}/);
+      if (jsonLike) {
+        try {
+          // Additional cleaning for common issues
+          const finalAttempt = jsonLike[0]
+            .replace(/,\s*}/g, '}') // Remove trailing commas
+            .replace(/,\s*]/g, ']')
+            .replace(/([{,]\s*)(\w+):/g, '$1"$2":') // Ensure property names are quoted
+            .replace(/:\s*'([^']*)'/g, ':"$1"') // Replace single quotes with double quotes
+            .replace(/\\/g, '\\\\'); // Escape backslashes
 
-    // Only add returnDate if it's a round trip
-    if (tripType === 'roundTrip' && formattedReturnDate) {
-      searchParams.returnDate = formattedReturnDate;
+          return JSON.parse(finalAttempt);
+        } catch (err) {
+          console.error('Final parsing attempt failed:', err);
+        }
+      }
     }
-
-    const response = await axios.get('https://test.api.amadeus.com/v2/shopping/flight-offers', {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      },
-      params: searchParams
-    });
-
-    return response.data.data;
   } catch (error) {
-    console.error('Flight API Error:', error);
-    throw error;
+    console.error("JSON Parse Error:", error);
+    console.log("Problematic string:", str);
   }
+  return null;
+};
+
+const fetchFlights = async (origin, destination, departureDate, returnDate, tripType, seatClass) => {
+  const tryFlightSearch = async (cabin) => {
+    try {
+      const tokenResponse = await axios.post(
+        'https://test.api.amadeus.com/v1/security/oauth2/token',
+        new URLSearchParams({
+          grant_type: 'client_credentials',
+          client_id: import.meta.env.VITE_AMADEUS_CLIENT_ID,
+          client_secret: import.meta.env.VITE_AMADEUS_CLIENT_SECRET
+        }).toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }
+      );
+
+      const accessToken = tokenResponse.data.access_token;
+
+      const searchParams = {
+        originLocationCode: origin,
+        destinationLocationCode: destination,
+        departureDate: departureDate,
+        adults: 1,
+        currencyCode: 'USD',
+        max: 50,
+        travelClass: cabin
+      };
+
+      if (tripType === 'roundTrip' && returnDate) {
+        searchParams.returnDate = returnDate;
+      }
+
+      const response = await axios.get('https://test.api.amadeus.com/v2/shopping/flight-offers', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        params: searchParams
+      });
+
+      return {
+        data: response.data.data,
+        cabinClass: cabin // Return the successful cabin class
+      };
+    } catch (error) {
+      console.log(`No flights found for ${cabin} class`);
+      return null;
+    }
+  };
+
+  // Try each cabin class in order of preference
+  const cabinClassOrder = {
+    'FIRST': ['FIRST', 'BUSINESS', 'ECONOMY'],
+    'BUSINESS': ['BUSINESS', 'FIRST', 'ECONOMY'],
+    'ECONOMY': ['ECONOMY', 'BUSINESS', 'FIRST']
+  };
+
+  // Get the order based on selected seat class
+  const classOrder = cabinClassOrder[seatClass] || ['ECONOMY', 'BUSINESS', 'FIRST'];
+
+  // Try each cabin class until flights are found
+  for (const cabin of classOrder) {
+    console.log(`Trying to find flights in ${cabin} class...`);
+    const result = await tryFlightSearch(cabin);
+    
+    if (result && result.data && result.data.length > 0) {
+      console.log(`Found flights in ${cabin} class`);
+      // If flights found in a different class, show a toast notification
+      if (cabin !== seatClass) {
+        toast.info(`No flights found in ${seatClass} class. Showing available ${cabin} class flights instead.`);
+      }
+      return result.data;
+    }
+  }
+
+  // If no flights found in any class
+  throw new Error('No flights found in any class');
 };
 
 const generateDayItineraries = (numDays) => {
@@ -919,6 +1027,104 @@ const SeatClassSelector = ({ selected, onSelect, options }) => {
   );
 };
 
+const generateHotels = async (destination, budget, preferences, numDays) => {
+  console.group('🏨 Hotel Generation');
+  console.time('Hotel Generation Duration');
+  const hotelPrompt = `Generate hotel recommendations for a ${numDays}-day stay in ${destination}.
+  Budget Level: ${budget}
+  Preferences: ${JSON.stringify(preferences)}
+
+  CRITICAL: Return ONLY valid JSON with EXACTLY 3-5 hotels matching these criteria:
+  1. Match the ${budget} budget level
+  2. Located near main attractions
+  3. Currently operational properties
+  4. Include REAL names, addresses, and prices
+  5. Include ACTUAL booking links
+  6. Have ACCURATE ratings and amenities
+
+  Response MUST be in this EXACT format:
+  {
+    "hotels": [
+      {
+        "name": "Real Hotel Name",
+        "address": "Complete Street Address",
+        "priceRange": "Price range in USD",
+        "rating": 4.5,
+        "description": "Detailed description",
+        "amenities": ["WiFi", "Pool", "Restaurant"],
+        "coordinates": {
+          "latitude": 35.6895,
+          "longitude": 139.6917
+        },
+        "imageUrl": "https://...",
+        "bookingLinks": {
+          "booking": "https://www.booking.com/...",
+          "tripadvisor": "https://www.tripadvisor.com/...",
+          "googleMaps": "https://www.google.com/maps/..."
+        }
+      }
+    ]
+  }`;
+
+  let retryCount = 0;
+  const maxRetries = 4;
+
+  while (retryCount < maxRetries) {
+    try {
+      console.log(`Attempting to generate hotels (attempt ${retryCount + 1})`);
+      const result = await chatSession.sendMessage([{ text: hotelPrompt }]);
+      const response = await result.response.text();
+      const data = safeJSONParse(response);
+
+      if (data?.hotels && Array.isArray(data.hotels) && data.hotels.length > 0) {
+        console.log('Generated Hotels:', data.hotels);
+        console.timeEnd('Hotel Generation Duration');
+        console.groupEnd();
+        return validateHotels(data.hotels, budget);
+      }
+
+      console.log(`⚠️ Invalid hotel data received, retrying...`);
+      retryCount++;
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+    } catch (error) {
+      console.error(`Error generating hotels (attempt ${retryCount + 1}):`, error);
+      retryCount++;
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+
+  console.warn('❌ All hotel generation attempts failed, using default hotels');
+  return generateDefaultHotels(budget);
+};
+
+// Helper function to generate default hotels
+const generateDefaultHotels = (budget) => {
+  const priceRanges = {
+    'Luxury': '$300+ per night',
+    'Moderate': '$150-300 per night',
+    'Budget': 'Under $150 per night'
+  };
+
+  return [
+    {
+      name: `${budget} Hotel 1`,
+      address: "City Center Location",
+      priceRange: priceRanges[budget] || priceRanges['Moderate'],
+      rating: 4,
+      description: `Quality ${budget.toLowerCase()} accommodation in the city center`,
+      amenities: ["WiFi", "Air Conditioning", "Restaurant"],
+      coordinates: { latitude: 0, longitude: 0 },
+      imageUrl: "",
+      bookingLinks: {
+        booking: "",
+        tripadvisor: "",
+        googleMaps: ""
+      }
+    },
+    // Add more default hotels if needed
+  ];
+};
+
 
 
 function CreateTrip() {
@@ -1042,76 +1248,7 @@ function CreateTrip() {
     }
   });
 
-  const safeJSONParse = (str) => {
-    try {
-      // First try direct parsing
-      try {
-        return JSON.parse(str);
-      } catch (e) {
-        // If direct parsing fails, try cleaning
-        let cleanStr = str
-          .replace(/```json/g, '')
-          .replace(/```/g, '')
-          // Remove all non-printable characters
-          .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
-          // Remove all unicode quotes
-          .replace(/[\u2018\u2019\u201C\u201D]/g, '"')
-          // Replace multiple spaces with single space
-          .replace(/\s+/g, ' ')
-          // Remove line breaks and tabs
-          .replace(/[\n\r\t]/g, '')
-          .trim();
   
-        // Try to find the JSON object
-        const matches = cleanStr.match(/\{(?:[^{}]|{[^{}]*})*\}/g);
-        if (matches) {
-          // Try each matched object
-          for (const match of matches) {
-            try {
-              const parsed = JSON.parse(match);
-              if (parsed && typeof parsed === 'object') {
-                return parsed;
-              }
-            } catch (err) {
-              continue;
-            }
-          }
-        }
-  
-        // Try to find a JSON array
-        const arrayMatch = cleanStr.match(/\[(?:[^$$$$]|$$.*?$$)*\]/g);
-        if (arrayMatch) {
-          try {
-            return JSON.parse(arrayMatch[0]);
-          } catch (err) {
-            console.error('Array parsing failed:', err);
-          }
-        }
-  
-        // If all else fails, try to extract anything that looks like JSON
-        const jsonLike = cleanStr.match(/{[\s\S]*}/);
-        if (jsonLike) {
-          try {
-            // Additional cleaning for common issues
-            const finalAttempt = jsonLike[0]
-              .replace(/,\s*}/g, '}') // Remove trailing commas
-              .replace(/,\s*]/g, ']')
-              .replace(/([{,]\s*)(\w+):/g, '$1"$2":') // Ensure property names are quoted
-              .replace(/:\s*'([^']*)'/g, ':"$1"') // Replace single quotes with double quotes
-              .replace(/\\/g, '\\\\'); // Escape backslashes
-  
-            return JSON.parse(finalAttempt);
-          } catch (err) {
-            console.error('Final parsing attempt failed:', err);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("JSON Parse Error:", error);
-      console.log("Problematic string:", str);
-    }
-    return null;
-  };
 
 
   const generateTrip = async (destination) => {
@@ -1240,14 +1377,6 @@ Trip Details:
 - Desired Activities: ${preferences.activities}
 - Sightseeing Interests: ${preferences.sightseeing}
 
-The hotels MUST:
-- Match the specified budget level (${budget})
-- Be located near preferred activities
-- Have real names, addresses, and accurate prices
-- Include actual booking links
-- Have realistic ratings and amenities
-- Be currently operational properties
-
 The activities MUST:
 - Match ALL specified preferences
 - Be available during the selected season
@@ -1263,7 +1392,6 @@ The activities MUST:
     5. String values MUST be in double quotes
     6. NO trailing commas
     7. NO single quotes
-    8. Response MUST CONTAIN HOTELS, even for long trips
     
   {
     "trip": {
@@ -1273,34 +1401,12 @@ The activities MUST:
       "budget": "${budget}",
       "currency": "USD"
     },
-    "hotels": [
-      {
-        "name": "",
-        "address": "",
-        "priceRange": "",
-        "rating": 0,
-        "description": "",
-        "amenities": ["WiFi", "Pool", "Restaurant"],
-        "coordinates": {
-          "latitude": 0,
-          "longitude": 0
-        },
-        "imageUrl": "",
-        "bookingLinks": {
-          "booking": "",
-          "skyscanner": "",
-          "tripadvisor": "",
-          "googleMaps": ""
-        }
-      }
-    ],
      ${generateDayItineraries(parseInt(numDays))}
   }`;
   
   const guidelines = `
   
   Guidelines:
-  - Provide at least 3 hotel suggestions with complete details including name, address, price range, rating, description, amenities, coordinates, image URL, and booking links.
   - Each day's activities should follow this structure:
   {
     "activity": "Name of activity",
@@ -1331,6 +1437,14 @@ The activities MUST:
 
 setIsGenerating(true);
 console.log('Starting trip generation...');
+console.log('Generating hotels...');
+
+const hotels = await generateHotels(
+  finalDestination.value.description,
+  getBudgetText(selectedBudgets[0]),
+  preferences,
+  parseInt(numDays)
+);
 
 // Initialize base structure with your original prompt structure
 let jsonResponse = {
@@ -1345,7 +1459,7 @@ let jsonResponse = {
     outbound: [],
     return: []
   },
-  hotels: [],
+  hotels: hotels,
   itinerary: {}
 };
 
@@ -1419,40 +1533,44 @@ try {
   }
 
   if (flightData && flightData.length > 0) {
-    
     console.log(`Found ${flightData.length} total flights`);
     const processedFlights = processFlightOffers(
       flightData,
       tripType === 'roundTrip'
     );
-  
-  // Separate round-trip and one-way flights
-  
 
+    jsonResponse.flights = {
+      type: tripType,
+      class: seatClass,
+      options: processedFlights
+    };
+
+    console.log('✅✅ Processed flights:', jsonResponse.flights);
+  } else {
+    console.log('No flights found in any class');
+    jsonResponse.flights = {
+      type: tripType,
+      class: seatClass,
+      options: {
+        cheapest: null,
+        best: null,
+        quickest: null,
+        all: []
+      }
+    };
+  }
+
+} catch (flightError) {
+  console.warn('Flight search failed:', flightError);
   jsonResponse.flights = {
     type: tripType,
     class: seatClass,
-    options: processedFlights
-  };
-
-  console.log('✅✅ Processed flights:', jsonResponse.flights);
-} else {
-  console.log('No flights found');
-  jsonResponse.flights = {
-    roundTrip: { cheapest: null, best: null, quickest: null },
-    oneWay: { cheapest: null, best: null, quickest: null }
-  };
-
-  
-    console.log('✅ Flights fetched successfully:', jsonResponse.flights);
-
-  }
-
-} catch (error) {
-  console.warn('Could not fetch flight data, falling back to AI suggestions:', error);
-  jsonResponse.flights = {
-    outbound: [],
-    return: []
+    options: {
+      cheapest: null,
+      best: null,
+      quickest: null,
+      all: []
+    }
   };
 }
 
