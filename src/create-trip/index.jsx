@@ -15,14 +15,7 @@ import { IoClose } from "react-icons/io5";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-
-// Import utility functions
 import { generateTrip } from "@/utils/itineraryUtils";
-import { generateBookingLinks } from '@/utils/bookingUtils';
-
-
-
-
 
 
 function CreateTrip() {

@@ -413,26 +413,26 @@ export const generateActivitiesForDay = async (dayNumber, destination, budget, t
     }
   };
   export const generateTrip = async ({
-    destination,
-  place,
-  isAISelected,
-  numDays,
-  selectedBudgets,
-  selectedPeople,
-  selectedWeather,
-  selectedActivities,
-  selectedSightseeing,
-  startDate,
-  endDate,
-  tripType,
-  seatClass,
-  preferences,
-  translate,
-  setGenerationProgress,
-  setTripData,
-  setOpenDialog,
-  setIsGenerating,
-  options
+   destination,
+    place,
+    isAISelected,
+    numDays,
+    selectedBudgets,
+    selectedPeople,
+    selectedWeather,
+    selectedActivities,
+    selectedSightseeing,
+    startDate,
+    endDate,
+    tripType,
+    seatClass,
+    preferences,
+    translate,
+    setGenerationProgress,
+    setTripData,
+    setOpenDialog,
+    setIsGenerating,
+    options
   }) => {
     const {
       SelectTravelsList,
@@ -628,12 +628,29 @@ export const generateActivitiesForDay = async (dayNumber, destination, budget, t
     console.log('Starting trip generation...');
     console.log('Generating hotels...');
     
-    const hotels = await generateHotels(
-      finalDestination.value.description,
-      getBudgetText(selectedBudgets[0]),
-      preferences,
-      parseInt(numDays)
+    let hotels = [];
+if (finalDestination && finalDestination.value && finalDestination.value.description) {
+    hotels = await generateHotels(
+        finalDestination.value.description,
+        getBudgetText(selectedBudgets[0]),
+        preferences,
+        parseInt(numDays),
+        {
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate)
+        }
     );
+} else {
+    console.warn('No destination specified, using default hotels');
+    hotels = generateDefaultHotels(
+        getBudgetText(selectedBudgets[0]),
+        'Default Location',
+        {
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate)
+        }
+    );
+}
     
     // Initialize base structure with your original prompt structure
     let jsonResponse = {
