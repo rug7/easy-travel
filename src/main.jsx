@@ -8,6 +8,7 @@ import Header from "./components/custom/Header";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext"; // Correct import
 import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import Viewtrip from "./view-trip/[tripId]/index.jsx";
 
 
 // Wrapper Component for Direction Handling
@@ -31,6 +32,17 @@ const router = createBrowserRouter([
         {/* <AppWrapper> */}
           <Header />
           <CreateTrip />
+        {/* </AppWrapper> */}
+      </LanguageProvider>
+    ),
+  },
+  {
+    path:'view-trip/:tripId',
+    element:(
+      <LanguageProvider>
+        {/* <AppWrapper> */}``
+          <Header />
+          <Viewtrip/>
         {/* </AppWrapper> */}
       </LanguageProvider>
     ),

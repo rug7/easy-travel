@@ -18,6 +18,7 @@ import axios from "axios";
 import { generateTrip } from "@/utils/itineraryUtils";
 import { setDoc,doc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -37,6 +38,9 @@ function CreateTrip() {
   const [selectedSightseeing, setSelectedSightseeing] = useState([]);
   const [selectedBudgets, setSelectedBudgets] = useState([]);
   const [selectedPeople, setSelectedPeople] = useState([]);
+
+
+  const navigate = useNavigate();
 
   const [openDialog,setOpenDialog]=useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -308,6 +312,7 @@ function CreateTrip() {
       id: docId,
       createdAt: new Date().toISOString()
     });
+    navigate('/view-trip/'+docId)
 
     // toast.success("Trip saved successfully!");
   } catch (error) {
