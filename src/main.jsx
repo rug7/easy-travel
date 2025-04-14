@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path:'view-trip/:tripId',
+    path:'/view-trip/:tripId',
     element:(
       <LanguageProvider>
         {/* <AppWrapper> */}``
