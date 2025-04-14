@@ -16,6 +16,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogClose } f
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { generateTrip } from "@/utils/itineraryUtils";
+import { setDoc,doc } from "firebase/firestore";
+import { db } from "@/service/firebaseConfig";
+
+
 
 
 function CreateTrip() {
@@ -166,6 +170,7 @@ function CreateTrip() {
         setTripData,
         setOpenDialog,
         setIsGenerating,
+        SaveAiTrip, // Pass the function as a parameter
         options: {
           SelectTravelsList,
           SelectBudgetOptions,
@@ -241,7 +246,75 @@ function CreateTrip() {
     })
   }
 
-  const SaveAiTrip=(tripData)
+  const SaveAiTrip = async (tripData) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const docId = Date.now().toString();
+      
+      // Get the actual names/labels from the selected IDs
+    const getBudgetText = (budgetId) => {
+      const budget = SelectBudgetOptions.find(b => b.id === parseInt(budgetId));
+      return budget?.title || 'Moderate';
+    };
+
+    const getPeopleText = (peopleId) => {
+      const people = SelectTravelsList.find(p => p.id === parseInt(peopleId));
+      return people?.title || 'Family';
+    };
+
+    const getWeatherPreferences = () => {
+      return selectedWeather.map(id => 
+        WeatherOptions.find(w => w.id === id)?.title
+      );
+    };
+
+    const getActivityPreferences = () => {
+      return selectedActivities.map(id => 
+        ActivityOptions.find(a => a.id === id)?.title
+      );
+    };
+
+    const getSightseeingPreferences = () => {
+      return selectedSightseeing.map(id => 
+        SightseeingOptions.find(s => s.id === id)?.title
+      );
+    };
+
+    // Format dates properly
+    const formatDate = (date) => {
+      if (!date) return null;
+      return new Date(date).toISOString();
+    };
+
+    const formData = {
+      destination: place?.value?.description || '',
+      numDays: numDays,
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
+      budget: getBudgetText(selectedBudgets[0]),
+      travelers: getPeopleText(selectedPeople[0]),
+      weather: getWeatherPreferences(),
+      activities: getActivityPreferences(),
+      sightseeing: getSightseeingPreferences(),
+      tripType: tripType,
+      seatClass: seatClass,
+      isAISelected: isAISelected
+    };
+
+    await setDoc(doc(db, "AITrips", docId), {
+      userSelection: formData,
+      tripData: tripData,
+      userEmail: user?.email,
+      id: docId,
+      createdAt: new Date().toISOString()
+    });
+
+    // toast.success("Trip saved successfully!");
+  } catch (error) {
+    console.error("Error saving trip:", error);
+    // toast.error("Failed to save trip");
+  }
+};
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">

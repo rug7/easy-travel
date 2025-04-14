@@ -427,6 +427,7 @@ export const generateActivitiesForDay = async (dayNumber, destination, budget, t
     tripType,
     seatClass,
     preferences,
+    SaveAiTrip,
     translate,
     setGenerationProgress,
     setTripData,
@@ -839,6 +840,9 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
       
           setTripData(jsonResponse);
           console.log(jsonResponse);
+          if (SaveAiTrip) {
+            await SaveAiTrip(jsonResponse);
+          }
           toast.success(translate("tripGeneratedSuccess"));
       
         } catch (error) {
