@@ -4,6 +4,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import InfoSection from "../components/InfoSection";
+import Hotels from "../components/Hotels";
+import Flights from "../components/Flights";
 
 function Viewtrip() {
     // Get tripId directly from useParams
@@ -39,8 +41,18 @@ function Viewtrip() {
     }
 
     return (
-        <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56'> {/* Add pt-[72px] here */}            <InfoSection trip={trip} />
+        <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56'>
+
+            {/* info*/}
+            <InfoSection trip={trip} />
+
+            {/* flights */}
+            <Flights trip={trip} />
+
             {/* Rest of your components */}
+            <Hotels trip={trip} />
+
+
         </div>
     );
 }
