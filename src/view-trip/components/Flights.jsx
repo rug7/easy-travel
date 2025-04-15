@@ -1,3 +1,11 @@
+const formatFlightPrice = (price) => {
+    if (!price) return '$0';
+    // Remove '$' if present, convert to number, and round to whole number
+    const numericPrice = parseFloat(price.replace('$', ''));
+    if (isNaN(numericPrice)) return '$0';
+    return `$${Math.round(numericPrice)}`;
+};
+
 function Flights({trip}) {
     // Get the links from the correct path
     const bestLink = trip?.tripData?.flights?.options?.best?.outbound?.bookingLinks?.momondo;
@@ -22,7 +30,7 @@ function Flights({trip}) {
                               {trip?.tripData?.flights?.options?.best?.airline}
                           </span>
                           <span className='text-white font-bold'>
-                              {trip?.tripData?.flights?.options?.best?.pricePerPerson}
+                          {formatFlightPrice(trip?.tripData?.flights?.options?.best?.pricePerPerson)}
                           </span>
                       </div>
                       <div className='text-gray-400 text-sm'>
@@ -47,7 +55,7 @@ function Flights({trip}) {
                               {trip?.tripData?.flights?.options?.cheapest?.airline}
                           </span>
                           <span className='text-white font-bold'>
-                              {trip?.tripData?.flights?.options?.cheapest?.pricePerPerson}
+                          {formatFlightPrice(trip?.tripData?.flights?.options?.cheapest?.pricePerPerson)}
                           </span>
                       </div>
                       <div className='text-gray-400 text-sm'>
@@ -72,8 +80,7 @@ function Flights({trip}) {
                               {trip?.tripData?.flights?.options?.quickest?.airline}
                           </span>
                           <span className='text-white font-bold'>
-                              {trip?.tripData?.flights?.options?.quickest?.pricePerPerson}
-                          </span>
+                          {formatFlightPrice(trip?.tripData?.flights?.options?.quickest?.pricePerPerson)}                          </span>
                       </div>
                       <div className='text-gray-400 text-sm'>
                           <div>✈️ Total Duration: {trip?.tripData?.flights?.options?.quickest?.totalDuration}</div>

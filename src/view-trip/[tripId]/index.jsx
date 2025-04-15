@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import InfoSection from "../components/InfoSection";
 import Hotels from "../components/Hotels";
 import Flights from "../components/Flights";
+import Activities from "../components/Activities";
 
 function Viewtrip() {
     // Get tripId directly from useParams
@@ -51,6 +52,9 @@ function Viewtrip() {
 
             {/* Rest of your components */}
             <Hotels trip={trip} />
+
+            <Activities trip={trip} />
+
 
 
         </div>

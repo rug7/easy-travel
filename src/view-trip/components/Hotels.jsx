@@ -6,7 +6,7 @@ function Hotels({trip}) {
         <h2 className='font-bold text-xl mt-5 text-white'>Hotel Recommendation</h2>
         <div className='grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5'>
             {trip?.tripData?.hotels.map((hotel,index)=>(
-                <div key={index}>
+                <div key={index} className='bg-gray-800 rounded-xl p-4 cursor-pointer hover:bg-gray-700 transition-all'>
                     <a href={hotel.bookingLinks.googleMaps} target="_blank" rel="noopener noreferrer">
                         <img 
                             src='/moderate1.jpg' 
