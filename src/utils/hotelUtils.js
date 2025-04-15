@@ -29,6 +29,7 @@ const getCountryCodeFromAI = async (country) => {
   }
 };
 
+
 export const generateHotels = async (destination, budget, preferences, numDays, dates) => {
     console.group('🏨 Hotel Generation');
     console.time('Hotel Generation Duration');
