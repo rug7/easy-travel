@@ -19,28 +19,14 @@ export const formatDuration = (isoDuration) => {
     })}`;
   };
 
-  export const formatDate = (date) => {
-    if (!date) return null;
-    
-    try {
-      const d = new Date(date);
-      if (isNaN(d.getTime())) {
-        throw new Error('Invalid date');
-      }
-      
-      // Format as YYYY-MM-DD
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      
-      const formattedDate = `${year}-${month}-${day}`;
-      console.log('Formatted date:', formattedDate); // Debug log
-      return formattedDate;
-    } catch (error) {
-      console.error('Date formatting error:', error);
-      return null;
-    }
-  };
+  export const formatDate = (dateString) => {
+    if (!dateString) return 'Not specified';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+};
   
  export const safeJSONParse = (str) => {
     try {
