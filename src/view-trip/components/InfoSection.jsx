@@ -42,17 +42,17 @@ function InfoSection({ trip }) {
                 <div className="flex justify-between items-center mt-4 px-1">
                     {/* Pills Container */}
                     <div className="flex gap-3">
-                        <div className="bg-gray-100 px-4 py-2 rounded-full flex items-center gap-2">
+                        <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2">
                             <span>💰</span>
                             <span className="font-medium text-gray-700">{trip.userSelection?.budget} Budget</span>
                         </div>
-                        <div className="bg-gray-100 px-4 py-2 rounded-full flex items-center gap-2">
+                        <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2">
                             <span>👥</span>
                             <span className="font-medium text-gray-700">No. Of Travelers: {trip.userSelection?.travelers}</span>
                         </div>
-                        <div className="bg-gray-100 px-4 py-2 rounded-full flex items-center gap-2">
+                        <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2">
                             <span>📆</span>
-                            <span className="font-medium text-gray-700">Travel Date: {formatDate(trip.userSelection?.startDate)}</span>
+                            <span className="font-medium text-gray-700">Travel Date: {formatDate(trip.userSelection?.startDate)} ➡️ {formatDate(trip.userSelection?.endDate)}</span>
                         </div>
                     </div>
                    {/* Share Button */}
