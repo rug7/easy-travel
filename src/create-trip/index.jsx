@@ -20,6 +20,9 @@ import { setDoc,doc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
+import LoadingScreen from "@/view-trip/components/LoadingScreen";
+
+
 
 
 
@@ -40,14 +43,25 @@ function CreateTrip() {
   const [selectedPeople, setSelectedPeople] = useState([]);
 
 
+  
   const navigate = useNavigate();
 
   const [openDialog,setOpenDialog]=useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState({
+    destination: false,
+    flights: false,
+    hotels: false,
+    activities: false,
+    finalizing: false,
+    completed: false,
     currentDay: 0,
     totalDays: 0
   });
+
+  // Add state to track the trip ID for navigation
+  const [generatedTripId, setGeneratedTripId] = useState(null);
+  
 
   const [tripData, setTripData] = useState({
     destination: null,
@@ -105,6 +119,11 @@ function CreateTrip() {
     SightseeingOptions,
   } = getTranslatedOptions(translate);
 
+  const handleGenerationComplete = () => {
+    setIsGenerating(false);
+    // Navigation is handled in the LoadingScreen component
+  };
+
   useEffect(() => {
     console.log("Current Form Data:", {
       destination: place,
@@ -148,7 +167,20 @@ function CreateTrip() {
   });
 
   const handleGenerateTrip = async () => {
+    // Reset progress state
+    setGenerationProgress({
+      destination: false,
+      flights: false,
+      hotels: false,
+      activities: false,
+      finalizing: false,
+      completed: false,
+      currentDay: 0,
+      totalDays: 0
+    });
+    
     setIsGenerating(true);
+    
     try {
       await generateTrip({
         place,
@@ -170,11 +202,16 @@ function CreateTrip() {
           sightseeing: selectedSightseeing
         },
         translate,
-        setGenerationProgress,
+        setGenerationProgress, // This will now receive our enhanced progress updates
         setTripData,
         setOpenDialog,
         setIsGenerating,
-        SaveAiTrip, // Pass the function as a parameter
+        SaveAiTrip: async (tripData) => {
+          // Modified SaveAiTrip to capture the generated ID
+          const id = await SaveAiTrip(tripData);
+          setGeneratedTripId(id);
+          return id;
+        },
         options: {
           SelectTravelsList,
           SelectBudgetOptions,
@@ -183,15 +220,20 @@ function CreateTrip() {
           SightseeingOptions
         }
       });
+      
+      // Mark generation as complete
+      setGenerationProgress(prev => ({
+        ...prev,
+        completed: true
+      }));
+      
     } catch (error) {
       console.error('Error generating trip:', error);
       toast.error(error.message || translate("errorGeneratingTrip"));
-    } finally {
       setIsGenerating(false);
     }
   };
-
-
+  
  
 
   const handleHelpMeDecide = () => {
@@ -283,6 +325,8 @@ function CreateTrip() {
         SightseeingOptions.find(s => s.id === id)?.title
       );
     };
+    // Add this function to your CreateTrip component
+
 
     // Format dates properly
     const formatDate = (date) => {
@@ -312,17 +356,24 @@ function CreateTrip() {
       id: docId,
       createdAt: new Date().toISOString()
     });
-    navigate('/view-trip/'+docId)
-
-    // toast.success("Trip saved successfully!");
+    // Return the docId so we can use it for navigation
+    return docId;
   } catch (error) {
     console.error("Error saving trip:", error);
-    // toast.error("Failed to save trip");
+    return null;
   }
 };
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">
+      {/* Show loading screen when generating */}
+      {isGenerating && (
+        <LoadingScreen 
+          progress={generationProgress} 
+          tripData={{ id: generatedTripId }}
+          onComplete={handleGenerationComplete}
+        />
+      )}
       <h2
         className="font-bold text-4xl text-white text-center mb-6"
         style={{ direction: isRTL ? "rtl" : "ltr" }}

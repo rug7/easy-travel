@@ -1,3 +1,4 @@
+// In your view-trip/[tripId]/index.jsx file
 import React, { useEffect, useState } from "react";
 import { db } from '@/service/firebaseConfig';
 import { doc, getDoc } from "firebase/firestore";
@@ -12,6 +13,15 @@ function Viewtrip() {
     // Get tripId directly from useParams
     const { tripId } = useParams();
     const [trip, setTrip] = useState(null);
+    const [loading, setLoading] = useState(true);
+    
+    // State to track which sections are visible for animation
+    const [visibleSections, setVisibleSections] = useState({
+        info: false,
+        flights: false,
+        hotels: false,
+        activities: false
+    });
 
     useEffect(() => {
         if (tripId) {
@@ -19,7 +29,31 @@ function Viewtrip() {
         }
     }, [tripId]);
 
+    // Progressive loading effect
+    useEffect(() => {
+        if (!trip) return;
+        
+        // Show info section immediately
+        setVisibleSections(prev => ({ ...prev, info: true }));
+        
+        // Show flights after a delay
+        setTimeout(() => {
+            setVisibleSections(prev => ({ ...prev, flights: true }));
+        }, 800);
+        
+        // Show hotels after another delay
+        setTimeout(() => {
+            setVisibleSections(prev => ({ ...prev, hotels: true }));
+        }, 1600);
+        
+        // Show activities after final delay
+        setTimeout(() => {
+            setVisibleSections(prev => ({ ...prev, activities: true }));
+        }, 2400);
+    }, [trip]);
+
     const GetTripData = async () => {
+        setLoading(true);
         try {
             const docRef = doc(db, 'AITrips', tripId);
             const docSnap = await getDoc(docRef);
@@ -34,29 +68,56 @@ function Viewtrip() {
         } catch (error) {
             console.error("Error fetching trip:", error);
             toast.error('Error loading trip data');
+        } finally {
+            setLoading(false);
         }
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
+
     if (!trip) {
-        return <div className="p-10 text-center">Loading...</div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-red-500">Trip not found</div>
+            </div>
+        );
     }
 
     return (
         <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56'>
+            {/* Info Section */}
+            {visibleSections.info && (
+                <div className="animate-fadeIn">
+                    <InfoSection trip={trip} />
+                </div>
+            )}
 
-            {/* info*/}
-            <InfoSection trip={trip} />
+            {/* Flights Section */}
+            {visibleSections.flights && (
+                <div className="animate-fadeIn">
+                    <Flights trip={trip} />
+                </div>
+            )}
 
-            {/* flights */}
-            <Flights trip={trip} />
+            {/* Hotels Section */}
+            {visibleSections.hotels && (
+                <div className="animate-fadeIn">
+                    <Hotels trip={trip} />
+                </div>
+            )}
 
-            {/* Rest of your components */}
-            <Hotels trip={trip} />
-
-            <Activities trip={trip} />
-
-
-
+            {/* Activities Section */}
+            {visibleSections.activities && (
+                <div className="animate-fadeIn">
+                    <Activities trip={trip} />
+                </div>
+            )}
         </div>
     );
 }

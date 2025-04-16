@@ -40,7 +40,7 @@ export const generateDayItineraries = (numDays) => {
     ${Array.from({ length: numDays }, (_, i) => `"day${i + 1}": []`).join(',')}
   }`;
 };
-export const validateItinerary = async (jsonResponse, numDays, destination, getBudgetText, getPeopleText, selectedBudgets, selectedPeople, generateActivitiesForDay,setGenerationProgress,preferences  ) => {
+export const validateItinerary = async (jsonResponse, numDays, destination, getBudgetText, getPeopleText, selectedBudgets, selectedPeople, generateActivitiesForDay, setGenerationProgress, preferences) => {
   console.log('Starting itinerary validation...');
 
   // Initialize itinerary if it doesn't exist or is empty
@@ -55,10 +55,16 @@ export const validateItinerary = async (jsonResponse, numDays, destination, getB
   for (let i = 1; i <= numDays; i++) {
     const dayKey = `day${i}`;
     console.log(`Processing ${dayKey}...`);
+    
+    // Update progress to show which day we're working on
+    setGenerationProgress(prev => ({
+      ...prev,
+      currentDay: i,
+      totalDays: numDays
+    }));
 
     try {
       // Generate new activities for this day
-      
       console.log(`Generating activities for ${dayKey} with preferences:`, preferences);
       const activities = await generateActivitiesForDay(
         i,
@@ -70,20 +76,6 @@ export const validateItinerary = async (jsonResponse, numDays, destination, getB
 
       // Update the itinerary immediately for this day
       jsonResponse.itinerary[dayKey] = activities;
-
-      // // Log the activities right after they're generated
-      // console.group(`✅ Day ${i} Activities Generated:`);
-      // activities.forEach((activity, index) => {
-      //   const timeIcon = index === 0 ? '🌅' : index === 1 ? '☀️' : '🌙';
-      //   console.group(`${timeIcon} Activity ${index + 1}:`);
-      //   console.log(`📍 Name: ${activity.activity}`);
-      //   console.log(`⏰ Time: ${activity.bestTime}`);
-      //   console.log(`⌛ Duration: ${activity.duration}`);
-      //   console.log(`💰 Price: ${activity.price}`);
-      //   console.log(`📝 Description: ${activity.description}`);
-      //   console.groupEnd();
-      // });
-      // console.groupEnd();
 
       // Validate each activity's required fields
       jsonResponse.itinerary[dayKey] = activities.map((activity, index) => {
@@ -150,27 +142,7 @@ export const validateItinerary = async (jsonResponse, numDays, destination, getB
           bookingLinks: { official: "", tripadvisor: "", googleMaps: "" }
         }
       ];
-
-      // Log the fallback activities
-      console.group(`⚠️ Day ${i} Fallback Activities:`);
-      jsonResponse.itinerary[dayKey].forEach((activity, index) => {
-        const timeIcon = index === 0 ? '🌅' : index === 1 ? '☀️' : '🌙';
-        console.group(`${timeIcon} Activity ${index + 1}:`);
-        console.log(`📍 Name: ${activity.activity}`);
-        console.log(`⏰ Time: ${activity.bestTime}`);
-        console.log(`⌛ Duration: ${activity.duration}`);
-        console.log(`💰 Price: ${activity.price}`);
-        console.log(`📝 Description: ${activity.description}`);
-        console.groupEnd();
-      });
-      console.groupEnd();
     }
-
-    // Update progress
-    setGenerationProgress(prev => ({
-      currentDay: i,
-      totalDays: numDays
-    }));
   }
 
   console.log('✅ Itinerary validation complete');
@@ -375,7 +347,7 @@ The response must exactly match this structure:
     }
   };
   export const generateTrip = async ({
-   destination,
+    destination,
     place,
     isAISelected,
     numDays,
@@ -456,6 +428,18 @@ The response must exactly match this structure:
       
         try {
           let finalDestination = destination;
+
+          // Reset progress state
+    setGenerationProgress({
+      destination: false,
+      flights: false,
+      hotels: false,
+      activities: false,
+      finalizing: false,
+      completed: false,
+      currentDay: 0,
+      totalDays: parseInt(numDays)
+    });
       
           // If no destination is selected but preferences are set, get an AI suggestion
           if (isAISelected) {
@@ -492,6 +476,8 @@ The response must exactly match this structure:
           };
       
           toast.success(`Suggested destination: ${suggestionData.destination}, ${suggestionData.country}`);
+          setGenerationProgress(prev => ({ ...prev, destination: true }));
+
         } else if (!destination) {
           toast.error(translate("pleaseSelectDestination"));
           return;
@@ -501,6 +487,8 @@ The response must exactly match this structure:
               description: destination.value.description,
             }
           };
+          setGenerationProgress(prev => ({ ...prev, destination: true }));
+
         }
       
         // Ensure finalDestination is properly formatted before continuing
@@ -631,6 +619,8 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
       hotels: hotels,
       itinerary: {}
     };
+    setGenerationProgress(prev => ({ ...prev, hotels: true }));
+
     
     
     try {
@@ -644,11 +634,20 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
       if (!airportInfo || !airportInfo.code) {
         console.warn(`No airport code found for ${destinationInput}, skipping flight search`);
         jsonResponse.flights = {
-          outbound: [],
-          return: []
+          type: tripType,
+          class: seatClass,
+          options: {
+            cheapest: null,
+            best: null,
+            quickest: null,
+            all: []
+          }
         };
-        return;
+          setGenerationProgress(prev => ({ ...prev, flights: true }));
+
+        
       }
+      
     
       console.log('Airport Information:', {
         code: airportInfo.code,
@@ -687,10 +686,18 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
         console.warn('Flight search failed:', flightError);
         // Continue with empty flights array rather than throwing
         jsonResponse.flights = {
-          outbound: [],
-          return: []
+          type: tripType,
+          class: seatClass,
+          options: {
+            cheapest: null,
+            best: null,
+            quickest: null,
+            all: []
+          }
         };
-        return;
+        
+        // Mark flights as complete
+        setGenerationProgress(prev => ({ ...prev, flights: true }));
       }
     
       if (flightData && flightData.length > 0) {
@@ -707,6 +714,8 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
         };
     
         console.log('✅✅ Processed flights:', jsonResponse.flights);
+        setGenerationProgress(prev => ({ ...prev, flights: true }));
+
       } else {
         console.log('No flights found in any class');
         jsonResponse.flights = {
@@ -719,6 +728,9 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
             all: []
           }
         };
+        
+        // Mark flights as complete
+        setGenerationProgress(prev => ({ ...prev, flights: true }));
       }
     
     } catch (flightError) {
@@ -733,6 +745,9 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
           all: []
         }
       };
+      
+      // Mark flights as complete
+      setGenerationProgress(prev => ({ ...prev, flights: true }));
     }
     
     // Initialize empty itinerary structure
@@ -752,7 +767,12 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
     
       // Now generate activities day by day
       console.log('Generating daily activities...');
-      setGenerationProgress({ currentDay: 0, totalDays: parseInt(numDays) });
+      // setGenerationProgress({ currentDay: 0, totalDays: parseInt(numDays) });
+      setGenerationProgress(prev => ({
+        ...prev, // Keep previous progress
+        currentDay: 0,
+        totalDays: parseInt(numDays)
+      }));
     
     
           console.log('Initial response:', jsonResponse); // Add this to see what we're getting
@@ -806,6 +826,13 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
             await SaveAiTrip(jsonResponse);
           }
           toast.success(translate("tripGeneratedSuccess"));
+
+          setGenerationProgress(prev => ({
+            ...prev,
+            activities: true,
+            finalizing: true,
+            completed: true
+          }));
       
         } catch (error) {
           console.warn('Could not fetch flight data, falling back to AI suggestions:', error);
@@ -813,7 +840,11 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
           toast.error(translate("errorGeneratingTrip"));
         }
         finally {
-          setIsGenerating(false);
+          // setIsGenerating(false);
+          setGenerationProgress(prev => ({
+            ...prev,
+            completed: false
+          }));
         }
       
   };
