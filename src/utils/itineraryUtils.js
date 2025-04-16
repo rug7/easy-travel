@@ -188,78 +188,40 @@ export const generateActivitiesForDay = async (dayNumber, destination, budget, t
       const sightseeingPref = preferences?.sightseeing || '';
   
       const activityPrompt = `Create activities for day ${dayNumber} in ${destination}.
-      Trip Details:
-      - Travelers: ${travelers}
-      - Budget: ${budget}
-      - Weather Preference: ${weatherPref}
-      - Activity Types: ${activitiesPref}
-      - Sightseeing Interests: ${sightseeingPref}
-      
-      IMPORTANT: Activities MUST match the preferences above.
-      For example, if preferences include beaches and warm weather, include beach activities, water sports, etc.
-      If preferences include adventure, include activities like hiking, climbing, water sports, etc.
-      
-      Return 3-4 activities that specifically match these preferences.
-      Each activity must be realistic and available in ${destination}.
-      Include actual prices, locations, and booking links.
-  
-      The response must exactly match this structure:
-      [
-        {
-          "activity": "Morning Activity",
-          "duration": "2-3 hours",
-          "bestTime": "9:00 AM - 12:00 PM",
-          "price": "",
-          "description": "",
-          "travelTime": "",
-          "coordinates": {
-            "latitude": 0,
-            "longitude": 0
-          },
-          "imageUrl": "",
-          "bookingLinks": {
-            "official": "",
-            "tripadvisor": "",
-            "googleMaps": ""
-          }
-        },
-        {
-          "activity": "Afternoon Activity",
-          "duration": "2-3 hours",
-          "bestTime": "2:00 PM - 5:00 PM",
-          "price": "",
-          "description": "",
-          "travelTime": "",
-          "coordinates": {
-            "latitude": 0,
-            "longitude": 0
-          },
-          "imageUrl": "",
-          "bookingLinks": {
-            "official": "",
-            "tripadvisor": "",
-            "googleMaps": ""
-          }
-        },
-        {
-          "activity": "Evening Activity",
-          "duration": "2-3 hours",
-          "bestTime": "7:00 PM - 10:00 PM",
-          "price": "",
-          "description": "",
-          "travelTime": "",
-          "coordinates": {
-            "latitude": 0,
-            "longitude": 0
-          },
-          "imageUrl": "",
-          "bookingLinks": {
-            "official": "",
-            "tripadvisor": "",
-            "googleMaps": ""
-          }
-        }
-      ]`;
+Trip Details:
+- Travelers: ${travelers}
+- Budget: ${budget}
+- Weather Preference: ${weatherPref}
+- Activity Types: ${activitiesPref}
+- Sightseeing Interests: ${sightseeingPref}
+
+IMPORTANT: DO NOT include any specific URLs for images or websites. These will be handled by the frontend.
+Instead, focus on providing accurate activity names, descriptions, durations, and price estimates.
+
+Return 3-4 activities that specifically match these preferences.
+Each activity must be realistic and available in ${destination}.
+
+The response must exactly match this structure:
+[
+  {
+    "activity": "Morning Activity",
+    "duration": "2-3 hours",
+    "bestTime": "9:00 AM - 12:00 PM",
+    "price": "$XX - $XX",
+    "description": "Detailed description of the activity including what visitors can expect, highlights, and tips.",
+    "travelTime": "XX minutes from previous location",
+    "coordinates": {
+      "latitude": XX.XXXXX,
+      "longitude": XX.XXXXX
+    },
+    "imageUrl": "",
+    "bookingLinks": {
+      "official": "",
+      "tripadvisor": "",
+      "googleMaps": ""
+    }
+  }
+]`;
   
       const result = await chatSession.sendMessage([{ text: activityPrompt }]);
       const response = await result.response.text();

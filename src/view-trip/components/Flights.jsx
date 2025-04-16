@@ -30,7 +30,7 @@ function Flights({trip}) {
                               {trip?.tripData?.flights?.options?.best?.airline}
                           </span>
                           <span className='text-white font-bold'>
-                          {formatFlightPrice(trip?.tripData?.flights?.options?.best?.pricePerPerson)}
+                          {trip?.tripData?.flights?.options?.best?.pricePerPerson}
                           </span>
                       </div>
                       <div className='text-gray-400 text-sm'>
@@ -55,7 +55,7 @@ function Flights({trip}) {
                               {trip?.tripData?.flights?.options?.cheapest?.airline}
                           </span>
                           <span className='text-white font-bold'>
-                          {formatFlightPrice(trip?.tripData?.flights?.options?.cheapest?.pricePerPerson)}
+                          {trip?.tripData?.flights?.options?.cheapest?.pricePerPerson}
                           </span>
                       </div>
                       <div className='text-gray-400 text-sm'>
@@ -80,7 +80,7 @@ function Flights({trip}) {
                               {trip?.tripData?.flights?.options?.quickest?.airline}
                           </span>
                           <span className='text-white font-bold'>
-                          {formatFlightPrice(trip?.tripData?.flights?.options?.quickest?.pricePerPerson)}                          </span>
+                          {trip?.tripData?.flights?.options?.quickest?.pricePerPerson}                        </span>
                       </div>
                       <div className='text-gray-400 text-sm'>
                           <div>✈️ Total Duration: {trip?.tripData?.flights?.options?.quickest?.totalDuration}</div>
