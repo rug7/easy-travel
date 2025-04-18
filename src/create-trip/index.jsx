@@ -15,10 +15,14 @@ import { IoClose } from "react-icons/io5";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { generateTrip } from "@/utils/itineraryUtils";
 import { setDoc,doc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import { 
+  generateTrip, 
+  saveLocationToHistory, 
+  getUserLocationHistory 
+} from "@/utils/itineraryUtils";
 
 import LoadingScreen from "@/view-trip/components/LoadingScreen";
 
@@ -201,17 +205,12 @@ function CreateTrip() {
           activities: selectedActivities,
           sightseeing: selectedSightseeing
         },
+        SaveAiTrip, // Pass the function directly
         translate,
-        setGenerationProgress, // This will now receive our enhanced progress updates
+        setGenerationProgress,
         setTripData,
         setOpenDialog,
         setIsGenerating,
-        SaveAiTrip: async (tripData) => {
-          // Modified SaveAiTrip to capture the generated ID
-          const id = await SaveAiTrip(tripData);
-          setGeneratedTripId(id);
-          return id;
-        },
         options: {
           SelectTravelsList,
           SelectBudgetOptions,
@@ -292,77 +291,106 @@ function CreateTrip() {
     })
   }
 
-  const SaveAiTrip = async (tripData) => {
+  const SaveAiTrip = async (tripData, progressInfo = null, existingId = null) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
-      const docId = Date.now().toString();
+      const userId = user?.id || user?.email;
+      const docId = existingId || Date.now().toString();
+      
+      console.log(`Saving trip with ID: ${docId}, existing ID: ${existingId}`);
       
       // Get the actual names/labels from the selected IDs
-    const getBudgetText = (budgetId) => {
-      const budget = SelectBudgetOptions.find(b => b.id === parseInt(budgetId));
-      return budget?.title || 'Moderate';
-    };
-
-    const getPeopleText = (peopleId) => {
-      const people = SelectTravelsList.find(p => p.id === parseInt(peopleId));
-      return people?.title || 'Family';
-    };
-
-    const getWeatherPreferences = () => {
-      return selectedWeather.map(id => 
-        WeatherOptions.find(w => w.id === id)?.title
-      );
-    };
-
-    const getActivityPreferences = () => {
-      return selectedActivities.map(id => 
-        ActivityOptions.find(a => a.id === id)?.title
-      );
-    };
-
-    const getSightseeingPreferences = () => {
-      return selectedSightseeing.map(id => 
-        SightseeingOptions.find(s => s.id === id)?.title
-      );
-    };
-    // Add this function to your CreateTrip component
-
-
-    // Format dates properly
-    const formatDate = (date) => {
-      if (!date) return null;
-      return new Date(date).toISOString();
-    };
-
-    const formData = {
-      destination: place?.value?.description || '',
-      numDays: numDays,
-      startDate: formatDate(startDate),
-      endDate: formatDate(endDate),
-      budget: getBudgetText(selectedBudgets[0]),
-      travelers: getPeopleText(selectedPeople[0]),
-      weather: getWeatherPreferences(),
-      activities: getActivityPreferences(),
-      sightseeing: getSightseeingPreferences(),
-      tripType: tripType,
-      seatClass: seatClass,
-      isAISelected: isAISelected
-    };
-
-    await setDoc(doc(db, "AITrips", docId), {
-      userSelection: formData,
-      tripData: tripData,
-      userEmail: user?.email,
-      id: docId,
-      createdAt: new Date().toISOString()
-    });
-    // Return the docId so we can use it for navigation
-    return docId;
-  } catch (error) {
-    console.error("Error saving trip:", error);
-    return null;
-  }
-};
+      const getBudgetText = (budgetId) => {
+        const budget = SelectBudgetOptions.find(b => b.id === parseInt(budgetId));
+        return budget?.title || 'Moderate';
+      };
+  
+      const getPeopleText = (peopleId) => {
+        const people = SelectTravelsList.find(p => p.id === parseInt(peopleId));
+        return people?.title || 'Family';
+      };
+  
+      const getWeatherPreferences = () => {
+        return selectedWeather.map(id => 
+          WeatherOptions.find(w => w.id === id)?.title
+        );
+      };
+  
+      const getActivityPreferences = () => {
+        return selectedActivities.map(id => 
+          ActivityOptions.find(a => a.id === id)?.title
+        );
+      };
+  
+      const getSightseeingPreferences = () => {
+        return selectedSightseeing.map(id => 
+          SightseeingOptions.find(s => s.id === id)?.title
+        );
+      };
+  
+      // Format dates properly
+      const formatDate = (date) => {
+        if (!date) return null;
+        return new Date(date).toISOString();
+      };
+  
+      const formData = {
+        destination: place?.value?.description || tripData?.trip?.destination || '',
+        numDays: numDays,
+        startDate: formatDate(startDate),
+        endDate: formatDate(endDate),
+        budget: getBudgetText(selectedBudgets[0]),
+        travelers: getPeopleText(selectedPeople[0]),
+        weather: getWeatherPreferences(),
+        activities: getActivityPreferences(),
+        sightseeing: getSightseeingPreferences(),
+        tripType: tripType,
+        seatClass: seatClass,
+        isAISelected: isAISelected
+      };
+  
+      // Add progress info to the trip data
+      const updatedTripData = {
+        ...tripData,
+        generationProgress: progressInfo || {
+          currentDay: 0,
+          totalDays: parseInt(tripData.trip.duration.split(' ')[0]) || 0,
+          completed: false
+        }
+      };
+  
+      // Set the generated trip ID for navigation
+      if (!existingId) {
+        setGeneratedTripId(docId);
+      }
+  
+      await setDoc(doc(db, "AITrips", docId), {
+        userSelection: formData,
+        tripData: updatedTripData,
+        userEmail: user?.email,
+        id: docId,
+        createdAt: new Date().toISOString()
+      }, { merge: true });
+      
+      // Only save to location history if this is a completed trip
+      if (progressInfo && progressInfo.completed) {
+        const destination = tripData.trip?.destination;
+        if (destination) {
+          try {
+            await saveLocationToHistory(userId, destination);
+            console.log(`Saved ${destination} to location history`);
+          } catch (historyError) {
+            console.error("Error saving to location history:", historyError);
+          }
+        }
+      }
+      
+      return docId;
+    } catch (error) {
+      console.error("Error saving trip:", error);
+      return null;
+    }
+  };
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-20 px-5 mt-20">

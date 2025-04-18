@@ -1,12 +1,23 @@
 
 import { toast } from "sonner";
 import { chatSession } from "@/service/AIModal";
-import { generateHotels } from "./hotelUtils";
+import { 
+  doc, 
+  setDoc, 
+  collection, 
+  query, 
+  where, 
+  getDocs 
+} from "firebase/firestore";
+import { db } from "@/service/firebaseConfig";
 import { getAirportCodeFromAI } from "@/services/aiService";
 import { formatDate,formatDuration,formatFlightSegment,formatPrice,safeJSONParse } from "./formatUtils";
 import { processFlightOffers } from "./flightUtils";
 import { validateResponse } from "./validationUtils";
 import { fetchFlights } from "@/services/flightService"; 
+import { generateHotels, validateHotels,generateDefaultHotels} from "./hotelUtils";
+
+
 
 
 export * from './hotelUtils';
@@ -14,7 +25,59 @@ export * from './flightUtils';
 export * from './formatUtils';
 export * from './itineraryUtils';
 
+export const saveLocationToHistory = async (userId, destination) => {
+  try {
+    if (!userId || !destination) return;
+    
+    // Clean the destination string
+    const cleanDestination = destination.trim();
+    if (!cleanDestination || cleanDestination.includes('undefined')) return;
+    
+    // Create a document ID based on userId and destination to prevent duplicates
+    const docId = `${userId}_${cleanDestination.replace(/[^a-zA-Z0-9]/g, '_')}`;
+    
+    await setDoc(doc(db, "userLocationHistory", docId), {
+      userId,
+      destination: cleanDestination,
+      visitedAt: new Date().toISOString()
+    });
+    
+    console.log(`Added ${cleanDestination} to user's location history`);
+  } catch (error) {
+    console.error("Error saving location to history:", error);
+  }
+};
 
+export const getUserLocationHistory = async (userId) => {
+  try {
+    if (!userId) return [];
+    
+    // Try the simple query first (no ordering)
+    try {
+      const q = query(
+        collection(db, "userLocationHistory"), 
+        where("userId", "==", userId)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const locations = [];
+      
+      querySnapshot.forEach((doc) => {
+        locations.push(doc.data().destination);
+      });
+      
+      console.log(`Retrieved ${locations.length} locations from user history`);
+      return locations;
+    } catch (indexError) {
+      console.warn("Index error with location history query:", indexError);
+      console.log("Returning empty location history due to index error");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching location history:", error);
+    return [];
+  }
+};
 
 export const generateDayItineraries = (numDays) => {
   const activityTemplate = {
@@ -40,8 +103,10 @@ export const generateDayItineraries = (numDays) => {
     ${Array.from({ length: numDays }, (_, i) => `"day${i + 1}": []`).join(',')}
   }`;
 };
-export const validateItinerary = async (jsonResponse, numDays, destination, getBudgetText, getPeopleText, selectedBudgets, selectedPeople, generateActivitiesForDay, setGenerationProgress, preferences) => {
+export const validateItinerary = async (jsonResponse, numDays, destination, getBudgetText, getPeopleText, selectedBudgets, selectedPeople, generateActivitiesForDay, setGenerationProgress, preferences, SaveAiTrip = null) => {
   console.log('Starting itinerary validation...');
+  let firstDayGenerated = false;
+  let tripId = jsonResponse.id || null; // Store the trip ID
 
   // Initialize itinerary if it doesn't exist or is empty
   if (!jsonResponse.itinerary || Object.keys(jsonResponse.itinerary).length === 0) {
@@ -76,6 +141,34 @@ export const validateItinerary = async (jsonResponse, numDays, destination, getB
 
       // Update the itinerary immediately for this day
       jsonResponse.itinerary[dayKey] = activities;
+
+      // Save the trip data to Firestore if SaveAiTrip is provided
+      if (SaveAiTrip) {
+        try {
+          const progressInfo = {
+            currentDay: i,
+            totalDays: numDays,
+            completed: i === numDays
+          };
+          
+          if (i === 1 && !firstDayGenerated) {
+            firstDayGenerated = true;
+            // Save the partial trip data to Firestore for the first time
+            tripId = await SaveAiTrip(jsonResponse, progressInfo);
+            console.log('Saved partial trip with first day, ID:', tripId);
+            
+            // Store the ID in the jsonResponse for future updates
+            jsonResponse.id = tripId;
+          } else if (tripId || jsonResponse.id) {
+            // Use the existing trip ID for updates
+            const existingId = tripId || jsonResponse.id;
+            await SaveAiTrip(jsonResponse, progressInfo, existingId);
+            console.log(`Updated trip ${existingId} with day ${i} activities`);
+          }
+        } catch (saveError) {
+          console.error(`Error saving trip data for day ${i}:`, saveError);
+        }
+      }
 
       // Validate each activity's required fields
       jsonResponse.itinerary[dayKey] = activities.map((activity, index) => {
@@ -443,53 +536,115 @@ The response must exactly match this structure:
       
           // If no destination is selected but preferences are set, get an AI suggestion
           if (isAISelected) {
-            const suggestionPrompt = `As a travel expert, suggest a perfect destination based on the following preferences:
-            Trip Duration: ${numDays} days
-            Travel Group: ${getPeopleText(selectedPeople[0])}
-            Budget Level: ${getBudgetText(selectedBudgets[0])}
-            
-            Preferences:
-            - Weather: ${getWeatherPreferences()}
-            - Desired Activities: ${getActivityPreferences()}
-            - Preferred Sightseeing: ${getSightseeingPreferences()}
-      
-            Respond ONLY with a JSON object in this exact format:
-            {
-              "destination": "Name of the city",
-              "country": "Country name",
-              "reasoning": "Brief explanation why this matches the preferences"
-            }`;
-      
-          const suggestionResult = await chatSession.sendMessage([{ text: suggestionPrompt }]);
-          const suggestionResponse = await suggestionResult.response.text();
-          const suggestionData = safeJSONParse(suggestionResponse);
-      
-          if (!suggestionData) {
-            throw new Error('Failed to parse destination suggestion');
+            let retryCount = 0;
+            let validDestination = false;
+            let suggestionData = null;
+          
+            try {
+              const user = JSON.parse(localStorage.getItem('user'));
+              const userId = user?.id || user?.email;
+              
+              // Get user's location history
+              let visitedLocations = [];
+              try {
+                visitedLocations = await getUserLocationHistory(userId);
+                console.log("Retrieved user's location history:", visitedLocations);
+              } catch (historyError) {
+                console.warn("Could not retrieve location history:", historyError);
+                // Continue without history if there's an error
+              }
+              
+              const visitedLocationsText = visitedLocations.length > 0 
+                ? `Previously visited: ${visitedLocations.join(', ')}` 
+                : 'No previous trips recorded';
+              
+              while (!validDestination && retryCount < 3) {
+                try {
+                  const suggestionPrompt = `As a travel expert, suggest a perfect destination based on the following preferences:
+          Trip Duration: ${numDays} days
+          Travel Group: ${getPeopleText(selectedPeople[0])}
+          Budget Level: ${getBudgetText(selectedBudgets[0])}
+          
+          Preferences:
+          - Weather: ${getWeatherPreferences()}
+          - Desired Activities: ${getActivityPreferences()}
+          - Preferred Sightseeing: ${getSightseeingPreferences()}
+          
+          ${visitedLocationsText}
+          
+          IMPORTANT: 
+          1. You MUST suggest a destination that is NOT in the list of previously visited locations.
+          2. You MUST respond with a valid, specific city and country.
+          3. Generic or undefined values are not acceptable.
+          
+          Respond ONLY with a JSON object in this exact format:
+          {
+            "destination": "Name of the city",
+            "country": "Country name",
+            "reasoning": "Brief explanation why this matches the preferences"
+          }`;
+              
+                  const suggestionResult = await chatSession.sendMessage([{ text: suggestionPrompt }]);
+                  const suggestionResponse = await suggestionResult.response.text();
+                  suggestionData = safeJSONParse(suggestionResponse);
+              
+                  // Validate the destination data
+                  if (suggestionData && 
+                      suggestionData.destination && 
+                      suggestionData.country && 
+                      suggestionData.destination !== "undefined" && 
+                      suggestionData.country !== "undefined") {
+                    
+                    // Check if this destination is in the visited locations
+                    const fullDestination = `${suggestionData.destination}, ${suggestionData.country}`;
+                    const isVisited = visitedLocations.some(loc => 
+                      loc.toLowerCase().includes(suggestionData.destination.toLowerCase()) ||
+                      fullDestination.toLowerCase().includes(loc.toLowerCase())
+                    );
+                    
+                    if (isVisited && visitedLocations.length < 10) {
+                      // If visited and we have fewer than 10 locations, try again
+                      console.log(`Destination ${fullDestination} already visited, trying again`);
+                      retryCount++;
+                    } else {
+                      // Either not visited or we have too many visited places to be picky
+                      validDestination = true;
+                    }
+                  } else {
+                    console.warn(`Invalid destination suggestion received: ${JSON.stringify(suggestionData)}`);
+                    retryCount++;
+                  }
+                } catch (error) {
+                  console.error('Error getting destination suggestion:', error);
+                  retryCount++;
+                }
+              }
+              
+              if (!validDestination) {
+                // Fallback to a default destination if all retries fail
+                toast.error(translate("couldNotGenerateDestination"));
+                suggestionData = {
+                  destination: "Paris",
+                  country: "France",
+                  reasoning: "A popular destination with diverse activities suitable for most preferences."
+                };
+              }
+              
+              finalDestination = {
+                value: {
+                  description: `${suggestionData.destination}, ${suggestionData.country}`,
+                  reasoning: suggestionData.reasoning
+                }
+              };
+              
+              toast.success(`Suggested destination: ${suggestionData.destination}, ${suggestionData.country}`);
+              setGenerationProgress(prev => ({ ...prev, destination: true }));
+            } catch (error) {
+              console.error("Error in AI destination selection:", error);
+              toast.error(translate("errorSelectingDestination"));
+              throw error;
+            }
           }
-      
-          finalDestination = {
-            value: {
-              description: `${suggestionData.destination}, ${suggestionData.country}`,
-              reasoning: suggestionData.reasoning
-            }
-          };
-      
-          toast.success(`Suggested destination: ${suggestionData.destination}, ${suggestionData.country}`);
-          setGenerationProgress(prev => ({ ...prev, destination: true }));
-
-        } else if (!destination) {
-          toast.error(translate("pleaseSelectDestination"));
-          return;
-        } else {
-          finalDestination = {
-            value: {
-              description: destination.value.description,
-            }
-          };
-          setGenerationProgress(prev => ({ ...prev, destination: true }));
-
-        }
       
         // Ensure finalDestination is properly formatted before continuing
         if (!finalDestination?.value?.description) {
@@ -817,16 +972,26 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
             selectedPeople,
             generateActivitiesForDay,
             setGenerationProgress,
-            preferences 
+            preferences,
+            SaveAiTrip 
           );
       
           setTripData(jsonResponse);
           console.log(jsonResponse);
           if (SaveAiTrip) {
-            await SaveAiTrip(jsonResponse);
+            const progressInfo = {
+              currentDay: parseInt(numDays),
+              totalDays: parseInt(numDays),
+              completed: true
+            };
+            
+            // If the trip already has an ID, use it
+            const tripId = jsonResponse.id || null;
+            await SaveAiTrip(jsonResponse, progressInfo, tripId);
           }
+          
           toast.success(translate("tripGeneratedSuccess"));
-
+          
           setGenerationProgress(prev => ({
             ...prev,
             activities: true,

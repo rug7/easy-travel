@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 function Activities({ trip }) {
     const [selectedDay, setSelectedDay] = useState(1);
     const dayKeys = trip?.tripData?.itinerary ? Object.keys(trip.tripData.itinerary) : [];
+    
 
     // Function to get reliable image for activity type
     const getActivityImage = (activity) => {
