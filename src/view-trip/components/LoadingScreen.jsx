@@ -72,16 +72,20 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
   
   // Get loading message based on current progress
   const getLoadingMessage = () => {
-    if (progress.destination) return "Finding your perfect destination";
-    if (progress.flights) return "Searching for the best flights";
-    if (progress.hotels) return "Discovering amazing accommodations";
-    if (progress.activities) {
+    if (!progress.destination) {
+      return "Finding your perfect destination";
+    } else if (progress.destination && !progress.hotels) {
+      return "Discovering amazing accommodations";
+    } else if (progress.hotels && !progress.flights) {
+      return "Searching for the best flights";
+    } else if (progress.flights && !progress.activities) {
       if (progress.currentDay && progress.totalDays) {
         return `Planning activities for day ${progress.currentDay} of ${progress.totalDays}`;
       }
       return "Planning exciting activities";
+    } else if (progress.finalizing) {
+      return "Finalizing your perfect trip";
     }
-    if (progress.finalizing) return "Finalizing your perfect trip";
     return "Preparing your adventure";
   };
   
