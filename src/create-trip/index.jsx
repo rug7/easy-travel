@@ -377,6 +377,8 @@ function CreateTrip() {
         const destination = tripData.trip?.destination;
         if (destination) {
           try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const userId = user?.id || user?.email;
             await saveLocationToHistory(userId, destination);
             console.log(`Saved ${destination} to location history`);
           } catch (historyError) {

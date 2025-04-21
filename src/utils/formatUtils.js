@@ -34,7 +34,6 @@ export const formatDuration = (isoDuration) => {
       const day = String(d.getDate()).padStart(2, '0');
       
       const formattedDate = `${year}-${month}-${day}`;
-      console.log('Formatted date:', formattedDate); // Debug log
       return formattedDate;
     } catch (error) {
       console.error('Date formatting error:', error);

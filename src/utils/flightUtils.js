@@ -64,63 +64,149 @@ import { formatFlightSegment } from './formatUtils';
       return getScore(a) - getScore(b);
     });
   
-    const formatFlight = (offer, category = 'cheapest') => {
-      if (!offer) return null;
+    // Modify your formatFlight function in flightUtils.js
+const formatFlight = (offer, category = 'cheapest') => {
+  if (!offer) return null;
+
+  try {
+    // Check if there are itineraries
+    if (!offer.itineraries || offer.itineraries.length === 0) {
+      console.warn('Missing itineraries in flight offer:', offer);
+      return null;
+    }
+
+    const outbound = offer.itineraries[0];
+    const return_ = isRoundTrip && offer.itineraries.length > 1 ? offer.itineraries[1] : null;
     
-      try {
-        const outbound = offer.itineraries[0];
-        const return_ = isRoundTrip ? offer.itineraries[1] : null;
-        const cabin = offer.travelerPricings[0].fareDetailsBySegment[0].cabin;
-        // Get total price from the offer
-        const totalPrice = parseFloat(offer.price.total);
-        // Get price per person
-        const pricePerPerson = totalPrice / offer.travelerPricings.length;
-    
-    
-        const outboundSegment = formatFlightSegment(outbound.segments);
-        const returnSegment = return_ ? formatFlightSegment(return_.segments) : null;
-    
-        return {
-          airline: offer.validatingAirlineCodes[0],
-          price: formatPrice(totalPrice),
-          pricePerPerson: formatPrice(pricePerPerson),
-          rawPrice: totalPrice, // Add raw price for sorting
-          class: cabin,
-          outbound: {
-            ...outboundSegment,
-            bookingLinks: generateBookingLinks(
-              outboundSegment.departure.airport,
-              outboundSegment.arrival.airport,
-              outbound.segments[0].departure.at,
-              return_?.segments[0].departure.at,
-              cabin,
-              isRoundTrip ? 'roundTrip' : 'oneWay',
-              category // Pass the category directly
-            )
-          },
-          return: returnSegment ? {
-            ...returnSegment,
-            bookingLinks: generateBookingLinks(
-              returnSegment.departure.airport,
-              returnSegment.arrival.airport,
-              return_.segments[0].departure.at,
-              null,
-              cabin,
-              'oneWay',
-              category // Pass the category directly
-            )
-          } : null,
-          totalDuration: formatDuration(
-            outbound.duration + (return_ ? return_.duration : '')
-          ),
-          totalStops: outbound.segments.length - 1 + (return_ ? return_.segments.length - 1 : 0)
-        };
-      } catch (error) {
-        console.error('Error formatting flight:', error);
-        console.error('Problematic offer:', offer);
-        return null;
+    // Check for valid price structure
+    if (!offer.price || !offer.price.total || isNaN(parseFloat(offer.price.total))) {
+      console.warn('Invalid price in flight offer:', offer.price);
+      return null;
+    }
+
+    // Get cabin class - more defensive coding
+    let cabin = 'ECONOMY';
+    try {
+      if (offer.travelerPricings && 
+          offer.travelerPricings[0] && 
+          offer.travelerPricings[0].fareDetailsBySegment && 
+          offer.travelerPricings[0].fareDetailsBySegment[0]) {
+        cabin = offer.travelerPricings[0].fareDetailsBySegment[0].cabin || 'ECONOMY';
       }
+    } catch (e) {
+      console.warn('Error getting cabin class:', e);
+    }
+
+    // Get total price and price per person with proper handling
+    const totalPrice = parseFloat(offer.price.total);
+    const travelerCount = Array.isArray(offer.travelerPricings) ? offer.travelerPricings.length : 1;
+    const pricePerPerson = totalPrice / travelerCount;
+
+    // Format the outbound segment with error checking
+    let outboundSegment;
+    try {
+      outboundSegment = formatFlightSegment(outbound.segments);
+    } catch (err) {
+      console.error('Error formatting outbound segment:', err);
+      outboundSegment = { 
+        departure: { airport: 'N/A' }, 
+        arrival: { airport: 'N/A' } 
+      };
+    }
+
+    // Format the return segment with error checking
+    let returnSegment = null;
+    if (return_) {
+      try {
+        returnSegment = formatFlightSegment(return_.segments);
+      } catch (err) {
+        console.error('Error formatting return segment:', err);
+      }
+    }
+
+    // Get airline code with fallback
+    const airlineCode = offer.validatingAirlineCodes && 
+                         offer.validatingAirlineCodes.length > 0 ? 
+                         offer.validatingAirlineCodes[0] : 'Unknown';
+
+    // Get more detailed duration calculation
+    let totalDurationMinutes = 0;
+    try {
+      totalDurationMinutes = outbound.segments.reduce((total, segment) => {
+        const durationMatch = segment.duration.match(/PT(\d+)H(\d+)M/);
+        if (durationMatch) {
+          const hours = parseInt(durationMatch[1]) || 0;
+          const minutes = parseInt(durationMatch[2]) || 0;
+          return total + (hours * 60) + minutes;
+        }
+        return total;
+      }, 0);
+      
+      if (return_) {
+        totalDurationMinutes += return_.segments.reduce((total, segment) => {
+          const durationMatch = segment.duration.match(/PT(\d+)H(\d+)M/);
+          if (durationMatch) {
+            const hours = parseInt(durationMatch[1]) || 0;
+            const minutes = parseInt(durationMatch[2]) || 0;
+            return total + (hours * 60) + minutes;
+          }
+          return total;
+        }, 0);
+      }
+    } catch (err) {
+      console.warn('Error calculating duration:', err);
+    }
+
+    const hours = Math.floor(totalDurationMinutes / 60);
+    const minutes = totalDurationMinutes % 60;
+    const formattedDuration = `${hours}h ${minutes}m`;
+
+    // Get the number of stops
+    const totalStops = (outbound.segments ? outbound.segments.length - 1 : 0) + 
+                      (return_ && return_.segments ? return_.segments.length - 1 : 0);
+
+    // Debug the price data
+    console.log(`Flight details - Airline: ${airlineCode}, Price: ${totalPrice}, Per Person: ${pricePerPerson}, Category: ${category}`);
+
+    return {
+      airline: airlineCode,
+      price: formatPrice(totalPrice),
+      pricePerPerson: formatPrice(pricePerPerson),
+      rawPrice: totalPrice,
+      class: cabin,
+      outbound: outboundSegment ? {
+        ...outboundSegment,
+        bookingLinks: generateBookingLinks(
+          outboundSegment.departure.airport,
+          outboundSegment.arrival.airport,
+          outbound.segments[0].departure.at,
+          return_?.segments[0]?.departure.at,
+          cabin,
+          isRoundTrip ? 'roundTrip' : 'oneWay',
+          category
+        )
+      } : null,
+      return: returnSegment ? {
+        ...returnSegment,
+        bookingLinks: generateBookingLinks(
+          returnSegment.departure.airport,
+          returnSegment.arrival.airport,
+          return_.segments[0].departure.at,
+          null,
+          cabin,
+          'oneWay',
+          category
+        )
+      } : null,
+      totalDuration: formattedDuration,
+      totalStops: totalStops
     };
+  } catch (error) {
+    console.error('Error formatting flight:', error);
+    console.error('Problematic offer:', offer);
+    return null;
+  }
+};
   
    // Sort by actual numeric prices
     const byPrice = [...validFlights].sort((a, b) => 

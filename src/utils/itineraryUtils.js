@@ -29,9 +29,20 @@ export const saveLocationToHistory = async (userId, destination) => {
   try {
     if (!userId || !destination) return;
     
-    // Clean the destination string
-    const cleanDestination = destination.trim();
+    // Clean and normalize the destination string
+    let cleanDestination = destination.trim();
     if (!cleanDestination || cleanDestination.includes('undefined')) return;
+    
+    // Ensure proper capitalization
+    cleanDestination = cleanDestination
+      .split(',')
+      .map(part => {
+        return part.trim()
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
+      })
+      .join(', ');
     
     // Create a document ID based on userId and destination to prevent duplicates
     const docId = `${userId}_${cleanDestination.replace(/[^a-zA-Z0-9]/g, '_')}`;
@@ -77,6 +88,55 @@ export const getUserLocationHistory = async (userId) => {
     console.error("Error fetching location history:", error);
     return [];
   }
+};
+
+// Add this function after getUserLocationHistory
+const isDestinationVisited = (newDestination, visitedLocations) => {
+  // Normalize the new destination
+  const normalizedNew = {
+    city: newDestination.destination.toLowerCase().trim(),
+    country: newDestination.country.toLowerCase().trim(),
+    full: `${newDestination.destination}, ${newDestination.country}`.toLowerCase().trim()
+  };
+  
+  console.log(`Checking if ${normalizedNew.full} has been visited before`);
+  
+  // Check against each visited location
+  for (const location of visitedLocations) {
+    // Skip empty locations
+    if (!location) continue;
+    
+    // Split the location into city and country if possible
+    const parts = location.split(',').map(part => part.toLowerCase().trim());
+    
+    // Direct match on full destination
+    if (normalizedNew.full === location.toLowerCase().trim()) {
+      console.log(`Exact match: ${normalizedNew.full} equals ${location}`);
+      return true;
+    }
+    
+    // Match on city name
+    if (parts.length >= 1) {
+      const visitedCity = parts[0];
+      if (normalizedNew.city === visitedCity) {
+        console.log(`City match: ${normalizedNew.city} equals ${visitedCity}`);
+        return true;
+      }
+    }
+    
+    // Match on country if both city and country don't match exactly
+    if (parts.length >= 2) {
+      const visitedCountry = parts[1];
+      if (normalizedNew.country === visitedCountry && 
+          (normalizedNew.city.includes(parts[0]) || parts[0].includes(normalizedNew.city))) {
+        console.log(`Country and partial city match: ${normalizedNew.full} similar to ${location}`);
+        return true;
+      }
+    }
+  }
+  
+  console.log(`${normalizedNew.full} has not been visited before`);
+  return false;
 };
 
 export const generateDayItineraries = (numDays) => {
@@ -539,6 +599,7 @@ The response must exactly match this structure:
             let retryCount = 0;
             let validDestination = false;
             let suggestionData = null;
+            const blacklistedDestinations = []; // Track rejected destinations
           
             try {
               const user = JSON.parse(localStorage.getItem('user'));
@@ -554,12 +615,18 @@ The response must exactly match this structure:
                 // Continue without history if there's an error
               }
               
+              // Format visited locations for the prompt
               const visitedLocationsText = visitedLocations.length > 0 
-                ? `Previously visited: ${visitedLocations.join(', ')}` 
+                ? `PREVIOUSLY VISITED LOCATIONS (DO NOT SUGGEST THESE):\n${visitedLocations.map(loc => `- ${loc}`).join('\n')}`
                 : 'No previous trips recorded';
               
-              while (!validDestination && retryCount < 3) {
+              while (!validDestination && retryCount < 5) { // Increased max retries to 5
                 try {
+                  // Add blacklisted destinations to the prompt
+                  const blacklistText = blacklistedDestinations.length > 0 
+                    ? `\nALSO DO NOT SUGGEST THESE ADDITIONAL DESTINATIONS:\n${blacklistedDestinations.map(loc => `- ${loc}`).join('\n')}`
+                    : '';
+                  
                   const suggestionPrompt = `As a travel expert, suggest a perfect destination based on the following preferences:
           Trip Duration: ${numDays} days
           Travel Group: ${getPeopleText(selectedPeople[0])}
@@ -570,12 +637,14 @@ The response must exactly match this structure:
           - Desired Activities: ${getActivityPreferences()}
           - Preferred Sightseeing: ${getSightseeingPreferences()}
           
-          ${visitedLocationsText}
+          ${visitedLocationsText}${blacklistText}
           
-          IMPORTANT: 
-          1. You MUST suggest a destination that is NOT in the list of previously visited locations.
-          2. You MUST respond with a valid, specific city and country.
-          3. Generic or undefined values are not acceptable.
+          CRITICAL INSTRUCTIONS:
+          1. You MUST NOT suggest any destination that the user has previously visited.
+          2. For example, if "Paris, France" is in the list above, do not suggest Paris.
+          3. If "Rome, Italy" is in the list, do not suggest Rome.
+          4. Suggest a completely new destination not in the list above.
+          5. Respond with a valid, specific city and country.
           
           Respond ONLY with a JSON object in this exact format:
           {
@@ -583,7 +652,8 @@ The response must exactly match this structure:
             "country": "Country name",
             "reasoning": "Brief explanation why this matches the preferences"
           }`;
-              
+          
+                  console.log(`Attempt ${retryCount + 1} to get destination suggestion`);
                   const suggestionResult = await chatSession.sendMessage([{ text: suggestionPrompt }]);
                   const suggestionResponse = await suggestionResult.response.text();
                   suggestionData = safeJSONParse(suggestionResponse);
@@ -595,19 +665,16 @@ The response must exactly match this structure:
                       suggestionData.destination !== "undefined" && 
                       suggestionData.country !== "undefined") {
                     
-                    // Check if this destination is in the visited locations
-                    const fullDestination = `${suggestionData.destination}, ${suggestionData.country}`;
-                    const isVisited = visitedLocations.some(loc => 
-                      loc.toLowerCase().includes(suggestionData.destination.toLowerCase()) ||
-                      fullDestination.toLowerCase().includes(loc.toLowerCase())
-                    );
+                    // Check if this destination is in the visited locations using our improved function
+                    const isVisited = isDestinationVisited(suggestionData, visitedLocations);
                     
-                    if (isVisited && visitedLocations.length < 10) {
-                      // If visited and we have fewer than 10 locations, try again
-                      console.log(`Destination ${fullDestination} already visited, trying again`);
+                    if (isVisited) {
+                      // If visited, add to blacklist and try again
+                      console.log(`Destination ${suggestionData.destination}, ${suggestionData.country} already visited, trying again`);
+                      blacklistedDestinations.push(`${suggestionData.destination}, ${suggestionData.country}`);
                       retryCount++;
                     } else {
-                      // Either not visited or we have too many visited places to be picky
+                      // Not visited, we can use this destination
                       validDestination = true;
                     }
                   } else {
@@ -623,11 +690,22 @@ The response must exactly match this structure:
               if (!validDestination) {
                 // Fallback to a default destination if all retries fail
                 toast.error(translate("couldNotGenerateDestination"));
-                suggestionData = {
-                  destination: "Paris",
-                  country: "France",
-                  reasoning: "A popular destination with diverse activities suitable for most preferences."
-                };
+                
+                // Find a destination not in the visited list
+                const defaultDestinations = [
+                  { destination: "Barcelona", country: "Spain" },
+                  { destination: "Tokyo", country: "Japan" },
+                  { destination: "Sydney", country: "Australia" },
+                  { destination: "Cape Town", country: "South Africa" },
+                  { destination: "Rio de Janeiro", country: "Brazil" }
+                ];
+                
+                // Try to find a default destination not in the visited list
+                suggestionData = defaultDestinations.find(dest => 
+                  !isDestinationVisited(dest, visitedLocations)
+                ) || defaultDestinations[0]; // Use first default if all have been visited
+                
+                suggestionData.reasoning = "A popular destination with diverse activities suitable for most preferences.";
               }
               
               finalDestination = {
