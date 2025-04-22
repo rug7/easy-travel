@@ -1,8 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { GetPlaceDetails } from "@/service/GlobalApi";
+
+const PHOTO_REF_URL = 'https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=800&maxWidthPx=1200&key=' + import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
 
 function Activities({ trip }) {
     const [selectedDay, setSelectedDay] = useState(1);
     const dayKeys = trip?.tripData?.itinerary ? Object.keys(trip.tripData.itinerary) : [];
+    const [activityImages, setActivityImages] = useState({});
+    const [loadingImages, setLoadingImages] = useState({});
+    const destination = trip?.tripData?.trip?.destination || '';
+
+    // Load images for current day's activities
+    useEffect(() => {
+        if (dayKeys.length && trip?.tripData?.itinerary[`day${selectedDay}`]) {
+            fetchActivityImages();
+        }
+    }, [selectedDay, trip]);
+
+    const fetchActivityImages = async () => {
+        const activities = trip.tripData.itinerary[`day${selectedDay}`];
+        const newImages = { ...activityImages };
+        const newLoadingStates = { ...loadingImages };
+
+        // Set loading states for all activities in this day
+        activities.forEach(activity => {
+            const activityId = `${selectedDay}_${activity.activity}`;
+            if (!newImages[activityId]) {
+                newLoadingStates[activityId] = true;
+            }
+        });
+        setLoadingImages(newLoadingStates);
+
+        // Process each activity
+        for (const activity of activities) {
+            const activityId = `${selectedDay}_${activity.activity}`;
+            
+            if (!newImages[activityId]) {
+                try {
+                    // Create search query for better image results
+                    const searchQuery = `${activity.activity} in ${destination}`;
+                    
+                    const data = {
+                        textQuery: searchQuery
+                    };
+                    
+                    const result = await GetPlaceDetails(data);
+                    
+                    if (result.data?.places?.[0]?.photos?.[0]?.name) {
+                        // Use the photo reference to construct the URL
+                        const photoUrl = PHOTO_REF_URL.replace('{NAME}', result.data.places[0].photos[0].name);
+                        console.log(`Using photo reference URL for ${activity.activity}:`, photoUrl);
+                        newImages[activityId] = photoUrl;
+                    } else {
+                        // Use fallback image if no photos found
+                        newImages[activityId] = getActivityImage(activity);
+                    }
+                } catch (error) {
+                    console.error(`Error fetching image for ${activity.activity}:`, error);
+                    newImages[activityId] = getActivityImage(activity);
+                } finally {
+                    // Update loading state for this activity
+                    newLoadingStates[activityId] = false;
+                }
+            }
+        }
+
+        setActivityImages(newImages);
+        setLoadingImages(newLoadingStates);
+    };
+
+    // Function to get image for a specific activity
+    const getImageForActivity = (activity) => {
+        const activityId = `${selectedDay}_${activity.activity}`;
+        return activityImages[activityId] || getActivityImage(activity);
+    };
+
     
 
     // Function to get reliable image for activity type
@@ -141,89 +213,64 @@ function Activities({ trip }) {
                         >
                             {/* Activity image */}
                             <div className="h-56 overflow-hidden relative">
-    <img 
-        src={getActivityImage(activity)} 
-        alt={activity.activity}
-        className="w-full h-full object-cover"
-        onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200";
-        }}
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
-    
-    {/* Time badge */}
-    <div className="absolute top-4 left-4 bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm font-medium">
-        {activity.bestTime}
-    </div>
-    
-    {/* Activity title overlay */}
-    <div className="absolute bottom-0 left-0 right-0 p-5">
-        <h3 className="text-xl font-bold text-white mb-1 drop-shadow-md">{activity.activity}</h3>
-        
-        {/* <div className="flex flex-wrap gap-2 mb-1">
-            {activity.duration && (
-                <span className="bg-gray-800/80 text-gray-200 px-2 py-1 rounded-md text-xs flex items-center backdrop-blur-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {activity.duration}
-                </span>
-            )}
-            
-            {activity.travelTime && (
-                <span className="bg-gray-800/80 text-gray-200 px-2 py-1 rounded-md text-xs flex items-center backdrop-blur-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                    {activity.travelTime}
-                </span>
-            )}
-            
-            {/* Price badge moved here */}
-            {/* {activity.price && (
-                <span className="bg-gray-800/80 text-gray-200 px-2 py-1 rounded-md text-xs flex items-center backdrop-blur-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {activity.price}
-                </span>
-            )} */}
-        {/* </div> */} 
-    </div>
-</div>
+                                Loading indicator
+                                {loadingImages[`${selectedDay}_${activity.activity}`] && (
+                                    <div className="absolute inset-0 bg-gray-600 animate-pulse z-10"></div>
+                                )}
+                                <img 
+                                    src={getImageForActivity(activity)} 
+                                    alt={activity.activity}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = getActivityImage(activity);
+                                    }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
+                                
+                                {/* Time badge */}
+                                <div className="absolute top-4 left-4 bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm font-medium">
+                                    {activity.bestTime}
+                                </div>
+                                
+                                {/* Activity title overlay */}
+                                <div className="absolute bottom-0 left-0 right-0 p-5">
+                                    <h3 className="text-xl font-bold text-white mb-1 drop-shadow-md">{activity.activity}</h3>
+                                </div>
+                            </div>
 
                             {/* Activity content */}
                             <div className="p-5">
-                                <p className="text-gray-400 text-sm mb-5 line-clamp-3"><div className="flex flex-wrap gap-2 mb-1">
-            {activity.duration && (
-                <span className="bg-gray-800/80 text-gray-200 px-2 py-1 rounded-md text-xs flex items-center backdrop-blur-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {activity.duration}
-                </span>
-            )}
-            
-            {activity.travelTime && (
-                <span className="bg-gray-800/80 text-gray-200 px-2 py-1 rounded-md text-xs flex items-center backdrop-blur-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                    {activity.travelTime}
-                </span>
-            )}
-            
-            {/* Price badge moved here */}
-            {activity.price && (
-                <span className="bg-gray-800/80 text-gray-200 px-2 py-1 rounded-md text-xs flex items-center backdrop-blur-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {activity.price}
-                </span>
-            )}
-        </div></p>
+                                <div className="text-gray-400 text-sm mb-5 line-clamp-3">
+                                    <div className="flex flex-wrap gap-2 mb-1">
+                                        {activity.duration && (
+                                            <span className="bg-gray-800/80 text-gray-200 px-2 py-1 rounded-md text-xs flex items-center backdrop-blur-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                {activity.duration}
+                                            </span>
+                                        )}
+                                        
+                                        {activity.travelTime && (
+                                            <span className="bg-gray-800/80 text-gray-200 px-2 py-1 rounded-md text-xs flex items-center backdrop-blur-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                </svg>
+                                                {activity.travelTime}
+                                            </span>
+                                        )}
+                                        
+                                        {activity.price && (
+                                            <span className="bg-gray-800/80 text-gray-200 px-2 py-1 rounded-md text-xs flex items-center backdrop-blur-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                {activity.price}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
 
                                 {/* Booking links */}
                                 <div className="flex flex-wrap gap-2">

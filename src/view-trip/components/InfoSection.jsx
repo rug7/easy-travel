@@ -4,94 +4,57 @@ import { IoIosSend } from "react-icons/io";
 import { Button } from "@/components/ui/button";
 import { GetPlaceDetails } from "@/service/GlobalApi";
 
-const PHOTO_REF_URL = 'https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1200&maxWidthPx=2000&key=' + import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
+const PHOTO_REF_URL='https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1000&maxWidthPx=1000&key='+import.meta.env.VITE_GOOGLE_PLACE_API_KEY
 
 function InfoSection({ trip }) {
     const [photoUrl, setPhotoUrl] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (trip) {
-            getPlacePhoto();
+            GetPlacePhoto();
         }
     }, [trip]);
 
-    const getPlacePhoto = async () => {
-        if (!trip?.tripData?.trip?.destination) {
-            setIsLoading(false);
-            return;
-        }
-
-        setIsLoading(true);
-        setError(null);
-
+    const GetPlacePhoto = async () => {
         try {
             const data = {
-                textQuery: trip.tripData.trip.destination
-            };
-            
-            const result = await GetPlaceDetails(data);
-            console.log("API response:", result.data);
-            
-            if (result.data?.places?.[0]?.photos && result.data.places[0].photos.length > 0) {
-                // Try to find a landscape-oriented photo (wider than tall)
-                let bestPhotoIndex = 0;
-                
-                // Log all available photos for debugging
-                result.data.places[0].photos.forEach((photo, index) => {
-                    console.log(`Photo ${index}:`, photo);
-                });
-                
-                // Use the first photo as default
-                const photoName = result.data.places[0].photos[bestPhotoIndex].name;
-                // Request a wider image by adjusting the dimensions
-                const photoUrlValue = PHOTO_REF_URL.replace('{NAME}', photoName);
-                setPhotoUrl(photoUrlValue);
-                console.log("Photo URL set:", photoUrlValue);
-            } else {
-                console.warn("No photos found for this destination");
-                setPhotoUrl('');
+                textQuery: trip.tripData?.trip?.destination
             }
-        } catch (err) {
-            console.error("Error fetching place photo:", err);
-            setError("Failed to load destination image");
-            setPhotoUrl('');
-        } finally {
-            setIsLoading(false);
+            const result = await GetPlaceDetails(data);
+            
+            if (result.data?.places?.[0]?.photos?.[3]?.name) {
+                console.log(result.data.places[0].photos[3].name);
+                
+                const newPhotoUrl = PHOTO_REF_URL.replace('{NAME}', result.data.places[0].photos[3].name);
+                setPhotoUrl(newPhotoUrl);
+                console.log("Photo URL set:", newPhotoUrl);
+            }
+        } catch (error) {
+            console.error("Error fetching photo:", error);
         }
-    };
-
-    // For direct image URL testing (uncomment to test with a specific image)
-    // useEffect(() => {
-    //     setPhotoUrl('https://lh3.googleusercontent.com/place-photos/ADOrq0tbk3XLs7zhf8RubVD4A9ePnzjrXKVODkURkNjuUt5_vAHBSDiZSP46ktmOQj61wObyJaODFKJ8VXnYqGXKVODkURkNjuUt5');
-    //     setIsLoading(false);
-    // }, []);
-
-    if (!trip) return null;
+    }
 
     // Default background if no photo is available
     const defaultBackground = "linear-gradient(to right, #4b6cb7, #182848)";
+
+    if (!trip) return null;
 
     return (
         <div className="relative w-full mt-4">
             {/* Hero Container */}
             <div className="relative w-full max-w-[1400px] mx-auto overflow-hidden">
-                {/* Background Image Container with wider aspect ratio */}
-                <div className="aspect-[21/9] relative rounded-xl overflow-hidden"> {/* Changed aspect ratio to 21:9 for wider look */}
-                    {/* Background Image or Gradient */}
+                {/* Background Image Container with fixed aspect ratio */}
+                <div className="aspect-[16/6] relative rounded-xl overflow-hidden">
                     <div
-                        className={`absolute inset-0 w-full h-full ${isLoading ? 'animate-pulse bg-gray-300' : ''}`}
+                        className="absolute inset-0 w-full h-full transform transition-transform duration-300 hover:scale-105"
                         style={{
                             backgroundImage: photoUrl ? `url(${photoUrl})` : defaultBackground,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
-                            filter: 'brightness(0.85) contrast(1.1)',
+                            filter: 'brightness(0.9) contrast(1.1)',
                         }}
                     />
-                    
-                    {/* Overlay Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
                     {/* Content Container */}
                     <div className="absolute bottom-0 left-0 right-0 p-8">
@@ -107,9 +70,9 @@ function InfoSection({ trip }) {
                 </div>
 
                 {/* Trip Details Pills - Below the image */}
-                <div className="flex flex-wrap justify-between items-center mt-4 px-1">
+                <div className="flex justify-between items-center mt-4 px-1">
                     {/* Pills Container */}
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex gap-3">
                         <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2">
                             <span>💰</span>
                             <span className="font-medium text-gray-700">{trip.userSelection?.budget} Budget</span>
@@ -125,7 +88,7 @@ function InfoSection({ trip }) {
                     </div>
                     {/* Share Button */}
                     <Button 
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-2 text-lg transition-all duration-300 hover:scale-105 mt-3 sm:mt-0"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-2 text-lg transition-all duration-300 hover:scale-105"
                     >
                         <IoIosSend className="text-xl" />
                         <span>Share</span>
