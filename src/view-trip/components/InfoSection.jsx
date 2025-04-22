@@ -4,57 +4,48 @@ import { IoIosSend } from "react-icons/io";
 import { Button } from "@/components/ui/button";
 import { GetPlaceDetails } from "@/service/GlobalApi";
 
-const PHOTO_REF_URL='https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=2000&maxWidthPx=2000&key='+import.meta.env.VITE_GOOGLE_PLACE_API_KEY
-
+const PHOTO_REF_URL='https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1000&maxWidthPx=1000&key='+import.meta.env.VITE_GOOGLE_PLACE_API_KEY
 function InfoSection({ trip }) {
-    const [photoUrl, setPhotoUrl] = useState('');
+    const[photoUrl,setPhotoUrl]=useState();
 
-    useEffect(() => {
-        if (trip) {
-            GetPlacePhoto();
-        }
-    }, [trip]);
+useEffect(()=>{
+    trip&&GetPlacePhoto();
+},[trip])
 
-    const GetPlacePhoto = async () => {
-        try {
-            const data = {
-                textQuery: trip.tripData?.trip?.destination
-            }
-            const result = await GetPlaceDetails(data);
-            
-            if (result.data?.places?.[0]?.photos?.[3]?.name) {
-                console.log(result.data.places[0].photos[3].name);
-                
-                const newPhotoUrl = PHOTO_REF_URL.replace('{NAME}', result.data.places[0].photos[3].name);
-                setPhotoUrl(newPhotoUrl);
-                console.log("Photo URL set:", newPhotoUrl);
-            }
-        } catch (error) {
-            console.error("Error fetching photo:", error);
-        }
+const GetPlacePhoto=async()=>{
+    const data={
+        textQuery:trip.tripData?.trip?.destination
     }
+    const result=await GetPlaceDetails(data).then(resp=>{
+        console.log(resp.data.places[0].photos[3].name);
+        
+        const PhotoUrl=PHOTO_REF_URL.replace('{NAME}',resp.data.places[0].photos[3].name);
+        setPhotoUrl(PhotoUrl);
 
-    // Default background if no photo is available
-    const defaultBackground = "linear-gradient(to right, #4b6cb7, #182848)";
+    })
+}
+
+
 
     if (!trip) return null;
 
     return (
         <div className="relative w-full mt-4">
             {/* Hero Container */}
-            <div className="relative w-full max-w-[1400px] mx-auto overflow-hidden">
-                {/* Background Image Container with fixed aspect ratio */}
-                <div className="aspect-[16/6] relative rounded-xl overflow-hidden">
+            <div className="relative w-full max-w-[1400px] mx-auto overflow-hidden"> {/* Removed rounded-xl from here */}
+    {/* Background Image Container with fixed aspect ratio */}
+    <div className="aspect-[16/6] relative rounded-xl overflow-hidden"> {/* Added rounded-xl here */}
+        
                     <div
-                        className="absolute inset-0 w-full h-full transform transition-transform duration-300 hover:scale-105"
-                        style={{
-                            backgroundImage: photoUrl ? `url(${photoUrl})` : defaultBackground,
+                className="absolute inset-0 w-full h-full transform transition-transform duration-300 hover:scale-105"
+                style={{
+                            backgroundImage: `url(${photoUrl})`||"url('/moderate1.jpg')",
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             filter: 'brightness(0.9) contrast(1.1)',
                         }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
                     {/* Content Container */}
                     <div className="absolute bottom-0 left-0 right-0 p-8">
@@ -86,8 +77,8 @@ function InfoSection({ trip }) {
                             <span className="font-medium text-gray-700">Travel Date: {formatDate(trip.userSelection?.startDate)} ➡️ {formatDate(trip.userSelection?.endDate)}</span>
                         </div>
                     </div>
-                    {/* Share Button */}
-                    <Button 
+                   {/* Share Button */}
+                   <Button 
                         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-2 text-lg transition-all duration-300 hover:scale-105"
                     >
                         <IoIosSend className="text-xl" />

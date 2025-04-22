@@ -14,3 +14,5 @@ const config={
 }
 
 export const GetPlaceDetails=(data)=>axios.post(BASE_URL,data,config)
+
+

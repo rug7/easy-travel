@@ -814,6 +814,7 @@ The response must exactly match this structure:
     
     let hotels = [];
 if (finalDestination && finalDestination.value && finalDestination.value.description) {
+  try {
     hotels = await generateHotels(
         finalDestination.value.description,
         getBudgetText(selectedBudgets[0]),
@@ -824,16 +825,32 @@ if (finalDestination && finalDestination.value && finalDestination.value.descrip
             endDate: formatDate(endDate)
         }
     );
-} else {
-    console.warn('No destination specified, using default hotels');
+} catch (error) {
+    console.error("Error generating hotels:", error);
     hotels = generateDefaultHotels(
         getBudgetText(selectedBudgets[0]),
-        'Default Location',
+        finalDestination.value.description,
         {
             startDate: formatDate(startDate),
             endDate: formatDate(endDate)
         }
     );
+}
+} else {
+console.warn('No destination specified, using default hotels');
+hotels = generateDefaultHotels(
+    getBudgetText(selectedBudgets[0]),
+    'Default Location',
+    {
+        startDate: formatDate(startDate),
+        endDate: formatDate(endDate)
+    }
+);
+}
+
+// Make sure hotels is not a Promise
+if (hotels instanceof Promise) {
+hotels = await hotels;
 }
     
     // Initialize base structure with your original prompt structure

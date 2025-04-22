@@ -349,12 +349,15 @@ function CreateTrip() {
         isAISelected: isAISelected
       };
   
+      // Make a deep copy of tripData to avoid modifying the original
+      const tripDataCopy = JSON.parse(JSON.stringify(tripData));
+      
       // Add progress info to the trip data
       const updatedTripData = {
-        ...tripData,
+        ...tripDataCopy,
         generationProgress: progressInfo || {
           currentDay: 0,
-          totalDays: parseInt(tripData.trip.duration.split(' ')[0]) || 0,
+          totalDays: parseInt(tripDataCopy.trip.duration.split(' ')[0]) || 0,
           completed: false
         }
       };
