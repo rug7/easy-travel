@@ -213,7 +213,7 @@ function Activities({ trip }) {
                         >
                             {/* Activity image */}
                             <div className="h-56 overflow-hidden relative">
-                                Loading indicator
+                            
                                 {loadingImages[`${selectedDay}_${activity.activity}`] && (
                                     <div className="absolute inset-0 bg-gray-600 animate-pulse z-10"></div>
                                 )}
