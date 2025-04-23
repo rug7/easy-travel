@@ -98,30 +98,79 @@ function Header() {
           </Button>
           
           <Popover>
-            <PopoverTrigger>
-              <img 
-                src={user?.picture} 
-                className="h-[35px] w-[35px] rounded-full cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all" 
-                alt="Profile" 
-              />
-            </PopoverTrigger> 
-            <PopoverContent className="bg-white border border-gray-200 shadow-lg rounded-lg p-4 w-48">
-              <div className="flex flex-col space-y-2">
-                <div className="pb-2 border-b border-gray-200">
-                  <p className="font-medium text-gray-800">{user?.name}</p>
-                  <p className="text-sm text-gray-500">{user?.email}</p>
+            <PopoverTrigger asChild>
+              <button className="relative p-[2px] rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <div className="rounded-full p-[2px] bg-white">
+                  <img 
+                    src={user?.picture} 
+                    className="h-[35px] w-[35px] rounded-full object-cover cursor-pointer hover:opacity-90 transition-all"
+                    alt="Profile" 
+                  />
                 </div>
-                <button 
-                  onClick={handleLogout}
-                  className="text-left text-red-500 hover:text-red-700 transition-colors flex items-center gap-2 py-1"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  Logout
-                </button>
-              </div>
-            </PopoverContent>
+              </button>
+            </PopoverTrigger> 
+            <PopoverContent 
+  className="w-64 p-0 bg-white rounded-lg shadow-lg border border-gray-200" 
+  align="end"
+  sideOffset={5}
+>
+  <div className="flex flex-col">
+    {/* User info section */}
+    {/* <div className="p-4 border-b border-gray-100">
+      <div className="flex items-center gap-3">
+        <img 
+          src={user?.picture} 
+          alt="Profile" 
+          className="w-10 h-10 rounded-full border-2 border-gray-100"
+        />
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-gray-900 text-sm truncate">{user?.name}</p>
+          <p className="text-gray-500 text-xs truncate">{user?.email}</p>
+        </div>
+      </div>
+    </div> */}
+    
+    {/* Menu items */}
+    {/* <div className="p-2">
+      <button
+        onClick={goToMyTrips}
+        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-left"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+        </svg>
+        My Trips
+      </button>
+      
+      <button
+        onClick={() => navigate('/account-settings')}
+        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-left"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        Settings
+      </button>
+    </div> */}
+    
+    {/* Divider */}
+    {/* <div className="border-t border-gray-100 my-1"></div> */}
+    
+    {/* Sign out button */}
+    <div className="p-2">
+      <button 
+        onClick={handleLogout}
+        className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-left"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        Sign out
+      </button>
+    </div>
+  </div>
+</PopoverContent>
           </Popover>
         </div>
       );
