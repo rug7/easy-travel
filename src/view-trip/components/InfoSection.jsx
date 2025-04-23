@@ -5,12 +5,10 @@ import { Button } from "@/components/ui/button";
 import { GetPlaceDetails } from "@/service/GlobalApi";
 import fallbackImage from '/public/moderate1.jpg';
 
-// Keep the same URL format
-const PHOTO_REF_URL = 'https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1000&maxWidthPx=1000&key=' + import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
-
 function InfoSection({ trip }) {
     const [photoUrl, setPhotoUrl] = useState('');
     const [loading, setLoading] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     useEffect(() => {
         if (trip) {
@@ -20,62 +18,65 @@ function InfoSection({ trip }) {
 
     const GetPlacePhoto = async () => {
         setLoading(true);
+        setImageError(false);
         
         try {
-            // Exactly match the YouTube example
             const data = {
-                textQuery: trip?.userSelection?.location?.label || trip.tripData?.trip?.destination
+                textQuery: trip?.userSelection?.location?.label || trip.tripData?.trip?.destination,
+                languageCode: "en"
             };
             
             const result = await GetPlaceDetails(data);
+            console.log("Places API response:", result.data);
             
-            // Log the full response
-            console.log("API Response:", result.data);
-            
-            // Directly access the 3rd photo (index 3) like in the YouTube example
-            if (result.data?.places?.[0]?.photos?.[3]?.name) {
-                console.log("Photo name:", result.data.places[0].photos[3].name);
+            if (result.data?.places?.[0]?.photos?.length > 0) {
+                // Try to use photo index 3 like in the YouTube example
+                const photoIndex = result.data.places[0].photos.length > 3 ? 3 : 0;
+                const photo = result.data.places[0].photos[photoIndex];
                 
-                // Set the photo URL directly without any validation
-                const PhotoUrl = PHOTO_REF_URL.replace('{NAME}', result.data.places[0].photos[3].name);
-                setPhotoUrl(PhotoUrl);
-            } else {
-                // If no photo at index 3, try index 0
-                if (result.data?.places?.[0]?.photos?.[0]?.name) {
-                    const PhotoUrl = PHOTO_REF_URL.replace('{NAME}', result.data.places[0].photos[0].name);
-                    setPhotoUrl(PhotoUrl);
+                if (photo && photo.name) {
+                    console.log("Using photo:", photo.name);
+                    
+                    // Use the original Places API URL - this works for background images
+                    const photoUrl = `https://places.googleapis.com/v1/${photo.name}/media?maxHeightPx=1000&maxWidthPx=1000&key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}`;
+                    
+                    setPhotoUrl(photoUrl);
                 } else {
+                    setImageError(true);
                     setPhotoUrl(fallbackImage);
                 }
+            } else {
+                setImageError(true);
+                setPhotoUrl(fallbackImage);
             }
         } catch (error) {
             console.error("Error fetching photo:", error);
+            setImageError(true);
             setPhotoUrl(fallbackImage);
         } finally {
             setLoading(false);
         }
     };
 
-    // Simplify the background style
-    const getBackgroundStyle = () => {
-        return {
-            backgroundImage: `url(${photoUrl || fallbackImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'brightness(0.9) contrast(1.1)',
-        };
-    };
-
+    // Use an actual image element instead of background-image
     if (!trip) return null;
 
     return (
         <div className="relative w-full mt-4">
             <div className="relative w-full max-w-[1400px] mx-auto overflow-hidden">
-                <div className="aspect-[16/6] relative rounded-xl overflow-hidden">
-                    <div
-                        className="absolute inset-0 w-full h-full transform transition-transform duration-300 hover:scale-105"
-                        style={getBackgroundStyle()}
+                <div className="aspect-[16/6] relative rounded-xl overflow-hidden bg-gray-900">
+                    {/* Use an actual image element for better control */}
+                    <img 
+                        src={photoUrl || fallbackImage}
+                        alt={trip.tripData?.trip?.destination || "Destination"}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        onError={(e) => {
+                            console.error("Image failed to load:", e.target.src);
+                            setImageError(true);
+                            e.target.src = fallbackImage;
+                        }}
                     />
+                    
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
                     {loading && (

@@ -153,11 +153,71 @@ function CreateTrip() {
         
         // Store user data
         localStorage.setItem('user', JSON.stringify(userInfo.data));
+        toast.success('Successfully signed in!');
         setOpenDialog(false);
         
-        // If there was a pending trip generation, execute it
+        // Now that the user is logged in, proceed with trip generation
         if (place) {
-          generateTrip(place);
+          // Reset progress state
+          setGenerationProgress({
+            destination: false,
+            flights: false,
+            hotels: false,
+            activities: false,
+            finalizing: false,
+            completed: false,
+            currentDay: 0,
+            totalDays: 0
+          });
+          
+          setIsGenerating(true);
+          
+          try {
+            await generateTrip({
+              place,
+              destination: place,
+              isAISelected,
+              numDays,
+              selectedBudgets,
+              selectedPeople,
+              selectedWeather,
+              selectedActivities,
+              selectedSightseeing,
+              startDate,
+              endDate,
+              tripType,
+              seatClass,
+              preferences: {
+                weather: selectedWeather,
+                activities: selectedActivities,
+                sightseeing: selectedSightseeing
+              },
+              SaveAiTrip,
+              translate,
+              setGenerationProgress,
+              setTripData,
+              setOpenDialog,
+              setIsGenerating,
+              options: {
+                SelectTravelsList,
+                SelectBudgetOptions,
+                WeatherOptions,
+                ActivityOptions,
+                SightseeingOptions
+              }
+            });
+            
+            // Mark generation as complete
+            setGenerationProgress(prev => ({
+              ...prev,
+              completed: true
+            }));
+            
+          } catch (error) {
+            console.error('Error generating trip:', error);
+            toast.error(error.message || translate("errorGeneratingTrip"));
+            setIsGenerating(false);
+          }
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
@@ -171,6 +231,16 @@ function CreateTrip() {
   });
 
   const handleGenerateTrip = async () => {
+    // Check if user is logged in
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user) {
+      // If not logged in, show the sign-in dialog
+      setOpenDialog(true);
+      return; // Stop execution until user is logged in
+    }
+    
+    // User is logged in, proceed with trip generation
     // Reset progress state
     setGenerationProgress({
       destination: false,
@@ -537,7 +607,12 @@ function CreateTrip() {
         </div>
       </div>
 
-      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+      <Dialog open={openDialog && !isGenerating} onOpenChange={(open) => {
+  // Only allow opening/closing the dialog if not generating
+  if (!isGenerating) {
+    setOpenDialog(open);
+  }
+}}>
   <DialogContent className="sm:max-w-md bg-white rounded-lg shadow-lg">
     <DialogHeader>
       <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
@@ -549,7 +624,7 @@ function CreateTrip() {
           <img src="/logo.svg" alt="Easy Travel Logo" className="h-12 w-12" />
           <h2 className="font-bold text-lg text-gray-800">Sign In With Google</h2>
           <p className="text-sm text-gray-600 text-center">
-            Sign in to the App with Google authentication securely
+            Sign in to continue generating your trip
           </p>
           <Button
             className="w-full mt-4 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 flex items-center justify-center space-x-2 py-2 rounded-md"
