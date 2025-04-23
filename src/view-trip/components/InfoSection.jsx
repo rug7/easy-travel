@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { GetPlaceDetails } from "@/service/GlobalApi";
 import fallbackImage from '/public/moderate1.jpg';
 
+const PHOTO_REF_URL = 'https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1000&maxWidthPx=1000&key=' + import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
+
+
 function InfoSection({ trip }) {
     const [photoUrl, setPhotoUrl] = useState('');
     const [loading, setLoading] = useState(false);
@@ -30,16 +33,13 @@ function InfoSection({ trip }) {
             console.log("Places API response:", result.data);
             
             if (result.data?.places?.[0]?.photos?.length > 0) {
-                // Try to use photo index 3 like in the YouTube example
                 const photoIndex = result.data.places[0].photos.length > 3 ? 3 : 0;
                 const photo = result.data.places[0].photos[photoIndex];
                 
                 if (photo && photo.name) {
-                    console.log("Using photo:", photo.name);
-                    
-                    // Use the original Places API URL - this works for background images
-                    const photoUrl = `https://places.googleapis.com/v1/${photo.name}/media?maxHeightPx=1000&maxWidthPx=1000&key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}`;
-                    
+                    // Use the same URL construction method as Hotels component
+                    const photoUrl = PHOTO_REF_URL.replace('{NAME}', photo.name);
+                    console.log("Using photo reference URL:", photoUrl);
                     setPhotoUrl(photoUrl);
                 } else {
                     setImageError(true);
@@ -58,25 +58,29 @@ function InfoSection({ trip }) {
         }
     };
 
-    // Use an actual image element instead of background-image
+    const getBackgroundStyle = () => {
+        return {
+            backgroundImage: `url(${photoUrl || fallbackImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(0.9) contrast(1.1)',
+        };
+    };
+
     if (!trip) return null;
 
     return (
         <div className="relative w-full mt-4">
             <div className="relative w-full max-w-[1400px] mx-auto overflow-hidden">
-                <div className="aspect-[16/6] relative rounded-xl overflow-hidden bg-gray-900">
-                    {/* Use an actual image element for better control */}
-                    <img 
-                        src={photoUrl || fallbackImage}
-                        alt={trip.tripData?.trip?.destination || "Destination"}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        onError={(e) => {
-                            console.error("Image failed to load:", e.target.src);
+                <div className="aspect-[16/6] relative rounded-xl overflow-hidden">
+                    <div
+                        className="absolute inset-0 w-full h-full transform transition-transform duration-300 hover:scale-105"
+                        style={getBackgroundStyle()}
+                        onError={() => {
+                            console.error("Background image failed to load");
                             setImageError(true);
-                            e.target.src = fallbackImage;
                         }}
                     />
-                    
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
                     {loading && (

@@ -71,7 +71,10 @@ function Hotels({ trip }) {
     <div className="w-full max-w-[1400px] mx-auto">
       <h2 className='font-bold text-xl mt-5 text-white'>Hotel Recommendation</h2>
       <div className='grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5'>
-        {trip?.tripData?.hotels.map((hotel, index) => (
+
+        {Array.isArray(trip?.tripData?.hotels) ? 
+        
+        trip?.tripData?.hotels.map((hotel, index) => (
           <div key={index} className='bg-gray-800 rounded-xl p-4 cursor-pointer hover:bg-gray-700 transition-all'>
             <a href={hotel.bookingLinks?.googleMaps || `https://www.google.com/maps/search/${encodeURIComponent(hotel.name + ' ' + destination)}`} 
                target="_blank" 
@@ -99,7 +102,11 @@ function Hotels({ trip }) {
               <h2 className='text-white text-sm'>⭐ {hotel?.rating} Stars</h2>
             </div>
           </div>   
-        ))}
+        ))
+        :
+        <p>No hotels available</p>
+        
+        }
       </div>
     </div>
   );
