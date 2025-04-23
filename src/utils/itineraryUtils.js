@@ -584,7 +584,7 @@ The response must exactly match this structure:
 
           // Reset progress state
     setGenerationProgress({
-      destination: false,
+      destination: !isAISelected,
       flights: false,
       hotels: false,
       activities: false,
