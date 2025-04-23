@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Viewtrip from "./view-trip/[tripId]/index.jsx";
 import LoadingScreen from "./view-trip/components/LoadingScreen";
+import MyTrips from "./my-trips";
 
 // Add animation styles to your CSS
 const animationStyles = `
@@ -55,6 +56,15 @@ const router = createBrowserRouter([
         <Header />
         <Viewtrip/>
       </LanguageProvider>
+    ),
+  },
+  {
+    path: "/my-trips",
+    element: (
+        <LanguageProvider>
+            <Header />
+            <MyTrips />
+        </LanguageProvider>
     ),
   },
 ]);
