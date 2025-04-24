@@ -22,6 +22,8 @@ function MyTrips() {
     const [mapLoading, setMapLoading] = useState(false);
     const [mapError, setMapError] = useState(null);
     const [mapInitialized, setMapInitialized] = useState(false);
+    const [locationHistory, setLocationHistory] = useState([]);
+
     
     // Refs
     const mapRef = useRef(null);
@@ -29,24 +31,7 @@ function MyTrips() {
     const markersRef = useRef([]);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchTrips();
-        
-        // Load Google Maps script on component mount
-        if (!window.google) {
-            loadGoogleMapsScript();
-        }
-        
-        return () => {
-            // Clean up markers on unmount
-            if (markersRef.current.length > 0) {
-                markersRef.current.forEach(marker => {
-                    if (marker) marker.setMap(null);
-                });
-                markersRef.current = [];
-            }
-        };
-    }, []);
+
 
     useEffect(() => {
         if (showMap) {
@@ -64,6 +49,41 @@ function MyTrips() {
             }
         }
     }, [showMap, mapExpanded]);
+
+    useEffect(() => {
+        const initializeData = async () => {
+            await Promise.all([fetchTrips(), fetchLocationHistory()]);
+            if (!window.google) {
+                loadGoogleMapsScript();
+            }
+        };
+        
+        initializeData();
+        
+        return () => {
+            if (markersRef.current.length > 0) {
+                markersRef.current.forEach(marker => {
+                    if (marker) marker.setMap(null);
+                });
+                markersRef.current = [];
+            }
+        };
+    }, []);
+    
+    const fetchLocationHistory = async () => {
+        try {
+            const historySnapshot = await getDocs(collection(db, 'userLocationHistory'));
+            const historyData = historySnapshot.docs.map(doc => ({
+                id: doc.id,
+                destination: doc.data().destination,
+                visitedAt: doc.data().visitedAt,
+                // Add any other fields you need
+            }));
+            setLocationHistory(historyData);
+        } catch (error) {
+            console.error('Error fetching location history:', error);
+        }
+    };
 
     const fetchTripImage = async (destination) => {
         try {
@@ -84,6 +104,8 @@ function MyTrips() {
             return null;
         }
     };
+
+    
 
     const fetchTrips = async () => {
         try {
@@ -178,12 +200,21 @@ function MyTrips() {
                 zoom: 2,
                 center: { lat: 20, lng: 0 },
                 mapTypeId: 'roadmap',
-                mapTypeControl: false,
-                fullscreenControl: false,
-                streetViewControl: false,
-                zoomControlOptions: {
-                    position: window.google.maps.ControlPosition.RIGHT_BOTTOM
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                    position: google.maps.ControlPosition.TOP_RIGHT
                 },
+                fullscreenControl: true,
+                fullscreenControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_TOP
+                },
+                streetViewControl: false,
+                zoomControl: true,
+                zoomControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_CENTER
+                },
+                scaleControl: true,
                 styles: [
                     {
                         "elementType": "geometry",
@@ -268,6 +299,7 @@ function MyTrips() {
         const bounds = new window.google.maps.LatLngBounds();
         const geocoder = new window.google.maps.Geocoder();
     
+        // Clear existing markers
         if (markersRef.current.length > 0) {
             markersRef.current.forEach(marker => {
                 if (marker) marker.setMap(null);
@@ -275,39 +307,41 @@ function MyTrips() {
             markersRef.current = [];
         }
     
+        // Add trip markers
         destinations.forEach((destination, index) => {
             geocoder.geocode({ address: destination.name }, (results, status) => {
                 if (status === 'OK' && results[0]) {
                     const position = results[0].geometry.location;
-                    const markerColors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF'];
-                    const colorIndex = index % markerColors.length;
                     
+                    // Create trip marker (pin style)
                     const marker = new window.google.maps.Marker({
                         position,
                         map,
                         title: destination.name,
                         animation: window.google.maps.Animation.DROP,
                         icon: {
-                            path: window.google.maps.SymbolPath.CIRCLE,
-                            fillColor: markerColors[colorIndex],
-                            fillOpacity: 0.9,
-                            strokeWeight: 2,
+                            path: 'M12 0C7.802 0 4 3.403 4 7.602C4 11.8 12 24 12 24S20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z',
+                            fillColor: '#DC2626',
+                            fillOpacity: 1,
+                            strokeWeight: 1,
                             strokeColor: '#FFFFFF',
-                            scale: 10
+                            scale: 1.5,
+                            anchor: new google.maps.Point(12, 24),
                         }
                     });
-                    
+    
                     markersRef.current.push(marker);
-                    
+    
+                    // Create info window
                     const infoWindow = new window.google.maps.InfoWindow({
                         content: `
                             <div style="padding: 10px; max-width: 200px; text-align: center; color: #333;">
-                                <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: bold; color: ${markerColors[colorIndex]};">
+                                <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: bold; color: #FF0000;">
                                     ${destination.name}
                                 </h3>
                                 <p style="margin: 4px 0 8px; font-size: 14px;">${destination.days} days</p>
                                 <button 
-                                    style="background: ${markerColors[colorIndex]}; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;"
+                                    style="background: #FF0000; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;"
                                     onclick="window.viewTrip('${destination.id}')"
                                 >
                                     View Trip
@@ -315,7 +349,7 @@ function MyTrips() {
                             </div>
                         `
                     });
-                    
+    
                     marker.addListener('click', () => {
                         if (window.currentInfoWindow) {
                             window.currentInfoWindow.close();
@@ -323,21 +357,71 @@ function MyTrips() {
                         infoWindow.open(map, marker);
                         window.currentInfoWindow = infoWindow;
                     });
-                    
+    
                     bounds.extend(position);
-                    
-                    if (index === destinations.length - 1) {
-                        map.fitBounds(bounds);
-                        const listener = window.google.maps.event.addListener(map, 'idle', () => {
-                            if (map.getZoom() > 5) {
-                                map.setZoom(5);
-                            }
-                            window.google.maps.event.removeListener(listener);
-                        });
-                    }
                 }
             });
         });
+    
+        // Add location history markers
+        locationHistory.forEach(location => {
+            geocoder.geocode({ address: location.destination }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const position = results[0].geometry.location;
+                    
+                    // Create history marker (circle style)
+                    const historyMarker = new window.google.maps.Marker({
+                        position,
+                        map,
+                        title: location.destination,
+                        icon: {
+                            path: window.google.maps.SymbolPath.CIRCLE,
+                            fillColor: '#DC2626',
+                            fillOpacity: 0.5,
+                            strokeWeight: 2,
+                            strokeColor: '#DC2626',
+                            scale: 8
+                        }
+                    });
+    
+                    markersRef.current.push(historyMarker);
+                    bounds.extend(position);
+    
+                    // Optional: Add info window for history locations
+                    const historyInfoWindow = new window.google.maps.InfoWindow({
+                        content: `
+                            <div style="padding: 8px; text-align: center;">
+                                <p style="margin: 0; font-weight: 500;">${location.destination}</p>
+                                <p style="margin: 4px 0 0; font-size: 12px; color: #666;">
+                                    Visited on ${new Date(location.visitedAt).toLocaleDateString()}
+                                </p>
+                            </div>
+                        `
+                    });
+    
+                    historyMarker.addListener('click', () => {
+                        if (window.currentInfoWindow) {
+                            window.currentInfoWindow.close();
+                        }
+                        historyInfoWindow.open(map, historyMarker);
+                        window.currentInfoWindow = historyInfoWindow;
+                    });
+                }
+            });
+        });
+    
+        // Fit bounds and adjust zoom
+        setTimeout(() => {
+            if (markersRef.current.length > 0) {
+                map.fitBounds(bounds);
+                const listener = window.google.maps.event.addListener(map, 'idle', () => {
+                    if (map.getZoom() > 5) {
+                        map.setZoom(5);
+                    }
+                    window.google.maps.event.removeListener(listener);
+                });
+            }
+        }, 1000);
     };
 
     const toggleMap = () => {
@@ -452,13 +536,41 @@ function MyTrips() {
                                         <IoExpandOutline className="w-5 h-5 text-gray-700" />
                                     </button>
                                     
-                                    <div className="absolute top-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg z-10">
-                                        <h3 className="text-sm font-bold text-gray-800 mb-2">Your Trip Destinations</h3>
-                                        <div className="flex items-center text-xs text-gray-600">
-                                            <div className="w-4 h-4 rounded-full bg-blue-500 mr-2"></div>
-                                            <span>Click markers to view trip details</span>
-                                        </div>
-                                    </div>
+                                    <div className="absolute top-4 left-4 bg-white bg-opacity-95 p-3 rounded-lg shadow-xl z-10 min-w-[200px]">
+    <h3 className="text-sm font-bold text-gray-800 mb-2">Map Legend</h3>
+    
+    {/* Planned Trips */}
+    <div className="mb-2">
+        <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C7.802 0 4 3.403 4 7.602C4 11.8 12 24 12 24S20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z"/>
+            </svg>
+            <span className="text-xs font-medium text-gray-700">Planned Trips ({destinations.length})</span>
+        </div>
+    </div>
+
+    {/* Location History */}
+    <div className="mb-2">
+        <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-red-500/50 border-2 border-red-600"></div>
+            <span className="text-xs font-medium text-gray-700">Visited Places ({locationHistory.length})</span>
+        </div>
+    </div>
+
+    {/* Stats */}
+    <div className="mt-2 pt-2 border-t border-gray-200">
+        <div className="flex justify-between text-xs text-gray-600">
+            <div>
+                <span className="font-medium">Total: </span>
+                <span>{destinations.length + locationHistory.length}</span>
+            </div>
+            <div>
+                <span className="font-medium">Visited: </span>
+                <span>{locationHistory.length}</span>
+            </div>
+        </div>
+    </div>
+</div>
                                 </div>
                             </motion.div>
                         )}
