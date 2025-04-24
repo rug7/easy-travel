@@ -82,7 +82,9 @@ function Hotels({ trip }) {
               <div className="relative h-[180px] w-full rounded-xl overflow-hidden">
                 {/* Loading indicator */}
                 {loadingImages[hotel.name] && (
-                  <div className="absolute inset-0 bg-gray-600 animate-pulse z-10"></div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              </div>
                 )}
                 <img 
                   src={getImageForHotel(hotel)} 

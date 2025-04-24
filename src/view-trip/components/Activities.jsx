@@ -41,7 +41,8 @@ function Activities({ trip }) {
                     const searchQuery = `${activity.activity} in ${destination}`;
                     
                     const data = {
-                        textQuery: searchQuery
+                         textQuery: searchQuery,
+                         languageCode: "en"
                     };
                     
                     const result = await GetPlaceDetails(data);
@@ -225,7 +226,7 @@ function Activities({ trip }) {
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
                                         e.target.onerror = null;
-                                        e.target.src = getActivityImage(activity);
+                                        e.target.src = '/moderate1.jpg';
                                     }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
