@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatUtils";
 import { IoIosSend } from "react-icons/io";
 import { Button } from "@/components/ui/button";
-import { GetPlaceDetails } from "@/service/GlobalApi";
 import fallbackImage from '/public/moderate1.jpg';
-
-const PHOTO_REF_URL = 'https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1000&maxWidthPx=1000&key=' + import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
-
+// Import the destinations data
+import destinationsData from '@/context/destinations.json';
 
 function InfoSection({ trip }) {
     const [photoUrl, setPhotoUrl] = useState('');
@@ -15,42 +13,64 @@ function InfoSection({ trip }) {
 
     useEffect(() => {
         if (trip) {
-            GetPlacePhoto();
+            getDestinationImage();
         }
     }, [trip]);
 
-    const GetPlacePhoto = async () => {
+    // Function to find the best matching image from destinations.json
+    const getDestinationImage = () => {
         setLoading(true);
         setImageError(false);
         
         try {
-            const data = {
-                textQuery: trip?.userSelection?.location?.label || trip.tripData?.trip?.destination,
-                languageCode: "en"
-            };
+            const locationQuery = (trip?.userSelection?.location?.label || trip.tripData?.trip?.destination || '').toLowerCase();
             
-            const result = await GetPlaceDetails(data);
-            console.log("Places API response:", result.data);
+            if (!locationQuery) {
+                setImageError(true);
+                setPhotoUrl(fallbackImage);
+                return;
+            }
             
-            if (result.data?.places?.[0]?.photos?.length > 0) {
-                const photoIndex = result.data.places[0].photos.length > 3 ? 3 : 0;
-                const photo = result.data.places[0].photos[photoIndex];
-                
-                if (photo && photo.name) {
-                    // Use the same URL construction method as Hotels component
-                    const photoUrl = PHOTO_REF_URL.replace('{NAME}', photo.name);
-                    console.log("Using photo reference URL:", photoUrl);
-                    setPhotoUrl(photoUrl);
-                } else {
-                    setImageError(true);
-                    setPhotoUrl(fallbackImage);
-                }
+            // First try to find an exact match
+            let matchedCountry = destinationsData.countries.find(country => 
+                country.name.toLowerCase() === locationQuery
+            );
+            
+            // If no exact match, check country aliases
+            if (!matchedCountry) {
+                matchedCountry = destinationsData.countries.find(country => 
+                    country.aliases.some(alias => locationQuery.includes(alias.toLowerCase()))
+                );
+            }
+            
+            // If still no match, look for partial matches in country names
+            if (!matchedCountry) {
+                matchedCountry = destinationsData.countries.find(country => 
+                    locationQuery.includes(country.name.toLowerCase()) || 
+                    country.name.toLowerCase().includes(locationQuery)
+                );
+            }
+            
+            // If still no match, look for partial matches in aliases
+            if (!matchedCountry) {
+                matchedCountry = destinationsData.countries.find(country => 
+                    country.aliases.some(alias => 
+                        locationQuery.includes(alias.toLowerCase()) || 
+                        alias.toLowerCase().includes(locationQuery)
+                    )
+                );
+            }
+            
+            if (matchedCountry) {
+                console.log(`Found match for "${locationQuery}": ${matchedCountry.name}`);
+                setPhotoUrl(matchedCountry.imageUrl);
             } else {
+                console.log(`No match found for "${locationQuery}"`);
                 setImageError(true);
                 setPhotoUrl(fallbackImage);
             }
         } catch (error) {
-            console.error("Error fetching photo:", error);
+            console.error("Error getting destination image:", error);
             setImageError(true);
             setPhotoUrl(fallbackImage);
         } finally {
@@ -79,6 +99,7 @@ function InfoSection({ trip }) {
                         onError={() => {
                             console.error("Background image failed to load");
                             setImageError(true);
+                            setPhotoUrl(fallbackImage);
                         }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />

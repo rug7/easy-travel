@@ -1,7 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { GetPlaceDetails } from "@/service/GlobalApi";
 
-const PHOTO_REF_URL = 'https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1000&maxWidthPx=1000&key=' + import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
+// Collection of hotel images
+const hotelImageCollection = [
+  'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200',  // Luxury hotel 1
+  'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200',     // Luxury hotel 2
+  'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200',  // Luxury hotel 3
+  'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200',     // Hotel room 1
+  'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=1200',  // Hotel room 2
+  'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=1200',  // Hotel room 3
+  'https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=1200',  // Hotel lobby 1
+  'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=1200',  // Hotel lobby 2
+  'https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?w=1200',  // Resort 1
+  'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=1200',  // Resort 2
+  'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1200',  // Resort pool
+  'https://images.unsplash.com/photo-1498503182468-3b51cbb6cb24?w=1200',  // Boutique hotel 1
+  'https://images.unsplash.com/photo-1505692952047-1a78307da8f2?w=1200',  // Boutique hotel 2
+  'https://images.unsplash.com/photo-1561501878-aabd62634533?w=1200',     // Business hotel
+  'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1200',  // Hotel exterior 1
+  'https://images.unsplash.com/photo-1559508551-44bff1de756b?w=1200',     // Hotel exterior 2
+  'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=1200',  // Budget hotel
+  'https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=1200',     // Hotel bathroom
+  'https://images.unsplash.com/photo-1552858725-2758b5fb1286?w=1200',     // Hotel view
+  'https://images.unsplash.com/photo-1558211583-d26f610c1eb1?w=1200'      // Hotel breakfast
+];
+
+// Fallback image
+const fallbackImage = '/moderate1.jpg';
 
 function Hotels({ trip }) {
   const [hotelImages, setHotelImages] = useState({});
@@ -10,61 +34,64 @@ function Hotels({ trip }) {
 
   useEffect(() => {
     if (trip?.tripData?.hotels && trip.tripData.hotels.length > 0) {
-      fetchHotelImages();
+      assignHotelImages();
     }
   }, [trip]);
 
-  const fetchHotelImages = async () => {
+  // Function to consistently map a hotel name to an image from the collection
+  const getConsistentImageForHotel = (hotelName) => {
+    // Create a simple hash from the hotel name
+    let hash = 0;
+    for (let i = 0; i < hotelName.length; i++) {
+      hash = hotelName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    // Use the hash to pick a consistent image from the collection
+    const index = Math.abs(hash) % hotelImageCollection.length;
+    return hotelImageCollection[index];
+  };
+
+  // Assign images to hotels
+  const assignHotelImages = () => {
     const newImages = { ...hotelImages };
     const newLoadingStates = { ...loadingImages };
   
-    // Start loading state for all hotels
+    // Simulate loading state for a brief moment
     trip.tripData.hotels.forEach(hotel => {
       if (!newImages[hotel.name]) {
         newLoadingStates[hotel.name] = true;
       }
     });
+    
     setLoadingImages(newLoadingStates);
   
-    // Process each hotel
-    for (const hotel of trip.tripData.hotels) {
-      if (!newImages[hotel.name]) {
-        try {
-          // Create a more specific search query for better results
-          const searchQuery = `${hotel.name} hotel in ${destination}`;
-          
-          const data = {
-            textQuery: searchQuery
-          };
-          
-          const result = await GetPlaceDetails(data);
-          
-          if (result.data?.places?.[0]?.photos?.[0]?.name) {
-            // Use the photo reference to construct the URL - this seems to be working for you
-            const photoUrl = PHOTO_REF_URL.replace('{NAME}', result.data.places[0].photos[0].name);
-            console.log(`Using photo reference URL for ${hotel.name}:`, photoUrl);
-            newImages[hotel.name] = photoUrl;
-          } else {
-            // Use default image if no photos found
-            newImages[hotel.name] = '/moderate1.jpg';
+    // Use setTimeout to simulate network delay (optional)
+    setTimeout(() => {
+      // Process each hotel
+      for (const hotel of trip.tripData.hotels) {
+        if (!newImages[hotel.name]) {
+          try {
+            // Get a consistent image for this hotel
+            const imageUrl = getConsistentImageForHotel(hotel.name);
+            newImages[hotel.name] = imageUrl;
+          } catch (error) {
+            console.error(`Error assigning image for ${hotel.name}:`, error);
+            newImages[hotel.name] = fallbackImage;
+          } finally {
+            // Update loading state for this hotel
+            newLoadingStates[hotel.name] = false;
           }
-        } catch (error) {
-          console.error(`Error fetching image for ${hotel.name}:`, error);
-          newImages[hotel.name] = '/moderate1.jpg';
-        } finally {
-          // Update loading state for this hotel
-          newLoadingStates[hotel.name] = false;
         }
       }
-    }
-  
-    setHotelImages(newImages);
-    setLoadingImages(newLoadingStates);
+    
+      setHotelImages(newImages);
+      setLoadingImages(newLoadingStates);
+    }, 300); // Simulate a short delay for loading effect
   };
 
   // Function to get image for a specific hotel
   const getImageForHotel = (hotel) => {
-    return hotelImages[hotel.name] || '/moderate1.jpg';
+    return hotelImages[hotel.name] || fallbackImage;
   };
 
   return (
@@ -82,9 +109,9 @@ function Hotels({ trip }) {
               <div className="relative h-[180px] w-full rounded-xl overflow-hidden">
                 {/* Loading indicator */}
                 {loadingImages[hotel.name] && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-              </div>
+                  <div className="absolute inset-0 bg-gray-800/80 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+                  </div>
                 )}
                 <img 
                   src={getImageForHotel(hotel)} 
@@ -92,8 +119,9 @@ function Hotels({ trip }) {
                   alt={hotel.name}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/moderate1.jpg';
+                    e.target.src = fallbackImage;
                   }}
+                  loading="lazy"
                 />
               </div>
             </a>
