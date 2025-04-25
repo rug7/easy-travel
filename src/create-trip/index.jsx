@@ -452,7 +452,7 @@ function CreateTrip() {
           try {
             const user = JSON.parse(localStorage.getItem('user'));
             const userId = user?.id || user?.email;
-            await saveLocationToHistory(userId, destination);
+            await saveLocationToHistory(userId, destination,formData.startDate);
             console.log(`Saved ${destination} to location history`);
           } catch (historyError) {
             console.error("Error saving to location history:", historyError);

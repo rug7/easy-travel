@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 // Collection of hotel images
 const hotelImageCollection = [
-  'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200',  // Luxury hotel 1
+  'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200',
+  'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',  // Luxury hotel 1
   'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200',     // Luxury hotel 2
   'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200',  // Luxury hotel 3
   'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200',     // Hotel room 1

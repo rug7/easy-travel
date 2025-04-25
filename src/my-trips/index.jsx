@@ -3,9 +3,14 @@ import { db } from '@/service/firebaseConfig';
 import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { IoArrowBack, IoTrashOutline, IoMapOutline, IoCloseOutline, IoExpandOutline } from 'react-icons/io5';
-import { GetPlaceDetails } from "@/service/GlobalApi";
+// Remove this import as we won't use it anymore
+// import { GetPlaceDetails } from "@/service/GlobalApi";
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+// Import fallback image
+import fallbackImage from '/public/moderate1.jpg';
+// Import the destinations data
+import destinationsData from '@/context/destinations.json';
 
 function MyTrips() {
     // Existing state
@@ -15,7 +20,7 @@ function MyTrips() {
     const [deleting, setDeleting] = useState({});
     const [confirmDelete, setConfirmDelete] = useState(null);
 
-    // New state for map
+    // Map related state
     const [showMap, setShowMap] = useState(false);
     const [mapExpanded, setMapExpanded] = useState(false);
     const [destinations, setDestinations] = useState([]);
@@ -24,14 +29,79 @@ function MyTrips() {
     const [mapInitialized, setMapInitialized] = useState(false);
     const [locationHistory, setLocationHistory] = useState([]);
 
-    
     // Refs
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const markersRef = useRef([]);
     const navigate = useNavigate();
 
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
 
+        try {
+            const date = new Date(dateString);
+
+            // Check if date is valid
+            if (isNaN(date.getTime())) return 'Invalid date';
+
+            // Get day, month, and year
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
+            const year = date.getFullYear();
+
+            return `${day}/${month}/${year}`;
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return 'Error';
+        }
+    };
+
+    // Replace fetchTripImage with getDestinationImage
+    const getDestinationImage = (locationQuery) => {
+        if (!locationQuery) {
+            return fallbackImage;
+        }
+
+        locationQuery = locationQuery.toLowerCase();
+
+        // First try to find an exact match
+        let matchedCountry = destinationsData.countries.find(country =>
+            country.name.toLowerCase() === locationQuery
+        );
+
+        // If no exact match, check country aliases
+        if (!matchedCountry) {
+            matchedCountry = destinationsData.countries.find(country =>
+                country.aliases.some(alias => locationQuery.includes(alias.toLowerCase()))
+            );
+        }
+
+        // If still no match, look for partial matches in country names
+        if (!matchedCountry) {
+            matchedCountry = destinationsData.countries.find(country =>
+                locationQuery.includes(country.name.toLowerCase()) ||
+                country.name.toLowerCase().includes(locationQuery)
+            );
+        }
+
+        // If still no match, look for partial matches in aliases
+        if (!matchedCountry) {
+            matchedCountry = destinationsData.countries.find(country =>
+                country.aliases.some(alias =>
+                    locationQuery.includes(alias.toLowerCase()) ||
+                    alias.toLowerCase().includes(locationQuery)
+                )
+            );
+        }
+
+        if (matchedCountry) {
+            console.log(`Found match for "${locationQuery}": ${matchedCountry.name}`);
+            return matchedCountry.imageUrl;
+        } else {
+            console.log(`No match found for "${locationQuery}"`);
+            return fallbackImage;
+        }
+    };
 
     useEffect(() => {
         if (showMap) {
@@ -57,9 +127,9 @@ function MyTrips() {
                 loadGoogleMapsScript();
             }
         };
-        
+
         initializeData();
-        
+
         return () => {
             if (markersRef.current.length > 0) {
                 markersRef.current.forEach(marker => {
@@ -69,7 +139,7 @@ function MyTrips() {
             }
         };
     }, []);
-    
+
     const fetchLocationHistory = async () => {
         try {
             const historySnapshot = await getDocs(collection(db, 'userLocationHistory'));
@@ -84,28 +154,6 @@ function MyTrips() {
             console.error('Error fetching location history:', error);
         }
     };
-
-    const fetchTripImage = async (destination) => {
-        try {
-            const data = {
-                textQuery: destination,
-                languageCode: "en"
-            };
-            
-            const result = await GetPlaceDetails(data);
-            
-            if (result.data?.places?.[0]?.photos?.[0]?.name) {
-                const photoName = result.data.places[0].photos[0].name;
-                return `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=800&maxWidthPx=1200&key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}`;
-            }
-            return null;
-        } catch (error) {
-            console.error('Error fetching image:', error);
-            return null;
-        }
-    };
-
-    
 
     const fetchTrips = async () => {
         try {
@@ -122,18 +170,16 @@ function MyTrips() {
                 name: trip.tripData?.trip?.destination || 'Unknown',
                 days: trip.tripData?.trip?.duration || trip.userSelection?.numDays || 0
             })).filter(dest => dest.name !== 'Unknown');
-            
+
             setDestinations(destinationsList);
 
-            // Fetch images for each trip
+            // Generate images for each trip using destinations.json
             const images = {};
             for (const trip of tripsData) {
                 const destination = trip.tripData?.trip?.destination;
                 if (destination) {
-                    const imageUrl = await fetchTripImage(destination);
-                    if (imageUrl) {
-                        images[trip.id] = imageUrl;
-                    }
+                    const imageUrl = getDestinationImage(destination);
+                    images[trip.id] = imageUrl;
                 }
             }
             setTripImages(images);
@@ -170,18 +216,18 @@ function MyTrips() {
             script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}&libraries=places`;
             script.async = true;
             script.defer = true;
-            
+
             script.onload = () => {
                 setMapLoading(false);
                 setMapInitialized(true);
                 createMap();
             };
-            
+
             script.onerror = () => {
                 setMapLoading(false);
                 setMapError('Failed to load Google Maps');
             };
-            
+
             document.head.appendChild(script);
         } catch (error) {
             console.error('Error loading Google Maps:', error);
@@ -192,7 +238,7 @@ function MyTrips() {
 
     const createMap = () => {
         if (!mapRef.current || !window.google || !window.google.maps) return;
-        
+
         try {
             if (mapInstanceRef.current) return;
 
@@ -218,67 +264,67 @@ function MyTrips() {
                 styles: [
                     {
                         "elementType": "geometry",
-                        "stylers": [{"color": "#1d2c4d"}]
+                        "stylers": [{ "color": "#1d2c4d" }]
                     },
                     {
                         "elementType": "labels.text.fill",
-                        "stylers": [{"color": "#8ec3b9"}]
+                        "stylers": [{ "color": "#8ec3b9" }]
                     },
                     {
                         "elementType": "labels.text.stroke",
-                        "stylers": [{"color": "#1a3646"}]
+                        "stylers": [{ "color": "#1a3646" }]
                     },
                     {
                         "featureType": "administrative.country",
                         "elementType": "geometry.stroke",
-                        "stylers": [{"color": "#4b6878"}]
+                        "stylers": [{ "color": "#4b6878" }]
                     },
                     {
                         "featureType": "administrative.land_parcel",
-                        "stylers": [{"visibility": "off"}]
+                        "stylers": [{ "visibility": "off" }]
                     },
                     {
                         "featureType": "administrative.province",
                         "elementType": "geometry.stroke",
-                        "stylers": [{"color": "#4b6878"}]
+                        "stylers": [{ "color": "#4b6878" }]
                     },
                     {
                         "featureType": "landscape.man_made",
                         "elementType": "geometry.stroke",
-                        "stylers": [{"color": "#334e87"}]
+                        "stylers": [{ "color": "#334e87" }]
                     },
                     {
                         "featureType": "landscape.natural",
                         "elementType": "geometry",
-                        "stylers": [{"color": "#023e58"}]
+                        "stylers": [{ "color": "#023e58" }]
                     },
                     {
                         "featureType": "poi",
-                        "stylers": [{"visibility": "off"}]
+                        "stylers": [{ "visibility": "off" }]
                     },
                     {
                         "featureType": "road",
-                        "stylers": [{"visibility": "off"}]
+                        "stylers": [{ "visibility": "off" }]
                     },
                     {
                         "featureType": "transit",
-                        "stylers": [{"visibility": "off"}]
+                        "stylers": [{ "visibility": "off" }]
                     },
                     {
                         "featureType": "water",
                         "elementType": "geometry",
-                        "stylers": [{"color": "#0e1626"}]
+                        "stylers": [{ "color": "#0e1626" }]
                     },
                     {
                         "featureType": "water",
                         "elementType": "labels.text.fill",
-                        "stylers": [{"color": "#4e6d70"}]
+                        "stylers": [{ "color": "#4e6d70" }]
                     }
                 ]
             };
 
             mapInstanceRef.current = new window.google.maps.Map(mapRef.current, mapOptions);
-            
+
             if (destinations.length > 0) {
                 addMarkersToMap();
             }
@@ -294,11 +340,11 @@ function MyTrips() {
 
     const addMarkersToMap = () => {
         if (!mapInstanceRef.current || !window.google || !window.google.maps) return;
-    
+
         const map = mapInstanceRef.current;
         const bounds = new window.google.maps.LatLngBounds();
         const geocoder = new window.google.maps.Geocoder();
-    
+
         // Clear existing markers
         if (markersRef.current.length > 0) {
             markersRef.current.forEach(marker => {
@@ -306,13 +352,13 @@ function MyTrips() {
             });
             markersRef.current = [];
         }
-    
+
         // Add trip markers
         destinations.forEach((destination, index) => {
             geocoder.geocode({ address: destination.name }, (results, status) => {
                 if (status === 'OK' && results[0]) {
                     const position = results[0].geometry.location;
-                    
+
                     // Create trip marker (pin style)
                     const marker = new window.google.maps.Marker({
                         position,
@@ -329,27 +375,27 @@ function MyTrips() {
                             anchor: new google.maps.Point(12, 24),
                         }
                     });
-    
+
                     markersRef.current.push(marker);
-    
+
                     // Create info window
                     const infoWindow = new window.google.maps.InfoWindow({
-                        content: `
-                            <div style="padding: 10px; max-width: 200px; text-align: center; color: #333;">
-                                <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: bold; color: #FF0000;">
-                                    ${destination.name}
-                                </h3>
-                                <p style="margin: 4px 0 8px; font-size: 14px;">${destination.days} days</p>
-                                <button 
-                                    style="background: #FF0000; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;"
-                                    onclick="window.viewTrip('${destination.id}')"
-                                >
-                                    View Trip
-                                </button>
-                            </div>
-                        `
-                    });
-    
+    content: `
+        <div style="padding: 8px; max-width: 150px; text-align: center; color: #333;">
+            <h3 style="margin: 0 0 5px; font-size: 14px; font-weight: bold; color: #DC2626;">
+                ${destination.name}
+            </h3>
+            <p style="margin: 2px 0 6px; font-size: 12px;">${destination.days.toString().replace(' days', '')} days</p>
+            <button 
+                style="background: #DC2626; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; width: 100%;"
+                onclick="window.viewTrip('${destination.id}')"
+            >
+                View Trip
+            </button>
+        </div>
+    `
+});
+
                     marker.addListener('click', () => {
                         if (window.currentInfoWindow) {
                             window.currentInfoWindow.close();
@@ -357,18 +403,18 @@ function MyTrips() {
                         infoWindow.open(map, marker);
                         window.currentInfoWindow = infoWindow;
                     });
-    
+
                     bounds.extend(position);
                 }
             });
         });
-    
+
         // Add location history markers
         locationHistory.forEach(location => {
             geocoder.geocode({ address: location.destination }, (results, status) => {
                 if (status === 'OK' && results[0]) {
                     const position = results[0].geometry.location;
-                    
+
                     // Create history marker (circle style)
                     const historyMarker = new window.google.maps.Marker({
                         position,
@@ -383,22 +429,22 @@ function MyTrips() {
                             scale: 8
                         }
                     });
-    
+
                     markersRef.current.push(historyMarker);
                     bounds.extend(position);
-    
+
                     // Optional: Add info window for history locations
                     const historyInfoWindow = new window.google.maps.InfoWindow({
                         content: `
-                            <div style="padding: 8px; text-align: center;">
-                                <p style="margin: 0; font-weight: 500;">${location.destination}</p>
-                                <p style="margin: 4px 0 0; font-size: 12px; color: #666;">
-                                    Visited on ${new Date(location.visitedAt).toLocaleDateString()}
-                                </p>
-                            </div>
+                           <div style="padding: 8px; text-align: center;">
+            <p style="margin: 0; font-weight: 500;">${location.destination}</p>
+            <p style="margin: 4px 0 0; font-size: 12px; color: #666;">
+                Visited on ${formatDate(location.visitedAt)}
+            </p>
+        </div>
                         `
                     });
-    
+
                     historyMarker.addListener('click', () => {
                         if (window.currentInfoWindow) {
                             window.currentInfoWindow.close();
@@ -409,7 +455,7 @@ function MyTrips() {
                 }
             });
         });
-    
+
         // Fit bounds and adjust zoom
         setTimeout(() => {
             if (markersRef.current.length > 0) {
@@ -461,16 +507,16 @@ function MyTrips() {
 
     const confirmDeleteTrip = async (e, tripId) => {
         e.stopPropagation(); // Prevent navigating to trip details
-        
+
         try {
             setDeleting(prev => ({ ...prev, [tripId]: true }));
-            
+
             // Delete from Firestore
             await deleteDoc(doc(db, 'AITrips', tripId));
-            
+
             // Update local state
             setTrips(trips.filter(trip => trip.id !== tripId));
-            
+
             toast.success('Trip deleted successfully');
         } catch (error) {
             console.error('Error deleting trip:', error);
@@ -482,99 +528,99 @@ function MyTrips() {
     };
 
     return (
-            <div className="min-h-screen bg-gray-800">
-                <div className="max-w-7xl mx-auto px-4 pt-[140px] pb-12">
-                    <div className="flex justify-between items-center mb-8">
-                        <h1 className="text-3xl font-bold text-white">My Trips</h1>
-                        
-                        <button
-                            onClick={toggleMap}
-                            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
+        <div className="min-h-screen bg-gray-800">
+            <div className="max-w-7xl mx-auto px-4 pt-[140px] pb-12">
+                <div className="flex justify-between items-center mb-8">
+                    <h1 className="text-3xl font-bold text-white">My Trips</h1>
+
+                    <button
+                        onClick={toggleMap}
+                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                    >
+                        {showMap ? <IoCloseOutline className="w-5 h-5" /> : <IoMapOutline className="w-5 h-5" />}
+                        {showMap ? "Hide Map" : "Show Map"}
+                    </button>
+                </div>
+
+                <AnimatePresence>
+                    {showMap && (
+                        <motion.div
+                            className={`bg-gray-900 rounded-xl overflow-hidden shadow-xl mb-8 ${mapExpanded ? 'h-[500px]' : 'h-[300px]'}`}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: mapExpanded ? 500 : 300 }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
                         >
-                            {showMap ? <IoCloseOutline className="w-5 h-5" /> : <IoMapOutline className="w-5 h-5" />}
-                            {showMap ? "Hide Map" : "Show Map"}
-                        </button>
-                    </div>
-    
-                    <AnimatePresence>
-                        {showMap && (
-                            <motion.div 
-                                className={`bg-gray-900 rounded-xl overflow-hidden shadow-xl mb-8 ${mapExpanded ? 'h-[500px]' : 'h-[300px]'}`}
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: mapExpanded ? 500 : 300 }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                <div className="relative w-full h-full">
-                                    {mapLoading && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 z-10">
-                                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                            <div className="relative w-full h-full">
+                                {mapLoading && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 z-10">
+                                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                                    </div>
+                                )}
+
+                                {mapError && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 z-10">
+                                        <div className="text-white text-center p-4">
+                                            <p className="text-red-400 mb-2">{mapError}</p>
+                                            <button
+                                                onClick={loadGoogleMapsScript}
+                                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                            >
+                                                Retry
+                                            </button>
                                         </div>
-                                    )}
-                                    
-                                    {mapError && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 z-10">
-                                            <div className="text-white text-center p-4">
-                                                <p className="text-red-400 mb-2">{mapError}</p>
-                                                <button 
-                                                    onClick={loadGoogleMapsScript}
-                                                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                                >
-                                                    Retry
-                                                </button>
+                                    </div>
+                                )}
+
+                                <div ref={mapRef} className="w-full h-full"></div>
+
+                                <button
+                                    onClick={toggleMapExpansion}
+                                    className="absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 transition-colors z-10"
+                                    title={mapExpanded ? "Collapse map" : "Expand map"}
+                                >
+                                    <IoExpandOutline className="w-5 h-5 text-gray-700" />
+                                </button>
+
+                                <div className="absolute top-4 left-4 bg-white bg-opacity-95 p-3 rounded-lg shadow-xl z-10 min-w-[200px]">
+                                    <h3 className="text-sm font-bold text-gray-800 mb-2">Map Legend</h3>
+
+                                    {/* Planned Trips */}
+                                    <div className="mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <svg className="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 0C7.802 0 4 3.403 4 7.602C4 11.8 12 24 12 24S20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z" />
+                                            </svg>
+                                            <span className="text-xs font-medium text-gray-700">Planned Trips ({destinations.length})</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Location History */}
+                                    <div className="mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded-full bg-red-500/50 border-2 border-red-600"></div>
+                                            <span className="text-xs font-medium text-gray-700">Visited Places ({locationHistory.length})</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Stats */}
+                                    <div className="mt-2 pt-2 border-t border-gray-200">
+                                        <div className="flex justify-between text-xs text-gray-600">
+                                            <div>
+                                                <span className="font-medium">Total: </span>
+                                                <span>{destinations.length + locationHistory.length}</span>
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">Visited: </span>
+                                                <span>{locationHistory.length}</span>
                                             </div>
                                         </div>
-                                    )}
-                                    
-                                    <div ref={mapRef} className="w-full h-full"></div>
-                                    
-                                    <button
-                                        onClick={toggleMapExpansion}
-                                        className="absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 transition-colors z-10"
-                                        title={mapExpanded ? "Collapse map" : "Expand map"}
-                                    >
-                                        <IoExpandOutline className="w-5 h-5 text-gray-700" />
-                                    </button>
-                                    
-                                    <div className="absolute top-4 left-4 bg-white bg-opacity-95 p-3 rounded-lg shadow-xl z-10 min-w-[200px]">
-    <h3 className="text-sm font-bold text-gray-800 mb-2">Map Legend</h3>
-    
-    {/* Planned Trips */}
-    <div className="mb-2">
-        <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0C7.802 0 4 3.403 4 7.602C4 11.8 12 24 12 24S20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z"/>
-            </svg>
-            <span className="text-xs font-medium text-gray-700">Planned Trips ({destinations.length})</span>
-        </div>
-    </div>
-
-    {/* Location History */}
-    <div className="mb-2">
-        <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-red-500/50 border-2 border-red-600"></div>
-            <span className="text-xs font-medium text-gray-700">Visited Places ({locationHistory.length})</span>
-        </div>
-    </div>
-
-    {/* Stats */}
-    <div className="mt-2 pt-2 border-t border-gray-200">
-        <div className="flex justify-between text-xs text-gray-600">
-            <div>
-                <span className="font-medium">Total: </span>
-                <span>{destinations.length + locationHistory.length}</span>
-            </div>
-            <div>
-                <span className="font-medium">Visited: </span>
-                <span>{locationHistory.length}</span>
-            </div>
-        </div>
-    </div>
-</div>
+                                    </div>
                                 </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
@@ -590,12 +636,12 @@ function MyTrips() {
                             >
                                 <div className="relative h-48">
                                     <img
-                                        src={tripImages[trip.id] || `/moderate1.jpg`}
+                                        src={tripImages[trip.id] || fallbackImage}
                                         alt={trip.tripData?.trip?.destination}
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
                                             e.target.onerror = null;
-                                            e.target.src = '/moderate1.jpg';
+                                            e.target.src = fallbackImage;
                                         }}
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
@@ -613,57 +659,58 @@ function MyTrips() {
                                         <div className="flex items-center gap-4 text-sm text-gray-600">
                                             <div className="flex items-center">
                                                 <span className="mr-1">📅</span>
-                                                {new Date(trip.createdAt).toLocaleDateString()}
+                                                {/* {formatDate(trip?.createdAt)} */}
+                                                {formatDate(trip.userSelection?.startDate)}
                                             </div>
                                             <div className="flex items-center">
                                                 <span className="mr-1">👥</span>
                                                 {trip.userSelection?.travelers} travelers
                                             </div>
                                         </div>
-                                        
+
                                         {/* Delete button */}
-{confirmDelete === trip.id ? (
-    <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="flex items-center gap-1.5" 
-        onClick={(e) => e.stopPropagation()}
-    >
-        <button
-            onClick={(e) => confirmDeleteTrip(e, trip.id)}
-            className="bg-red-100 text-red-600 px-2.5 py-1.5 text-xs font-medium rounded-md
+                                        {confirmDelete === trip.id ? (
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="flex items-center gap-1.5"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <button
+                                                    onClick={(e) => confirmDeleteTrip(e, trip.id)}
+                                                    className="bg-red-100 text-red-600 px-2.5 py-1.5 text-xs font-medium rounded-md
                      hover:bg-red-200 transition-colors duration-200 flex items-center gap-1.5"
-            disabled={deleting[trip.id]}
-        >
-            {deleting[trip.id] ? (
-                <div className="w-3 h-3 rounded-full border-1.5 border-red-600 border-t-transparent animate-spin" />
-            ) : (
-                "Delete"
-            )}
-        </button>
-        <button
-            onClick={cancelDelete}
-            className="bg-gray-100 text-gray-600 px-2.5 py-1.5 text-xs font-medium rounded-md
+                                                    disabled={deleting[trip.id]}
+                                                >
+                                                    {deleting[trip.id] ? (
+                                                        <div className="w-3 h-3 rounded-full border-1.5 border-red-600 border-t-transparent animate-spin" />
+                                                    ) : (
+                                                        "Delete"
+                                                    )}
+                                                </button>
+                                                <button
+                                                    onClick={cancelDelete}
+                                                    className="bg-gray-100 text-gray-600 px-2.5 py-1.5 text-xs font-medium rounded-md
                      hover:bg-gray-200 transition-colors duration-200"
-        >
-            Cancel
-        </button>
-    </motion.div>
-) : (
-    <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={(e) => openDeleteConfirmation(e, trip.id)}
-        className="text-gray-800 text-bold hover:text-red-800 p-2.5 rounded-full bg-white
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </motion.div>
+                                        ) : (
+                                            <motion.button
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                onClick={(e) => openDeleteConfirmation(e, trip.id)}
+                                                className="text-gray-800 text-bold hover:text-red-800 p-2.5 rounded-full bg-white
                  transition-all duration-300 hover:scale-110 transform
                  "
-        title="Delete trip"
-    >
-        <IoTrashOutline className="w-5 h-5 " />
-    </motion.button>
-)}
+                                                title="Delete trip"
+                                            >
+                                                <IoTrashOutline className="w-5 h-5 " />
+                                            </motion.button>
+                                        )}
                                     </div>
                                 </div>
                             </div>

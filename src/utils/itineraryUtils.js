@@ -25,7 +25,7 @@ export * from './flightUtils';
 export * from './formatUtils';
 export * from './itineraryUtils';
 
-export const saveLocationToHistory = async (userId, destination) => {
+export const saveLocationToHistory = async (userId, destination,startDate = null) => {
   try {
     if (!userId || !destination) return;
     
@@ -50,7 +50,7 @@ export const saveLocationToHistory = async (userId, destination) => {
     await setDoc(doc(db, "userLocationHistory", docId), {
       userId,
       destination: cleanDestination,
-      visitedAt: new Date().toISOString()
+      visitedAt: startDate || new Date().toISOString()
     });
     
     console.log(`Added ${cleanDestination} to user's location history`);

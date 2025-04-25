@@ -98,7 +98,7 @@ const fallbackImage = "/moderate1.jpg";
 function Activities({ trip }) {
     const [selectedDay, setSelectedDay] = useState(1);
     const dayKeys = trip?.tripData?.itinerary ? Object.keys(trip.tripData.itinerary) : [];
-    const [activityImages, setActivityImages] = useState({});
+    const [loadedActivityImages, setLoadedActivityImages] = useState({});
     const [loadingImages, setLoadingImages] = useState({});
     const destination = trip?.tripData?.trip?.destination || '';
 
@@ -135,9 +135,10 @@ function Activities({ trip }) {
     // Assign images to activities with simulated loading
     const assignActivityImages = () => {
         const activities = trip.tripData.itinerary[`day${selectedDay}`];
-        const newImages = { ...activityImages };
+        const newImages = { ...loadedActivityImages };
         const newLoadingStates = { ...loadingImages };
-
+        const usedImagesForDay = new Set();
+    
         // Set loading states for all activities in this day
         activities.forEach(activity => {
             const activityId = `${selectedDay}_${activity.activity}`;
@@ -146,18 +147,54 @@ function Activities({ trip }) {
             }
         });
         setLoadingImages(newLoadingStates);
-
+    
         // Simulate loading delay (remove this setTimeout for instant loading)
         setTimeout(() => {
             // Process each activity
-            for (const activity of activities) {
+            activities.forEach((activity, index) => {
                 const activityId = `${selectedDay}_${activity.activity}`;
                 
                 if (!newImages[activityId]) {
                     try {
-                        // Find the best image for this activity
-                        const imageUrl = getActivityImage(activity);
+                        // First get all matching keywords
+                        const activityText = `${activity.activity} ${activity.description || ''}`.toLowerCase();
+                        const matchingKeywords = [];
+                        
+                        for (const keyword in activityImages) {
+                            if (activityText.includes(keyword.toLowerCase())) {
+                                matchingKeywords.push(keyword);
+                            }
+                        }
+                        
+                        let imageUrl;
+                        
+                        // Try to find an image we haven't used yet
+                        for (const keyword of matchingKeywords) {
+                            const potentialImage = activityImages[keyword];
+                            if (!usedImagesForDay.has(potentialImage)) {
+                                imageUrl = potentialImage;
+                                usedImagesForDay.add(potentialImage);
+                                break;
+                            }
+                        }
+                        
+                        // If all matching images are used or no matches found
+                        if (!imageUrl && matchingKeywords.length > 0) {
+                            imageUrl = activityImages[matchingKeywords[0]];
+                        } else if (!imageUrl) {
+                            // Time-of-day based fallback
+                            const timeOfDay = (activity.bestTime || '').toLowerCase();
+                            if (timeOfDay.includes('am') || timeOfDay.includes('morning')) {
+                                imageUrl = timeOfDayImages.morning;
+                            } else if (timeOfDay.includes('pm') && parseInt((activity.bestTime || '0:00').split(':')[0]) < 6) {
+                                imageUrl = timeOfDayImages.afternoon;
+                            } else {
+                                imageUrl = timeOfDayImages.evening;
+                            }
+                        }
+                        
                         newImages[activityId] = imageUrl;
+                        usedImagesForDay.add(imageUrl);
                     } catch (error) {
                         console.error(`Error assigning image for ${activity.activity}:`, error);
                         newImages[activityId] = fallbackImage;
@@ -166,30 +203,51 @@ function Activities({ trip }) {
                         newLoadingStates[activityId] = false;
                     }
                 }
-            }
+            });
             
-            setActivityImages(newImages);
+            setLoadedActivityImages(newImages);
             setLoadingImages(newLoadingStates);
         }, 300); // 300ms simulated loading for a smoother experience
     };
 
     // Function to get image for a specific activity
-    const getImageForActivity = (activity) => {
+    const getImageForActivity = (activity, index) => {
         const activityId = `${selectedDay}_${activity.activity}`;
         
         // If image is already loaded, return it
-        if (activityImages[activityId]) {
-            return activityImages[activityId];
+        if (loadedActivityImages[activityId]) {
+            return loadedActivityImages[activityId];
         }
         
-        // Otherwise, find appropriate image
         const activityText = `${activity.activity} ${activity.description || ''}`.toLowerCase();
         
-        // Check for keyword matches
-        for (const [keyword, url] of Object.entries(activityImages)) {
-            if (activityText.includes(keyword.toLowerCase())) {
-                return url;
+        // Track already used images for this day to avoid duplicates
+        const usedImagesForCurrentDay = new Set();
+        trip?.tripData?.itinerary[`day${selectedDay}`]?.forEach((act, i) => {
+            if (i < index && loadedActivityImages[`${selectedDay}_${act.activity}`]) {
+                usedImagesForCurrentDay.add(loadedActivityImages[`${selectedDay}_${act.activity}`]);
             }
+        });
+        
+        // Find matching keywords for the activity
+        const matchingKeywords = [];
+        for (const keyword in activityImages) {
+            if (activityText.includes(keyword.toLowerCase())) {
+                matchingKeywords.push(keyword);
+            }
+        }
+        
+        // If we have multiple matching keywords, try to find one with an image we haven't used
+        for (const keyword of matchingKeywords) {
+            const imageUrl = activityImages[keyword];
+            if (!usedImagesForCurrentDay.has(imageUrl)) {
+                return imageUrl;
+            }
+        }
+        
+        // If all matching images are used or no matches found, use the first matching image or fallback
+        if (matchingKeywords.length > 0) {
+            return activityImages[matchingKeywords[0]];
         }
         
         // Time-of-day based fallback
@@ -251,15 +309,15 @@ function Activities({ trip }) {
                                     </div>
                                 )}
                                 <img 
-                                    src={getImageForActivity(activity)} 
-                                    alt={activity.activity}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = fallbackImage;
-                                    }}
-                                    loading="lazy"
-                                />
+    src={getImageForActivity(activity, index)} 
+    alt={activity.activity}
+    className="w-full h-full object-cover"
+    onError={(e) => {
+        e.target.onerror = null;
+        e.target.src = fallbackImage;
+    }}
+    loading="lazy"
+/>
                                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
                                 
                                 {/* Time badge */}
