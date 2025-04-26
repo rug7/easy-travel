@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { IoClose, IoCalendarOutline, IoTimeOutline, IoLocationOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import './calendar-styles.css'; 
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Badge = ({ children, className, ...props }) => (
     <div 
@@ -271,10 +273,40 @@ const Badge = ({ children, className, ...props }) => (
               <span>❯</span>
             </Button>
           </div>
+          
+          {/* Mini calendar dropdown */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="ml-2 calendar-nav-button">
+                <IoCalendarOutline className="mr-2" />
+                Jump to Date
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-700">
+              <DatePicker
+                selected={calendarDate}
+                onChange={date => {
+                  setCalendarDate(date);
+                  toolbar.onNavigate('DATE', date);
+                }}
+                inline
+                calendarClassName="bg-gray-800 text-white"
+                dayClassName={date => 
+                  moment(date).isSame(new Date(), 'day') 
+                    ? "bg-blue-600 text-white rounded-full" 
+                    : undefined
+                }
+                popperClassName="date-picker-popper"
+                wrapperClassName="date-picker-wrapper"
+              />
+            </PopoverContent>
+          </Popover>
         </div>
+        
         <div className="travel-calendar-toolbar-label">
           <h2>{toolbar.label}</h2>
         </div>
+        
         <div className="travel-calendar-toolbar-views">
           <div className="bg-gray-800 rounded-lg p-1 flex">
             <button 
@@ -352,7 +384,7 @@ const Badge = ({ children, className, ...props }) => (
           <div className="travel-calendar-container">
             <Calendar
               localizer={localizer}
-              events={events}
+              events={filteredEvents}
               startAccessor="start"
               endAccessor="end"
               onSelectEvent={handleEventClick}
