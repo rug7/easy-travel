@@ -1,0 +1,469 @@
+/* calendar-styles.css */
+.travel-calendar-container {
+    height: 700px;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Toolbar styling */
+  .travel-calendar-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: #1F2937;
+    border-bottom: 1px solid #374151;
+  }
+  
+  .travel-calendar-toolbar-label h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+  }
+  
+  .calendar-nav-button {
+    background: #111827;
+    border-color: #374151;
+    color: white;
+  }
+  
+  .calendar-nav-button:hover {
+    background: #374151;
+  }
+  
+  /* Calendar grid styling */
+  .rbc-month-view {
+    border: none;
+    background-color: #111827;
+  }
+  
+  .rbc-header {
+    padding: 12px 0;
+    font-weight: 500;
+    background-color: #1F2937;
+    color: #E5E7EB;
+    border-bottom: 1px solid #374151;
+    border-right: none;
+  }
+  
+  .rbc-month-row {
+    border-top: 1px solid #374151;
+  }
+  
+  .rbc-day-bg {
+    border-right: 1px solid #374151;
+    transition: all 0.2s;
+  }
+  
+  .rbc-day-bg.rbc-today {
+    background-color: rgba(59, 130, 246, 0.15);
+  }
+  
+  .rbc-off-range-bg {
+    background-color: #111827;
+  }
+  
+  .rbc-off-range {
+    color: #4B5563;
+  }
+  
+  .rbc-date-cell {
+    padding: 8px;
+    text-align: right;
+    color: #D1D5DB;
+  }
+  
+  .rbc-date-cell.rbc-now {
+    font-weight: bold;
+    color: #3B82F6;
+  }
+  
+  /* Custom day header styling */
+  .travel-calendar-day-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+  }
+  
+  .travel-calendar-day-name {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #9CA3AF;
+    font-weight: 500;
+  }
+  
+  .travel-calendar-day-number {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #E5E7EB;
+  }
+  
+  .travel-calendar-today .travel-calendar-day-number {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3B82F6;
+    color: white;
+    border-radius: 50%;
+    margin-top: 2px;
+  }
+  
+  /* Event styling */
+  .travel-calendar-event {
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    margin: 2px 0;
+    overflow: hidden;
+    transition: transform 0.15s ease;
+  }
+  
+  .travel-calendar-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  }
+  
+  .travel-calendar-event-content {
+    padding: 4px 8px;
+  }
+  
+  .travel-calendar-event-title {
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .travel-calendar-event-time {
+    font-size: 0.7rem;
+    opacity: 0.85;
+    margin-bottom: 2px;
+  }
+  
+  .travel-calendar-event-location {
+    font-size: 0.7rem;
+    opacity: 0.85;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    margin-top: 2px;
+  }
+  
+  /* Week & Day view styling */
+.rbc-time-view {
+    background-color: #111827;
+    border: none;
+  }
+  
+  .rbc-time-header {
+    border-bottom: 1px solid #374151;
+  }
+  
+  .rbc-time-header-content {
+    border-left: 1px solid #374151;
+  }
+  
+  .rbc-time-content {
+    border-top: 1px solid #374151;
+  }
+  
+  .rbc-timeslot-group {
+    border-bottom: 1px solid #1F2937;
+  }
+  
+  .rbc-time-gutter, .rbc-header-gutter {
+    background-color: #1F2937;
+  }
+  
+  .rbc-label {
+    color: #9CA3AF;
+    font-size: 0.75rem;
+    padding: 8px;
+  }
+  
+  .rbc-time-content > * + * > * {
+    border-left: 1px solid #374151;
+  }
+  
+  .rbc-day-slot .rbc-time-slot {
+    border-top: 1px solid #1F2937;
+  }
+  
+  .rbc-current-time-indicator {
+    background-color: #3B82F6;
+    height: 2px;
+  }
+  
+  /* Agenda view styling */
+  .rbc-agenda-view {
+    background-color: #111827;
+    color: #E5E7EB;
+  }
+  
+  .rbc-agenda-view table.rbc-agenda-table {
+    border: none;
+  }
+  
+  .rbc-agenda-view table.rbc-agenda-table thead > tr > th {
+    border-bottom: 1px solid #374151;
+    color: #9CA3AF;
+    font-weight: 600;
+    padding: 12px 8px;
+  }
+  
+  .rbc-agenda-view table.rbc-agenda-table tbody > tr > td {
+    border-bottom: 1px solid #1F2937;
+    padding: 12px 8px;
+  }
+  
+  .rbc-agenda-view table.rbc-agenda-table tbody > tr:hover {
+    background-color: #1F2937;
+  }
+  
+  .rbc-agenda-date-cell {
+    color: #D1D5DB;
+    font-weight: 500;
+  }
+  
+  .rbc-agenda-time-cell {
+    color: #9CA3AF;
+  }
+  
+  .rbc-agenda-event-cell {
+    font-weight: 500;
+  }
+  
+  /* Event row styling for month view */
+  .rbc-row-content {
+    z-index: 1;
+  }
+  
+  .rbc-row-content-scrollable {
+    display: flex;
+  }
+  
+  .rbc-row-content-scrollable .rbc-row-content-scroll-container {
+    display: flex;
+  }
+  
+  /* Multiple events handling */
+  .rbc-show-more {
+    background-color: transparent;
+    color: #3B82F6;
+    font-weight: 600;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  
+  .rbc-show-more:hover, .rbc-show-more:focus {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #60A5FA;
+    text-decoration: none;
+  }
+  
+  /* Selecting time slots */
+  .rbc-time-view .rbc-day-slot .rbc-time-slot-selection {
+    background-color: rgba(59, 130, 246, 0.15);
+    border: 1px dashed #3B82F6;
+  }
+  
+  /* Popover for more events */
+  .rbc-overlay {
+    background-color: #1F2937;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+  }
+  
+  .rbc-overlay-header {
+    border-bottom: 1px solid #374151;
+    color: #E5E7EB;
+    font-weight: 600;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+  
+  /* Transitions for smoother UX */
+  .rbc-calendar {
+    transition: height 0.3s ease;
+  }
+  
+  .rbc-date-cell, .rbc-header, .rbc-label {
+    transition: color 0.2s ease;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .travel-calendar-toolbar {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    
+    .travel-calendar-toolbar-views {
+      width: 100%;
+    }
+    
+    .travel-calendar-toolbar-views .bg-gray-800 {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .travel-calendar-event-title {
+      font-size: 0.75rem;
+    }
+    
+    .travel-calendar-day-name {
+      font-size: 0.7rem;
+    }
+    
+    .travel-calendar-day-number {
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* Event status indicators */
+  .rbc-event-trip {
+    border-left: 3px solid #3B82F6;
+  }
+  
+  .rbc-event-activity {
+    border-left: 3px solid #DC2626;
+  }
+  
+  /* Tooltip for events */
+  .travel-calendar-event-tooltip {
+    position: absolute;
+    background-color: #1F2937;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    pointer-events: none;
+    z-index: 1000;
+    max-width: 300px;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  
+  .travel-calendar-event-tooltip-header {
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+  }
+  
+  .travel-calendar-event-tooltip-time {
+    font-size: 0.8rem;
+    color: #9CA3AF;
+    margin-bottom: 6px;
+  }
+  
+  .travel-calendar-event-tooltip-content {
+    font-size: 0.85rem;
+    color: #D1D5DB;
+  }
+  
+  /* Animation for event creation/updates */
+  @keyframes eventHighlight {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    50% {
+      transform: scale(1.03);
+      box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+  }
+  
+  .travel-calendar-event-highlight {
+    animation: eventHighlight 1.5s ease;
+  }
+  
+  /* Navigation between months/weeks/days */
+  .rbc-btn-group {
+    background-color: #1F2937;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  
+  .rbc-btn-group button {
+    color: #D1D5DB;
+    background-color: transparent;
+    border: none;
+    transition: background-color 0.2s, color 0.2s;
+    padding: 8px 16px;
+  }
+  
+  .rbc-btn-group button:hover {
+    background-color: #374151;
+    color: white;
+  }
+  
+  .rbc-btn-group button.rbc-active {
+    background-color: #3B82F6;
+    color: white;
+  }
+  
+  .rbc-btn-group button.rbc-active:hover {
+    background-color: #2563EB;
+  }
+  
+  /* Empty slots styling */
+  .rbc-day-slot .rbc-time-slot {
+    position: relative;
+  }
+  
+  .rbc-day-slot .rbc-time-slot::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background-color: rgba(55, 65, 81, 0.3);
+    pointer-events: none;
+  }
+  
+  /* Extra professional touches */
+  .rbc-calendar {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.011em;
+  }
+  
+  /* Multi-day events styling */
+  .rbc-event.rbc-selected {
+    background-color: #3B82F6;
+  }
+  
+  .rbc-event.rbc-selected:focus {
+    outline: none;
+  }
+  
+  /* Day slots for better visual distinction */
+  .rbc-day-slot.rbc-today {
+    background-color: rgba(59, 130, 246, 0.07);
+  }
+  
+  /* Handle dark mode better */
+  @media (prefers-color-scheme: dark) {
+    .rbc-off-range-bg {
+      background-color: #0B111E;
+    }
+    
+    .rbc-day-bg {
+      background-color: #111827;
+    }
+  }

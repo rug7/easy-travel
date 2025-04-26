@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@
 import { Button } from "@/components/ui/button";
 import { IoClose, IoCalendarOutline, IoTimeOutline, IoLocationOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import './calendar-styles.css'; 
+
 const Badge = ({ children, className, ...props }) => (
     <div 
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${className}`} 
@@ -17,17 +19,20 @@ const Badge = ({ children, className, ...props }) => (
       {children}
     </div>
   );
-// Set up the localizer
-const localizer = momentLocalizer(moment);
+  
+  // Set up the localizer
+  const localizer = momentLocalizer(moment);
+  
+  function TravelCalendar() {
+    const [trips, setTrips] = useState([]);
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedView, setSelectedView] = useState('month');
+    const [calendarDate, setCalendarDate] = useState(new Date());
+    const [exportVisible, setExportVisible] = useState(false);
+    const [filterType, setFilterType] = useState('all'); // 'all', 'trip', 'activity'
 
-function TravelCalendar() {
-  const [trips, setTrips] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [selectedView, setSelectedView] = useState('month');
-  const [calendarDate, setCalendarDate] = useState(new Date());
-  const [exportVisible, setExportVisible] = useState(false);
 
   useEffect(() => {
     async function fetchTrips() {
@@ -61,6 +66,19 @@ function TravelCalendar() {
     
     fetchTrips();
   }, []);
+
+  const filteredEvents = events.filter(event => {
+    if (filterType === 'all') return true;
+    return event.resource?.type === filterType;
+  });
+
+  const TodayIndicator = () => {
+    return (
+      <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+        Today
+      </div>
+    );
+  };
   
   const generateCalendarEvents = (tripsData) => {
     const allEvents = [];
@@ -174,22 +192,31 @@ function TravelCalendar() {
   
   // Custom event component to show colored events
   const EventComponent = ({ event }) => {
-    const backgroundColor = event.resource?.color || '#3B82F6';
+    const isActivity = event.resource?.type === 'activity';
+    const backgroundColor = isActivity ? '#DC2626' : '#3B82F6';
+    const isTruncated = event.title.length > 30;
     
     return (
       <div 
-        style={{ 
-          backgroundColor, 
-          color: 'white',
-          padding: '2px 4px',
-          borderRadius: '4px',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          height: '100%'
-        }}
+        className="travel-calendar-event"
+        style={{ backgroundColor }}
       >
-        {event.title}
+        <div className="travel-calendar-event-content">
+          {isActivity && (
+            <div className="travel-calendar-event-time">
+              {moment(event.start).format('HH:mm')}
+            </div>
+          )}
+          <div className="travel-calendar-event-title">
+            {isTruncated ? `${event.title.substring(0, 28)}...` : event.title}
+          </div>
+          {isActivity && event.resource?.location && (
+            <div className="travel-calendar-event-location">
+              <IoLocationOutline className="inline-block mr-1" size={10} />
+              {event.resource.location}
+            </div>
+          )}
+        </div>
       </div>
     );
   };
@@ -201,6 +228,85 @@ function TravelCalendar() {
   const handleViewChange = (view) => {
     setSelectedView(view);
   };
+  const DayHeaderComponent = ({ date, label }) => {
+    const isToday = moment(date).isSame(new Date(), 'day');
+    
+    return (
+      <div className={`travel-calendar-day-header ${isToday ? 'travel-calendar-today' : ''}`}>
+        <div className="travel-calendar-day-name">{moment(date).format('ddd')}</div>
+        <div className="travel-calendar-day-number">{moment(date).format('D')}</div>
+      </div>
+    );
+  };
+  
+  // Custom toolbar component
+  const CustomToolbar = (toolbar) => {
+    const navigate = (action) => {
+      toolbar.onNavigate(action);
+    };
+    
+    return (
+      <div className="travel-calendar-toolbar">
+        <div className="travel-calendar-toolbar-nav">
+          <Button 
+            variant="outline" 
+            className="calendar-nav-button"
+            onClick={() => navigate('TODAY')}
+          >
+            Today
+          </Button>
+          <div className="flex gap-1">
+            <Button 
+              variant="outline" 
+              className="calendar-nav-button"
+              onClick={() => navigate('PREV')}
+            >
+              <span>❮</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="calendar-nav-button"
+              onClick={() => navigate('NEXT')}
+            >
+              <span>❯</span>
+            </Button>
+          </div>
+        </div>
+        <div className="travel-calendar-toolbar-label">
+          <h2>{toolbar.label}</h2>
+        </div>
+        <div className="travel-calendar-toolbar-views">
+          <div className="bg-gray-800 rounded-lg p-1 flex">
+            <button 
+              className={`px-4 py-2 rounded-md transition ${toolbar.view === 'month' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
+              onClick={() => toolbar.onView('month')}
+            >
+              Month
+            </button>
+            <button 
+              className={`px-4 py-2 rounded-md transition ${toolbar.view === 'week' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
+              onClick={() => toolbar.onView('week')}
+            >
+              Week
+            </button>
+            <button 
+              className={`px-4 py-2 rounded-md transition ${toolbar.view === 'day' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
+              onClick={() => toolbar.onView('day')}
+            >
+              Day
+            </button>
+            <button 
+              className={`px-4 py-2 rounded-md transition ${toolbar.view === 'agenda' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
+              onClick={() => toolbar.onView('agenda')}
+            >
+              Agenda
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
 
   if (loading) {
     return (
@@ -218,6 +324,18 @@ function TravelCalendar() {
             <h1 className="text-3xl font-bold text-white">Travel Calendar</h1>
             <p className="text-gray-400 mt-1">View and manage your travel schedule</p>
           </div>
+          <div className="flex items-center gap-2 ml-4">
+  <span className="text-gray-400 text-sm">Filter:</span>
+  <select 
+    value={filterType} 
+    onChange={e => setFilterType(e.target.value)}
+    className="bg-gray-800 border-gray-700 text-white rounded-md px-3 py-1.5 text-sm"
+  >
+    <option value="all">All Events</option>
+    <option value="trip">Trips Only</option>
+    <option value="activity">Activities Only</option>
+  </select>
+</div>
           
           <div className="flex gap-4">
             <Button 
@@ -227,53 +345,40 @@ function TravelCalendar() {
             >
               Export to Google Calendar
             </Button>
-            
-            <div className="bg-gray-800 rounded-lg p-1 flex">
-              <button 
-                className={`px-4 py-2 rounded-md transition ${selectedView === 'month' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-                onClick={() => handleViewChange('month')}
-              >
-                Month
-              </button>
-              <button 
-                className={`px-4 py-2 rounded-md transition ${selectedView === 'week' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-                onClick={() => handleViewChange('week')}
-              >
-                Week
-              </button>
-              <button 
-                className={`px-4 py-2 rounded-md transition ${selectedView === 'day' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-                onClick={() => handleViewChange('day')}
-              >
-                Day
-              </button>
-              <button 
-                className={`px-4 py-2 rounded-md transition ${selectedView === 'agenda' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-                onClick={() => handleViewChange('agenda')}
-              >
-                Agenda
-              </button>
-            </div>
           </div>
         </div>
         
-        <div className="bg-gray-800 rounded-xl p-4 shadow-xl">
-          <div className="h-[700px]">
+        <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl">
+          <div className="travel-calendar-container">
             <Calendar
               localizer={localizer}
               events={events}
               startAccessor="start"
               endAccessor="end"
               onSelectEvent={handleEventClick}
-              style={{ height: "100%" }}
               views={['month', 'week', 'day', 'agenda']}
               view={selectedView}
               onView={handleViewChange}
               date={calendarDate}
               onNavigate={handleNavigate}
               components={{
-                event: EventComponent
-              }}
+                event: EventComponent,
+                toolbar: CustomToolbar,
+                day: {
+                  header: DayHeaderComponent
+                },
+                dateCellWrapper: (props) => {
+                    const { children, value } = props;
+                    const isToday = moment(value).isSame(new Date(), 'day');
+                    return (
+                      <div style={{ position: 'relative' }}>
+                        {children}
+                        {isToday && <TodayIndicator />}
+                      </div>
+                    );
+                  }
+                }}
+            
               eventPropGetter={(event) => {
                 return {
                   style: {
@@ -285,19 +390,32 @@ function TravelCalendar() {
                 };
               }}
               dayPropGetter={(date) => {
-                // Highlight today
-                if (moment(date).isSame(new Date(), 'day')) {
-                  return {
-                    style: {
-                      backgroundColor: 'rgba(59, 130, 246, 0.1)'
-                    }
-                  };
+                // Highlight today and weekend days
+                const isToday = moment(date).isSame(new Date(), 'day');
+                const isWeekend = moment(date).day() === 0 || moment(date).day() === 6;
+                const isPast = moment(date).isBefore(new Date(), 'day');
+                
+                let style = {};
+                
+                if (isToday) {
+                  style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
+                  style.borderLeft = '3px solid #3B82F6';
+                } else if (isWeekend) {
+                  style.backgroundColor = 'rgba(17, 24, 39, 0.7)';
+                } else if (isPast) {
+                  style.backgroundColor = 'rgba(31, 41, 55, 0.7)';
                 }
-                return {};
+                
+                return { style };
               }}
               formats={{
                 dateFormat: 'D',
                 dayFormat: 'ddd D/M',
+                dayHeaderFormat: 'dddd, MMMM D',
+                dayRangeHeaderFormat: ({ start, end }) => {
+                  return `${moment(start).format('MMMM D')} - ${moment(end).format('MMMM D, YYYY')}`;
+                },
+                monthHeaderFormat: 'MMMM YYYY',
                 timeGutterFormat: 'HH:mm',
                 eventTimeRangeFormat: ({ start, end }) => {
                   return `${moment(start).format('HH:mm')} - ${moment(end).format('HH:mm')}`;
@@ -542,23 +660,23 @@ function TravelCalendar() {
 
 // Helper Component for Stats
 function StatsCard({ title, value, icon, color }) {
-  return (
-    <motion.div 
-      className={`${color} rounded-xl p-6 shadow-lg`}
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.2 }}
-    >
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="text-white text-opacity-80">{title}</p>
-          <p className="text-3xl font-bold text-white mt-1">{value}</p>
+    return (
+      <motion.div 
+        className={`${color} rounded-xl p-6 shadow-lg`}
+        whileHover={{ y: -5 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-white text-opacity-80">{title}</p>
+            <p className="text-3xl font-bold text-white mt-1">{value}</p>
+          </div>
+          <div className="bg-white/10 p-3 rounded-lg text-white">
+            {icon}
+          </div>
         </div>
-        <div className="bg-white/10 p-3 rounded-lg text-white">
-          {icon}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-export default TravelCalendar;
+      </motion.div>
+    );
+  }
+  
+  export default TravelCalendar;
