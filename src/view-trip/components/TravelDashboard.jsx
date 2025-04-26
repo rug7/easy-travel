@@ -315,7 +315,7 @@ function TravelDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-[100px] pb-10 px-4 md:px-8">
+    <div className="min-h-screen bg-gray-900 pt-[140px] pb-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-white mb-8">Travel Analytics Dashboard</h1>
         
