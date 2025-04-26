@@ -8,7 +8,7 @@ import { IoArrowBack, IoTrashOutline, IoMapOutline, IoCloseOutline, IoExpandOutl
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 // Import fallback image
-import fallbackImage from '/public/moderate1.jpg';
+import fallbackImage from '/moderate1.jpg';
 // Import the destinations data
 import destinationsData from '@/context/destinations.json';
 

@@ -12,6 +12,9 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import Viewtrip from "./view-trip/[tripId]/index.jsx";
 import LoadingScreen from "./view-trip/components/LoadingScreen";
 import MyTrips from "./my-trips";
+// Import the new components
+import TravelDashboard from "./view-trip/components/TravelDashboard";
+import TravelCalendar from "./view-trip/components/TravelCalendar";
 
 // Add animation styles to your CSS
 const animationStyles = `
@@ -64,6 +67,25 @@ const router = createBrowserRouter([
         <LanguageProvider>
             <Header />
             <MyTrips />
+        </LanguageProvider>
+    ),
+  },
+  // Add new routes for dashboard and calendar
+  {
+    path: "/dashboard",
+    element: (
+        <LanguageProvider>
+            <Header />
+            <TravelDashboard />
+        </LanguageProvider>
+    ),
+  },
+  {
+    path: "/calendar",
+    element: (
+        <LanguageProvider>
+            <Header />
+            <TravelCalendar />
         </LanguageProvider>
     ),
   },

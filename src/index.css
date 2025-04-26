@@ -106,3 +106,17 @@ width: 100%;
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out forwards;
 }
+
+.travel-dashboard-map-container {
+  position: relative;
+  z-index: 0; /* Lower z-index than header */
+  padding-top: 10px; /* Add some padding */
+}
+
+/* Make sure your header has */
+.header {
+  position: fixed;
+  top: 0;
+  z-index: 10; /* Higher z-index than map */
+  width: 100%;
+}
