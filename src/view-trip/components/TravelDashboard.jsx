@@ -60,36 +60,74 @@ function TravelDashboard() {
 
   useEffect(() => {
     async function fetchTrips() {
-        try {
-          const user = JSON.parse(localStorage.getItem('user'));
-          if (!user?.email) return;
-          
-          const q = query(
-            collection(db, 'AITrips'),
-            where('userEmail', '==', user.email)
-          );
-          
-          const querySnapshot = await getDocs(q);
-          const tripsData = [];
-          
-          querySnapshot.forEach((doc) => {
-            tripsData.push({
-              id: doc.id,
-              ...doc.data()
-            });
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user?.email) return;
+        
+        // First load Google Maps
+        await loadGoogleMapsScript();
+        
+        const q = query(
+          collection(db, 'AITrips'),
+          where('userEmail', '==', user.email)
+        );
+        
+        const querySnapshot = await getDocs(q);
+        const tripsData = [];
+        
+        querySnapshot.forEach((doc) => {
+          tripsData.push({
+            id: doc.id,
+            ...doc.data()
           });
-          
-          setTrips(tripsData);
-          await analyzeTrips(tripsData);
-        } catch (error) {
-          console.error('Error fetching trips:', error);
-        } finally {
-          setLoading(false);
-        }
+        });
+        
+        setTrips(tripsData);
+        await analyzeTrips(tripsData);
+      } catch (error) {
+        console.error('Error fetching trips:', error);
+      } finally {
+        setLoading(false);
       }
+    }
     
     fetchTrips();
   }, []);
+  
+  // Add this function to load Google Maps
+  const loadGoogleMapsScript = () => {
+    return new Promise((resolve, reject) => {
+      if (window.google && window.google.maps) {
+        resolve();
+        return;
+      }
+      
+      if (document.querySelector('script[src*="maps.googleapis.com/maps/api"]')) {
+        const checkGoogleExists = setInterval(() => {
+          if (window.google && window.google.maps) {
+            clearInterval(checkGoogleExists);
+            resolve();
+          }
+        }, 100);
+        return;
+      }
+      
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      
+      script.onload = () => {
+        resolve();
+      };
+      
+      script.onerror = () => {
+        reject(new Error('Failed to load Google Maps'));
+      };
+      
+      document.head.appendChild(script);
+    });
+  };
   
   const analyzeTrips = async (tripsData) => {
     // Simple stats
@@ -212,18 +250,17 @@ function TravelDashboard() {
       spending.activities += budgetMultiplier * 0.15;
       spending.transportation += budgetMultiplier * 0.15;
       spending.shopping += budgetMultiplier * 0.1;
-      setDestinations(locations);
-    };
+    } // <-- The issue was here - brace was misplaced
     
     // Update stats
     setStats({
-        totalTrips: validTrips.length,
-        countriesVisited: countries.size,
-        continentsExplored: continents.size || Math.min(3, Math.floor(countries.size / 3)),
-        totalSpent: Object.values(spending).reduce((sum, val) => sum + val, 0),
-        upcomingTrips: upcomingCount,
-        averageTripLength: validTrips.length ? (totalDays / validTrips.length).toFixed(1) : 0
-      });
+      totalTrips: validTrips.length,
+      countriesVisited: countries.size,
+      continentsExplored: continents.size || Math.min(3, Math.floor(countries.size / 3)),
+      totalSpent: Object.values(spending).reduce((sum, val) => sum + val, 0),
+      upcomingTrips: upcomingCount,
+      averageTripLength: validTrips.length ? (totalDays / validTrips.length).toFixed(1) : 0
+    });
     
     // Update chart data
     setActivityData({
