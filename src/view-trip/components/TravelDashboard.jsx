@@ -31,6 +31,7 @@ ChartJS.register(
 function TravelDashboard() {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [stats, setStats] = useState({
     totalTrips: 0,
     countriesVisited: 0,
@@ -62,7 +63,12 @@ function TravelDashboard() {
     async function fetchTrips() {
       try {
         const user = JSON.parse(localStorage.getItem('user'));
-        if (!user?.email) return;
+        if (!user?.email) {
+          console.log("No user email found in localStorage");
+          return;
+        }
+        
+        console.log("Fetching trips for:", user.email);
         
         // First load Google Maps
         await loadGoogleMapsScript();
@@ -75,11 +81,16 @@ function TravelDashboard() {
         const querySnapshot = await getDocs(q);
         const tripsData = [];
         
+        console.log(`Found ${querySnapshot.size} trips for this user`);
+        
         querySnapshot.forEach((doc) => {
-          tripsData.push({
+          const tripData = {
             id: doc.id,
             ...doc.data()
-          });
+          };
+          console.log("Trip found:", tripData.tripData?.trip?.destination, 
+                      "Start date:", tripData.userSelection?.startDate);
+          tripsData.push(tripData);
         });
         
         setTrips(tripsData);
@@ -92,7 +103,7 @@ function TravelDashboard() {
     }
     
     fetchTrips();
-  }, []);
+  }, [refreshKey]);
   
   // Add this function to load Google Maps
   const loadGoogleMapsScript = () => {
@@ -254,13 +265,16 @@ function TravelDashboard() {
     
     // Update stats
     setStats({
-      totalTrips: validTrips.length,
-      countriesVisited: countries.size,
-      continentsExplored: continents.size || Math.min(3, Math.floor(countries.size / 3)),
-      totalSpent: Object.values(spending).reduce((sum, val) => sum + val, 0),
-      upcomingTrips: upcomingCount,
-      averageTripLength: validTrips.length ? (totalDays / validTrips.length).toFixed(1) : 0
-    });
+        totalTrips: validTrips.length,
+        countriesVisited: countries.size,
+        continentsExplored: continents.size || Math.min(3, Math.floor(countries.size / 3)),
+        totalSpent: Object.values(spending).reduce((sum, val) => sum + val, 0),
+        upcomingTrips: validTrips.filter(trip => {
+          const startDate = trip.userSelection?.startDate;
+          return startDate && new Date(startDate) > new Date();
+        }).length,
+        averageTripLength: validTrips.length ? (totalDays / validTrips.length).toFixed(1) : 0
+      });
     
     // Update chart data
     setActivityData({
@@ -317,7 +331,15 @@ function TravelDashboard() {
   return (
     <div className="min-h-screen bg-gray-900 pt-[140px] pb-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-8">Travel Analytics Dashboard</h1>
+      <div className="flex justify-between items-center mb-8">
+  <h1 className="text-3xl font-bold text-white">Travel Analytics Dashboard</h1>
+  <button 
+    onClick={() => setRefreshKey(old => old + 1)}
+    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full"
+  >
+    Refresh Data
+  </button>
+</div>
         
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -435,19 +457,42 @@ function TravelDashboard() {
         
         {/* Recent Trips Timeline */}
         <div className="bg-gray-800 rounded-xl p-4 shadow-xl">
-          <h2 className="text-xl font-semibold text-white mb-4">Trip Timeline</h2>
-          <div className="space-y-4">
-            {trips.length > 0 ? trips.slice(0, 5).map((trip, index) => (
-              <TimelineItem 
-                key={trip.id}
-                trip={trip}
-                index={index}
-              />
-            )) : (
-              <p className="text-gray-400 text-center py-10">No trips to display</p>
-            )}
-          </div>
-        </div>
+  <h2 className="text-xl font-semibold text-white mb-4">Trip Timeline</h2>
+  <div className="space-y-4">
+    {trips.length > 0 ? 
+      trips
+        // Make a copy to avoid modifying the original array
+        .slice()
+        // Sort by start date - upcoming first, then by how soon they are
+        .sort((a, b) => {
+          const dateA = a.userSelection?.startDate ? new Date(a.userSelection.startDate) : new Date(0);
+          const dateB = b.userSelection?.startDate ? new Date(b.userSelection.startDate) : new Date(0);
+          const today = new Date();
+          
+          // Check if both are upcoming or both are past
+          const aIsUpcoming = dateA > today;
+          const bIsUpcoming = dateB > today;
+          
+          if (aIsUpcoming && !bIsUpcoming) return -1; // A is upcoming, B is past
+          if (!aIsUpcoming && bIsUpcoming) return 1;  // A is past, B is upcoming
+          
+          // If both are upcoming or both are past, sort by date
+          return aIsUpcoming ? dateA - dateB : dateB - dateA;
+        })
+        // Take first 10 trips instead of just 5
+        .slice(0, 10)
+        .map((trip, index) => (
+          <TimelineItem 
+            key={trip.id}
+            trip={trip}
+            index={index}
+          />
+        )) : (
+        <p className="text-gray-400 text-center py-10">No trips to display</p>
+      )
+    }
+  </div>
+</div>
       </div>
     </div>
   );
@@ -477,6 +522,33 @@ function TimelineItem({ trip, index }) {
     const startDate = trip.userSelection?.startDate ? new Date(trip.userSelection?.startDate) : null;
     const isUpcoming = startDate && startDate > new Date();
     
+    // Format date more clearly
+    const formatDate = (date) => {
+      if (!date) return 'No date specified';
+      
+      const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+      
+      return date.toLocaleDateString(undefined, options);
+    };
+    
+    // Calculate days until trip
+    const getDaysUntil = (date) => {
+      if (!date) return null;
+      
+      const today = new Date();
+      const timeDiff = date.getTime() - today.getTime();
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      
+      if (daysDiff <= 0) return null;
+      return daysDiff === 1 ? 'Tomorrow' : `in ${daysDiff} days`;
+    };
+    
+    const daysUntil = getDaysUntil(startDate);
+    
     return (
       <motion.div 
         className="flex gap-4"
@@ -488,7 +560,7 @@ function TimelineItem({ trip, index }) {
           <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isUpcoming ? 'bg-blue-500' : 'bg-green-500'}`}>
             <span className="text-white text-sm">{isUpcoming ? '🔜' : '✓'}</span>
           </div>
-          {index < 4 && <div className="w-0.5 h-full bg-gray-700 mt-2"></div>}
+          {index < 9 && <div className="w-0.5 h-full bg-gray-700 mt-2"></div>}
         </div>
         <div className="bg-gray-700 rounded-lg p-4 flex-1 mb-4">
           <div className="flex justify-between items-start">
@@ -498,11 +570,8 @@ function TimelineItem({ trip, index }) {
             </span>
           </div>
           <div className="text-gray-400 text-sm mt-1">
-            {startDate ? startDate.toLocaleDateString(undefined, {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            }) : 'No date specified'}
+            {formatDate(startDate)}
+            {daysUntil && <span className="ml-2 text-blue-300 font-medium">({daysUntil})</span>}
             {trip.tripData?.trip?.duration && ` · ${trip.tripData.trip.duration}`}
           </div>
           <div className="flex gap-2 mt-3">
