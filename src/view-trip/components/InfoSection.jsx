@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatUtils";
 import { IoIosSend } from "react-icons/io";
 import { Button } from "@/components/ui/button";
-import fallbackImage from '/public/moderate1.jpg';
+import fallbackImage from '/moderate1.jpg';
 // Import the destinations data
 import destinationsData from '@/context/destinations.json';
 

@@ -153,7 +153,7 @@ function TravelDashboard() {
     
     // Category counters
     const activities = { cultural: 0, adventure: 0, relaxation: 0, food: 0, nature: 0 };
-    const spending = { accommodation: 0, food: 0, activities: 0, transportation: 0, shopping: 0 };
+    const spending = { flights: 0, accommodation: 0, food: 0, activities: 0, transportation: 0, shopping: 0 };
     
     const validTrips = tripsData.filter(trip => 
       trip.tripData?.trip?.destination && 
@@ -548,6 +548,11 @@ function TimelineItem({ trip, index }) {
     };
     
     const daysUntil = getDaysUntil(startDate);
+
+    const handleTripClick = () => {
+      // Navigate to trip view page
+      window.location.href = `/view-trip/${trip.id}`;
+    };
     
     return (
       <motion.div 
@@ -562,7 +567,10 @@ function TimelineItem({ trip, index }) {
           </div>
           {index < 9 && <div className="w-0.5 h-full bg-gray-700 mt-2"></div>}
         </div>
-        <div className="bg-gray-700 rounded-lg p-4 flex-1 mb-4">
+        <div 
+          className="bg-gray-700 rounded-lg p-4 flex-1 mb-4 hover:bg-gray-600 transition-colors cursor-pointer"
+          onClick={handleTripClick}
+        >
           <div className="flex justify-between items-start">
             <h3 className="font-semibold text-white">{destination}</h3>
             <span className={`text-xs font-medium px-2 py-1 rounded-full ${isUpcoming ? 'bg-blue-900 text-blue-200' : 'bg-green-900 text-green-200'}`}>
@@ -581,6 +589,12 @@ function TimelineItem({ trip, index }) {
             <div className="bg-gray-800 text-xs text-gray-300 px-2 py-1 rounded">
               {trip.userSelection?.budget || 'Standard'} Budget
             </div>
+          </div>
+          {/* View button */}
+          <div className="mt-3 flex justify-end">
+            <button className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition-colors">
+              View Trip
+            </button>
           </div>
         </div>
       </motion.div>
