@@ -172,3 +172,32 @@ width: 100%;
 .exporting-pdf .no-pdf {
   display: none !important;
 }
+
+:root {
+  /* Default color variables */
+  --color-primary: #3b82f6;
+  --color-secondary: #8b5cf6;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+  --color-background: #ffffff;
+  --color-text: #1f2937;
+}
+
+/* Then use these variables in your components */
+.bg-blue-600 {
+  background-color: var(--color-primary);
+}
+
+.bg-purple-600 {
+  background-color: var(--color-secondary);
+}
+
+.bg-green-600 {
+  background-color: var(--color-success);
+}
+
+.text-white {
+  color: white; /* Or use a variable for contrast */
+}

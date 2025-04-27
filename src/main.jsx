@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreateTrip from "./create-trip";
 import Header from "./components/custom/Header";
 import { LanguageProvider } from "./context/LanguageContext";
+import { AccessibilityProvider } from './context/AccessibilityContext'; // Import the provider
 import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Viewtrip from "./view-trip/[tripId]/index.jsx";
@@ -33,60 +34,72 @@ const styleElement = document.createElement('style');
 styleElement.textContent = animationStyles;
 document.head.appendChild(styleElement);
 
+// Create a wrapper component that provides both context providers
+function AppProviders({ children }) {
+  return (
+    <AccessibilityProvider>
+      <LanguageProvider>
+        {children}
+      </LanguageProvider>
+    </AccessibilityProvider>
+  );
+}
+
+// Modify your routes to use the wrapper
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <LanguageProvider>
+      <AppProviders>
         <Header />
         <App />
-      </LanguageProvider>
+      </AppProviders>
     ),
   },
   {
     path: "/create-trip",
     element: (
-      <LanguageProvider>
+      <AppProviders>
         <Header />
         <CreateTrip />
-      </LanguageProvider>
+      </AppProviders>
     ),
   },
   {
     path:'/view-trip/:tripId',
     element:(
-      <LanguageProvider>
+      <AppProviders>
         <Header />
         <Viewtrip/>
-      </LanguageProvider>
+      </AppProviders>
     ),
   },
   {
     path: "/my-trips",
     element: (
-        <LanguageProvider>
-            <Header />
-            <MyTrips />
-        </LanguageProvider>
+      <AppProviders>
+        <Header />
+        <MyTrips />
+      </AppProviders>
     ),
   },
   // Add new routes for dashboard and calendar
   {
     path: "/dashboard",
     element: (
-        <LanguageProvider>
-            <Header />
-            <TravelDashboard />
-        </LanguageProvider>
+      <AppProviders>
+        <Header />
+        <TravelDashboard />
+      </AppProviders>
     ),
   },
   {
     path: "/calendar",
     element: (
-        <LanguageProvider>
-            <Header />
-            <TravelCalendar />
-        </LanguageProvider>
+      <AppProviders>
+        <Header />
+        <TravelCalendar />
+      </AppProviders>
     ),
   },
 ]);

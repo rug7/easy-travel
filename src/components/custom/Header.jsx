@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useLanguage } from "@/context/LanguageContext";
-import { IoClose } from "react-icons/io5";
+import { useAccessibility } from "@/context/AccessibilityContext"; // Import accessibility hook
+import { IoClose, IoAccessibility } from "react-icons/io5"; // Added accessibility icon
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
@@ -14,19 +15,11 @@ import {
 } from "@/components/ui/popover";
 import { googleLogout } from "@react-oauth/google";
 
-// Make sure these imports are correct and the components exist
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
-
 function Header() {
   const { language, changeLanguage, translate } = useLanguage();
+  const { colorMode, setColorMode, colorSchemes, increaseFont, decreaseFont, resetFont } = useAccessibility();
   const [openDialog, setOpenDialog] = useState(false);
+  const [accessibilityMenuOpen, setAccessibilityMenuOpen] = useState(false);
   const navigate = useNavigate();
   
   // Safely parse user data with error handling
@@ -194,6 +187,74 @@ function Header() {
           <option value="pt">Português</option>
           <option value="it">Italiano</option>
         </select>  
+         {/* Accessibility Button */}
+        <Popover open={accessibilityMenuOpen} onOpenChange={setAccessibilityMenuOpen}>
+          <PopoverTrigger asChild>
+            <Button 
+              variant="outline" 
+              className="rounded-full p-2 h-9 w-9 flex items-center justify-center text-black bg-white hover:bg-gray-100 hover:text-gray-800 hover:scale-105 transition-all hover:text-xl"
+              aria-label="Accessibility options"
+            >
+              <IoAccessibility className="h-5 w-5" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent 
+            className="w-64 p-4 bg-white rounded-xl shadow-lg border border-gray-200" 
+            align="end"
+            sideOffset={14}
+          >
+            <div className="space-y-4">
+              <h3 className="font-medium text-sm text-gray-700">Color Vision</h3>
+              <div className="grid grid-cols-1 gap-2">
+                {colorSchemes.map(scheme => (
+                  <button
+                    key={scheme}
+                    onClick={() => setColorMode(scheme)}
+                    className={`px-3 py-2 text-xs font-medium rounded-md text-left transition-all ${
+                      colorMode === scheme
+                        ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-700'
+                        : 'bg-gray-50 text-gray-800 hover:bg-gray-100'
+                    }`}
+                  >
+                    {scheme.charAt(0).toUpperCase() + scheme.slice(1)}
+                  </button>
+                ))}
+              </div>
+              
+              <div className="border-t border-gray-200 pt-3">
+                <h3 className="font-medium text-sm text-gray-700 mb-2">Text Size</h3>
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={decreaseFont}
+                    className="p-2 bg-gray-300 rounded-full hover:scale-105 text-black transition-all"
+                    aria-label="Decrease font size"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 bg-gray-300 rounded-full hover:scale-105 text-black transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                    </svg>
+                  </button>
+                  
+                  <button
+                    onClick={resetFont}
+                    className="px-2 py-1 text-sm text-black bg-gray-300 rounded hover:bg-gray-200 transition-all"
+                  >
+                    Reset
+                  </button>
+                  
+                  <button
+                    onClick={increaseFont}
+                    className="p-2 bg-gray-300 rounded-full hover:scale-105 text-black transition-all"
+                    aria-label="Increase font size"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 bg-gray-300 rounded-full hover:scale-105 text-black transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
       
       {/* Render login modal using a different approach */}
