@@ -121,3 +121,54 @@ width: 100%;
   width: 100%;
 }
 
+/* Print styles */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .dashboard-container {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  .dashboard-container h1 {
+    color: black !important;
+    font-size: 24pt !important;
+  }
+  
+  .dashboard-container h2 {
+    color: black !important;
+    font-size: 18pt !important;
+  }
+  
+  .dashboard-container p, 
+  .dashboard-container div {
+    color: black !important;
+  }
+  
+  /* Hide elements not needed in print */
+  button, .no-print {
+    display: none !important;
+  }
+}
+
+/* PDF export styles */
+.exporting-pdf {
+  padding: 20px !important;
+  background-color: white !important;
+}
+
+.exporting-pdf h1, 
+.exporting-pdf h2, 
+.exporting-pdf p, 
+.exporting-pdf div {
+  color: black !important;
+}
+
+/* Hide elements not needed in PDF */
+.exporting-pdf button,
+.exporting-pdf .no-pdf {
+  display: none !important;
+}

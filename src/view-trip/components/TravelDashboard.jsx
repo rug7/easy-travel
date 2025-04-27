@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Chart as ChartJS, 
@@ -14,6 +14,9 @@ import { Pie, Bar } from 'react-chartjs-2';
 import { db } from '@/service/firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import dynamic from 'next/dynamic';
+import html2pdf from 'html2pdf.js';
+
+
 const MapWithNoSSR = dynamic(() => import('./MapComponent'), { ssr: false });
 
 
@@ -32,6 +35,7 @@ function TravelDashboard() {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  const dashboardRef = useRef(null);
   const [stats, setStats] = useState({
     totalTrips: 0,
     countriesVisited: 0,
@@ -104,6 +108,52 @@ function TravelDashboard() {
     
     fetchTrips();
   }, [refreshKey]);
+
+
+  const handlePrint = () => {
+    // Open print dialog
+    window.print();
+  };
+  
+  // Function to export dashboard as PDF
+  const handleExportPDF = () => {
+    // Show loading state
+    setLoading(true);
+    
+    // Options for PDF export
+    const options = {
+      margin: 10,
+      filename: `Travel_Dashboard_${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    // Get dashboard element
+    const dashboard = dashboardRef.current;
+    
+    // Add a class for styling during PDF export
+    dashboard.classList.add('exporting-pdf');
+    
+    // Use timeout to allow any loading visuals to render
+    setTimeout(() => {
+      // Generate PDF
+      html2pdf()
+        .set(options)
+        .from(dashboard)
+        .save()
+        .then(() => {
+          // Remove export class
+          dashboard.classList.remove('exporting-pdf');
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error exporting PDF:', error);
+          dashboard.classList.remove('exporting-pdf');
+          setLoading(false);
+        });
+    }, 500);
+  };
   
   // Add this function to load Google Maps
   const loadGoogleMapsScript = () => {
@@ -386,7 +436,7 @@ function TravelDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-[140px] pb-10 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
+      <div ref={dashboardRef} className="max-w-7xl mx-auto dashboard-container">
         {/* Header with subtitle */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
           <div>
@@ -774,34 +824,43 @@ function TravelDashboard() {
       
       {/* Footer with user experience info */}
       <div className="mt-10 flex items-center justify-between text-gray-500 text-sm">
-        <div>
-          Dashboard updated at {new Date().toLocaleTimeString()}
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="text-white hover:text-white transition-all hover:scale-105">
-            <span className="sr-only">Accessibility Settings</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-            </svg>
-          </button>
-          <button className="text-white hover:text-white transition-all hover:scale-105">
-            <span className="sr-only">Print Dashboard</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
-            </svg>
-          </button>
-          <button className="text-white hover:text-white transition-all hover:scale-105 ">
-            <span className="sr-only">Export Data</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </button>
+          <div>
+            Dashboard updated at {new Date().toLocaleTimeString()}
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="text-white hover:text-white transition-all hover:scale-105">
+              <span className="sr-only">Accessibility Settings</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <button 
+              onClick={handlePrint}
+              className="text-white hover:text-white transition-all hover:scale-105"
+              title="Print Dashboard"
+            >
+              <span className="sr-only">Print Dashboard</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <button 
+              onClick={handleExportPDF}
+              className="text-white hover:text-white transition-all hover:scale-105"
+              title="Export as PDF"
+            >
+              <span className="sr-only">Export Data</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
+
 
 // Helper Components
 function StatsCard({ title, value, icon, color }) {
