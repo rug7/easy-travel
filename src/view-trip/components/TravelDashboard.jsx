@@ -14,7 +14,9 @@ import { Pie, Bar } from 'react-chartjs-2';
 import { db } from '@/service/firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import dynamic from 'next/dynamic';
-import html2pdf from 'html2pdf.js';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
 
 
 const MapWithNoSSR = dynamic(() => import('./MapComponent'), { ssr: false });
@@ -116,44 +118,201 @@ function TravelDashboard() {
   };
   
   // Function to export dashboard as PDF
-  const handleExportPDF = () => {
-    // Show loading state
-    setLoading(true);
+  // Function to export dashboard as PDF
+  const handleExportPDF = async () => {
+  setLoading(true);
+  
+  try {
+    // Modify the dashboard style to be PDF-friendly - single page optimized format
+    const pdfContent = `
+      <div style="font-family: 'Helvetica', Arial, sans-serif; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background: white;">
+        <h1 style="font-size: 24px; color: #1e3a8a; text-align: center; margin-bottom: 5px;">Travel Dashboard</h1>
+        <p style="text-align: center; color: #666; font-size: 12px; margin-bottom: 20px;">Generated on ${new Date().toLocaleString()}</p>
+        
+        <!-- Stats Row -->
+        <div style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+          <h2 style="font-size: 16px; margin-bottom: 10px; color: #4b5563; font-weight: 600;">Travel Statistics</h2>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            <div style="background: #f9fafb; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              <div style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">Total Trips</div>
+              <div style="font-size: 18px; font-weight: bold;">${stats.totalTrips}</div>
+            </div>
+            <div style="background: #f9fafb; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              <div style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">Countries Visited</div>
+              <div style="font-size: 18px; font-weight: bold;">${stats.countriesVisited}</div>
+            </div>
+            <div style="background: #f9fafb; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              <div style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">Continents Explored</div>
+              <div style="font-size: 18px; font-weight: bold;">${stats.continentsExplored}</div>
+            </div>
+            <div style="background: #f9fafb; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              <div style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">Total Spent</div>
+              <div style="font-size: 18px; font-weight: bold;">$${stats.totalSpent.toLocaleString()}</div>
+            </div>
+            <div style="background: #f9fafb; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              <div style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">Upcoming Trips</div>
+              <div style="font-size: 18px; font-weight: bold;">${stats.upcomingTrips}</div>
+            </div>
+            <div style="background: #f9fafb; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              <div style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">Avg. Trip Length</div>
+              <div style="font-size: 18px; font-weight: bold;">${stats.averageTripLength} days</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Spending Section -->
+        <div style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+          <h2 style="font-size: 16px; margin-bottom: 10px; color: #4b5563; font-weight: 600;">Spending Breakdown</h2>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            ${budgetData.labels.map((label, i) => `
+              <div style="background: #f9fafb; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                <div style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">${label}</div>
+                <div style="font-size: 18px; font-weight: bold;">$${Math.round(budgetData.datasets[0].data[i]).toLocaleString()}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div style="font-size: 10px; color: #6b7280; font-style: italic; margin-top: 10px;">
+            Flight costs are based on ${stats.tripsWithFlightData} trips with available flight data. All other expenses are calculated based on your selected budget level for each trip.
+          </div>
+        </div>
+        
+        <!-- Trips Section -->
+        <div>
+          <h2 style="font-size: 16px; margin-bottom: 10px; color: #4b5563; font-weight: 600;">Recent Trips</h2>
+          ${trips.slice(0, 5).map((trip, index) => {
+            const destination = trip.tripData?.trip?.destination || 'Unknown Destination';
+            const startDate = trip.userSelection?.startDate ? new Date(trip.userSelection.startDate) : null;
+            const isUpcoming = startDate && startDate > new Date();
+            const formattedDate = startDate ? startDate.toLocaleDateString(undefined, {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            }) : 'No date specified';
+            
+            const budget = trip.userSelection?.budget || 'Standard';
+            const travelers = trip.userSelection?.travelers || 'Solo';
+            const duration = trip.tripData?.trip?.duration || '';
+            
+            return `
+              <div style="w-full display: flex; align-items: flex-start; margin-bottom: 10px; background: #f9fafb; border-radius: 6px; overflow: hidden;">
+                <div style="width: 12px; background-color: ${isUpcoming ? '#3b82f6' : '#10b981'}; align-self: stretch; margin-right: 10px;"></div>
+                <div style="padding: 10px 10px 10px 0;">
+                  <div style="display: flex; align-items: center;  margin-bottom: 5px;">
+                    <div style="font-weight: 600; font-size: 14px; flex-grow: 1;">${destination}</div>
+                    <div style="font-size: 10px; background: ${isUpcoming ? '#3b82f6' : '#10b981'}; color: white; padding: 2px 6px; border-radius: 12px;">${isUpcoming ? 'Upcoming' : 'Completed'}</div>
+                  </div>
+                  <div style="font-size: 12px; color: #6b7280; margin-bottom: 5px;">${formattedDate}</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                    <span style="font-size: 10px; background: #e5e7eb; color: #4b5563; padding: 2px 6px; border-radius: 4px;">${travelers}</span>
+                    <span style="font-size: 10px; background: #e5e7eb; color: #4b5563; padding: 2px 6px; border-radius: 4px;">${budget} Budget</span>
+                    ${duration ? `<span style="font-size: 10px; background: #e5e7eb; color: #4b5563; padding: 2px 6px; border-radius: 4px;">${duration}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        
+        <div style="margin-top: 20px; text-align: center; font-size: 10px; color: #9ca3af; padding-top: 10px;">
+          Generated by Travel Dashboard on ${new Date().toLocaleDateString()}
+        </div>
+      </div>
+    `;
     
-    // Options for PDF export
-    const options = {
-      margin: 10,
-      filename: `Travel_Dashboard_${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    // Create a container with a fixed size and controlled layout
+    const container = document.createElement('div');
+    container.style.width = '800px';
+    container.style.height = 'auto';
+    container.style.backgroundColor = 'white';
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    container.innerHTML = pdfContent;
+    document.body.appendChild(container);
     
-    // Get dashboard element
-    const dashboard = dashboardRef.current;
-    
-    // Add a class for styling during PDF export
-    dashboard.classList.add('exporting-pdf');
-    
-    // Use timeout to allow any loading visuals to render
-    setTimeout(() => {
-      // Generate PDF
-      html2pdf()
-        .set(options)
-        .from(dashboard)
-        .save()
-        .then(() => {
-          // Remove export class
-          dashboard.classList.remove('exporting-pdf');
-          setLoading(false);
-        })
-        .catch(error => {
-          console.error('Error exporting PDF:', error);
-          dashboard.classList.remove('exporting-pdf');
-          setLoading(false);
-        });
-    }, 500);
-  };
+    try {
+      // Wait for rendering
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Generate PDF with jsPDF directly
+      // Create canvas and convert to PDF in a controlled manner
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: 'white',
+        logging: false, // Reduce console noise
+        windowWidth: 800
+      });
+      
+      // Calculate dimensions
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      // Calculate scaling to fit on one page if possible
+      const imgWidth = pageWidth - 20; // margins
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      if (imgHeight <= pageHeight - 20) {
+        // It fits on one page
+        pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
+      } else {
+        // Need multiple pages - with proper scaling and no duplication
+        const contentRatio = canvas.height / canvas.width;
+        const pageHeightWithMargins = pageHeight - 20;
+        const contentHeightOnPage = imgWidth * contentRatio;
+        
+        // How many pages we need
+        const totalPages = Math.ceil(contentHeightOnPage / pageHeightWithMargins);
+        
+        // For each page
+        for (let i = 0; i < totalPages; i++) {
+          if (i > 0) {
+            pdf.addPage();
+          }
+          
+          // Calculate which part of the image to use
+          const sourceY = (i * canvas.height / totalPages);
+          const sourceHeight = canvas.height / totalPages;
+          
+          pdf.addImage(
+            imgData, 
+            'JPEG', 
+            10, // x position
+            10, // y position
+            imgWidth, 
+            pageHeightWithMargins,
+            null, // alias
+            'FAST', // compression
+            i * (-pageHeightWithMargins / contentRatio * canvas.width / imgWidth) // source y position (cropping)
+          );
+        }
+      }
+      
+      // Save PDF
+      pdf.save('travel-dashboard.pdf');
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      throw error;
+    } finally {
+      // Clean up
+      document.body.removeChild(container);
+    }
+  } catch (error) {
+    console.error('Error creating PDF:', error);
+    alert('There was an error creating the PDF: ' + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
   
   // Add this function to load Google Maps
   const loadGoogleMapsScript = () => {
