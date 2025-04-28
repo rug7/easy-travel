@@ -12,6 +12,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import './calendar-styles.css'; 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { IoCloudOutline, IoSunnyOutline, IoRainyOutline, IoSnowOutline, IoThunderstormOutline } from "react-icons/io5";
+
 
 const Badge = ({ children, className, ...props }) => (
     <div 
@@ -34,6 +36,9 @@ const Badge = ({ children, className, ...props }) => (
     const [calendarDate, setCalendarDate] = useState(new Date());
     const [exportVisible, setExportVisible] = useState(false);
     const [filterType, setFilterType] = useState('all'); // 'all', 'trip', 'activity'
+    const [weatherData, setWeatherData] = useState({});
+
+    
 
 
   useEffect(() => {
@@ -74,12 +79,50 @@ const Badge = ({ children, className, ...props }) => (
     return event.resource?.type === filterType;
   });
 
+  const [calendarView, setCalendarView] = useState({
+    compactAgenda: false,
+    showWeekends: true,
+    colorCoding: 'type', // 'type', 'destination', or 'custom'
+  });
+
   const TodayIndicator = () => {
     return (
       <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full">
         Today
       </div>
     );
+  };
+  const fetchWeatherForTrip = async (destination, startDate) => {
+    // In a real app, you would make an API call to a weather service
+    // For demo purposes, we'll generate random weather data
+    const weatherTypes = ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy', 'Thunderstorm', 'Snow'];
+    const weatherIcons = {
+      'Sunny': <IoSunnyOutline className="w-5 h-5 text-yellow-400" />,
+      'Cloudy': <IoCloudOutline className="w-5 h-5 text-gray-400" />,
+      'Rainy': <IoRainyOutline className="w-5 h-5 text-blue-400" />,
+      'Partly Cloudy': <IoCloudOutline className="w-5 h-5 text-gray-300" />,
+      'Thunderstorm': <IoThunderstormOutline className="w-5 h-5 text-yellow-300" />,
+      'Snow': <IoSnowOutline className="w-5 h-5 text-white" />
+    };
+    
+    // Generate 5 days of forecast data
+    const forecast = Array.from({length: 5}, (_, i) => {
+      const forecastDate = new Date(startDate);
+      forecastDate.setDate(forecastDate.getDate() + i);
+      
+      const weatherType = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+      return {
+        date: forecastDate,
+        condition: weatherType,
+        temperature: Math.floor(Math.random() * 25) + 10, // 10-35 degrees
+        icon: weatherIcons[weatherType]
+      };
+    });
+    
+    return {
+      destination,
+      forecast
+    };
   };
   
   const generateCalendarEvents = (tripsData) => {
@@ -184,8 +227,15 @@ const Badge = ({ children, className, ...props }) => (
     setEvents(allEvents);
   };
   
-  const handleEventClick = (event) => {
+  const handleEventClick = async (event) => {
     setSelectedEvent(event);
+    
+    // If it's a trip, fetch weather data
+    if (event.resource?.type === 'trip') {
+      const destination = event.title.replace('Trip to ', '');
+      const weatherData = await fetchWeatherForTrip(destination, event.start);
+      setWeatherData(weatherData);
+    }
   };
   
   const handleExportCalendar = () => {
@@ -195,7 +245,24 @@ const Badge = ({ children, className, ...props }) => (
   // Custom event component to show colored events
   const EventComponent = ({ event }) => {
     const isActivity = event.resource?.type === 'activity';
-    const backgroundColor = isActivity ? '#DC2626' : '#3B82F6';
+    let backgroundColor;
+    
+    // Apply different color coding based on preferences
+    if (calendarView.colorCoding === 'type') {
+      backgroundColor = isActivity ? '#DC2626' : '#3B82F6';
+    } else if (calendarView.colorCoding === 'destination') {
+      // Generate color based on destination
+      const destination = event.resource?.destination || '';
+      const hash = destination.split('').reduce((acc, char) => {
+        return char.charCodeAt(0) + ((acc << 5) - acc);
+      }, 0);
+      const h = Math.abs(hash) % 360;
+      backgroundColor = `hsl(${h}, 70%, 50%)`;
+    } else if (calendarView.colorCoding === 'custom') {
+      // For custom, you could allow users to set colors per trip
+      backgroundColor = isActivity ? '#9333EA' : '#10B981'; // Purple for activities, green for trips
+    }
+    
     const isTruncated = event.title.length > 30;
     
     return (
@@ -368,6 +435,82 @@ const Badge = ({ children, className, ...props }) => (
     <option value="activity">Activities Only</option>
   </select>
 </div>
+{/* Add after your filter dropdown in the header section */}
+<div className="flex items-center gap-4">
+  <Popover>
+    <PopoverTrigger asChild>
+      <Button variant="outline" size="sm" className="gap-1 bg-gray-800 border-gray-700 text-white hover:bg-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+        </svg>
+        <span>View Options</span>
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent className="w-72 p-4 bg-gray-800 border-gray-700 text-white">
+      <div className="space-y-4">
+        <h3 className="font-medium">Calendar Preferences</h3>
+        
+        <div className="grid gap-4">
+          <div className="flex items-center justify-between">
+            <label htmlFor="showWeekends" className="text-sm">Show Weekends</label>
+            <div className="relative inline-block w-10 h-5 rounded-full bg-gray-700">
+              <input 
+                type="checkbox" 
+                id="showWeekends" 
+                className="sr-only"
+                checked={calendarView.showWeekends} 
+                onChange={(e) => setCalendarView(prev => ({...prev, showWeekends: e.target.checked}))}
+              />
+              <span 
+                className={`absolute left-0.5 top-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${calendarView.showWeekends ? 'bg-blue-500 transform translate-x-5' : 'bg-gray-400'}`}
+              ></span>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <label htmlFor="compactAgenda" className="text-sm">Compact Agenda View</label>
+            <div className="relative inline-block w-10 h-5 rounded-full bg-gray-700">
+              <input 
+                type="checkbox" 
+                id="compactAgenda" 
+                className="sr-only"
+                checked={calendarView.compactAgenda} 
+                onChange={(e) => setCalendarView(prev => ({...prev, compactAgenda: e.target.checked}))}
+              />
+              <span 
+                className={`absolute left-0.5 top-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${calendarView.compactAgenda ? 'bg-blue-500 transform translate-x-5' : 'bg-gray-400'}`}
+              ></span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <label className="text-sm">Color Coding</label>
+          <div className="grid grid-cols-3 gap-2">
+            <button 
+              className={`text-xs p-2 rounded ${calendarView.colorCoding === 'type' ? 'bg-blue-600' : 'bg-gray-700'}`}
+              onClick={() => setCalendarView(prev => ({...prev, colorCoding: 'type'}))}
+            >
+              By Type
+            </button>
+            <button 
+              className={`text-xs p-2 rounded ${calendarView.colorCoding === 'destination' ? 'bg-blue-600' : 'bg-gray-700'}`}
+              onClick={() => setCalendarView(prev => ({...prev, colorCoding: 'destination'}))}
+            >
+              By Destination
+            </button>
+            <button 
+              className={`text-xs p-2 rounded ${calendarView.colorCoding === 'custom' ? 'bg-blue-600' : 'bg-gray-700'}`}
+              onClick={() => setCalendarView(prev => ({...prev, colorCoding: 'custom'}))}
+            >
+              Custom
+            </button>
+          </div>
+        </div>
+      </div>
+    </PopoverContent>
+  </Popover>
+</div>
           
           <div className="flex gap-4">
             <Button 
@@ -465,6 +608,27 @@ const Badge = ({ children, className, ...props }) => (
               <div className="w-4 h-4 rounded-sm bg-blue-500"></div>
               <span className="text-gray-300">Trip Duration</span>
             </div>
+            <div className="mt-4 p-4 bg-gray-700/50 rounded-lg">
+  <h3 className="font-medium text-white mb-3 flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+    </svg>
+    Weather Forecast
+  </h3>
+  
+  <div className="flex overflow-x-auto gap-3 pb-2">
+    {weatherData.forecast?.map((day, idx) => (
+      <div key={idx} className="flex-shrink-0 bg-gray-800 rounded-lg p-3 text-center w-20">
+        <p className="text-xs text-gray-400">{moment(day.date).format('ddd')}</p>
+        <div className="text-2xl my-1">{day.icon}</div>
+        <p className="text-white font-medium">{day.temperature}°C</p>
+        <p className="text-xs text-gray-400">{day.condition}</p>
+      </div>
+    ))}
+  </div>
+  
+  <p className="text-xs text-gray-400 mt-2">*Forecast data is for planning purposes only</p>
+</div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded-sm bg-red-600"></div>
               <span className="text-gray-300">Activities</span>
@@ -521,6 +685,9 @@ const Badge = ({ children, className, ...props }) => (
                     </p>
                   </div>
                 </div>
+
+                
+                
                 
                 <div className="p-4 bg-gray-700 rounded-lg">
                   <h3 className="font-medium text-white mb-2">Activities on This Trip</h3>
