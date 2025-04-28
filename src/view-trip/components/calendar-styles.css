@@ -409,6 +409,7 @@
   transform: scale(1.2);
 }
 
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .travel-calendar-toolbar {

@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { toast } from "sonner";
 import { db } from '@/service/firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose,DialogDescription  } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { IoClose, IoCalendarOutline, IoTimeOutline, IoLocationOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import './calendar-styles.css'; 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { IoCloudOutline, IoSunnyOutline, IoRainyOutline, IoSnowOutline, IoThunderstormOutline } from "react-icons/io5";
+import { CustomDialogContent } from '@/components/ui/custom-dialog-content';
 
 const Badge = ({ children, className, ...props }) => (
     <div 
@@ -494,89 +495,14 @@ const Badge = ({ children, className, ...props }) => (
   <select 
     value={filterType} 
     onChange={e => setFilterType(e.target.value)}
-    className="bg-gray-800 border-gray-700 text-white rounded-md px-3 py-1.5 text-sm"
+    className="bg-gray-800 border-gray-700 text-white rounded-xl px-3 py-1.5 text-sm"
   >
     <option value="all">All Events</option>
     <option value="trip">Trips Only</option>
     <option value="activity">Activities Only</option>
   </select>
 </div>
-{/* Add after your filter dropdown in the header section */}
-<div className="flex items-center gap-4">
-  <Popover>
-    <PopoverTrigger asChild>
-      <Button variant="outline" size="sm" className="gap-1 bg-gray-800 border-gray-700 text-white hover:bg-gray-700">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-        </svg>
-        <span>View Options</span>
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent className="w-72 p-4 bg-gray-800 border-gray-700 text-white">
-      <div className="space-y-4">
-        <h3 className="font-medium">Calendar Preferences</h3>
-        
-        <div className="grid gap-4">
-          <div className="flex items-center justify-between">
-            <label htmlFor="showWeekends" className="text-sm">Show Weekends</label>
-            <div className="relative inline-block w-10 h-5 rounded-full bg-gray-700">
-              <input 
-                type="checkbox" 
-                id="showWeekends" 
-                className="sr-only"
-                checked={calendarView.showWeekends} 
-                onChange={(e) => setCalendarView(prev => ({...prev, showWeekends: e.target.checked}))}
-              />
-              <span 
-                className={`absolute left-0.5 top-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${calendarView.showWeekends ? 'bg-blue-500 transform translate-x-5' : 'bg-gray-400'}`}
-              ></span>
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <label htmlFor="compactAgenda" className="text-sm">Compact Agenda View</label>
-            <div className="relative inline-block w-10 h-5 rounded-full bg-gray-700">
-              <input 
-                type="checkbox" 
-                id="compactAgenda" 
-                className="sr-only"
-                checked={calendarView.compactAgenda} 
-                onChange={(e) => setCalendarView(prev => ({...prev, compactAgenda: e.target.checked}))}
-              />
-              <span 
-                className={`absolute left-0.5 top-0.5 w-4 h-4 rounded-full transition-transform duration-200 ${calendarView.compactAgenda ? 'bg-blue-500 transform translate-x-5' : 'bg-gray-400'}`}
-              ></span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <label className="text-sm">Color Coding</label>
-          <div className="grid grid-cols-3 gap-2">
-            <button 
-              className={`text-xs p-2 rounded ${calendarView.colorCoding === 'type' ? 'bg-blue-600' : 'bg-gray-700'}`}
-              onClick={() => setCalendarView(prev => ({...prev, colorCoding: 'type'}))}
-            >
-              By Type
-            </button>
-            <button 
-              className={`text-xs p-2 rounded ${calendarView.colorCoding === 'destination' ? 'bg-blue-600' : 'bg-gray-700'}`}
-              onClick={() => setCalendarView(prev => ({...prev, colorCoding: 'destination'}))}
-            >
-              By Destination
-            </button>
-            <button 
-              className={`text-xs p-2 rounded ${calendarView.colorCoding === 'custom' ? 'bg-blue-600' : 'bg-gray-700'}`}
-              onClick={() => setCalendarView(prev => ({...prev, colorCoding: 'custom'}))}
-            >
-              Custom
-            </button>
-          </div>
-        </div>
-      </div>
-    </PopoverContent>
-  </Popover>
-</div>
+
           
           <div className="flex gap-4">
             <Button 
@@ -707,33 +633,35 @@ const Badge = ({ children, className, ...props }) => (
 
             {/* Event Details Dialog */}
             <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
-        <DialogContent className="bg-gray-800 border-gray-700 text-white">
+        <CustomDialogContent  className="bg-gray-800 border-gray-700 text-white">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">
               {selectedEvent?.title}
             </DialogTitle>
-            <DialogClose className="absolute right-4 top-4 text-gray-400 hover:text-white">
-              <IoClose className="h-5 w-5" />
-            </DialogClose>
+            <DialogDescription className="sr-only">
+        Event details and information
+      </DialogDescription>
+            <DialogClose className="absolute right-4 top-4 text-black  bg-white hover:scale-105">
+  <IoClose className="h-4 w-4" />
+</DialogClose>
           </DialogHeader>
           
           <div className="mt-2">
             {selectedEvent?.resource?.type === 'trip' ? (
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
-                    <IoCalendarOutline className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-gray-400 text-sm">Trip Duration</p>
-                    <p className="text-white font-medium">
-                      {moment(selectedEvent.start).format('MMM D, YYYY')} - {moment(selectedEvent.end).subtract(1, 'day').format('MMM D, YYYY')}
-                    </p>
-                  </div>
+              <div className="event-dialog-section">
+              <div className="event-dialog-header">
+                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
+                  <IoCalendarOutline className="h-5 w-5 text-white" />
                 </div>
-
-                
-                
+                <div>
+                  <p className="text-gray-400 text-sm">Trip Duration</p>
+                  <p className="text-white font-medium">
+                    {moment(selectedEvent.start).format('MMM D, YYYY')} - {moment(selectedEvent.end).subtract(1, 'day').format('MMM D, YYYY')}
+                  </p>
+                </div>
+              </div>
+    
+                  
                 
                 <div className="p-4 bg-gray-700 rounded-lg">
                   <h3 className="font-medium text-white mb-2">Activities on This Trip</h3>
@@ -829,18 +757,20 @@ const Badge = ({ children, className, ...props }) => (
               </div>
             )}
           </div>
-        </DialogContent>
+        </CustomDialogContent >
       </Dialog>
       
       {/* Export Calendar Dialog */}
       <Dialog open={exportVisible} onOpenChange={setExportVisible}>
-        <DialogContent className="bg-gray-800 border-gray-700 text-white">
+        <CustomDialogContent className="bg-gray-800 border-gray-700 text-white" >
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">
               Export Calendar
             </DialogTitle>
-            <DialogClose className="absolute right-4 top-4 text-gray-400 hover:text-white">
-              <IoClose className="h-5 w-5" />
+            <DialogDescription className="sr-only">
+      </DialogDescription>
+            <DialogClose className="absolute right-4 top-4 text-black  bg-white hover:scale-105">
+              <IoClose className="h-4 w-4" />
             </DialogClose>
           </DialogHeader>
           
@@ -849,41 +779,44 @@ const Badge = ({ children, className, ...props }) => (
               <p className="text-gray-300 mb-2">Select which calendar services you want to export your travel schedule to:</p>
               
               <div className="space-y-3 mt-4">
-                <div className="flex items-center p-3 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700">
-                  <input type="checkbox" id="googleCalendar" className="mr-3" />
-                  <label htmlFor="googleCalendar" className="flex-1 cursor-pointer">
-                    <div className="font-medium">Google Calendar</div>
-                    <div className="text-sm text-gray-400">Sync with your Google account</div>
-                  </label>
-                  <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" strokeWidth="1.5" fill="none"></path>
-                    <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"></path>
-                  </svg>
-                </div>
+  {exportCalendars.map((calendar) => (
+    <div 
+      key={calendar.id}
+      className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
+        calendar.selected ? 'bg-blue-900/30 border border-blue-700' : 'bg-gray-700/50 hover:bg-gray-700'
+      }`}
+      onClick={() => {
+        setExportCalendars(exportCalendars.map(cal => 
+          cal.id === calendar.id ? {...cal, selected: !cal.selected} : cal
+        ));
+      }}
+    >
+      <div className={`w-5 h-5 rounded-md mr-3 flex items-center justify-center ${
+        calendar.selected ? 'bg-blue-600' : 'border border-gray-500'
+      }`}>
+        {calendar.selected && (
+          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
+        )}
+      </div>
+      <div className="flex-1">
+        <div className="font-medium">{calendar.name}</div>
+        <div className="text-sm text-gray-400">
+          {calendar.id === 'google' ? 'Sync with your Google account' : 'Export as .ics file'}
+        </div>
+      </div>
+      {calendar.selected && (
+        <div className="w-6 h-6 rounded-full bg-blue-600/20 flex items-center justify-center">
+          <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      )}
+    </div>
+  ))}
                 
-                <div className="flex items-center p-3 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700">
-                  <input type="checkbox" id="appleCalendar" className="mr-3" />
-                  <label htmlFor="appleCalendar" className="flex-1 cursor-pointer">
-                    <div className="font-medium">Apple Calendar</div>
-                    <div className="text-sm text-gray-400">Export as .ics file</div>
-                  </label>
-                  <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" strokeWidth="1.5" fill="none"></path>
-                    <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"></path>
-                  </svg>
-                </div>
-                
-                <div className="flex items-center p-3 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700">
-                  <input type="checkbox" id="outlookCalendar" className="mr-3" />
-                  <label htmlFor="outlookCalendar" className="flex-1 cursor-pointer">
-                    <div className="font-medium">Outlook</div>
-                    <div className="text-sm text-gray-400">Export as .ics file</div>
-                  </label>
-                  <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" strokeWidth="1.5" fill="none"></path>
-                    <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"></path>
-                  </svg>
-                </div>
+              
               </div>
             </div>
             
@@ -908,7 +841,7 @@ const Badge = ({ children, className, ...props }) => (
 </Button>
             </div>
           </div>
-        </DialogContent>
+        </CustomDialogContent >
       </Dialog>
     </div>
   );

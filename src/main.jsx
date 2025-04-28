@@ -11,7 +11,6 @@ import { AccessibilityProvider } from './context/AccessibilityContext'; // Impor
 import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Viewtrip from "./view-trip/[tripId]/index.jsx";
-import LoadingScreen from "./view-trip/components/LoadingScreen";
 import MyTrips from "./my-trips";
 // Import the new components
 import TravelDashboard from "./view-trip/components/TravelDashboard";
