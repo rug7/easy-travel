@@ -9,7 +9,29 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   letter-spacing: -0.011em;
 }
+.bg-custom-primary {
+  background-color: var(--color-primary, #3b82f6) !important;
+}
 
+.text-custom-primary {
+  color: var(--color-primary, #3b82f6) !important;
+}
+
+.border-custom-primary {
+  border-color: var(--color-primary, #3b82f6) !important;
+}
+
+.bg-custom-danger {
+  background-color: var(--color-danger, #ef4444) !important;
+}
+
+.text-custom-danger {
+  color: var(--color-danger, #ef4444) !important;
+}
+
+.border-custom-danger {
+  border-color: var(--color-danger, #ef4444) !important;
+}
 /* Calendar base styling */
 .rbc-calendar {
   background-color: #0f172a;

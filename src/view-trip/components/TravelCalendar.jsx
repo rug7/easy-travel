@@ -17,6 +17,7 @@ import { CustomDialogContent } from '@/components/ui/custom-dialog-content';
 import { useAccessibility } from '@/context/AccessibilityContext';
 
 
+
 const Badge = ({ children, className, ...props }) => (
     <div 
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${className}`} 
@@ -91,9 +92,67 @@ const Badge = ({ children, className, ...props }) => (
     colorCoding: 'type', // 'type', 'destination', or 'custom'
   });
 
+  const getAccessibleColor = (colorType) => {
+    // Map standard color names to your colorMode-specific colors
+    const colorMap = {
+      default: {
+        primary: '#3b82f6', // blue-500
+        secondary: '#8b5cf6', // purple-500
+        success: '#10b981', // green-500
+        danger: '#ef4444', // red-500
+        warning: '#f59e0b', // amber-500
+        info: '#3b82f6', // blue-500
+      },
+      protanopia: {
+        primary: '#2563eb', // More bluish
+        secondary: '#7c3aed', // More visible purple
+        success: '#059669', // Adjusted green
+        danger: '#9ca3af', // Gray instead of red
+        warning: '#d97706', // Darker amber
+        info: '#0284c7', // Darker blue
+      },
+      deuteranopia: {
+        primary: '#1d4ed8', // Deeper blue
+        secondary: '#6d28d9', // Deeper purple
+        success: '#0f766e', // Teal instead of green
+        danger: '#b91c1c', // More visible red
+        warning: '#b45309', // Darker amber
+        info: '#1e40af', // Deeper blue
+      },
+      tritanopia: {
+        primary: '#4f46e5', // Indigo
+        secondary: '#7e22ce', // Darker purple
+        success: '#15803d', // Darker green
+        danger: '#dc2626', // Bright red
+        warning: '#ca8a04', // Darker yellow
+        info: '#4338ca', // Indigo
+      },
+      monochromacy: {
+        primary: '#4b5563', // Gray-600
+        secondary: '#6b7280', // Gray-500
+        success: '#374151', // Gray-700
+        danger: '#1f2937', // Gray-800
+        warning: '#6b7280', // Gray-500
+        info: '#4b5563', // Gray-600
+      },
+      highContrast: {
+        primary: '#1d4ed8', // Deep blue
+        secondary: '#6d28d9', // Deep purple
+        success: '#047857', // Deep green
+        danger: '#b91c1c', // Deep red
+        warning: '#b45309', // Deep amber
+        info: '#1e40af', // Deep blue
+      }
+    };
+  
+    // Use CSS variables if they exist, otherwise fall back to the hardcoded colors
+    return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
+  };
+
   const TodayIndicator = () => {
     return (
-      <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+      <div className="absolute top-2 right-2 text-white text-xs font-bold px-2 py-1 rounded-full"
+           style={{ backgroundColor: getAccessibleColor('primary') }}>
         Today
       </div>
     );
@@ -319,7 +378,9 @@ const Badge = ({ children, className, ...props }) => (
     
     // Apply different color coding based on preferences
     if (calendarView.colorCoding === 'type') {
-      backgroundColor = isActivity ? '#DC2626' : '#3B82F6';
+      backgroundColor = isActivity ? 
+        getAccessibleColor('danger') : 
+        getAccessibleColor('primary');
     } else if (calendarView.colorCoding === 'destination') {
       // Generate color based on destination
       const destination = event.resource?.destination || '';
@@ -330,7 +391,9 @@ const Badge = ({ children, className, ...props }) => (
       backgroundColor = `hsl(${h}, 70%, 50%)`;
     } else if (calendarView.colorCoding === 'custom') {
       // For custom, you could allow users to set colors per trip
-      backgroundColor = isActivity ? '#9333EA' : '#10B981'; // Purple for activities, green for trips
+      backgroundColor = isActivity ? 
+        getAccessibleColor('secondary') : 
+        getAccessibleColor('success');
     }
     
     const isTruncated = event.title.length > 30;
@@ -427,7 +490,7 @@ const Badge = ({ children, className, ...props }) => (
                   toolbar.onNavigate('DATE', date);
                 }}
                 inline
-                calendarClassName="bg-gray-800 text-white"
+                calendarClassName="bg-gray-800 text-white" 
                 dayClassName={date => 
                   moment(date).isSame(new Date(), 'day') 
                     ? "bg-blue-600 text-white rounded-full" 
@@ -445,32 +508,21 @@ const Badge = ({ children, className, ...props }) => (
         </div>
         
         <div className="travel-calendar-toolbar-views">
-          <div className="bg-gray-800 rounded-lg p-1 flex">
-            <button 
-              className={`px-4 py-2 rounded-xl transition ${toolbar.view === 'month' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-              onClick={() => toolbar.onView('month')}
-            >
-              Month
-            </button>
-            <button 
-              className={`px-4 py-2 rounded-xl transition ${toolbar.view === 'week' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-              onClick={() => toolbar.onView('week')}
-            >
-              Week
-            </button>
-            <button 
-              className={`px-4 py-2 rounded-xl transition ${toolbar.view === 'day' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-              onClick={() => toolbar.onView('day')}
-            >
-              Day
-            </button>
-            <button 
-              className={`px-4 py-2 rounded-xl transition ${toolbar.view === 'agenda' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-              onClick={() => toolbar.onView('agenda')}
-            >
-              Agenda
-            </button>
-          </div>
+        <div className="bg-gray-800 rounded-lg p-1 flex">
+  {['month', 'week', 'day', 'agenda'].map(viewName => (
+    <button 
+      key={viewName}
+      className={`px-4 py-2 rounded-xl transition`}
+      style={{
+        backgroundColor: toolbar.view === viewName ? getAccessibleColor('primary') : 'transparent',
+        color: toolbar.view === viewName ? 'white' : '#d1d5db',
+      }}
+      onClick={() => toolbar.onView(viewName)}
+    >
+      {viewName.charAt(0).toUpperCase() + viewName.slice(1)}
+    </button>
+  ))}
+</div>
         </div>
       </div>
     );
@@ -568,8 +620,15 @@ const Badge = ({ children, className, ...props }) => (
                 let style = {};
                 
                 if (isToday) {
-                  style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
-                  style.borderLeft = '3px solid #3B82F6';
+                  const primaryColor = getAccessibleColor('primary');
+                  // Convert hex to rgba for background
+                  const rgbMatch = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(primaryColor);
+                  const rgb = rgbMatch 
+                    ? `${parseInt(rgbMatch[1], 16)}, ${parseInt(rgbMatch[2], 16)}, ${parseInt(rgbMatch[3], 16)}` 
+                    : '59, 130, 246'; // Default blue if conversion fails
+                  
+                  style.backgroundColor = `rgba(${rgb}, 0.15)`;
+                  style.borderLeft = `3px solid ${primaryColor}`;
                 } else if (isWeekend) {
                   style.backgroundColor = 'rgba(17, 24, 39, 0.7)';
                 } else if (isPast) {
@@ -600,38 +659,45 @@ const Badge = ({ children, className, ...props }) => (
   <h2 className="text-xl font-semibold text-white mb-4">Calendar Legend</h2>
   
   <div className="flex flex-wrap gap-6 mb-6">
-    <div className="flex items-center gap-2">
-<div className="w-4 h-4 rounded-sm" style={{ backgroundColor: 'var(--color-primary, #3B82F6)' }}></div>
-      <span className="text-gray-300">Trip Duration</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <div className="w-4 h-4 rounded-sm bg-red-600"></div>
-      <span className="text-gray-300">Activities</span>
-    </div>
+  <div className="flex items-center gap-2">
+    <div 
+      className="w-4 h-4 rounded-sm" 
+      style={{ backgroundColor: getAccessibleColor('primary') }}
+    ></div>
+    <span className="text-gray-300">Trip Duration</span>
   </div>
+  <div className="flex items-center gap-2">
+    <div 
+      className="w-4 h-4 rounded-sm" 
+      style={{ backgroundColor: getAccessibleColor('danger') }}
+    ></div>
+    <span className="text-gray-300">Activities</span>
+  </div>
+</div>
 </div>
 
         {/* Trip Statistics */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatsCard 
-            title="Upcoming Trips" 
-            value={events.filter(e => e.resource?.type === 'trip' && e.start > new Date()).length} 
-            icon={<IoCalendarOutline className="w-6 h-6" />}
-            color="bg-gradient-to-br from-blue-600 to-blue-700"
-          />
-          <StatsCard 
-            title="Planned Activities" 
-            value={events.filter(e => e.resource?.type === 'activity').length} 
-            icon={<IoTimeOutline className="w-6 h-6" />}
-            color="bg-gradient-to-br from-red-600 to-red-700"
-          />
-          <StatsCard 
-            title="Destinations" 
-            value={new Set(trips.map(t => t.tripData?.trip?.destination).filter(Boolean)).size} 
-            icon={<IoLocationOutline className="w-6 h-6" />}
-            color="bg-gradient-to-br from-green-600 to-green-700"
-          />
-        </div>
+  <StatsCard 
+    title="Upcoming Trips" 
+    value={events.filter(e => e.resource?.type === 'trip' && e.start > new Date()).length} 
+    icon={<IoCalendarOutline className="w-6 h-6" />}
+    type="upcoming-trips"
+  />
+  <StatsCard 
+    title="Planned Activities" 
+    value={events.filter(e => e.resource?.type === 'activity').length} 
+    icon={<IoTimeOutline className="w-6 h-6" />}
+    type="planned-activities"
+  />
+  <StatsCard 
+    title="Destinations" 
+    value={new Set(trips.map(t => t.tripData?.trip?.destination).filter(Boolean)).size} 
+    icon={<IoLocationOutline className="w-6 h-6" />}
+    type="destinations"
+  />
+</div>
+
       </div>
 
             {/* Event Details Dialog */}
@@ -669,32 +735,39 @@ const Badge = ({ children, className, ...props }) => (
                 <div className="p-4 bg-gray-700 rounded-lg">
                   <h3 className="font-medium text-white mb-2">Activities on This Trip</h3>
                   <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
-                    {events
-                      .filter(e => e.resource?.type === 'activity' && e.resource?.tripId === selectedEvent.resource.tripId)
-                      .sort((a, b) => a.start - b.start)
-                      .map((activity, index) => (
-                        <div key={index} className="p-3 bg-gray-800 rounded-lg flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white text-xs font-bold">
-                            {moment(activity.start).format('HH:mm')}
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-medium text-white">{activity.title}</p>
-                            <p className="text-sm text-gray-400">
-                              {moment(activity.start).format('ddd, MMM D')} • {moment(activity.start).format('HH:mm')} - {moment(activity.end).format('HH:mm')}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
+                  {events
+  .filter(e => e.resource?.type === 'activity' && e.resource?.tripId === selectedEvent.resource.tripId)
+  .sort((a, b) => a.start - b.start)
+  .map((activity, index) => (
+    <div key={index} className="p-3 bg-gray-800 rounded-lg flex items-center gap-3">
+      <div 
+        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+        style={{ backgroundColor: getAccessibleColor('danger') }}
+      >
+        {moment(activity.start).format('HH:mm')}
+      </div>
+      <div className="flex-1">
+        <p className="font-medium text-white">{activity.title}</p>
+        <p className="text-sm text-gray-400">
+          {moment(activity.start).format('ddd, MMM D')} • {moment(activity.start).format('HH:mm')} - {moment(activity.end).format('HH:mm')}
+        </p>
+      </div>
+    </div>
+  ))}
                   </div>
                 </div>
                 
                 <div className="flex justify-end">
-  <Button 
-    className="bg-blue-600 hover:bg-blue-700 w-full"
-    onClick={() => window.location.href = `/view-trip/${selectedEvent?.resource?.tripId}`}
-  >
-    View Full Itinerary
-  </Button>
+                <Button 
+  className="w-full"
+  style={{ 
+    backgroundColor: getAccessibleColor('primary'),
+    color: 'white'
+  }}
+  onClick={() => window.location.href = `/view-trip/${selectedEvent?.resource?.tripId}`}
+>
+  View Full Itinerary
+</Button>
 </div>
               </div>
             ) : (
@@ -702,7 +775,13 @@ const Badge = ({ children, className, ...props }) => (
               <div className="space-y-4">
                 <div className="mb-4 p-4 bg-gray-700/50 rounded-lg">
                   <div className="flex justify-between items-center mb-2">
-                    <Badge className="bg-red-600 hover:bg-red-700">Activity</Badge>
+                  <Badge 
+  style={{ 
+    backgroundColor: getAccessibleColor('danger'),
+  }}
+>
+  Activity
+</Badge>
                     <span className="text-sm text-gray-400">
                       {moment(selectedEvent?.start).format('dddd, MMMM D, YYYY')}
                     </span>
@@ -745,13 +824,21 @@ const Badge = ({ children, className, ...props }) => (
                 <div className="flex justify-end gap-3 mt-4">
   <Button 
     variant="outline" 
-    className="border-gray-600 text-gray-300 hover:bg-gray-700 flex-1"
+    className="flex-1"
+    style={{ 
+      borderColor: getAccessibleColor('primary') + '80',
+      color: getAccessibleColor('primary'),
+    }}
     onClick={() => handleAddToPersonalCalendar(selectedEvent)}
   >
     Add to Personal Calendar
   </Button>
   <Button 
-    className="bg-blue-600 hover:bg-blue-700 flex-1"
+    className="flex-1"
+    style={{ 
+      backgroundColor: getAccessibleColor('primary'),
+      color: 'white'
+    }}
     onClick={() => window.location.href = `/view-trip/${selectedEvent?.resource?.tripId}`}
   >
     View Trip Details
@@ -824,7 +911,10 @@ const Badge = ({ children, className, ...props }) => (
             </div>
             
             <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-4 flex items-start gap-3">
-              <IoInformationCircleOutline className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+            <IoInformationCircleOutline 
+    className="w-5 h-5 flex-shrink-0 mt-0.5" 
+    style={{ color: getAccessibleColor('primary') }}
+  />
               <p className="text-blue-300 text-sm">
                 Exporting your travel calendar will create events in your preferred calendar application. 
                 You can choose to export all trips or just selected ones.
@@ -836,7 +926,12 @@ const Badge = ({ children, className, ...props }) => (
                 Cancel
               </Button>
               <Button 
-  className="bg-blue-600 hover:bg-blue-700"
+  className=""
+  style={{ 
+    backgroundColor: getAccessibleColor('primary'),
+    color: 'white',
+    opacity: exportCalendars.some(cal => cal.selected) ? 1 : 0.5
+  }}
   onClick={handleExportSelected}
   disabled={!exportCalendars.some(cal => cal.selected)}
 >
@@ -848,13 +943,47 @@ const Badge = ({ children, className, ...props }) => (
       </Dialog>
     </div>
   );
-}
 
-// Helper Component for Stats
-function StatsCard({ title, value, icon, color }) {
+  function StatsCard({ title, value, icon, type }) {
+  
+    // Get base colors based on type and color mode
+    const getCardColor = (type) => {
+      const baseColors = {
+        'upcoming-trips': 'primary',
+        'planned-activities': 'danger',
+        'destinations': 'success'
+      };
+      
+      const colorType = baseColors[type] || 'primary';
+      return getAccessibleColor(colorType);
+    };
+    
+    // Create gradient based on the accessible color
+    const createGradient = (color) => {
+      // Create a slightly darker version for the gradient
+      const darkerColor = color.replace(/^#/, '');
+      const r = parseInt(darkerColor.substr(0, 2), 16);
+      const g = parseInt(darkerColor.substr(2, 2), 16);
+      const b = parseInt(darkerColor.substr(4, 2), 16);
+      const darkR = Math.max(0, r - 20).toString(16).padStart(2, '0');
+      const darkG = Math.max(0, g - 20).toString(16).padStart(2, '0');
+      const darkB = Math.max(0, b - 20).toString(16).padStart(2, '0');
+      const darkerHex = `#${darkR}${darkG}${darkB}`;
+      
+      return `linear-gradient(to bottom right, ${color}, ${darkerHex})`;
+    };
+    
+    const baseColor = getCardColor(type);
+    const gradientBackground = createGradient(baseColor);
+    
     return (
       <motion.div 
-        className={`${color} rounded-xl p-6 shadow-lg`}
+        style={{ 
+          background: gradientBackground,
+          borderRadius: '0.75rem',
+          padding: '1.5rem',
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+        }}
         whileHover={{ y: -5 }}
         transition={{ duration: 0.2 }}
       >
@@ -870,5 +999,11 @@ function StatsCard({ title, value, icon, color }) {
       </motion.div>
     );
   }
+
+
+}
+
+// Helper Component for Stats
+
   
   export default TravelCalendar;
