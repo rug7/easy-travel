@@ -780,38 +780,56 @@ const formatedDate = (dateString) => {
   
         {/* Add detailed spending breakdown */}
         <div className="bg-gray-800 p-6 rounded-xl shadow-xl mb-10 border border-gray-700">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              Travel Spending Breakdown
-            </h2>
-            <div className="bg-gray-700 rounded-lg px-3 py-1 text-sm text-gray-300">
-              {stats.tripsWithFlightData} trips with flight data
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-  {budgetData.datasets[0].data.map((value, index) => (
-    <div key={index} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600/50 hover:border-blue-500/30 transition-colors">
-      <div className="flex items-center gap-2 mb-2">
-        <div 
-          className="w-3 h-3 rounded-sm" 
-          style={{ backgroundColor: budgetData.datasets[0].backgroundColor[index] }}
-        ></div>
-        <span className="text-gray-300 text-sm font-medium">{budgetData.labels[index]}</span>
-      </div>
-      <div className="text-white font-bold text-2xl">
-        ${Math.round(value).toLocaleString()}
-      </div>
-      <div className="text-gray-400 text-xs mt-1">
-        per trip average
-      </div>
+  <div className="flex justify-between items-center mb-6">
+    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+      Travel Spending Breakdown
+    </h2>
+    <div className="bg-gray-700 rounded-lg px-3 py-1 text-sm text-gray-300">
+      {stats.tripsWithFlightData} trips with flight data
     </div>
-  ))}
-</div>
+  </div>
+  
+  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    {budgetData.labels.map((label, index) => {
+      // Generate the accessible color on each render based on current colorMode
+      const accessibleColor = 
+        index === 0 ? getAccessibleColor('danger') + '99' : // Flights
+        index === 1 ? getAccessibleColor('primary') + '99' : // Accommodation
+        index === 2 ? getAccessibleColor('success') + '99' : // Food
+        index === 3 ? getAccessibleColor('warning') + '99' : // Activities
+        index === 4 ? getAccessibleColor('secondary') + '99' : // Transportation
+        getAccessibleColor('info') + '99'; // Shopping
+      
+      const value = budgetData.datasets[0].data[index] || 0;
+      
+      return (
+        <div 
+          key={`spending-item-${index}-${colorMode}`}  // Add colorMode to force re-render
+          className={`bg-gray-700/50 rounded-lg p-4 border border-gray-600/50 transition-colors ${
+            colorMode === 'default' ? 'hover:border-blue-500/30' : 'hover:border-gray-500/50'
+          }`}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <div 
+              className="w-3 h-3 rounded-sm" 
+              style={{ backgroundColor: accessibleColor }}
+            ></div>
+            <span className="text-gray-300 text-sm font-medium">{label}</span>
+          </div>
+          <div className="text-white font-bold text-2xl">
+            ${Math.round(value).toLocaleString()}
+          </div>
+          <div className="text-gray-400 text-xs mt-1">
+            per trip average
+          </div>
         </div>
+      );
+    })}
+  </div>
+</div>
         
         {/* Map and Charts - enhanced design */}
 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
@@ -1322,7 +1340,12 @@ const formatedDate = (dateString) => {
             </svg>
             {formatDate(startDate)}
             {daysUntil && (
-              <span className="ml-1 inline-flex items-center text-blue-300 font-medium">
+              <span className={`ml-1 inline-flex items-center font-medium ${colorMode === 'default' ? 'text-blue-300' : ''}`}
+              style={{ 
+                color: colorMode !== 'default' ? getAccessibleColor('primary') : undefined
+              }}
+            >
+
                 ({daysUntil})
               </span>
             )}
@@ -1368,28 +1391,26 @@ const formatedDate = (dateString) => {
           
           {/* View button */}
           <div className="mt-3 flex justify-end">
-            <button 
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-                fontSize: '0.75rem',
-                background: `linear-gradient(to right, ${getAccessibleColor('primary')}, ${getAccessibleColor('primary')}dd)`,
-                color: 'white',
-                padding: '0.375rem 0.75rem',
-                borderRadius: '0.375rem',
-                transition: 'background 0.2s',
-                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
-              }}
-              className="hover:opacity-90"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-              View Trip Details
-            </button>
-          </div>
+  <button 
+    className={`flex items-center gap-1 text-xs text-white px-3 py-1.5 rounded-xl transition-colors shadow-sm ${
+      colorMode === 'default' ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800' : ''
+    }`}
+    style={
+      colorMode !== 'default' 
+        ? {
+            background: `linear-gradient(to right, ${getAccessibleColor('primary')}, ${getAccessibleColor('primary')}dd)`,
+            color: 'white'
+          } 
+        : {}
+    }
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+    </svg>
+    View Trip Details
+  </button>
+</div>
         </div>
       </motion.div>
     );
