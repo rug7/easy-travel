@@ -653,14 +653,14 @@ const Badge = ({ children, className, ...props }) => (
                   </div>
                 </div>
                 
-                <div className="flex justify-end gap-3">
-                  <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700">
-                    View Full Itinerary
-                  </Button>
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    Edit Trip
-                  </Button>
-                </div>
+                <div className="flex justify-end">
+  <Button 
+    className="bg-blue-600 hover:bg-blue-700 w-full"
+    onClick={() => window.location.href = `/view-trip/${selectedEvent?.resource?.tripId}`}
+  >
+    View Full Itinerary
+  </Button>
+</div>
               </div>
             ) : (
               /* Activity Details */
