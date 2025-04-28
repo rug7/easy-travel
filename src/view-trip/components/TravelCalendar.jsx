@@ -37,7 +37,11 @@ const Badge = ({ children, className, ...props }) => (
     const [filterType, setFilterType] = useState('all'); // 'all', 'trip', 'activity'
 
     
-
+    const [exportCalendars, setExportCalendars] = useState([
+      { id: 'google', name: 'Google Calendar', selected: false },
+      { id: 'apple', name: 'Apple Calendar', selected: false },
+      { id: 'outlook', name: 'Outlook', selected: false }
+    ]);
 
   useEffect(() => {
     async function fetchTrips() {
@@ -90,6 +94,106 @@ const Badge = ({ children, className, ...props }) => (
       </div>
     );
   };
+
+
+  const handleAddToPersonalCalendar = (event) => {
+    // Create calendar event data
+    const eventData = {
+      title: event.title,
+      location: event.resource?.location || '',
+      description: event.resource?.description || '',
+      startTime: event.start.toISOString(),
+      endTime: event.end.toISOString()
+    };
+    
+    // Create ics file content
+    const icsContent = createICSFile(eventData);
+    
+    // Create and trigger download
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${event.title.replace(/\s+/g, '_')}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Added to Calendar",
+      description: "Event has been downloaded as an .ics file",
+      status: "success",
+      duration: 3000
+    });
+  };
+  
+  const createICSFile = (event) => {
+    const formatDate = (date) => {
+      return date.replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    };
+    
+    return `BEGIN:VCALENDAR
+  VERSION:2.0
+  CALSCALE:GREGORIAN
+  BEGIN:VEVENT
+  SUMMARY:${event.title}
+  DTSTART:${formatDate(event.startTime)}
+  DTEND:${formatDate(event.endTime)}
+  LOCATION:${event.location}
+  DESCRIPTION:${event.description}
+  STATUS:CONFIRMED
+  END:VEVENT
+  END:VCALENDAR`;
+  };
+  
+  const handleExportSelected = () => {
+    const selectedCalendars = exportCalendars.filter(cal => cal.selected);
+    
+    if (selectedCalendars.length === 0) {
+      return;
+    }
+    
+    // If Google Calendar is selected, open OAuth flow
+    if (selectedCalendars.some(cal => cal.id === 'google')) {
+      // In a real implementation, you would initiate Google OAuth flow
+      window.open('https://calendar.google.com/calendar/u/0/r', '_blank');
+    }
+    
+    // For other calendars, generate and download .ics file
+    if (selectedCalendars.some(cal => ['apple', 'outlook'].includes(cal.id))) {
+      const allEvents = events.map(event => ({
+        title: event.title,
+        location: event.resource?.location || '',
+        description: event.resource?.type === 'trip' ? 
+          `Trip to ${event.resource?.destination || ''}` : 
+          event.resource?.description || '',
+        startTime: event.start.toISOString(),
+        endTime: event.end.toISOString()
+      }));
+      
+      const icsContent = allEvents.map(event => createICSFile(event)).join('\n');
+      
+      // Create and trigger download
+      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'travel_calendar.ics';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    setExportVisible(false);
+    
+    // Show success message
+    toast({
+      title: "Calendar Exported",
+      description: "Your travel schedule has been exported",
+      status: "success",
+      duration: 3000
+    });
+  };
+
+
 
   
   const generateCalendarEvents = (tripsData) => {
@@ -708,13 +812,20 @@ const Badge = ({ children, className, ...props }) => (
                 </div>
                 
                 <div className="flex justify-end gap-3 mt-4">
-                  <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700">
-                    Add to Personal Calendar
-                  </Button>
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    View Trip Details
-                  </Button>
-                </div>
+  <Button 
+    variant="outline" 
+    className="border-gray-600 text-gray-300 hover:bg-gray-700 flex-1"
+    onClick={() => handleAddToPersonalCalendar(selectedEvent)}
+  >
+    Add to Personal Calendar
+  </Button>
+  <Button 
+    className="bg-blue-600 hover:bg-blue-700 flex-1"
+    onClick={() => window.location.href = `/view-trip/${selectedEvent?.resource?.tripId}`}
+  >
+    View Trip Details
+  </Button>
+</div>
               </div>
             )}
           </div>
@@ -788,9 +899,13 @@ const Badge = ({ children, className, ...props }) => (
               <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700" onClick={() => setExportVisible(false)}>
                 Cancel
               </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                Export Selected
-              </Button>
+              <Button 
+  className="bg-blue-600 hover:bg-blue-700"
+  onClick={handleExportSelected}
+  disabled={!exportCalendars.some(cal => cal.selected)}
+>
+  Export Selected
+</Button>
             </div>
           </div>
         </DialogContent>
