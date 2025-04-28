@@ -14,6 +14,8 @@ import './calendar-styles.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { CustomDialogContent } from '@/components/ui/custom-dialog-content';
+import { useAccessibility } from '@/context/AccessibilityContext';
+
 
 const Badge = ({ children, className, ...props }) => (
     <div 
@@ -28,6 +30,7 @@ const Badge = ({ children, className, ...props }) => (
   const localizer = momentLocalizer(moment);
   
   function TravelCalendar() {
+    const { colorMode } = useAccessibility();
     const [trips, setTrips] = useState([]);
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -598,7 +601,7 @@ const Badge = ({ children, className, ...props }) => (
   
   <div className="flex flex-wrap gap-6 mb-6">
     <div className="flex items-center gap-2">
-      <div className="w-4 h-4 rounded-sm bg-blue-500"></div>
+<div className="w-4 h-4 rounded-sm" style={{ backgroundColor: 'var(--color-primary, #3B82F6)' }}></div>
       <span className="text-gray-300">Trip Duration</span>
     </div>
     <div className="flex items-center gap-2">
