@@ -16,6 +16,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import dynamic from 'next/dynamic';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { useAccessibility } from '@/context/AccessibilityContext';
 
 
 
@@ -38,6 +39,7 @@ function TravelDashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
   const dashboardRef = useRef(null);
+  const { colorMode } = useAccessibility();
   const [stats, setStats] = useState({
     totalTrips: 0,
     countriesVisited: 0,
@@ -64,6 +66,63 @@ function TravelDashboard() {
     }]
   });
   const [destinations, setDestinations] = useState([]);
+
+  const getAccessibleColor = (colorType) => {
+    // Map standard color names to your colorMode-specific colors
+    const colorMap = {
+      default: {
+        primary: '#3b82f6', // blue-500
+        secondary: '#8b5cf6', // purple-500
+        success: '#10b981', // green-500
+        danger: '#ef4444', // red-500
+        warning: '#f59e0b', // amber-500
+        info: '#3b82f6', // blue-500
+      },
+      protanopia: {
+        primary: '#2563eb', // More bluish
+        secondary: '#7c3aed', // More visible purple
+        success: '#059669', // Adjusted green
+        danger: '#9ca3af', // Gray instead of red
+        warning: '#d97706', // Darker amber
+        info: '#0284c7', // Darker blue
+      },
+      deuteranopia: {
+        primary: '#1d4ed8', // Deeper blue
+        secondary: '#6d28d9', // Deeper purple
+        success: '#0f766e', // Teal instead of green
+        danger: '#b91c1c', // More visible red
+        warning: '#b45309', // Darker amber
+        info: '#1e40af', // Deeper blue
+      },
+      tritanopia: {
+        primary: '#4f46e5', // Indigo
+        secondary: '#7e22ce', // Darker purple
+        success: '#15803d', // Darker green
+        danger: '#dc2626', // Bright red
+        warning: '#ca8a04', // Darker yellow
+        info: '#4338ca', // Indigo
+      },
+      monochromacy: {
+        primary: '#4b5563', // Gray-600
+        secondary: '#6b7280', // Gray-500
+        success: '#374151', // Gray-700
+        danger: '#1f2937', // Gray-800
+        warning: '#6b7280', // Gray-500
+        info: '#4b5563', // Gray-600
+      },
+      highContrast: {
+        primary: '#1d4ed8', // Deep blue
+        secondary: '#6d28d9', // Deep purple
+        success: '#047857', // Deep green
+        danger: '#b91c1c', // Deep red
+        warning: '#b45309', // Deep amber
+        info: '#1e40af', // Deep blue
+      }
+    };
+  
+    // Use CSS variables if they exist, otherwise fall back to the hardcoded colors
+    return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
+  };
 
   useEffect(() => {
     async function fetchTrips() {
@@ -112,6 +171,8 @@ function TravelDashboard() {
   }, [refreshKey]);
 
 
+
+
   const handlePrint = () => {
     // Open print dialog
     window.print();
@@ -136,7 +197,8 @@ function TravelDashboard() {
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
             <div style="background: #f9fafb; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
               <div style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">Total Trips</div>
-              <div style="font-size: 18px; font-weight: bold;">${stats.totalTrips}</div>
+              <div style="font-size: 18px; font-weight: bold; color: ${getComputedStyle(document.documentElement).getPropertyValue('--color-primary') || '#3b82f6'}">${stats.totalTrips}</div>
+
             </div>
             <div style="background: #f9fafb; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
               <div style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">Countries Visited</div>
@@ -566,7 +628,11 @@ const formatedDate = (dateString) => {
           activities.nature
         ],
         backgroundColor: [
-          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+          getAccessibleColor('danger'),
+          getAccessibleColor('primary'),
+          getAccessibleColor('warning'),
+          getAccessibleColor('success'),
+          getAccessibleColor('secondary')
         ]
       }]
     });
@@ -585,12 +651,12 @@ const formatedDate = (dateString) => {
           spending.shopping / tripCount
         ],
         backgroundColor: [
-          'rgba(220, 38, 38, 0.6)', // Red for flights
-          'rgba(59, 130, 246, 0.6)', // Blue
-          'rgba(16, 185, 129, 0.6)', // Green
-          'rgba(245, 158, 11, 0.6)', // Yellow
-          'rgba(139, 92, 246, 0.6)', // Purple
-          'rgba(14, 165, 233, 0.6)'  // Sky
+          getAccessibleColor('danger') ,+ '99', // Red for flights
+          getAccessibleColor('primary') + '99', // Blue
+          getAccessibleColor('success') + '99', // Green
+          getAccessibleColor('warning') + '99', // Yellow
+          getAccessibleColor('secondary') + '99', // Purple
+          getAccessibleColor('info') + '99'  // Sky
         ]
       }]
     });
@@ -627,14 +693,24 @@ const formatedDate = (dateString) => {
           <div className="mt-4 md:mt-0 flex gap-4 items-center">
             <p className="text-gray-400 text-sm">Last updated: {formatedDate(new Date().toLocaleDateString())}</p>
             <button 
-              onClick={() => setRefreshKey(old => old + 1)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-              </svg>
-              Refresh Data
-            </button>
+  onClick={() => setRefreshKey(old => old + 1)}
+  style={{
+    backgroundColor: getAccessibleColor('primary'),
+    color: 'white',
+    padding: '0.5rem 1rem',
+    borderRadius: '0.75rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    transition: 'all 0.2s',
+  }}
+  className="hover:opacity-90"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+  </svg>
+  Refresh Data
+</button>
           </div>
         </div>
           
@@ -717,21 +793,24 @@ const formatedDate = (dateString) => {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {budgetData.datasets[0].data.map((value, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600/50 hover:border-blue-500/30 transition-colors">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: budgetData.datasets[0].backgroundColor[index] }}></div>
-                  <span className="text-gray-300 text-sm font-medium">{budgetData.labels[index]}</span>
-                </div>
-                <div className="text-white font-bold text-2xl">
-                  ${Math.round(value).toLocaleString()}
-                </div>
-                <div className="text-gray-400 text-xs mt-1">
-                  per trip average
-                </div>
-              </div>
-            ))}
-          </div>
+  {budgetData.datasets[0].data.map((value, index) => (
+    <div key={index} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600/50 hover:border-blue-500/30 transition-colors">
+      <div className="flex items-center gap-2 mb-2">
+        <div 
+          className="w-3 h-3 rounded-sm" 
+          style={{ backgroundColor: budgetData.datasets[0].backgroundColor[index] }}
+        ></div>
+        <span className="text-gray-300 text-sm font-medium">{budgetData.labels[index]}</span>
+      </div>
+      <div className="text-white font-bold text-2xl">
+        ${Math.round(value).toLocaleString()}
+      </div>
+      <div className="text-gray-400 text-xs mt-1">
+        per trip average
+      </div>
+    </div>
+  ))}
+</div>
         </div>
         
         {/* Map and Charts - enhanced design */}
@@ -777,10 +856,23 @@ const formatedDate = (dateString) => {
       </h2>
     </div>
     <div className="p-6 flex flex-col items-center">
-      <div className="h-[260px] w-[260px] relative">
-        <Pie 
-          data={activityData}
-          options={{
+  <div className="h-[260px] w-[260px] relative">
+    <Pie 
+      key={`pie-chart-${colorMode}`} // This forces complete re-render when colorMode changes
+      data={{
+        ...activityData,
+        datasets: [{
+          ...activityData.datasets[0],
+          backgroundColor: [
+            getAccessibleColor('danger'),
+            getAccessibleColor('primary'),
+            getAccessibleColor('warning'),
+            getAccessibleColor('success'),
+            getAccessibleColor('secondary')
+          ]
+        }]
+      }}
+      options={{
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
@@ -813,17 +905,25 @@ const formatedDate = (dateString) => {
       
       {/* Custom legend */}
       <div className="mt-6 grid grid-cols-2 gap-x-8 gap-y-2 w-full">
-        {activityData.labels.map((label, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <div 
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: activityData.datasets[0].backgroundColor[index] }}
-            ></div>
-            <span className="text-gray-300 text-sm">{label}</span>
-          </div>
-        ))}
+    {activityData.labels.map((label, index) => (
+      <div key={index} className="flex items-center gap-2">
+        <div 
+          className="w-3 h-3 rounded-full"
+          style={{ 
+            backgroundColor: [
+              getAccessibleColor('danger'),
+              getAccessibleColor('primary'),
+              getAccessibleColor('warning'),
+              getAccessibleColor('success'),
+              getAccessibleColor('secondary')
+            ][index] 
+          }}
+        ></div>
+        <span className="text-gray-300 text-sm">{label}</span>
       </div>
-    </div>
+    ))}
+  </div>
+</div>
   </div>
 </div>
           
@@ -844,10 +944,24 @@ const formatedDate = (dateString) => {
           </div>
           
           <div className="p-6">
-            <div className="h-[300px]">
-              <Bar 
-                data={budgetData}
-                options={{
+          <div className="h-[300px]">
+  <Bar 
+    key={`budget-chart-${colorMode}`} // Force re-render on colorMode change
+    data={{
+      ...budgetData,
+      datasets: [{
+        ...budgetData.datasets[0],
+        backgroundColor: [
+          getAccessibleColor('danger') + '99',
+          getAccessibleColor('primary') + '99',
+          getAccessibleColor('success') + '99',
+          getAccessibleColor('warning') + '99',
+          getAccessibleColor('secondary') + '99',
+          getAccessibleColor('info') + '99'
+        ]
+      }]
+    }}
+    options={{
                   responsive: true,
                   maintainAspectRatio: false,
                   scales: {
@@ -911,20 +1025,34 @@ const formatedDate = (dateString) => {
             </div>
             
             {/* Flight data source info */}
-            <div className="mt-6 flex items-start gap-3 bg-blue-900/20 border border-blue-500/30 p-4 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <p className="text-blue-300 text-sm">
-                  Flight costs are based on {stats.tripsWithFlightData} trips with available flight data. 
-                  For trips without flight information, estimates are derived from destinations and budget preferences.
-                </p>
-                <p className="text-blue-300 text-sm mt-1">
-                  All other expenses are calculated based on your selected budget level for each trip.
-                </p>
-              </div>
-            </div>
+            <div 
+  className="mt-6 flex items-start gap-3 p-4 rounded-lg"
+  style={{
+    backgroundColor: `${getAccessibleColor('primary')}15`,
+    borderWidth: '1px',
+    borderColor: `${getAccessibleColor('primary')}30`,
+  }}
+>
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    className="h-5 w-5 mt-0.5 flex-shrink-0" 
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor"
+    style={{ color: getAccessibleColor('primary') }}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+  <div style={{ color: `${getAccessibleColor('primary')}ee` }}>
+    <p className="text-sm">
+      Flight costs are based on {stats.tripsWithFlightData} trips with available flight data. 
+      For trips without flight information, estimates are derived from destinations and budget preferences.
+    </p>
+    <p className="text-sm mt-1">
+      All other expenses are calculated based on your selected budget level for each trip.
+    </p>
+  </div>
+</div>
           </div>
         </div>
           
@@ -1016,172 +1144,247 @@ const formatedDate = (dateString) => {
               </svg>
             </button>
             <button 
-              onClick={handlePrint}
-              className="text-white hover:text-white transition-all hover:scale-105"
-              title="Print Dashboard"
-            >
-              <span className="sr-only">Print Dashboard</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
-              </svg>
-            </button>
-            <button 
-              onClick={handleExportPDF}
-              className="text-white hover:text-white transition-all hover:scale-105"
-              title="Export as PDF"
-            >
-              <span className="sr-only">Export Data</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
+  onClick={handlePrint}
+  style={{ color: getAccessibleColor('primary') }}
+  className="hover:opacity-80 transition-all hover:scale-105"
+  title="Print Dashboard"
+>
+  <span className="sr-only">Print Dashboard</span>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
+  </svg>
+</button>
+<button 
+  onClick={handleExportPDF}
+  style={{ color: getAccessibleColor('primary') }}
+  className="hover:opacity-80 transition-all hover:scale-105"
+  title="Export as PDF"
+>
+  <span className="sr-only">Export Data</span>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+  </svg>
+</button>
           </div>
         </div>
       </div>
     </div>
   );
-}
 
-
-// Helper Components
-function StatsCard({ title, value, icon, color }) {
-  return (
-    <motion.div 
-      className={`${color} rounded-xl overflow-hidden shadow-lg relative`}
-      whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)' }}
-      transition={{ duration: 0.2 }}
-    >
-      {/* Decorative corner */}
-      <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 transform rotate-45 translate-x-6 -translate-y-6"></div>
+  function StatsCard({ title, value, icon, color }) {
+    // Map color prop to accessibility-friendly colors
+    const getCardBgColor = () => {
+      const colorMappings = {
+        'bg-gradient-to-br from-blue-600 to-blue-700': `linear-gradient(to bottom right, ${getAccessibleColor('primary')}, ${getAccessibleColor('primary')}dd)`,
+        'bg-gradient-to-br from-purple-600 to-purple-700': `linear-gradient(to bottom right, ${getAccessibleColor('secondary')}, ${getAccessibleColor('secondary')}dd)`,
+        'bg-gradient-to-br from-green-600 to-green-700': `linear-gradient(to bottom right, ${getAccessibleColor('success')}, ${getAccessibleColor('success')}dd)`,
+        'bg-gradient-to-br from-yellow-500 to-yellow-600': `linear-gradient(to bottom right, ${getAccessibleColor('warning')}, ${getAccessibleColor('warning')}dd)`,
+        'bg-gradient-to-br from-red-600 to-red-700': `linear-gradient(to bottom right, ${getAccessibleColor('danger')}, ${getAccessibleColor('danger')}dd)`,
+        'bg-gradient-to-br from-indigo-600 to-indigo-700': `linear-gradient(to bottom right, ${getAccessibleColor('info')}, ${getAccessibleColor('info')}dd)`,
+      };
       
-      <div className="p-6 relative z-10">
-        <div className="flex justify-between items-center">
-          <div>
-            <p className="text-white/80 font-medium text-sm">{title}</p>
-            <p className="text-3xl font-bold text-white mt-1 tracking-tight">{value}</p>
-          </div>
-          <div className="bg-white/10 p-3 rounded-lg text-white">
-            {icon}
+      return colorMappings[color] || colorMappings['bg-gradient-to-br from-blue-600 to-blue-700'];
+    };
+  
+    return (
+      <motion.div 
+        style={{
+          background: getCardBgColor(),
+          borderRadius: '0.75rem',
+          overflow: 'hidden',
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+          position: 'relative'
+        }}
+        whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)' }}
+        transition={{ duration: 0.2 }}
+      >
+        {/* Decorative corner */}
+        <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 transform rotate-45 translate-x-6 -translate-y-6"></div>
+        
+        <div className="p-6 relative z-10">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-white/80 font-medium text-sm">{title}</p>
+              <p className="text-3xl font-bold text-white mt-1 tracking-tight">{value}</p>
+            </div>
+            <div className="bg-white/10 p-3 rounded-lg text-white">
+              {icon}
+            </div>
           </div>
         </div>
-      </div>
-    </motion.div>
-  );
-}
+      </motion.div>
+    );
+  }
 
-// Enhanced Timeline Item
-function TimelineItem({ trip, index }) {
-  const destination = trip.tripData?.trip?.destination || 'Unknown Destination';
-  const startDate = trip.userSelection?.startDate ? new Date(trip.userSelection?.startDate) : null;
-  const isUpcoming = startDate && startDate > new Date();
+  function TimelineItem({ trip, index }) {
+    const destination = trip.tripData?.trip?.destination || 'Unknown Destination';
+    const startDate = trip.userSelection?.startDate ? new Date(trip.userSelection?.startDate) : null;
+    const isUpcoming = startDate && startDate > new Date();
+    const { colorMode } = useAccessibility();
   
-  const formatDate = (date) => {
-    if (!date) return 'No date specified';
     
-    const options = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    const formatDate = (date) => {
+      if (!date) return 'No date specified';
+      
+      const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+      
+      return date.toLocaleDateString(undefined, options);
     };
     
-    return date.toLocaleDateString(undefined, options);
-  };
-  
-  const getDaysUntil = (date) => {
-    if (!date) return null;
+    const getDaysUntil = (date) => {
+      if (!date) return null;
+      
+      const today = new Date();
+      const timeDiff = date.getTime() - today.getTime();
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      
+      if (daysDiff <= 0) return null;
+      return daysDiff === 1 ? 'Tomorrow' : `in ${daysDiff} days`;
+    };
     
-    const today = new Date();
-    const timeDiff = date.getTime() - today.getTime();
-    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    const daysUntil = getDaysUntil(startDate);
+  
+    const handleTripClick = () => {
+      window.location.href = `/view-trip/${trip.id}`;
+    };
     
-    if (daysDiff <= 0) return null;
-    return daysDiff === 1 ? 'Tomorrow' : `in ${daysDiff} days`;
-  };
-  
-  const daysUntil = getDaysUntil(startDate);
-
-  const handleTripClick = () => {
-    window.location.href = `/view-trip/${trip.id}`;
-  };
-  
-  return (
-    <motion.div 
-      className="flex gap-4"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.1 }}
-    >
-      <div className="flex flex-col items-center">
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isUpcoming ? 'bg-gradient-to-br from-white to-white' : 'bg-gradient-to-br from-green-500 to-green-600'} shadow-lg`}>
-          <span className="text-white text-md">{isUpcoming ? '🔜' : '✓'}</span>
-        </div>
-        {index < 9 && <div className="w-0.5 h-full bg-gray-700 mt-2"></div>}
-      </div>
-      <div 
-        className={`rounded-xl p-4 flex-1 mb-4 cursor-pointer transition-all transform hover:scale-[1.02] border ${isUpcoming ? 'bg-blue-900/20 border-blue-800/50 hover:border-blue-500/50' : 'bg-gray-700 border-gray-600 hover:border-gray-500'}`}
-        onClick={handleTripClick}
+    return (
+      <motion.div 
+        className="flex gap-4"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: index * 0.1 }}
       >
-        <div className="flex justify-between items-start">
-          <h3 className="font-semibold text-white text-lg">{destination}</h3>
-          <span className={`text-xs font-medium px-3 py-1 rounded-full shadow-sm ${isUpcoming ? 'bg-blue-600 text-blue-100' : 'bg-green-600 text-green-100'}`}>
-            {isUpcoming ? 'Upcoming' : 'Completed'}
-          </span>
+        <div className="flex flex-col items-center">
+          <div 
+            style={{ 
+              width: '2rem', 
+              height: '2rem',
+              borderRadius: '9999px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: isUpcoming ? 
+                'linear-gradient(to bottom right, white, white)' : 
+                `linear-gradient(to bottom right, ${getAccessibleColor('success')}, ${getAccessibleColor('success')}dd)`,
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <span className="text-white text-md">{isUpcoming ? '🔜' : '✓'}</span>
+          </div>
+          {index < 9 && <div className="w-0.5 h-full bg-gray-700 mt-2"></div>}
         </div>
-        <div className="text-gray-300 text-sm mt-2 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          {formatDate(startDate)}
-          {daysUntil && (
-            <span className="ml-1 inline-flex items-center text-blue-300 font-medium">
-              ({daysUntil})
+        <div 
+          style={{
+            borderRadius: '0.75rem',
+            padding: '1rem',
+            flex: '1',
+            marginBottom: '1rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            transform: 'scale(1)',
+            border: '1px solid',
+            borderColor: isUpcoming ? 
+              `${getAccessibleColor('primary')}33` : 
+              'rgba(75, 85, 99, 0.5)',
+            backgroundColor: isUpcoming ? 
+              `${getAccessibleColor('primary')}15` : 
+              'rgba(55, 65, 81, 1)'
+          }}
+          className="hover:scale-[1.02]"
+          onClick={handleTripClick}
+        >
+          <div className="flex justify-between items-start">
+            <h3 className="font-semibold text-white text-lg">{destination}</h3>
+            <span 
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: '500',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '9999px',
+                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                backgroundColor: isUpcoming ? 
+                  getAccessibleColor('primary') : 
+                  getAccessibleColor('success'),
+                color: 'rgba(255, 255, 255, 0.9)'
+              }}
+            >
+              {isUpcoming ? 'Upcoming' : 'Completed'}
             </span>
-          )}
-        </div>
-        
-        <div className="flex gap-2 mt-3">
-          <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-            {trip.userSelection?.travelers || 'Solo'}
           </div>
-          <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <div className="text-gray-300 text-sm mt-2 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            {trip.userSelection?.budget || 'Standard'} Budget
+            {formatDate(startDate)}
+            {daysUntil && (
+              <span className="ml-1 inline-flex items-center text-blue-300 font-medium">
+                ({daysUntil})
+              </span>
+            )}
           </div>
-          {trip.tripData?.trip?.duration && (
+          
+          <div className="flex gap-2 mt-3">
             <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              {trip.tripData?.trip?.duration}
+              {trip.userSelection?.travelers || 'Solo'}
+            </div>
+            <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {trip.userSelection?.budget || 'Standard'} Budget
+            </div>
+            {trip.tripData?.trip?.duration && (
+              <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {trip.tripData?.trip?.duration}
+              </div>
+            )}
+          </div>
+          
+          {/* Flight data if available */}
+          {trip.tripData?.flights?.options?.best?.pricePerPerson && (
+            <div className="mt-3 flex items-center gap-2 text-xs text-gray-300">
+              <div className="flex items-center gap-1 bg-blue-900/30 text-blue-300 px-2 py-1 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 transform rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                Flight: {trip.tripData?.flights?.options?.best?.pricePerPerson}
+              </div>
+              <div className="text-gray-400">
+                {trip.tripData?.flights?.options?.best?.airline}
+              </div>
             </div>
           )}
-        </div>
-        
-        {/* Flight data if available */}
-        {trip.tripData?.flights?.options?.best?.pricePerPerson && (
-          <div className="mt-3 flex items-center gap-2 text-xs text-gray-300">
-            <div className="flex items-center gap-1 bg-blue-900/30 text-blue-300 px-2 py-1 rounded">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 transform rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-              Flight: {trip.tripData?.flights?.options?.best?.pricePerPerson}
-            </div>
-            <div className="text-gray-400">
-              {trip.tripData?.flights?.options?.best?.airline}
-            </div>
-          </div>
-        )}
-        
-        {/* View button */}
-        <div className="mt-3 flex justify-end">
-          <button className="flex items-center gap-1 text-xs bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-3 py-1.5 rounded-md transition-colors shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          
+          {/* View button */}
+          <div className="mt-3 flex justify-end">
+            <button 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                fontSize: '0.75rem',
+                background: `linear-gradient(to right, ${getAccessibleColor('primary')}, ${getAccessibleColor('primary')}dd)`,
+                color: 'white',
+                padding: '0.375rem 0.75rem',
+                borderRadius: '0.375rem',
+                transition: 'background 0.2s',
+                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
+              }}
+              className="hover:opacity-90"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               View Trip Details
@@ -1191,5 +1394,11 @@ function TimelineItem({ trip, index }) {
       </motion.div>
     );
   }
+}
+
+
+// Enhanced Timeline Item
+
+
   
   export default TravelDashboard;
