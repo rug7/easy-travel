@@ -8,6 +8,8 @@ import InfoSection from "../components/InfoSection";
 import Hotels from "../components/Hotels";
 import Flights from "../components/Flights";
 import Activities from "../components/Activities";
+import WeatherForecast from "../components/WeatherForecast"; // Import the weather component
+
 
 function Viewtrip() {
     // Get tripId directly from useParams
@@ -18,6 +20,7 @@ function Viewtrip() {
     // State to track which sections are visible for animation
     const [visibleSections, setVisibleSections] = useState({
         info: false,
+        weather:false,
         flights: false,
         hotels: false,
         activities: false
@@ -35,6 +38,11 @@ function Viewtrip() {
         
         // Show info section immediately
         setVisibleSections(prev => ({ ...prev, info: true }));
+
+        // show weather after a short delay
+        setTimeout(() => {
+            setVisibleSections(prev => ({ ...prev, weather: true }));
+        }, 400);
         
         // Show flights after a delay
         setTimeout(() => {
@@ -98,6 +106,8 @@ function Viewtrip() {
                 </div>
             )}
 
+            
+
             {/* Flights Section */}
             {visibleSections.flights && (
                 <div className="animate-fadeIn">
@@ -116,6 +126,17 @@ function Viewtrip() {
             {visibleSections.activities && (
                 <div className="animate-fadeIn">
                     <Activities trip={trip} />
+                </div>
+            )}
+
+             {/* Weather Section */}
+             {visibleSections.weather && (
+                <div className="animate-fadeIn">
+                    <WeatherForecast 
+                        destination={trip.tripData?.trip?.destination} 
+                        startDate={trip.userSelection?.startDate}
+                        endDate={trip.userSelection?.endDate}
+                    />
                 </div>
             )}
         </div>
