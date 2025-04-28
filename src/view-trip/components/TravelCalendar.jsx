@@ -13,7 +13,7 @@ import './calendar-styles.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { IoCloudOutline, IoSunnyOutline, IoRainyOutline, IoSnowOutline, IoThunderstormOutline } from "react-icons/io5";
-
+import { chatSession } from '@/service/AIModal';
 
 const Badge = ({ children, className, ...props }) => (
     <div 
@@ -92,36 +92,171 @@ const Badge = ({ children, className, ...props }) => (
       </div>
     );
   };
-  const fetchWeatherForTrip = async (destination, startDate) => {
-    // In a real app, you would make an API call to a weather service
-    // For demo purposes, we'll generate random weather data
-    const weatherTypes = ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy', 'Thunderstorm', 'Snow'];
+  const fetchWeatherFromGemini = async (destination, startDate) => {
+    try {
+      // Format the prompt for Gemini API
+      const prompt = `Generate realistic weather forecast data for "${destination}" starting from ${moment(startDate).format('YYYY-MM-DD')} for the next 7 days. 
+      Return the data as a JSON object with this structure:
+      {
+        "location": "${destination}",
+        "forecast": [
+          {
+            "date": "YYYY-MM-DD",
+            "day": "Day of week",
+            "temperature": {
+              "min": minimum temperature in Celsius,
+              "max": maximum temperature in Celsius
+            },
+            "condition": "Weather condition (Sunny, Partly Cloudy, Cloudy, Rainy, Thunderstorm, Snowy, Foggy, or Windy)",
+            "humidity": humidity percentage,
+            "windSpeed": wind speed in km/h,
+            "uvIndex": UV index (0-11),
+            "chanceOfPrecipitation": percentage chance of precipitation
+          },
+          ... (for all 7 days)
+        ],
+        "climateSummary": "A brief 1-2 sentence summary of the week's weather pattern",
+        "travelRecommendation": "A brief recommendation for travelers during this period"
+      }
+  
+      Base your forecast on typical weather patterns for ${destination} during ${moment(startDate).format('MMMM')}. 
+      Include appropriate variations in temperature and conditions across the week.
+      Don't include any explanations, just return the JSON object.`;
+  
+      // IMPORTANT: Use chatSession instance instead of ChatSession class
+      // You need to import or access the chatSession instance
+      const result = await chatSession.sendMessage([{ text: prompt }]);
+      const textResponse = await result.response.text();
+      
+      // Rest of the function remains the same
+      const jsonStart = textResponse.indexOf('{');
+      const jsonEnd = textResponse.lastIndexOf('}') + 1;
+      
+      if (jsonStart === -1 || jsonEnd === 0) {
+        throw new Error("Could not extract valid JSON from the response");
+      }
+      
+      const jsonStr = textResponse.substring(jsonStart, jsonEnd);
+      const weatherData = JSON.parse(jsonStr);
+      
+      // Map weather conditions to appropriate icons
+      weatherData.forecast = weatherData.forecast.map(day => ({
+        ...day,
+        iconComponent: getIconComponentForCondition(day.condition)
+      }));
+      
+      console.log("Weather data fetched:", weatherData);
+      return weatherData;
+    } catch (error) {
+      console.error("Error fetching weather from Gemini:", error);
+      
+      // Fallback to generating random weather data
+      return generateFallbackWeatherData(destination, startDate);
+    }
+  };
+  
+  // Helper function to map weather conditions to icon components
+  const getIconComponentForCondition = (condition) => {
+    const condition_lc = condition?.toLowerCase() || '';
+    
+    if (condition_lc.includes('sunny') && condition_lc.includes('partly')) {
+      return (
+        <div className="relative">
+          <IoSunnyOutline className="w-10 h-10 text-yellow-400" />
+          <IoCloudOutline className="w-6 h-6 text-gray-400 absolute -bottom-1 -right-1" />
+        </div>
+      );
+    } else if (condition_lc.includes('sunny') || condition_lc.includes('clear')) {
+      return <IoSunnyOutline className="w-10 h-10 text-yellow-400" />;
+    } else if (condition_lc.includes('partly cloudy')) {
+      return (
+        <div className="relative">
+          <IoSunnyOutline className="w-8 h-8 text-yellow-400 absolute -top-1 -left-1" />
+          <IoCloudOutline className="w-10 h-10 text-gray-400" />
+        </div>
+      );
+    } else if (condition_lc.includes('cloudy')) {
+      return <IoCloudOutline className="w-10 h-10 text-gray-400" />;
+    } else if (condition_lc.includes('thunder')) {
+      return <IoThunderstormOutline className="w-10 h-10 text-yellow-300" />;
+    } else if (condition_lc.includes('rain') && condition_lc.includes('light')) {
+      return (
+        <div className="relative">
+          <IoCloudOutline className="w-10 h-10 text-gray-400" />
+          <IoRainyOutline className="w-6 h-6 text-blue-400 absolute -bottom-1 -right-1" />
+        </div>
+      );
+    } else if (condition_lc.includes('rain')) {
+      return <IoRainyOutline className="w-10 h-10 text-blue-400" />;
+    } else if (condition_lc.includes('snow')) {
+      return <IoSnowOutline className="w-10 h-10 text-white" />;
+    } else if (condition_lc.includes('fog')) {
+      return (
+        <div className="relative">
+          <IoCloudOutline className="w-10 h-10 text-gray-300" />
+          <IoCloudOutline className="w-6 h-6 text-gray-400 absolute -bottom-1 -right-1" />
+        </div>
+      );
+    } else if (condition_lc.includes('wind')) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      );
+    } else {
+      return <IoCloudOutline className="w-10 h-10 text-gray-400" />;
+    }
+  };
+  
+  // Fallback function to generate random weather data if API fails
+  const generateFallbackWeatherData = (destination, startDate) => {
+    const weatherTypes = ['Sunny', 'Partly Cloudy', 'Cloudy', 'Rainy', 'Thunderstorm', 'Snowy', 'Foggy', 'Windy'];
     const weatherIcons = {
-      'Sunny': <IoSunnyOutline className="w-5 h-5 text-yellow-400" />,
-      'Cloudy': <IoCloudOutline className="w-5 h-5 text-gray-400" />,
-      'Rainy': <IoRainyOutline className="w-5 h-5 text-blue-400" />,
-      'Partly Cloudy': <IoCloudOutline className="w-5 h-5 text-gray-300" />,
-      'Thunderstorm': <IoThunderstormOutline className="w-5 h-5 text-yellow-300" />,
-      'Snow': <IoSnowOutline className="w-5 h-5 text-white" />
+      'Sunny': <IoSunnyOutline className="w-10 h-10 text-yellow-400" />,
+      'Partly Cloudy': <div className="flex"><IoSunnyOutline className="w-8 h-8 text-yellow-400 -mr-2" /><IoCloudOutline className="w-8 h-8 text-gray-400" /></div>,
+      'Cloudy': <IoCloudOutline className="w-10 h-10 text-gray-400" />,
+      'Rainy': <IoRainyOutline className="w-10 h-10 text-blue-400" />,
+      'Thunderstorm': <IoThunderstormOutline className="w-10 h-10 text-yellow-300" />,
+      'Snowy': <IoSnowOutline className="w-10 h-10 text-white" />,
+      'Foggy': <IoCloudOutline className="w-10 h-10 text-gray-300" />,
+      'Windy': (
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      )
     };
     
-    // Generate 5 days of forecast data
-    const forecast = Array.from({length: 5}, (_, i) => {
+    // Generate 7 days of forecast data
+    const forecast = Array.from({length: 7}, (_, i) => {
       const forecastDate = new Date(startDate);
       forecastDate.setDate(forecastDate.getDate() + i);
       
-      const weatherType = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+      const condition = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+      const minTemp = Math.floor(Math.random() * 15) + 10; // 10-25 degrees
+      const maxTemp = minTemp + Math.floor(Math.random() * 10) + 5; // 5-15 degrees higher than min
+      
       return {
-        date: forecastDate,
-        condition: weatherType,
-        temperature: Math.floor(Math.random() * 25) + 10, // 10-35 degrees
-        icon: weatherIcons[weatherType]
+        date: moment(forecastDate).format('YYYY-MM-DD'),
+        day: moment(forecastDate).format('ddd'),
+        temperature: {
+          min: minTemp,
+          max: maxTemp
+        },
+        condition: condition,
+        humidity: Math.floor(Math.random() * 30) + 40, // 40-70%
+        windSpeed: Math.floor(Math.random() * 20) + 5, // 5-25 km/h
+        uvIndex: Math.floor(Math.random() * 10) + 1, // 1-10
+        chanceOfPrecipitation: Math.floor(Math.random() * 100), // 0-100%
+        icon: condition,
+        iconComponent: weatherIcons[condition]
       };
     });
     
     return {
-      destination,
-      forecast
+      location: destination,
+      forecast: forecast,
+      climateSummary: `Expected ${forecast[0].condition.toLowerCase()} conditions initially, with changes later in the week.`,
+      travelRecommendation: "Pack versatile clothing and check for weather changes before heading out each day."
     };
   };
   
@@ -233,7 +368,7 @@ const Badge = ({ children, className, ...props }) => (
     // If it's a trip, fetch weather data
     if (event.resource?.type === 'trip') {
       const destination = event.title.replace('Trip to ', '');
-      const weatherData = await fetchWeatherForTrip(destination, event.start);
+      const weatherData = await fetchWeatherFromGemini(destination, event.start);
       setWeatherData(weatherData);
     }
   };
@@ -601,40 +736,81 @@ const Badge = ({ children, className, ...props }) => (
         </div>
         
         {/* Trip Legend */}
-        <div className="mt-6 bg-gray-800 rounded-xl p-4 shadow-xl">
-          <h2 className="text-xl font-semibold text-white mb-4">Calendar Legend</h2>
-          <div className="flex gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-sm bg-blue-500"></div>
-              <span className="text-gray-300">Trip Duration</span>
-            </div>
-            <div className="mt-4 p-4 bg-gray-700/50 rounded-lg">
-  <h3 className="font-medium text-white mb-3 flex items-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-    </svg>
-    Weather Forecast
-  </h3>
+        <div className="mt-6 bg-gray-800 rounded-xl p-6 shadow-xl">
+  <h2 className="text-xl font-semibold text-white mb-4">Calendar Legend</h2>
   
-  <div className="flex overflow-x-auto gap-3 pb-2">
-    {weatherData.forecast?.map((day, idx) => (
-      <div key={idx} className="flex-shrink-0 bg-gray-800 rounded-lg p-3 text-center w-20">
-        <p className="text-xs text-gray-400">{moment(day.date).format('ddd')}</p>
-        <div className="text-2xl my-1">{day.icon}</div>
-        <p className="text-white font-medium">{day.temperature}°C</p>
-        <p className="text-xs text-gray-400">{day.condition}</p>
-      </div>
-    ))}
+  <div className="flex flex-wrap gap-6 mb-6">
+    <div className="flex items-center gap-2">
+      <div className="w-4 h-4 rounded-sm bg-blue-500"></div>
+      <span className="text-gray-300">Trip Duration</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <div className="w-4 h-4 rounded-sm bg-red-600"></div>
+      <span className="text-gray-300">Activities</span>
+    </div>
   </div>
   
-  <p className="text-xs text-gray-400 mt-2">*Forecast data is for planning purposes only</p>
-</div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-sm bg-red-600"></div>
-              <span className="text-gray-300">Activities</span>
+  <div className="mt-8">
+    <div className="flex items-center gap-2 mb-4">
+      <IoCloudOutline className="text-blue-400 w-6 h-6" />
+      <h3 className="text-lg font-medium text-white">Weather Forecast</h3>
+    </div>
+    
+    {weatherData.forecast?.length > 0 ? (
+      <>
+        <div className="grid grid-cols-5 gap-2 p-4 bg-gray-900/50 rounded-lg">
+          {weatherData.forecast.slice(0, 5).map((day, idx) => (
+            <div key={idx} className="text-center">
+              <div className="text-sm font-medium text-gray-400 mb-2">{day.day}</div>
+              <div className="flex justify-center mb-2">
+                {day.iconComponent}
+              </div>
+              <div className="text-lg font-bold text-white">
+                {day.temperature.max}°
+              </div>
+              <div className="text-sm text-gray-400">
+                {day.temperature.min}°
+              </div>
+              <div className="mt-1 text-xs text-gray-500 truncate">{day.condition}</div>
+            </div>
+          ))}
+        </div>
+        
+        {weatherData.climateSummary && (
+          <div className="mt-3 bg-blue-900/20 border border-blue-900/30 rounded-md p-3 text-blue-300 flex items-start gap-2">
+            <IoInformationCircleOutline className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm">{weatherData.climateSummary}</p>
+              {weatherData.travelRecommendation && (
+                <p className="text-sm mt-2 font-medium">{weatherData.travelRecommendation}</p>
+              )}
             </div>
           </div>
+        )}
+        
+        <div className="mt-2 text-xs text-gray-500 text-right">
+          *Forecast data for {weatherData.location} is for planning purposes only
         </div>
+      </>
+    ) : (
+      <div className="p-6 bg-gray-900/50 rounded-lg">
+        <div className="flex items-center justify-center flex-col">
+          <div className="text-gray-500 mb-4">Select a trip to view weather forecast</div>
+          <div className="flex gap-2">
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <div key={idx} className="flex flex-col items-center animate-pulse">
+                <div className="h-4 w-8 bg-gray-700 rounded mb-2"></div>
+                <div className="h-10 w-10 bg-gray-700 rounded-full mb-2"></div>
+                <div className="h-4 w-12 bg-gray-700 rounded mb-1"></div>
+                <div className="h-3 w-8 bg-gray-700 rounded"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</div>
 
         {/* Trip Statistics */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">

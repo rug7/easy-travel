@@ -116,6 +116,7 @@ function TravelDashboard() {
     // Open print dialog
     window.print();
   };
+
   
   // Function to export dashboard as PDF
   // Function to export dashboard as PDF
@@ -311,6 +312,27 @@ function TravelDashboard() {
     alert('There was an error creating the PDF: ' + error.message);
   } finally {
     setLoading(false);
+  }
+};
+
+const formatedDate = (dateString) => {
+  if (!dateString) return 'N/A';
+
+  try {
+      const date = new Date(dateString);
+
+      // Check if date is valid
+      if (isNaN(date.getTime())) return 'Invalid date';
+
+      // Get day, month, and year
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
+      const year = date.getFullYear();
+
+      return `${day}/${month}/${year}`;
+  } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Error';
   }
 };
   
@@ -603,7 +625,7 @@ function TravelDashboard() {
             <p className="text-gray-400 mt-1">Insights and statistics about your travel history and plans</p>
           </div>
           <div className="mt-4 md:mt-0 flex gap-4 items-center">
-            <p className="text-gray-400 text-sm">Last updated: {new Date().toLocaleDateString()}</p>
+            <p className="text-gray-400 text-sm">Last updated: {formatedDate(new Date().toLocaleDateString())}</p>
             <button 
               onClick={() => setRefreshKey(old => old + 1)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-colors"
