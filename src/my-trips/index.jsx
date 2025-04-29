@@ -770,7 +770,7 @@ function MyTrips() {
                                                                 </div>
                                                                 <div className="flex items-center">
                                                                     <span className="mr-1">👥</span>
-                                                                    {trip.userSelection?.travelers} travelers
+                                                                    {trip.userSelection?.travelers}
                                                                 </div>
                                                             </div>
                     
