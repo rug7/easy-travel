@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAccessibility } from "@/context/AccessibilityContext"; // Import accessibility hook
-import { IoClose, IoAccessibility } from "react-icons/io5"; // Added accessibility icon
+import { useAccessibility } from "@/context/AccessibilityContext"; 
+import { IoClose, IoAccessibility } from "react-icons/io5";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
@@ -32,6 +32,63 @@ function Header() {
       return null;
     }
   })();
+
+  // Function to get accessible colors based on color mode
+  const getAccessibleColor = (colorType) => {
+    const colorMap = {
+      default: {
+        primary: '#3b82f6', // blue-500
+        secondary: '#8b5cf6', // purple-500
+        success: '#10b981', // green-500
+        danger: '#ef4444', // red-500
+        warning: '#f59e0b', // amber-500
+        info: '#3b82f6', // blue-500
+      },
+      protanopia: {
+        primary: '#2563eb', // More bluish
+        secondary: '#7c3aed', // More visible purple
+        success: '#059669', // Adjusted green
+        danger: '#9ca3af', // Gray instead of red
+        warning: '#d97706', // Darker amber
+        info: '#0284c7', // Darker blue
+      },
+      deuteranopia: {
+        primary: '#1d4ed8', // Deeper blue
+        secondary: '#6d28d9', // Deeper purple
+        success: '#0f766e', // Teal instead of green
+        danger: '#b91c1c', // More visible red
+        warning: '#b45309', // Darker amber
+        info: '#1e40af', // Deeper blue
+      },
+      tritanopia: {
+        primary: '#4f46e5', // Indigo
+        secondary: '#7e22ce', // Darker purple
+        success: '#15803d', // Darker green
+        danger: '#dc2626', // Bright red
+        warning: '#ca8a04', // Darker yellow
+        info: '#4338ca', // Indigo
+      },
+      monochromacy: {
+        primary: '#4b5563', // Gray-600
+        secondary: '#6b7280', // Gray-500
+        success: '#374151', // Gray-700
+        danger: '#1f2937', // Gray-800
+        warning: '#6b7280', // Gray-500
+        info: '#4b5563', // Gray-600
+      },
+      highContrast: {
+        primary: '#1d4ed8', // Deep blue
+        secondary: '#6d28d9', // Deep purple
+        success: '#047857', // Deep green
+        danger: '#b91c1c', // Deep red
+        warning: '#b45309', // Deep amber
+        info: '#1e40af', // Deep blue
+      }
+    };
+  
+    // Use colorMode-specific colors, falling back to default
+    return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
+  };
 
   const login = useGoogleLogin({
     onSuccess: async (codeResponse) => {
@@ -85,7 +142,7 @@ function Header() {
     navigate('/calendar');
   };
   
-  // Render without Dialog first to check if that's the issue
+  // Render user section with accessible colors
   const renderUserSection = () => {
     if (user) {
       return (
@@ -93,7 +150,17 @@ function Header() {
           {/* My Trips Button */}
           <Button 
             variant="outline" 
-            className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 hover:text-white hover:scale-105 hover:shadow-lg transition-all"
+            className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105  ${
+              colorMode === 'default' ? 'bg-blue-600 hover:bg-blue-600 hover:text-white' : ''
+            }`}
+            style={
+              colorMode !== 'default' 
+                ? { 
+                    backgroundColor: getAccessibleColor('primary'),
+                    color: 'white',
+                  }
+                : {}
+            }
             onClick={goToMyTrips}
           >
             My Trips
@@ -102,7 +169,17 @@ function Header() {
           {/* Dashboard Button */}
           <Button 
             variant="outline" 
-            className="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700 hover:text-white hover:scale-105 hover:shadow-lg transition-all"
+            className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105 ${
+              colorMode === 'default' ? 'bg-purple-600 hover:bg-purple-600 hover:text-white' : ''
+            }`}
+            style={
+              colorMode !== 'default' 
+                ? { 
+                    backgroundColor: getAccessibleColor('secondary'),
+                    color: 'white',
+                  }
+                : {}
+            }
             onClick={goToDashboard}
           >
             Dashboard
@@ -111,7 +188,17 @@ function Header() {
           {/* Calendar Button */}
           <Button 
             variant="outline" 
-            className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 hover:text-white hover:scale-105 hover:shadow-lg transition-all"
+            className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105  ${
+              colorMode === 'default' ? 'bg-green-600 hover:bg-green-600 hover:text-white' : ''
+            }`}
+            style={
+              colorMode !== 'default' 
+                ? { 
+                    backgroundColor: getAccessibleColor('success'),
+                    color: 'white',
+                  }
+                : {}
+            }
             onClick={goToCalendar}
           >
             Calendar
@@ -119,7 +206,17 @@ function Header() {
           
           <Popover>
             <PopoverTrigger asChild>
-              <button className="relative p-[2px] rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              <button 
+                className="relative p-[2px] rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                style={{ 
+                  background: colorMode === 'default' 
+                    ? 'linear-gradient(to right, #3b82f6, #1d4ed8)' 
+                    : `linear-gradient(to right, ${getAccessibleColor('primary')}, ${getAccessibleColor('primary')}dd)`,
+                  borderRadius: '9999px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                  ...(colorMode !== 'default' && { borderColor: getAccessibleColor('primary') })
+                }}
+              >
                 <div className="rounded-full p-[2px] bg-white">
                   <img 
                     src={user?.picture} 
@@ -134,12 +231,36 @@ function Header() {
               align="end"
               sideOffset={14}
             >
-              <div className="">
+              <div>
                 {/* Sign out button */}
                 <div className="p-2">
                   <button 
                     onClick={handleLogout}
-                    className="w-full flex items-right gap-3 px-3 py-2 text-sm font-semibold text-gray-800 bg-white transition-all text-left rounded-full hover:scale-105 hover:shadow-lg hover:text-white hover:bg-red-500 "
+                    className={`w-full flex items-right gap-3 px-3 py-2 text-sm font-semibold text-gray-800 bg-white transition-all text-left rounded-full hover:scale-105 hover:shadow-lg ${
+                      colorMode === 'default' ? 'hover:bg-red-500 hover:text-white' : ''
+                    }`}
+                    style={
+                      colorMode !== 'default' 
+                        ? { 
+                            '&:hover': { 
+                              backgroundColor: getAccessibleColor('danger'),
+                              color: 'white'
+                            }
+                          }
+                        : {}
+                    }
+                    onMouseEnter={(e) => {
+                      if (colorMode !== 'default') {
+                        e.currentTarget.style.backgroundColor = getAccessibleColor('danger');
+                        e.currentTarget.style.color = 'white';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (colorMode !== 'default') {
+                        e.currentTarget.style.backgroundColor = 'white';
+                        e.currentTarget.style.color = '#1f2937';
+                      }
+                    }}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -155,7 +276,17 @@ function Header() {
     } else {
       return (
         <Button 
-          className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 hover:text-white hover:scale-105 hover:shadow-lg transition-all"
+          className={`px-6 py-3 rounded-full text-white transition-all hover:scale-105  ${
+            colorMode === 'default' ? 'bg-blue-600 hover:bg-blue-600 hover:text-white' : ''
+          }`}
+          style={
+            colorMode !== 'default' 
+              ? { 
+                  backgroundColor: getAccessibleColor('primary'),
+                  color: 'white',
+                }
+              : {}
+          }
           onClick={handleSignIn}
         >
           {translate("signIn")}
@@ -175,10 +306,15 @@ function Header() {
       <div className="flex space-x-4 items-center">
         {renderUserSection()}
         
+        {/* Language selector */}
         <select
           value={language}
           onChange={(e) => changeLanguage(e.target.value)}
-          className="bg-gray-100 text-gray-800 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-blue-600 hover:text-gray-800 hover:scale-105 transition-all"
+          className="bg-gray-100 text-gray-800 px-4 py-2 rounded-full border border-gray-300 focus:outline-none hover:text-gray-800 hover:scale-105 transition-all"
+          style={{ 
+            ...(colorMode !== 'default' && { borderColor: getAccessibleColor('primary') }),
+            ...(colorMode !== 'default' && { boxShadow: `0 0 0 1px ${getAccessibleColor('primary')}30` }),
+          }}
         >
           <option value="en">English</option>
           <option value="he">עברית</option>
@@ -187,13 +323,22 @@ function Header() {
           <option value="pt">Português</option>
           <option value="it">Italiano</option>
         </select>  
-         {/* Accessibility Button */}
+        
+        {/* Accessibility Button */}
         <Popover open={accessibilityMenuOpen} onOpenChange={setAccessibilityMenuOpen}>
           <PopoverTrigger asChild>
             <Button 
               variant="outline" 
-              className="rounded-full p-2 h-9 w-9 flex items-center justify-center text-black bg-white hover:bg-gray-100 hover:text-gray-800 hover:scale-105 transition-all hover:text-xl"
+              className="rounded-full p-2 h-9 w-9 flex items-center justify-center text-black bg-white hover:bg-gray-100 hover:text-gray-800 hover:scale-105 transition-all"
               aria-label="Accessibility options"
+              style={
+                colorMode !== 'default' 
+                  ? { 
+                      border: `2px solid ${getAccessibleColor('primary')}`,
+                      color: getAccessibleColor('primary')
+                    }
+                  : {}
+              }
             >
               <IoAccessibility className="h-5 w-5" />
             </Button>
@@ -211,10 +356,20 @@ function Header() {
                     key={scheme}
                     onClick={() => setColorMode(scheme)}
                     className={`px-3 py-2 text-xs font-medium rounded-md text-left transition-all ${
-                      colorMode === scheme
+                      colorMode === scheme && colorMode === 'default'
                         ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-700'
                         : 'bg-gray-50 text-gray-800 hover:bg-gray-100'
                     }`}
+                    style={
+                      colorMode !== 'default' 
+                        ? { 
+                            backgroundColor: colorMode === scheme ? `${getAccessibleColor('primary')}20` : '#f9fafb',
+                            color: colorMode === scheme ? getAccessibleColor('primary') : '#1f2937',
+                            borderLeft: colorMode === scheme ? `4px solid ${getAccessibleColor('primary')}` : 'none',
+                            paddingLeft: colorMode === scheme ? '10px' : '12px'
+                          }
+                        : {}
+                    }
                   >
                     {scheme.charAt(0).toUpperCase() + scheme.slice(1)}
                   </button>
@@ -228,8 +383,16 @@ function Header() {
                     onClick={decreaseFont}
                     className="p-2 bg-gray-300 rounded-full hover:scale-105 text-black transition-all"
                     aria-label="Decrease font size"
+                    style={
+                      colorMode !== 'default' 
+                        ? { 
+                            backgroundColor: `${getAccessibleColor('secondary')}30`,
+                            color: getAccessibleColor('secondary'),
+                          }
+                        : {}
+                    }
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 bg-gray-300 rounded-full hover:scale-105 text-black transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                     </svg>
                   </button>
@@ -237,6 +400,14 @@ function Header() {
                   <button
                     onClick={resetFont}
                     className="px-2 py-1 text-sm text-black bg-gray-300 rounded hover:bg-gray-200 transition-all"
+                    style={
+                      colorMode !== 'default' 
+                        ? { 
+                            backgroundColor: `${getAccessibleColor('primary')}20`,
+                            color: getAccessibleColor('primary'),
+                          }
+                        : {}
+                    }
                   >
                     Reset
                   </button>
@@ -245,8 +416,16 @@ function Header() {
                     onClick={increaseFont}
                     className="p-2 bg-gray-300 rounded-full hover:scale-105 text-black transition-all"
                     aria-label="Increase font size"
+                    style={
+                      colorMode !== 'default' 
+                        ? { 
+                            backgroundColor: `${getAccessibleColor('secondary')}30`,
+                            color: getAccessibleColor('secondary'),
+                          }
+                        : {}
+                    }
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 bg-gray-300 rounded-full hover:scale-105 text-black transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                   </button>
@@ -257,7 +436,7 @@ function Header() {
         </Popover>
       </div>
       
-      {/* Render login modal using a different approach */}
+      {/* Render login modal with accessible colors */}
       {openDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
@@ -265,7 +444,14 @@ function Header() {
               <h2 className="text-xl font-bold">Sign In</h2>
               <button 
                 onClick={() => setOpenDialog(false)}
-                className="text-white hover:text-white bg-gray-700 hover:scale-105 hover:shadow-lg transition-all"
+                className={`text-white ${colorMode === 'default' ? 'bg-gray-700' : ''} hover:scale-105 hover:shadow-lg transition-all p-1 rounded-full`}
+                style={
+                  colorMode !== 'default' 
+                    ? { 
+                        backgroundColor: getAccessibleColor('danger'),
+                      }
+                    : {}
+                }
               >
                 <IoClose className="h-5 w-5" />
               </button>
@@ -273,13 +459,21 @@ function Header() {
             
             <div className="flex flex-col items-center justify-center space-y-4 p-2">
               <img src="/logo.svg" alt="Easy Travel Logo" className="h-12 w-12" />
-              <h2 className="font-bold text-lg text-gray-800 ">Sign In With Google</h2>
+              <h2 className="font-bold text-lg text-gray-800">Sign In With Google</h2>
               <p className="text-sm text-gray-600 text-center">
                 Sign in to the App with Google authentication securely
               </p>
               <button
                 className="w-full mt-4 bg-white text-gray-700 border border-gray-700 hover:bg-gray-50 flex items-center justify-center space-x-2 py-2 rounded-full hover:scale-105 hover:shadow-lg transition-all"
                 onClick={() => login()}
+                style={
+                  colorMode !== 'default' 
+                    ? { 
+                        borderColor: getAccessibleColor('primary'),
+                        color: getAccessibleColor('primary'),
+                      }
+                    : {}
+                }
               >
                 <FcGoogle className="h-5 w-5" />
                 <span>Sign In With Google</span>
