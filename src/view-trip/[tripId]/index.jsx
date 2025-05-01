@@ -166,7 +166,7 @@ function Viewtrip() {
         {visibleSections.activities && (
             <div className="animate-fadeIn mb-8">
                 <SectionHeader 
-                    title="Daily Activities"
+                    title="DailyActivities"
                     isExpanded={expandedSections.activities}
                     onToggle={() => setExpandedSections(prev => ({
                         ...prev,
