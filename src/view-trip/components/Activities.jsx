@@ -275,7 +275,7 @@ function Activities({ trip }) {
 
     return (
         <div className="w-full max-w-[1400px] mx-auto">
-            <h2 className='font-bold text-2xl mt-8 mb-6 text-white'>Daily Activities</h2>
+            
 
             {/* Day selector tabs */}
             <div className="flex overflow-x-auto mb-6 pb-2 scrollbar-hide">
