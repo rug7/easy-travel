@@ -216,59 +216,104 @@ function Viewtrip() {
   
     const handleExportPDF = () => {
         if (!trip?.tripData?.itinerary) return;
-      
+    
         const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const destination = trip.tripData.trip?.destination || 'N/A';
+
+    
+        // Section: Trip Summary Title
+        doc.setFontSize(20);
+        doc.setTextColor(40, 40, 40);
+        doc.setFillColor(230, 240, 255);
+        doc.text(`${destination}'s Trip Summary`, pageWidth / 2, 20, { align: 'center' });
+    
+        let yOffset = 30;
+    
+        // // Section: Destination
+        // const destination = trip.tripData.trip?.destination || 'N/A';
+        // doc.setTextColor(20, 60, 120);
+        //     doc.setFontSize(14);
+        //     doc.text(`Destination: ${destination}`, pageWidth / 2, yOffset + 7, { align: 'center' });
         
-        doc.setFontSize(18);
-        doc.text('Trip Activities', 105, 15, { align: 'center' });
-      
-        let yOffset = 25;
-
-        doc.setFontSize(12);
-doc.text(`Destination: ${trip.tripData.trip.destination || 'N/A'}`, 14, yOffset);
-yOffset += 8;
-
-doc.text(`Hotel: ${trip.tripData.hotels?.name || 'N/A'}`, 14, yOffset);
-yOffset += 10;
-      
-        const days = Object.keys(trip.tripData.itinerary).sort((a, b) => {
-          const aDay = parseInt(a.replace('day', ''));
-          const bDay = parseInt(b.replace('day', ''));
-          return aDay - bDay;
-        });
-      
+        // yOffset += 10;
+    
+        // Section: Hotel Table
+        const hotels = trip.tripData.hotels || [];
+        if (hotels.length > 0) {
+            // Title with background
+            doc.setFillColor(230, 240, 255);
+            doc.rect(14, yOffset, pageWidth - 28, 10, 'F');
+            doc.setTextColor(20, 60, 120);
+            doc.setFontSize(14);
+            doc.text('Hotel Recommendations', pageWidth / 2, yOffset + 7, { align: 'center' });
+    
+            yOffset += 14;
+    
+            const hotelRows = hotels.map(hotel => [
+                hotel.name || '',
+                hotel.address || '',
+                hotel.priceRange || hotel.price || '',
+                `${hotel.rating || 'N/A'} Stars`
+            ]);
+    
+            autoTable(doc, {
+                startY: yOffset,
+                head: [['Name', 'Address', 'Price', 'Rating']],
+                body: hotelRows,
+                styles: { fontSize: 9, cellPadding: 3 },
+                theme: 'striped',
+                headStyles: { fillColor: [60, 130, 200] },
+                margin: { left: 14, right: 14 },
+                didDrawPage: data => yOffset = data.cursor.y + 10
+            });
+        }
+    
+        // Section: Daily Activities Header (before Day 1)
+        doc.setFillColor(230, 255, 230);
+        doc.rect(14, yOffset, pageWidth - 28, 10, 'F');
+        doc.setTextColor(20, 100, 20);
+        doc.setFontSize(14);
+        doc.text('Daily Activities', pageWidth / 2, yOffset + 7, { align: 'center' });
+        yOffset += 14;
+    
+        // Section: Activities per Day
+        const days = Object.keys(trip.tripData.itinerary).sort((a, b) => 
+            parseInt(a.replace('day', '')) - parseInt(b.replace('day', ''))
+        );
+    
         days.forEach((dayKey, i) => {
-          const day = trip.tripData.itinerary[dayKey];
-          if (!day?.length) return;
-      
-          doc.setFontSize(14);
-          doc.text(`Day ${i + 1}`, 14, yOffset);
-      
-          const rows = day.map(activity => [
-            activity.bestTime || '',
-            activity.activity || '',
-            activity.description || '',
-            activity.duration || '',
-            activity.travelTime || '',
-            activity.price || ''
-          ]);
-      
-          autoTable(doc, {
-            startY: yOffset + 4,
-            head: [['Time', 'Activity', 'Description', 'Duration', 'Travel', 'Price']],
-            body: rows,
-            styles: { fontSize: 9, cellPadding: 3 },
-            theme: 'striped',
-            headStyles: { fillColor: [41, 128, 185] },
-            margin: { left: 14, right: 14 },
-            didDrawPage: data => {
-              yOffset = data.cursor.y + 10;
-            }
-          });
+            const day = trip.tripData.itinerary[dayKey];
+            if (!day?.length) return;
+    
+            doc.setFontSize(13);
+            doc.setTextColor(33);
+            doc.text(`Day ${i + 1}`, 14, yOffset);
+    
+            const rows = day.map(activity => [
+                activity.bestTime || '',
+                activity.activity || '',
+                activity.description || '',
+                activity.duration || '',
+                activity.travelTime || '',
+                activity.price || ''
+            ]);
+    
+            autoTable(doc, {
+                startY: yOffset + 4,
+                head: [['Time', 'Activity', 'Description', 'Duration', 'Travel', 'Price']],
+                body: rows,
+                styles: { fontSize: 9, cellPadding: 3 },
+                theme: 'striped',
+                headStyles: { fillColor: [41, 128, 185] },
+                margin: { left: 14, right: 14 },
+                didDrawPage: data => yOffset = data.cursor.y + 10
+            });
         });
-      
-        doc.save('trip-activities.pdf');
-      };
+    
+        doc.save('trip-details.pdf');
+    };
+    
       
       
 
