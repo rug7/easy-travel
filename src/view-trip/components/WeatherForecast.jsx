@@ -1,15 +1,88 @@
 // components/WeatherForecast.jsx
+// components/WeatherForecast.jsx
 import React, { useState, useEffect } from 'react';
 import { chatSession } from '@/service/AIModal';
-import moment from 'moment';
-import { IoCloudOutline, IoSunnyOutline, IoRainyOutline, IoSnowOutline, 
-         IoThunderstormOutline, IoInformationCircleOutline } from "react-icons/io5";
+import dayjs from 'dayjs';
+import { useAccessibility } from "@/context/AccessibilityContext";
+import { 
+  IoCloudOutline, 
+  IoSunnyOutline, 
+  IoRainyOutline, 
+  IoSnowOutline, 
+  IoThunderstormOutline, 
+  IoInformationCircleOutline 
+} from "react-icons/io5";
 
 const WeatherForecast = ({ destination, startDate, endDate }) => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { colorMode } = useAccessibility();
   
+  // Function to get accessible colors
+  const getAccessibleColor = (colorType) => {
+    const colorMap = {
+      default: {
+        primary: '#3b82f6',
+        secondary: '#1d4ed8',
+        accent: '#60a5fa',
+        text: '#ffffff',
+        background: '#1e293b',
+        border: '#475569',
+      },
+      protanopia: {
+        primary: '#2563eb',
+        secondary: '#1e40af',
+        accent: '#93c5fd',
+        text: '#ffffff',
+        background: '#1e293b',
+        border: '#475569',
+      },
+      deuteranopia: {
+        primary: '#1d4ed8',
+        secondary: '#1e3a8a',
+        accent: '#bfdbfe',
+        text: '#ffffff',
+        background: '#1e293b',
+        border: '#475569',
+      },
+      tritanopia: {
+        primary: '#4f46e5',
+        secondary: '#4338ca',
+        accent: '#a5b4fc',
+        text: '#ffffff',
+        background: '#1e293b',
+        border: '#475569',
+      },
+      monochromacy: {
+        primary: '#4b5563',
+        secondary: '#374151',
+        accent: '#6b7280',
+        text: '#ffffff',
+        background: '#1e293b',
+        border: '#475569',
+      }
+    };
+    
+    return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
+  };
+
+  // Check if the trip is within 7 days
+  const isWithinSevenDays = () => {
+    const today = dayjs();
+const tripStart = dayjs(startDate);
+return tripStart.diff(today, 'day') <= 7;
+
+  };
+
+  // Get weather title based on timeframe
+  const getWeatherTitle = () => {
+    if (isWithinSevenDays()) {
+      return `Weather Forecast for ${destination}`;
+    }
+    return `Average Weather Conditions for ${destination}`;
+  };
+
   useEffect(() => {
     if (destination && startDate) {
       fetchWeatherData();
@@ -21,7 +94,8 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
       setLoading(true);
             
       // Format prompt for weather forecast
-      const prompt = `Generate realistic weather forecast data for "${destination}" starting from ${moment(startDate).format('YYYY-MM-DD')} for the next 7 days. 
+      const prompt = `Generate realistic weather forecast data for "${destination}" starting from ${dayjs(startDate).format('YYYY-MM-DD')}
+ for the next 7 days. 
       Return the data as a JSON object with this structure:
       {
         "location": "${destination}",
@@ -44,7 +118,7 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
         "recommendation": "A brief travel recommendation based on the forecast"
       }
       
-      Base your forecast on typical weather patterns for ${destination} during ${moment(startDate).format('MMMM')}.
+      Base your forecast on typical weather patterns for ${destination} during ${dayjs(startDate).format('MMMM')}.
       Include realistic variations in temperature and conditions across the week.
       Only return the JSON object without explanations.`;
       
@@ -93,8 +167,8 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
       const maxTemp = baseTemp + (Math.random() * 5 + 2);
       
       return {
-        date: moment(forecastDate).format('YYYY-MM-DD'),
-        day: moment(forecastDate).format('ddd'),
+        date: dayjs(forecastDate).format('YYYY-MM-DD'),
+        day: dayjs(forecastDate).format('ddd'),
         temperature: {
           min: Math.round(minTemp),
           max: Math.round(maxTemp)
@@ -109,22 +183,24 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
     return {
       location: destination,
       forecast: forecast,
-      summary: `Typical ${forecast[0].condition.toLowerCase()} conditions for ${destination} in ${moment(startDate).format('MMMM')}.`,
+      summary: `Typical ${forecast[0].condition.toLowerCase()} conditions for ${destination} in ${dayjs(startDate).format('MMMM')}.`,
       recommendation: "Pack layers and be prepared for changing conditions."
     };
   };
 
   // Helper function to map weather conditions to icon components
+  // Modified getWeatherIcon function with color-blind friendly colors
   const getWeatherIcon = (condition) => {
     const conditionLower = condition.toLowerCase();
+    const iconColor = getAccessibleColor('accent');
     
     if (conditionLower.includes('sunny') || conditionLower.includes('clear')) {
-      return <IoSunnyOutline className="w-10 h-10 text-yellow-400" />;
+      return <IoSunnyOutline className="w-10 h-10" style={{ color: iconColor }} />;
     } else if (conditionLower.includes('partly cloudy')) {
       return (
         <div className="relative">
-          <IoSunnyOutline className="w-8 h-8 text-yellow-400 absolute -top-1 -left-1" />
-          <IoCloudOutline className="w-10 h-10 text-gray-400" />
+          <IoSunnyOutline className="w-8 h-8 absolute -top-1 -left-1" style={{ color: iconColor }} />
+          <IoCloudOutline className="w-10 h-10" style={{ color: getAccessibleColor('secondary') }} />
         </div>
       );
     } else if (conditionLower.includes('cloud')) {
@@ -136,13 +212,15 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
     } else if (conditionLower.includes('snow')) {
       return <IoSnowOutline className="w-10 h-10 text-white" />;
     } else {
-      return <IoCloudOutline className="w-10 h-10 text-gray-400" />;
+      return <IoCloudOutline className="w-10 h-10" style={{ color: getAccessibleColor('secondary') }} />;
+
     }
   };
   
   if (loading) {
     return (
-      <div className="my-8 bg-gray-800 rounded-xl shadow-md p-6 animate-pulse">
+      <div className="my-8 rounded-xl shadow-md p-6 animate-pulse"
+           style={{ backgroundColor: getAccessibleColor('background') }}>
         <h2 className="text-xl font-semibold mb-4 bg-gray-700 h-7 w-48 rounded"></h2>
         <div className="grid grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -161,60 +239,82 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
   if (!weatherData) return null;
   
   return (
-    <div className="my-8 bg-gray-800 rounded-xl shadow-md overflow-hidden">
+    <div className="my-8 rounded-xl shadow-md overflow-hidden"
+         style={{ backgroundColor: getAccessibleColor('background') }}>
       <div className="p-6">
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
-          <IoCloudOutline className="w-6 h-6 text-blue-500" />
-          Weather Forecast for {weatherData.location}
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"
+            style={{ color: getAccessibleColor('text') }}>
+          <IoCloudOutline className="w-6 h-6" style={{ color: getAccessibleColor('primary') }} />
+          {getWeatherTitle()}
         </h2>
-        
+
         {/* Forecast Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3 mb-6">
           {weatherData.forecast.map((day, idx) => (
-            <div 
-              key={idx} 
-              className={`p-4 rounded-lg text-center transition-all
-                ${idx === 0 ? 'bg-blue-900/30 border border-blue-800' : 
-                'bg-gray-700/30 hover:bg-blue-900/20'}`}
-            >
-              <div className="text-sm font-medium text-gray-400 mb-2">
+            <div key={idx}
+                 className={`p-4 rounded-lg text-center transition-all`}
+                 style={{
+                   backgroundColor: idx === 0 ? `${getAccessibleColor('primary')}20` : `${getAccessibleColor('secondary')}10`,
+                   borderColor: idx === 0 ? getAccessibleColor('primary') : 'transparent',
+                   borderWidth: idx === 0 ? '1px' : '0'
+                 }}>
+              <div className="text-sm font-medium mb-2"
+                   style={{ color: getAccessibleColor('accent') }}>
                 {day.day}
               </div>
               <div className="flex justify-center mb-2">
                 {getWeatherIcon(day.condition)}
               </div>
-              <div className="text-lg font-bold text-white">
+              <div className="text-lg font-bold"
+                   style={{ color: getAccessibleColor('text') }}>
                 {day.temperature.max}°C
               </div>
-              <div className="text-sm text-gray-400">
+              <div className="text-sm"
+                   style={{ color: getAccessibleColor('accent') }}>
                 {day.temperature.min}°C
               </div>
-              <div className="mt-1 text-xs text-gray-300 font-medium">
+              <div className="mt-1 text-xs font-medium"
+                   style={{ color: getAccessibleColor('text') }}>
                 {day.condition}
               </div>
-              <div className="mt-2 flex justify-between text-xs text-gray-400">
+              <div className="mt-2 flex justify-between text-xs"
+                   style={{ color: getAccessibleColor('accent') }}>
                 <span>💧 {day.precipitation}%</span>
                 <span>💨 {day.windSpeed}km/h</span>
               </div>
             </div>
           ))}
         </div>
-        
+
         {/* Summary and Recommendations */}
-        <div className="bg-blue-900/20 border border-blue-800/50 rounded-lg p-4 flex items-start gap-3">
-          <IoInformationCircleOutline className="w-6 h-6 text-blue-500 flex-shrink-0 mt-0.5" />
+        <div className="rounded-lg p-4 flex items-start gap-3"
+             style={{
+               backgroundColor: `${getAccessibleColor('primary')}20`,
+               borderColor: getAccessibleColor('primary'),
+               borderWidth: '1px'
+             }}>
+          <IoInformationCircleOutline 
+            className="w-6 h-6 flex-shrink-0 mt-0.5"
+            style={{ color: getAccessibleColor('primary') }}
+          />
           <div>
-            <p className="text-sm text-blue-300">{weatherData.summary}</p>
+            <p className="text-sm" style={{ color: getAccessibleColor('accent') }}>
+              {weatherData.summary}
+            </p>
             {weatherData.recommendation && (
-              <p className="text-sm mt-2 font-medium text-blue-200">
+              <p className="text-sm mt-2 font-medium"
+                 style={{ color: getAccessibleColor('text') }}>
                 {weatherData.recommendation}
               </p>
             )}
           </div>
         </div>
-        
-        <div className="mt-2 text-xs text-right text-gray-400">
-          *Forecast data is for planning purposes only. Check local weather before activities.
+
+        <div className="mt-2 text-xs text-right"
+             style={{ color: getAccessibleColor('accent') }}>
+          *{isWithinSevenDays() 
+             ? 'Forecast data is for planning purposes only. Check local weather before activities.'
+             : 'Historical average conditions. Actual weather may vary.'}
         </div>
       </div>
     </div>
