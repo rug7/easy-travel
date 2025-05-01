@@ -24,17 +24,17 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
     const colorMap = {
       default: {
         // Normal mode colors
-        background: '#0f172a', // Dark navy background
-        cardBg: '#1e293b', // Slightly lighter navy for cards
-        highlightCardBg: '#172554', // Highlighted card background
+        background: '#0f172a', 
+        cardBg: '#1e293b', 
+        highlightCardBg: '#172554',
         text: '#ffffff',
         lightText: '#94a3b8',
         border: '#2563eb',
-        sunny: '#fbbf24', // Yellow for sun
-        cloudy: '#94a3b8', // Gray for clouds
-        rainy: '#38bdf8', // Light blue for rain
-        thunderstorm: '#f59e0b', // Amber for thunder
-        snow: '#e2e8f0', // White for snow
+        sunny: '#fbbf24',
+        cloudy: '#94a3b8',
+        rainy: '#38bdf8',
+        thunderstorm: '#f59e0b',
+        snow: '#e2e8f0',
         primary: '#3b82f6',
         accent: '#60a5fa',
       },
@@ -55,33 +55,60 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
         accent: '#93c5fd',
       },
       deuteranopia: {
+        // Deuteranopia-friendly colors
+        background: '#0f172a',
+        cardBg: '#1e293b',
+        highlightCardBg: '#172554',
+        text: '#ffffff',
+        lightText: '#94a3b8',
+        border: '#475569',
+        sunny: '#bfdbfe', // Light blue instead of yellow
+        cloudy: '#64748b', // Mid-gray
+        rainy: '#1d4ed8', // Darker blue
+        thunderstorm: '#2563eb', // Medium blue
+        snow: '#e2e8f0', // Light gray
         primary: '#1d4ed8',
         secondary: '#1e3a8a',
         accent: '#bfdbfe',
-        text: '#ffffff',
-        background: '#1e293b',
-        border: '#475569',
       },
       tritanopia: {
+        // Tritanopia-friendly colors
+        background: '#0f172a',
+        cardBg: '#1e293b',
+        highlightCardBg: '#172554',
+        text: '#ffffff',
+        lightText: '#94a3b8',
+        border: '#475569',
+        sunny: '#a5b4fc', // Light purple instead of yellow
+        cloudy: '#64748b',
+        rainy: '#4f46e5', // Purple
+        thunderstorm: '#4338ca', // Dark purple
+        snow: '#e2e8f0',
         primary: '#4f46e5',
         secondary: '#4338ca',
         accent: '#a5b4fc',
-        text: '#ffffff',
-        background: '#1e293b',
-        border: '#475569',
       },
       monochromacy: {
+        // Monochrome-friendly colors
+        background: '#0f172a',
+        cardBg: '#1e293b',
+        highlightCardBg: '#172554',
+        text: '#ffffff',
+        lightText: '#94a3b8',
+        border: '#475569',
+        sunny: '#9ca3af', // Light gray
+        cloudy: '#6b7280', // Mid gray
+        rainy: '#4b5563', // Darker gray
+        thunderstorm: '#374151', // Very dark gray
+        snow: '#e2e8f0', // Very light gray
         primary: '#4b5563',
         secondary: '#374151',
         accent: '#6b7280',
-        text: '#ffffff',
-        background: '#1e293b',
-        border: '#475569',
       }
     };
     
     return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
-  };
+};
 
   // Check if the trip is within 7 days
   const isWithinSevenDays = () => {
@@ -205,47 +232,60 @@ return tripStart.diff(today, 'day') <= 7;
   };
 
   // Modified getWeatherIcon function with color-blind friendly colors
-  const getWeatherIcon = (condition) => {
-    const conditionLower = condition.toLowerCase();
-    
-    if (colorMode === 'default') {
-      // Normal mode with specific colors
-      if (conditionLower.includes('sunny') || conditionLower.includes('clear')) {
-        return <IoSunnyOutline className="w-10 h-10" style={{ color: getAccessibleColor('sunny') }} />;
-      } else if (conditionLower.includes('partly cloudy')) {
-        return (
-          <div className="relative">
-            <IoSunnyOutline className="w-8 h-8 absolute -top-1 -left-1" style={{ color: getAccessibleColor('sunny') }} />
-            <IoCloudOutline className="w-10 h-10" style={{ color: getAccessibleColor('cloudy') }} />
-          </div>
-        );
-      } else if (conditionLower.includes('cloud')) {
-        return <IoCloudOutline className="w-10 h-10" style={{ color: getAccessibleColor('cloudy') }} />;
-      } else if (conditionLower.includes('thunder')) {
-        return <IoThunderstormOutline className="w-10 h-10" style={{ color: getAccessibleColor('thunderstorm') }} />;
-      } else if (conditionLower.includes('rain')) {
-        return <IoRainyOutline className="w-10 h-10" style={{ color: getAccessibleColor('rainy') }} />;
-      } else if (conditionLower.includes('snow')) {
-        return <IoSnowOutline className="w-10 h-10" style={{ color: getAccessibleColor('snow') }} />;
-      }
-    } else {
-      // Color blind mode - use accessible colors
-      return <div className="w-10 h-10" style={{ color: getAccessibleColor('accent') }}>
-        {/* Use the same icon components but with color-blind friendly colors */}
-        {getColorBlindIcon(condition)}
-      </div>;
-    }
-  };
-  
-  // Helper function for color blind icons
   const getColorBlindIcon = (condition) => {
     const conditionLower = condition.toLowerCase();
-    const iconColor = getAccessibleColor('accent');
     
     if (conditionLower.includes('sunny') || conditionLower.includes('clear')) {
-      return <IoSunnyOutline className="w-10 h-10" style={{ color: iconColor }} />;
-    } // ... rest of your conditions
-  };
+      return <IoSunnyOutline className="w-10 h-10" style={{ color: getAccessibleColor('sunny') }} />;
+    } else if (conditionLower.includes('partly cloudy')) {
+      return (
+        <div className="relative">
+          <IoSunnyOutline 
+            className="w-8 h-8 absolute -top-1 -left-1" 
+            style={{ color: getAccessibleColor('sunny') }}
+          />
+          <IoCloudOutline 
+            className="w-10 h-10" 
+            style={{ color: getAccessibleColor('cloudy') }}
+          />
+        </div>
+      );
+    } else if (conditionLower.includes('cloud')) {
+      return <IoCloudOutline 
+        className="w-10 h-10" 
+        style={{ color: getAccessibleColor('cloudy') }}
+      />;
+    } else if (conditionLower.includes('thunder')) {
+      return <IoThunderstormOutline 
+        className="w-10 h-10" 
+        style={{ color: getAccessibleColor('thunderstorm') }}
+      />;
+    } else if (conditionLower.includes('rain')) {
+      return <IoRainyOutline 
+        className="w-10 h-10" 
+        style={{ color: getAccessibleColor('rainy') }}
+      />;
+    } else if (conditionLower.includes('snow')) {
+      return <IoSnowOutline 
+        className="w-10 h-10" 
+        style={{ color: getAccessibleColor('snow') }}
+      />;
+    } else {
+      return <IoCloudOutline 
+        className="w-10 h-10" 
+        style={{ color: getAccessibleColor('cloudy') }}
+      />;
+    }
+};
+
+// Updated getWeatherIcon function to use the color-blind handling
+const getWeatherIcon = (condition) => {
+    if (colorMode === 'default') {
+        return getColorBlindIcon(condition); // Will use default colors
+    } else {
+        return getColorBlindIcon(condition); // Will use color-blind friendly colors
+    }
+};
   
   if (loading) {
     return (
