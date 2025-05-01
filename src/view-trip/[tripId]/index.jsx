@@ -99,7 +99,7 @@ function Viewtrip() {
     return (
         <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56'>
         {visibleSections.info && (
-            <div className="animate-fadeIn">
+            <div className="animate-fadeIn mb-8">
                 <SectionHeader 
                     title="Trip Information"
                     isExpanded={expandedSections.info}
@@ -120,7 +120,7 @@ function Viewtrip() {
             </div>
         )}
              {visibleSections.flights && (
-            <div className="animate-fadeIn">
+            <div className="animate-fadeIn mb-8">
                 <SectionHeader 
                     title="Flight Options"
                     isExpanded={expandedSections.flights}
@@ -142,7 +142,7 @@ function Viewtrip() {
         )}
 
         {visibleSections.hotels && (
-            <div className="animate-fadeIn">
+            <div className="animate-fadeIn mb-8">
                 <SectionHeader 
                     title="Hotel Recommendations"
                     isExpanded={expandedSections.hotels}
@@ -164,9 +164,9 @@ function Viewtrip() {
         )}
 
         {visibleSections.activities && (
-            <div className="animate-fadeIn">
+            <div className="animate-fadeIn mb-8">
                 <SectionHeader 
-                    title="Activities"
+                    title="Daily Activities"
                     isExpanded={expandedSections.activities}
                     onToggle={() => setExpandedSections(prev => ({
                         ...prev,
@@ -186,7 +186,7 @@ function Viewtrip() {
         )}
 
         {visibleSections.weather && (
-            <div className="animate-fadeIn">
+            <div className="animate-fadeIn mb-8">
                 <SectionHeader 
                     title="Weather Forecast"
                     isExpanded={expandedSections.weather}
