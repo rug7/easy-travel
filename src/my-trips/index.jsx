@@ -454,10 +454,10 @@ function MyTrips() {
                                         const infoWindow = new window.google.maps.InfoWindow({
                                             content: `
                                                 <div style="padding: 8px; max-width: 150px; text-align: center; color: #333; font-family: system-ui, sans-serif;">
-                                                    <h3 style="margin: 0 0 5px; font-size: 14px; font-weight: bold; color: ${getAccessibleColor('danger')};">
+                                                    <h3 style="margin: 0 0 5px; font-size: 14px; font-weight: bold; color: #000000;">
                                                         ${destination.name}
                                                     </h3>
-                                                    <p style="margin: 2px 0 6px; font-size: 12px;">${destination.days.toString().replace(' days', '')} days</p>
+                                                    <p style="margin: 2px 0 6px; color: black; font-size: 12px; font-weight: 400">${destination.days.toString().replace(' days', '')} days</p>
                                                     <button 
                                                         style="background: ${getAccessibleColor('primary')}; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; width: 100%;"
                                                         onclick="window.viewTrip('${destination.id}')"
@@ -510,7 +510,7 @@ function MyTrips() {
                                             content: `
                                                 <div style="padding: 8px; text-align: center; font-family: system-ui, sans-serif;">
                                                     <p style="margin: 0; font-weight: 500;">${location.destination}</p>
-                                                    <p style="margin: 4px 0 0; font-size: 12px; color: #666;">
+                                                    <p style="margin: 4px 0 0; font-size: 12px; color: #000000;">
                                                         Visited on ${formatDate(location.visitedAt)}
                                                     </p>
                                                 </div>
@@ -703,7 +703,7 @@ function MyTrips() {
                                                                         borderColor: getAccessibleColor('primary')
                                                                     }}
                                                                 ></div>
-                                                                <span className="text-xs font-medium text-gray-700">Visited Places ({locationHistory.length})</span>
+                                                                <span className="text-xs font-medium text-black">Visited Places ({locationHistory.length})</span>
                                                             </div>
                                                         </div>
                     
