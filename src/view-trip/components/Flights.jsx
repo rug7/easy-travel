@@ -63,7 +63,6 @@ function Flights({trip}) {
 
     return (
         <div className="w-full max-w-[1400px] mx-auto">
-            <h2 className='font-bold text-xl mt-5 text-white'>Flight Options</h2>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-5 mt-4'>
                 {/* Best Flight Option */}
                 <div 

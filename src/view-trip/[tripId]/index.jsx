@@ -8,6 +8,7 @@ import Hotels from "../components/Hotels";
 import Flights from "../components/Flights";
 import Activities from "../components/Activities";
 import WeatherForecast from "../components/WeatherForecast";
+import { useAccessibility } from "@/context/AccessibilityContext";
 import { ChevronDown } from 'lucide-react'; // Import the chevron icon (or use any other icon library)
 
 import jsPDF from 'jspdf';
@@ -19,6 +20,8 @@ function Viewtrip() {
     const [trip, setTrip] = useState(null);
     const [loading, setLoading] = useState(true);
     const viewRef = useRef(null); // Add this line
+      const { colorMode } = useAccessibility();
+    
 
     const [visibleSections, setVisibleSections] = useState({
         info: false,
@@ -84,6 +87,71 @@ function Viewtrip() {
             setLoading(false);
         }
     };
+    const getAccessibleColor = (colorType) => {
+        // Map standard color names to your colorMode-specific colors
+        const colorMap = {
+          default: {
+            primary: '#3b82f6', // blue-500
+            secondary: '#8b5cf6', // purple-500
+            success: '#10b981', // green-500
+            danger: '#ef4444', // red-500
+            warning: '#f59e0b', // amber-500
+            info: '#3b82f6', // blue-500
+            iconColor: '#ffffff', // White for normal mode
+          },
+          protanopia: {
+            primary: '#2563eb', // More bluish
+            secondary: '#7c3aed', // More visible purple
+            success: '#059669', // Adjusted green
+            danger: '#9ca3af', // Gray instead of red
+            warning: '#d97706', // Darker amber
+            info: '#0284c7', // Darker blue
+            iconColor: '#3b82f6', // Use accessible colors for color-blind modes
+          },
+          deuteranopia: {
+            primary: '#1d4ed8', // Deeper blue
+            secondary: '#6d28d9', // Deeper purple
+            success: '#0f766e', // Teal instead of green
+            danger: '#b91c1c', // More visible red
+            warning: '#b45309', // Darker amber
+            info: '#1e40af', // Deeper blue
+            iconColor: '#1d4ed8',
+          },
+          tritanopia: {
+            primary: '#4f46e5', // Indigo
+            secondary: '#7e22ce', // Darker purple
+            success: '#15803d', // Darker green
+            danger: '#dc2626', // Bright red
+            warning: '#ca8a04', // Darker yellow
+            info: '#4338ca', // Indigo
+            iconColor: '#4f46e5',
+    
+          },
+          monochromacy: {
+            primary: '#4b5563', // Gray-600
+            secondary: '#6b7280', // Gray-500
+            success: '#374151', // Gray-700
+            danger: '#1f2937', // Gray-800
+            warning: '#6b7280', // Gray-500
+            info: '#4b5563', // Gray-600
+            iconColor: '#4f46e5',
+    
+          },
+          highContrast: {
+            primary: '#1d4ed8', // Deep blue
+            secondary: '#6d28d9', // Deep purple
+            success: '#047857', // Deep green
+            danger: '#b91c1c', // Deep red
+            warning: '#b45309', // Deep amber
+            info: '#1e40af', // Deep blue
+            iconColor: '#4b5563',
+    
+          }
+        };
+      
+        // Use CSS variables if they exist, otherwise fall back to the hardcoded colors
+        return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
+      };
 
     const generatePrintableActivitiesHTML = () => {
         if (!trip?.tripData?.itinerary) return '<p>No itinerary data available.</p>';
@@ -450,8 +518,30 @@ function Viewtrip() {
             </div>
         )}
        <div className="flex justify-end items-center gap-4 mt-6 px-10 print:hidden">
-  <button onClick={handlePrint} className="bg-blue-600 text-white px-4 py-2 rounded">🖨 Print</button>
-  <button onClick={handleExportPDF} className="bg-green-600 text-white px-4 py-2 rounded">📄 Export PDF</button>
+  {/* <button onClick={handlePrint} className="bg-blue-600 text-white px-4 py-2 rounded">🖨 Print</button> */}
+  <button 
+    onClick={handlePrint}
+    style={{ color: getAccessibleColor('iconColor') }}
+    className="hover:opacity-80 transition-all hover:scale-105"
+    title="Print Dashboard"
+>
+    <span className="sr-only">Print Dashboard</span>
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
+    </svg>
+</button>
+<button 
+    onClick={handleExportPDF}
+    style={{ color: getAccessibleColor('iconColor') }}
+    className="hover:opacity-80 transition-all hover:scale-105"
+    title="Export as PDF"
+>
+  <span className="sr-only">Export Data</span>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+  </svg>
+</button>
+  {/* <button onClick={handleExportPDF} className="bg-green-600 text-white px-4 py-2 rounded">📄 Export PDF</button> */}
 </div>
 
 
