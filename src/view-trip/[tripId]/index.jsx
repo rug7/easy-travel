@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef } from "react";
 import { db } from '@/service/firebaseConfig';
 import { doc, getDoc } from "firebase/firestore";
 import { useParams } from "react-router-dom";
@@ -10,11 +10,16 @@ import Activities from "../components/Activities";
 import WeatherForecast from "../components/WeatherForecast";
 import { ChevronDown } from 'lucide-react'; // Import the chevron icon (or use any other icon library)
 
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+
 function Viewtrip() {
     const { tripId } = useParams();
     const [trip, setTrip] = useState(null);
     const [loading, setLoading] = useState(true);
-    
+    const viewRef = useRef(null); // Add this line
+
     const [visibleSections, setVisibleSections] = useState({
         info: false,
         weather: false,
@@ -80,6 +85,193 @@ function Viewtrip() {
         }
     };
 
+    const generatePrintableActivitiesHTML = () => {
+        if (!trip?.tripData?.itinerary) return '<p>No itinerary data available.</p>';
+      
+        const days = Object.keys(trip.tripData.itinerary).sort((a, b) => {
+          const dayA = parseInt(a.replace('day', ''));
+          const dayB = parseInt(b.replace('day', ''));
+          return dayA - dayB;
+        });
+      
+        let html = `
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <style>
+              body {
+                background-color: white;
+                color: #000;
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                padding: 30px;
+              }
+              h1 {
+                text-align: center;
+                font-size: 24px;
+                margin-bottom: 30px;
+                color: #222;
+              }
+              h2 {
+                margin-top: 30px;
+                font-size: 18px;
+                color: #333;
+                border-bottom: 2px solid #eee;
+                padding-bottom: 6px;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+                margin-bottom: 25px;
+              }
+              th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                vertical-align: top;
+              }
+              th {
+                background-color: #f7f7f7;
+                font-weight: bold;
+                text-align: left;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Trip Activities</h1>
+        `;
+      
+        days.forEach(day => {
+          const activities = trip.tripData.itinerary[day];
+          if (!activities?.length) return;
+      
+          html += `
+            <h2>${day.replace('day', 'Day ')}</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Activity</th>
+                  <th>Description</th>
+                  <th>Duration</th>
+                  <th>Travel</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+      
+          activities.forEach(activity => {
+            html += `
+              <tr>
+                <td>${activity.bestTime || ''}</td>
+                <td>${activity.activity || ''}</td>
+                <td>${activity.description || ''}</td>
+                <td>${activity.duration || ''}</td>
+                <td>${activity.travelTime || ''}</td>
+                <td>${activity.price || ''}</td>
+              </tr>
+            `;
+          });
+      
+          html += `
+              </tbody>
+            </table>
+          `;
+        });
+      
+        html += `
+          </body>
+          </html>
+        `;
+        return html;
+      };
+      
+      
+      
+      
+    const handlePrint = () => {
+        window.print();
+      };
+      
+    //   const handleExportPDF = async () => {
+    //     if (!viewRef.current) return;
+      
+    //     const canvas = await html2canvas(viewRef.current, {
+    //       scale: 2,
+    //       useCORS: true,
+    //       backgroundColor: 'white'
+    //     });
+      
+    //     const imgData = canvas.toDataURL('image/jpeg', 1.0);
+    //     const pdf = new jsPDF('p', 'mm', 'a4');
+    //     const imgProps = pdf.getImageProperties(imgData);
+    //     const pdfWidth = pdf.internal.pageSize.getWidth();
+    //     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      
+    //     pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+    //     pdf.save('view-trip.pdf');
+    //   };
+  
+  
+    const handleExportPDF = () => {
+        if (!trip?.tripData?.itinerary) return;
+      
+        const doc = new jsPDF();
+        
+        doc.setFontSize(18);
+        doc.text('Trip Activities', 105, 15, { align: 'center' });
+      
+        let yOffset = 25;
+
+        doc.setFontSize(12);
+doc.text(`Destination: ${trip.tripData.trip.destination || 'N/A'}`, 14, yOffset);
+yOffset += 8;
+
+doc.text(`Hotel: ${trip.tripData.hotels?.name || 'N/A'}`, 14, yOffset);
+yOffset += 10;
+      
+        const days = Object.keys(trip.tripData.itinerary).sort((a, b) => {
+          const aDay = parseInt(a.replace('day', ''));
+          const bDay = parseInt(b.replace('day', ''));
+          return aDay - bDay;
+        });
+      
+        days.forEach((dayKey, i) => {
+          const day = trip.tripData.itinerary[dayKey];
+          if (!day?.length) return;
+      
+          doc.setFontSize(14);
+          doc.text(`Day ${i + 1}`, 14, yOffset);
+      
+          const rows = day.map(activity => [
+            activity.bestTime || '',
+            activity.activity || '',
+            activity.description || '',
+            activity.duration || '',
+            activity.travelTime || '',
+            activity.price || ''
+          ]);
+      
+          autoTable(doc, {
+            startY: yOffset + 4,
+            head: [['Time', 'Activity', 'Description', 'Duration', 'Travel', 'Price']],
+            body: rows,
+            styles: { fontSize: 9, cellPadding: 3 },
+            theme: 'striped',
+            headStyles: { fillColor: [41, 128, 185] },
+            margin: { left: 14, right: 14 },
+            didDrawPage: data => {
+              yOffset = data.cursor.y + 10;
+            }
+          });
+        });
+      
+        doc.save('trip-activities.pdf');
+      };
+      
+      
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -97,7 +289,9 @@ function Viewtrip() {
     }
 
     return (
-        <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56'>
+        
+        <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56' ref={viewRef}>
+            
         {visibleSections.info && (
             <div className="animate-fadeIn mb-8">
                 <SectionHeader 
@@ -210,6 +404,12 @@ function Viewtrip() {
                 </div>
             </div>
         )}
+       <div className="flex justify-end items-center gap-4 mt-6 px-10 print:hidden">
+  <button onClick={handlePrint} className="bg-blue-600 text-white px-4 py-2 rounded">🖨 Print</button>
+  <button onClick={handleExportPDF} className="bg-green-600 text-white px-4 py-2 rounded">📄 Export PDF</button>
+</div>
+
+
     </div>
 );
 }
