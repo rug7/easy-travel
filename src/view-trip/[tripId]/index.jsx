@@ -26,6 +26,14 @@ function Viewtrip() {
         activities: false
     });
 
+    const [expandedSections, setExpandedSections] = useState({
+        info: true,
+        flights: true,
+        hotels: true,
+        activities: true,
+        weather: true
+    });
+
     useEffect(() => {
         if (tripId) {
             GetTripData();
@@ -59,6 +67,18 @@ function Viewtrip() {
             setVisibleSections(prev => ({ ...prev, activities: true }));
         }, 2400);
     }, [trip]);
+
+    const SectionHeader = ({ title, isExpanded, onToggle }) => (
+        <div 
+            className="flex items-center cursor-pointer mb-4 text-white" 
+            onClick={onToggle}
+        >
+            <span className={`transform transition-transform ${isExpanded ? 'rotate-0' : '-rotate-90'}`}>
+                ▼
+            </span>
+            <h2 className="text-xl font-bold ml-2">{title}</h2>
+        </div>
+    );
 
     const GetTripData = async () => {
         setLoading(true);
@@ -101,8 +121,16 @@ function Viewtrip() {
         <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56'>
             {/* Info Section */}
             {visibleSections.info && (
-                <div className="animate-fadeIn">
-                    <InfoSection trip={trip} />
+                <div className="animate-fadeIn mb-6">
+                <SectionHeader 
+                    title="Trip Information" 
+                    isExpanded={expandedSections.info}
+                    onToggle={() => setExpandedSections(prev => ({
+                        ...prev,
+                        info: !prev.info
+                    }))}
+                />
+                    {expandedSections.info && <InfoSection trip={trip} />}
                 </div>
             )}
 
