@@ -403,10 +403,10 @@ function Viewtrip() {
 
     return (
         
-        <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56' ref={viewRef}>
+        <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56 bg-gradient-to-b from-gray-900 to-gray-800' ref={viewRef}>
             
         {visibleSections.info && (
-            <div className="animate-fadeIn mb-8">
+            <div className="animate-fadeIn mb-8 mt-8">
                 <SectionHeader 
                     title="Trip Information"
                     isExpanded={expandedSections.info}
@@ -473,7 +473,7 @@ function Viewtrip() {
         {visibleSections.activities && (
             <div className="animate-fadeIn mb-8">
                 <SectionHeader 
-                    title="DailyActivities"
+                    title="Daily Activities"
                     isExpanded={expandedSections.activities}
                     onToggle={() => setExpandedSections(prev => ({
                         ...prev,
