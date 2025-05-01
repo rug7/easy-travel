@@ -23,20 +23,23 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
   const getAccessibleColor = (colorType) => {
     const colorMap = {
       default: {
-        // Normal mode colors
-        background: '#0f172a', 
-        cardBg: '#1e293b', 
-        highlightCardBg: '#172554',
+        // Professional colors matching website theme
+        background: '#1e1e2d', // Dark background matching website
+        cardBg: '#2b2b40', // Slightly lighter for cards
+        highlightCardBg: '#2A2A42', // Highlighted card
+        selectedBorder: '#3699FF', // Bright blue for accents (matching your website's buttons)
         text: '#ffffff',
-        lightText: '#94a3b8',
-        border: '#2563eb',
+        lightText: '#92929F',
+        border: '#3699FF',
         sunny: '#fbbf24',
         cloudy: '#94a3b8',
         rainy: '#38bdf8',
         thunderstorm: '#f59e0b',
         snow: '#e2e8f0',
-        primary: '#3b82f6',
+        primary: '#3699FF', // Matching your website's primary blue
         accent: '#60a5fa',
+        infoBoxBg: '#1b1b29', // Slightly darker for info box
+        containerBorder: '#2b2b40',
       },
       protanopia: {
         // Protanopia-friendly colors
@@ -308,16 +311,21 @@ const getWeatherIcon = (condition) => {
   
   if (!weatherData) return null;
   
-  return (
-    <div className="my-8 rounded-xl shadow-md overflow-hidden"
-         style={{ backgroundColor: getAccessibleColor('background') }}>
-      <div className="p-6">
-        <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3"
-            style={{ color: getAccessibleColor('text') }}>
-          <IoCloudOutline className="w-7 h-7" 
-                          style={{ color: getAccessibleColor('iconPrimary') }} />
-          {getWeatherTitle()}
-        </h2>
+ return (
+    <div className="my-8 rounded-xl shadow-lg overflow-hidden border"
+         style={{ 
+             backgroundColor: getAccessibleColor('background'),
+             borderColor: getAccessibleColor('containerBorder'),
+         }}>
+        <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"
+                style={{ color: getAccessibleColor('text') }}>
+                <IoCloudOutline 
+                    className="w-6 h-6" 
+                    style={{ color: getAccessibleColor('primary') }} 
+                />
+                {getWeatherTitle()}
+            </h2>
   
         {/* Forecast Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-4 mb-8">
