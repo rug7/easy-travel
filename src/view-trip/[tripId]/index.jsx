@@ -1,6 +1,6 @@
 import React, { useEffect, useState ,useRef } from "react";
 import { db } from '@/service/firebaseConfig';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc,setDoc } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import InfoSection from "../components/InfoSection";
@@ -13,6 +13,9 @@ import { ChevronDown } from 'lucide-react'; // Import the chevron icon (or use a
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+// import { shareTripWithUser } from "@/utils/ShareTrip";
+// import { useUser } from '@/context/UserContext'; // your logic to get logged-in user
+
 
 
 function Viewtrip() {
@@ -21,6 +24,8 @@ function Viewtrip() {
     const [loading, setLoading] = useState(true);
     const viewRef = useRef(null); // Add this line
       const { colorMode } = useAccessibility();
+      const [shareEmail, setShareEmail] = useState('');
+      const user = JSON.parse(localStorage.getItem('user'));
     
 
     const [visibleSections, setVisibleSections] = useState({
@@ -87,6 +92,37 @@ function Viewtrip() {
             setLoading(false);
         }
     };
+    const GetUserProfile = (tokenInfo) => {
+        axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo.access_token}`,{
+          headers:{
+            Authorization:`Bearer ${tokenInfo?.access_token}`,
+            Accept: 'Application/json'
+          }
+        }).then((resp)=>{
+          console.log(resp);
+          localStorage.setItem('user',JSON.stringify(resp.data));
+          setOpenDialog(false);
+          generateTrip();
+        })
+      }
+
+      const handleShareTrip = async () => {
+        const email = prompt("Enter the email to share this trip with:");
+        if (!email) return;
+      
+        try {
+          await setDoc(doc(db, 'sharedTrips', `${tripId}_${email}`), {
+            sharedWith: email,
+            tripId
+          });
+      
+          toast.success(`Trip shared with ${email}`);
+        } catch (error) {
+          console.error("Error sharing trip:", error);
+          toast.error("Failed to share trip.");
+        }
+      };
+    
     const getAccessibleColor = (colorType) => {
         // Map standard color names to your colorMode-specific colors
         const colorMap = {
@@ -404,7 +440,8 @@ function Viewtrip() {
     return (
         
         <div className='pt-[72px] p-10 md:px-20 lg:px-44 xl:px-56 bg-gradient-to-b from-gray-900 to-gray-800' ref={viewRef}>
-            
+                <div className="flex gap-2 mt-4 items-center">
+
         {visibleSections.info && (
             <div className="animate-fadeIn mb-8 mt-8">
                 <SectionHeader 
@@ -424,8 +461,25 @@ function Viewtrip() {
                         </div>
                     )}
                 </div>
-            </div>
+                
+      </div>
+      
         )}
+        <input
+        type="email"
+        placeholder="Enter recipient's email"
+        value={shareEmail}
+        onChange={(e) => setShareEmail(e.target.value)}
+        className="px-4 py-2 rounded border bg-white text-black"
+      />
+      <button
+  onClick={handleShareTrip}
+  className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+>
+  <span>Share</span>
+</button>
+      </div>
+        
              {visibleSections.flights && (
             <div className="animate-fadeIn mb-8">
                 <SectionHeader 

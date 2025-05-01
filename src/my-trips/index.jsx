@@ -423,7 +423,7 @@ function MyTrips() {
         // Get marker colors based on color mode
         const markerFillColor = getAccessibleColor('danger');
         const markerStrokeColor = colorMode === 'monochromacy' ? '#e5e7eb' : '#FFFFFF';
-        const historyMarkerColor = getAccessibleColor('primary');
+        const historyMarkerColor = getAccessibleColor('danger');
 
         // Add trip markers
         destinations.forEach((destination, index) => {
@@ -459,7 +459,7 @@ function MyTrips() {
                                                     </h3>
                                                     <p style="margin: 2px 0 6px; color: black; font-size: 12px; font-weight: 400">${destination.days.toString().replace(' days', '')} days</p>
                                                     <button 
-                                                        style="background: ${getAccessibleColor('primary')}; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; width: 100%;"
+                                                        style="background: ${getAccessibleColor('danger')}; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; width: 100%;"
                                                         onclick="window.viewTrip('${destination.id}')"
                                                     >
                                                         View Trip
@@ -699,8 +699,8 @@ function MyTrips() {
                                                                 <div 
                                                                     className="w-4 h-4 rounded-full border-2" 
                                                                     style={{ 
-                                                                        backgroundColor: `${getAccessibleColor('primary')}80`,
-                                                                        borderColor: getAccessibleColor('primary')
+                                                                        backgroundColor: `${getAccessibleColor('danger')}80`,
+                                                                        borderColor: getAccessibleColor('danger')
                                                                     }}
                                                                 ></div>
                                                                 <span className="text-xs font-medium text-black">Visited Places ({locationHistory.length})</span>

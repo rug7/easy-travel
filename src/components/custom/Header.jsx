@@ -147,6 +147,21 @@ function Header() {
     if (user) {
       return (
         <div className="flex items-center gap-3">
+          <Button 
+  variant="outline" 
+  className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105 ${
+    colorMode === 'default' ? 'bg-indigo-600 hover:bg-indigo-600 hover:text-white' : ''
+  }`}
+  style={
+    colorMode !== 'default' 
+      ? { backgroundColor: getAccessibleColor('info'), color: 'white' }
+      : {}
+  }
+  onClick={() => navigate('/shared-trips')}
+>
+  Shared Trips
+</Button>
+
           {/* My Trips Button */}
           <Button 
             variant="outline" 

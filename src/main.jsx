@@ -14,6 +14,7 @@ import Viewtrip from "./view-trip/[tripId]/index.jsx";
 import MyTrips from "./my-trips";
 import TravelDashboard from "./view-trip/components/TravelDashboard";
 import TravelCalendar from "./view-trip/components/TravelCalendar";
+import SharedTrips from "./view-trip/components/SharedTrips";
 
 // Animation styles code...
 
@@ -70,6 +71,15 @@ const router = createBrowserRouter([
       <>
         <Header />
         <TravelCalendar />
+      </>
+    ),
+  },
+  {
+    path: "/shared-trips",
+    element: (
+      <>
+        <Header />
+        <SharedTrips />
       </>
     ),
   },
