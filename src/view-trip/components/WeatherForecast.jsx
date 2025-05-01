@@ -373,7 +373,7 @@ const getWeatherIcon = (condition) => {
                borderWidth: '1px'
              }}>
           <IoInformationCircleOutline 
-            className="w-6 h-6 flex-shrink-0 mt-0.5"
+            className="w-7 h-7 flex-shrink-0 mt-0.5 text-white"
             style={{ color: getAccessibleColor('iconPrimary') }}
           />
           <div>
