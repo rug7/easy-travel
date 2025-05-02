@@ -36,7 +36,7 @@ const docId = `${tripId}_${normalizedSenderEmail.replace(/[^a-z0-9]/g, '_')}_${n
         read: false
       });
 
-      toast.success(`Trip shared with \${email}`);
+      toast.success(`Trip shared with ${email}`);
       setEmail('');
       onClose();
     } catch (error) {

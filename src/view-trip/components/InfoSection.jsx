@@ -143,7 +143,7 @@ function InfoSection({ trip }) {
                     {/* Share Button */}
                     <Button 
                         onClick={() => setShowShareModal(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-2 text-lg transition-all duration-300 hover:scale-105"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-3 text-lg transition-all duration-300 hover:scale-105 ml-2"
                     >
                         <IoIosSend className="text-xl" />
                         <span>Share</span>
