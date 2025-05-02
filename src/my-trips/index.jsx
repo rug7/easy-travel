@@ -42,12 +42,16 @@ function MyTrips() {
     const [mapError, setMapError] = useState(null);
     const [mapInitialized, setMapInitialized] = useState(false);
     const [locationHistory, setLocationHistory] = useState([]);
+    const [dataLoaded, setDataLoaded] = useState(false);
+
 
     // Refs
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const markersRef = useRef([]);
     const navigate = useNavigate();
+
+    
 
     // Function to get accessible colors based on color mode
     const getAccessibleColor = (colorType) => {
@@ -167,10 +171,10 @@ function MyTrips() {
         }
 
         if (matchedCountry) {
-            console.log(`Found match for "${locationQuery}": ${matchedCountry.name}`);
+            // console.log(`Found match for "${locationQuery}": ${matchedCountry.name}`);
             return matchedCountry.imageUrl;
         } else {
-            console.log(`No match found for "${locationQuery}"`);
+            // console.log(`No match found for "${locationQuery}"`);
             return fallbackImage;
         }
     };
@@ -200,21 +204,31 @@ function MyTrips() {
 
     useEffect(() => {
         const initializeData = async () => {
-            // Only proceed if the user is logged in
-            if (user?.email) {
-                await Promise.all([fetchTrips(), fetchLocationHistory()]);
-                if (!window.google) {
-                    loadGoogleMapsScript();
+            if (user?.id && !dataLoaded) {
+                try {
+                    // console.log("Initializing data with user:", user.id);
+                    await Promise.all([fetchTrips(), fetchLocationHistory()]);
+                    setDataLoaded(true);
+                    
+                    if (!window.google) {
+                        loadGoogleMapsScript();
+                    }
+                } catch (error) {
+                    console.error("Error initializing data:", error);
+                } finally {
+                    setLoading(false);
                 }
-            } else {
-                // If no user is logged in, redirect to home
+            } else if (!user) {
+                setLoading(false);
+                // Navigate home if needed
                 navigate('/');
-                toast.error('Please log in to view your trips');
+                // toast.error('Please log in to view your trips');
             }
         };
-
+    
         initializeData();
-
+    
+        // Clean up function
         return () => {
             if (markersRef.current.length > 0) {
                 markersRef.current.forEach(marker => {
@@ -223,24 +237,29 @@ function MyTrips() {
                 markersRef.current = [];
             }
         };
-    }, [user]);
+    }, [user, dataLoaded]); 
 
     const fetchLocationHistory = async () => {
-        if (!user?.email) return;
+        // Don't get user again here - use the one from component state
+        if (!user?.id) {
+            console.error("No user ID found - cannot fetch location history");
+            return;
+        }
         
         try {
-            // Filter location history by user email
+            // console.log("Filtering location history with userId:", user.id);
             const historyQuery = query(
                 collection(db, 'userLocationHistory'),
-                where('userEmail', '==', user.email)
+                where('userId', '==', user.id)
             );
             const historySnapshot = await getDocs(historyQuery);
+            
+            // console.log("Query returned docs:", historySnapshot.docs.length);
             
             const historyData = historySnapshot.docs.map(doc => ({
                 id: doc.id,
                 destination: doc.data().destination,
                 visitedAt: doc.data().visitedAt,
-                // Add any other fields you need
             }));
             setLocationHistory(historyData);
         } catch (error) {
