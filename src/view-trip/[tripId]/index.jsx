@@ -1,7 +1,7 @@
 import React, { useEffect, useState ,useRef } from "react";
 import { db } from '@/service/firebaseConfig';
 import { doc, getDoc,setDoc } from "firebase/firestore";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import InfoSection from "../components/InfoSection";
 import Hotels from "../components/Hotels";
@@ -20,12 +20,19 @@ import autoTable from 'jspdf-autotable';
 
 function Viewtrip() {
     const { tripId } = useParams();
+    const navigate = useNavigate();
     const [trip, setTrip] = useState(null);
     const [loading, setLoading] = useState(true);
     const viewRef = useRef(null); // Add this line
       const { colorMode } = useAccessibility();
       const [shareEmail, setShareEmail] = useState('');
       const user = JSON.parse(localStorage.getItem('user'));
+      useEffect(() => {
+        // Check if user is logged in
+        if (!user) {
+          navigate('/');
+        }
+      }, [user, navigate]);
     
 
     const [visibleSections, setVisibleSections] = useState({
@@ -106,22 +113,22 @@ function Viewtrip() {
         })
       }
 
-      const handleShareTrip = async () => {
-        const email = prompt("Enter the email to share this trip with:");
-        if (!email) return;
+      // const handleShareTrip = async () => {
+      //   const email = prompt("Enter the email to share this trip with:");
+      //   if (!email) return;
       
-        try {
-          await setDoc(doc(db, 'sharedTrips', `${tripId}_${email}`), {
-            sharedWith: email,
-            tripId
-          });
+      //   try {
+      //     await setDoc(doc(db, 'sharedTrips', `${tripId}_${email}`), {
+      //       sharedWith: email,
+      //       tripId
+      //     });
       
-          toast.success(`Trip shared with ${email}`);
-        } catch (error) {
-          console.error("Error sharing trip:", error);
-          toast.error("Failed to share trip.");
-        }
-      };
+      //     toast.success(`Trip shared with ${email}`);
+      //   } catch (error) {
+      //     console.error("Error sharing trip:", error);
+      //     toast.error("Failed to share trip.");
+      //   }
+      // };
     
     const getAccessibleColor = (colorType) => {
         // Map standard color names to your colorMode-specific colors
@@ -457,7 +464,7 @@ function Viewtrip() {
                 }`}>
                     {expandedSections.info && (
                         <div className="content-enter">
-                            <InfoSection trip={trip} />
+                            <InfoSection trip={{...trip, id: tripId}} />
                         </div>
                     )}
                 </div>
@@ -465,7 +472,7 @@ function Viewtrip() {
       </div>
       
         )}
-        <input
+        {/* <input
         type="email"
         placeholder="Enter recipient's email"
         value={shareEmail}
@@ -477,7 +484,7 @@ function Viewtrip() {
   className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
 >
   <span>Share</span>
-</button>
+</button> */}
       </div>
         
              {visibleSections.flights && (

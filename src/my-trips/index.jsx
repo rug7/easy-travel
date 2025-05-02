@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { db } from '@/service/firebaseConfig';
-import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc, query, where } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { IoArrowBack, IoTrashOutline, IoMapOutline, IoCloseOutline, IoExpandOutline } from 'react-icons/io5';
 import { toast } from 'sonner';
@@ -15,6 +15,17 @@ import { useAccessibility } from '@/context/AccessibilityContext';
 function MyTrips() {
     // Get color mode from accessibility context
     const { colorMode } = useAccessibility();
+    
+    // Get the current user from localStorage
+    const user = (() => {
+        try {
+            const userData = localStorage.getItem('user');
+            return userData ? JSON.parse(userData) : null;
+        } catch (e) {
+            console.error("Error parsing user data:", e);
+            return null;
+        }
+    })();
     
     // Existing state
     const [trips, setTrips] = useState([]);
@@ -189,9 +200,16 @@ function MyTrips() {
 
     useEffect(() => {
         const initializeData = async () => {
-            await Promise.all([fetchTrips(), fetchLocationHistory()]);
-            if (!window.google) {
-                loadGoogleMapsScript();
+            // Only proceed if the user is logged in
+            if (user?.email) {
+                await Promise.all([fetchTrips(), fetchLocationHistory()]);
+                if (!window.google) {
+                    loadGoogleMapsScript();
+                }
+            } else {
+                // If no user is logged in, redirect to home
+                navigate('/');
+                toast.error('Please log in to view your trips');
             }
         };
 
@@ -205,11 +223,19 @@ function MyTrips() {
                 markersRef.current = [];
             }
         };
-    }, []);
+    }, [user]);
 
     const fetchLocationHistory = async () => {
+        if (!user?.email) return;
+        
         try {
-            const historySnapshot = await getDocs(collection(db, 'userLocationHistory'));
+            // Filter location history by user email
+            const historyQuery = query(
+                collection(db, 'userLocationHistory'),
+                where('userEmail', '==', user.email)
+            );
+            const historySnapshot = await getDocs(historyQuery);
+            
             const historyData = historySnapshot.docs.map(doc => ({
                 id: doc.id,
                 destination: doc.data().destination,
@@ -223,12 +249,21 @@ function MyTrips() {
     };
 
     const fetchTrips = async () => {
+        if (!user?.email) return;
+        
         try {
-            const querySnapshot = await getDocs(collection(db, 'AITrips'));
+            // Create a query that filters trips by the user's email
+            const tripsQuery = query(
+                collection(db, 'AITrips'),
+                where('userEmail', '==', user.email)
+            );
+            
+            const querySnapshot = await getDocs(tripsQuery);
             const tripsData = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
+            
             setTrips(tripsData);
 
             // Extract destinations for map
@@ -598,7 +633,22 @@ function MyTrips() {
                                 setConfirmDelete(null);
                             }
                         };
-                    
+                        if (!user) {
+                            return (
+                                <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-[100px] flex flex-col items-center justify-center">
+                                    <div className="text-white text-center">
+                                        <h1 className="text-3xl font-bold mb-4">Please Log In</h1>
+                                        <p className="mb-6">You need to be logged in to view your trips</p>
+                                        <button
+                                            onClick={() => navigate('/')}
+                                            className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+                                        >
+                                            Go to Home
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        }
                         return (
                             <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
                                 <div className="max-w-7xl mx-auto px-4 pt-[140px] pb-12">
@@ -888,6 +938,7 @@ function MyTrips() {
                             </div>
                         </div>
                     );
+                    
                 }
                 
                 export default MyTrips;

@@ -3,13 +3,14 @@ import { formatDate } from "@/utils/formatUtils";
 import { IoIosSend } from "react-icons/io";
 import { Button } from "@/components/ui/button";
 import fallbackImage from '/moderate1.jpg';
-// Import the destinations data
 import destinationsData from '@/context/destinations.json';
+import ShareTripModal from "./ShareTripModal";
 
 function InfoSection({ trip }) {
     const [photoUrl, setPhotoUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [imageError, setImageError] = useState(false);
+    const [showShareModal, setShowShareModal] = useState(false);
 
     useEffect(() => {
         if (trip) {
@@ -115,8 +116,8 @@ function InfoSection({ trip }) {
                             {trip.tripData?.trip?.destination || 'Your Trip'}
                         </h1>
                         <div className="flex items-center gap-2">
-                            <span className="text-xl font-semibold text-white/90">
-                                📅 {trip.tripData?.trip?.duration || `${trip.userSelection?.numDays} days`}
+                        <span className="text-xl font-semibold text-white/90">
+                                📅 {trip.tripData?.trip?.duration || `\${trip.userSelection?.numDays} days`}
                             </span>
                         </div>
                     </div>
@@ -141,6 +142,7 @@ function InfoSection({ trip }) {
                     </div>
                     {/* Share Button */}
                     <Button 
+                        onClick={() => setShowShareModal(true)}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-2 text-lg transition-all duration-300 hover:scale-105"
                     >
                         <IoIosSend className="text-xl" />
@@ -148,6 +150,14 @@ function InfoSection({ trip }) {
                     </Button>
                 </div>
             </div>
+            
+            {/* Share Trip Modal */}
+            <ShareTripModal 
+                isOpen={showShareModal} 
+                onClose={() => setShowShareModal(false)}
+                tripId={trip.id}
+                tripDestination={trip.tripData?.trip?.destination || 'Trip'}
+            />
         </div>
     );
 }

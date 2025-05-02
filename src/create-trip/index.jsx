@@ -65,6 +65,8 @@ function CreateTrip() {
 
   // Add state to track the trip ID for navigation
   const [generatedTripId, setGeneratedTripId] = useState(null);
+  const user = JSON.parse(localStorage.getItem('user'));
+
   
 
   const [tripData, setTripData] = useState({
@@ -139,6 +141,21 @@ function CreateTrip() {
       sightseeing: selectedSightseeing
     });
   }, [place, numDays, selectedBudgets, selectedPeople, selectedWeather, selectedActivities, selectedSightseeing]);
+
+  // Add this useEffect in CreateTrip
+useEffect(() => {
+  // Check if user is logged in
+  if (!user || !user.email) {
+    toast.error('You need to be logged in to create a trip');
+    navigate('/');
+  }
+}, [user, navigate]);
+  const tripWithUserEmail = {
+    ...tripData,
+    userEmail: user.email, // Store the user's email
+    createdAt: new Date().toISOString()
+  };
+  
 
   const login = useGoogleLogin({
     onSuccess: async (codeResponse) => {

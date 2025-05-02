@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAccessibility } from "@/context/AccessibilityContext"; 
-import { IoClose, IoAccessibility } from "react-icons/io5";
+import { IoClose, IoAccessibility, IoNotifications } from "react-icons/io5";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
@@ -14,12 +14,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { googleLogout } from "@react-oauth/google";
+import { db } from '@/service/firebaseConfig';
+import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 
 function Header() {
   const { language, changeLanguage, translate } = useLanguage();
   const { colorMode, setColorMode, colorSchemes, increaseFont, decreaseFont, resetFont } = useAccessibility();
   const [openDialog, setOpenDialog] = useState(false);
   const [accessibilityMenuOpen, setAccessibilityMenuOpen] = useState(false);
+  const [newSharedTrips, setNewSharedTrips] = useState(0);
   const navigate = useNavigate();
   
   // Safely parse user data with error handling
@@ -32,6 +35,36 @@ function Header() {
       return null;
     }
   })();
+
+  // Fetch unread shared trips count
+  useEffect(() => {
+    if (!user?.email) return;
+    
+    const fetchUnreadTripsCount = async () => {
+      try {
+        const q = query(
+          collection(db, 'sharedTrips'), 
+          where('sharedWith', '==', user.email),
+          where('read', '==', false)
+        );
+        
+        // Initial fetch
+        const querySnapshot = await getDocs(q);
+        setNewSharedTrips(querySnapshot.size);
+        
+        // Set up real-time listener for changes
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          setNewSharedTrips(snapshot.size);
+        });
+        
+        return () => unsubscribe();
+      } catch (error) {
+        console.error("Error fetching unread shared trips:", error);
+      }
+    };
+    
+    fetchUnreadTripsCount();
+  }, [user]);
 
   // Function to get accessible colors based on color mode
   const getAccessibleColor = (colorType) => {
@@ -142,25 +175,36 @@ function Header() {
     navigate('/calendar');
   };
   
+  const goToSharedTrips = () => {
+    navigate('/shared-trips');
+  };
+  
   // Render user section with accessible colors
   const renderUserSection = () => {
     if (user) {
       return (
         <div className="flex items-center gap-3">
-          <Button 
-  variant="outline" 
-  className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105 ${
-    colorMode === 'default' ? 'bg-indigo-600 hover:bg-indigo-600 hover:text-white' : ''
-  }`}
-  style={
-    colorMode !== 'default' 
-      ? { backgroundColor: getAccessibleColor('info'), color: 'white' }
-      : {}
-  }
-  onClick={() => navigate('/shared-trips')}
->
-  Shared Trips
-</Button>
+          <div className="relative">
+            <Button 
+              variant="outline" 
+              className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105 ${
+                colorMode === 'default' ? 'bg-indigo-600 hover:bg-indigo-600 hover:text-white' : ''
+              }`}
+              style={
+                colorMode !== 'default' 
+                  ? { backgroundColor: getAccessibleColor('info'), color: 'white' }
+                  : {}
+              }
+              onClick={goToSharedTrips}
+            >
+              Shared Trips
+              {newSharedTrips > 0 && (
+                <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                  {newSharedTrips}
+                </span>
+              )}
+            </Button>
+          </div>
 
           {/* My Trips Button */}
           <Button 
