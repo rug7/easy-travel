@@ -148,11 +148,21 @@ const q = query(
     );
   }
 
-  if (loading) return <div className="text-white p-10 pt-[100px]">Loading shared trips...</div>;
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="flex flex-col items-center space-y-4">
+          {/* Spinner */}
+          <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-white text-lg font-medium">Loading shared trips...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="pt-[72px] p-10 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen">
-      <h1 className="text-3xl font-bold text-white mb-6">Trips Shared With You</h1>
+    <div className="pt-[72px] p-10 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen mt-8">
+      <h1 className="text-3xl font-bold text-white mb-8">Trips Shared With You</h1>
       {trips.length === 0 ? (
         <p className="text-white">No shared trips yet.</p>
       ) : (
