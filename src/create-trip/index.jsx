@@ -7,6 +7,7 @@ import PeopleInput from "@/components/custom/PeopleInput";
 import TripTypeSelector from "@/components/custom/TripTypeSelector";
 import SeatClassSelector from "@/components/custom/SeatClassSelector";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAccessibility } from "@/context/AccessibilityContext";
 import { getTranslatedOptions } from "@/constants/options";
 import { toast } from "sonner";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -15,7 +16,7 @@ import { IoClose } from "react-icons/io5";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { setDoc,doc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -26,10 +27,6 @@ import {
 
 import LoadingScreen from "@/view-trip/components/LoadingScreen";
 
-
-
-
-
 function CreateTrip() {
   const [place, setPlace] = useState(null);
   const [showMoreQuestions, setShowMoreQuestions] = useState(false);
@@ -38,6 +35,7 @@ function CreateTrip() {
   const [useDates, setUseDates] = useState(false);
   const [numDays, setNumDays] = useState("");
   const { translate, language } = useLanguage();
+  const { colorMode, colorSchemes } = useAccessibility();
   const isRTL = language === "he";
 
   const [selectedWeather, setSelectedWeather] = useState([]);
@@ -45,12 +43,67 @@ function CreateTrip() {
   const [selectedSightseeing, setSelectedSightseeing] = useState([]);
   const [selectedBudgets, setSelectedBudgets] = useState([]);
   const [selectedPeople, setSelectedPeople] = useState([]);
-
-
   
+  // Function to get accessible colors based on color mode
+  const getAccessibleColor = (colorType) => {
+    const colorMap = {
+      default: {
+        primary: '#3b82f6', // blue-500
+        secondary: '#8b5cf6', // purple-500
+        success: '#10b981', // green-500
+        danger: '#ef4444', // red-500
+        warning: '#f59e0b', // amber-500
+        info: '#3b82f6', // blue-500
+      },
+      protanopia: {
+        primary: '#2563eb', // More bluish
+        secondary: '#7c3aed', // More visible purple
+        success: '#059669', // Adjusted green
+        danger: '#9ca3af', // Gray instead of red
+        warning: '#d97706', // Darker amber
+        info: '#0284c7', // Darker blue
+      },
+      deuteranopia: {
+        primary: '#1d4ed8', // Deeper blue
+        secondary: '#6d28d9', // Deeper purple
+        success: '#0f766e', // Teal instead of green
+        danger: '#b91c1c', // More visible red
+        warning: '#b45309', // Darker amber
+        info: '#1e40af', // Deeper blue
+      },
+      tritanopia: {
+        primary: '#4f46e5', // Indigo
+        secondary: '#7e22ce', // Darker purple
+        success: '#15803d', // Darker green
+        danger: '#dc2626', // Bright red
+        warning: '#ca8a04', // Darker yellow
+        info: '#4338ca', // Indigo
+      },
+      monochromacy: {
+        primary: '#4b5563', // Gray-600
+        secondary: '#6b7280', // Gray-500
+        success: '#374151', // Gray-700
+        danger: '#1f2937', // Gray-800
+        warning: '#6b7280', // Gray-500
+        info: '#4b5563', // Gray-600
+      },
+      highContrast: {
+        primary: '#1d4ed8', // Deep blue
+        secondary: '#6d28d9', // Deep purple
+        success: '#047857', // Deep green
+        danger: '#b91c1c', // Deep red
+        warning: '#b45309', // Deep amber
+        info: '#1e40af', // Deep blue
+      }
+    };
+  
+    // Use colorMode-specific colors, falling back to default
+    return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
+  };
+
   const navigate = useNavigate();
 
-  const [openDialog,setOpenDialog]=useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState({
     destination: false,
@@ -66,8 +119,6 @@ function CreateTrip() {
   // Add state to track the trip ID for navigation
   const [generatedTripId, setGeneratedTripId] = useState(null);
   const user = JSON.parse(localStorage.getItem('user'));
-
-  
 
   const [tripData, setTripData] = useState({
     destination: null,
@@ -114,8 +165,6 @@ function CreateTrip() {
     { id: 'BUSINESS', title: translate("business"), icon: '🛋️' },
     { id: 'FIRST', title: translate("first"), icon: '👑' }
   ];
-  
-
 
   const {
     SelectTravelsList,
@@ -124,6 +173,42 @@ function CreateTrip() {
     ActivityOptions,
     SightseeingOptions,
   } = getTranslatedOptions(translate);
+
+  // Function for accessible button styles
+  const getButtonStyle = (type = 'primary') => {
+    if (colorMode === 'default') {
+      return {}; // Use default Tailwind classes
+    }
+    
+    // Return color-blind accessible styles
+    switch (type) {
+      case 'primary':
+        return {
+          backgroundColor: getAccessibleColor('primary'),
+          color: 'white',
+        };
+      case 'secondary':
+        return {
+          backgroundColor: getAccessibleColor('secondary'),
+          color: 'white',
+        };
+      case 'danger':
+        return {
+          backgroundColor: getAccessibleColor('danger'),
+          color: 'white',
+        };
+      case 'success':
+        return {
+          backgroundColor: getAccessibleColor('success'),
+          color: 'white',
+        };
+      default:
+        return {
+          backgroundColor: getAccessibleColor('primary'),
+          color: 'white',
+        };
+    }
+  };
 
   const handleGenerationComplete = () => {
     setIsGenerating(false);
@@ -143,19 +228,19 @@ function CreateTrip() {
   }, [place, numDays, selectedBudgets, selectedPeople, selectedWeather, selectedActivities, selectedSightseeing]);
 
   // Add this useEffect in CreateTrip
-useEffect(() => {
-  // Check if user is logged in
-  if (!user || !user.email) {
-    toast.error('You need to be logged in to create a trip');
-    navigate('/');
-  }
-}, [user, navigate]);
+  useEffect(() => {
+    // Check if user is logged in
+    if (!user || !user.email) {
+      toast.error('You need to be logged in to create a trip');
+      navigate('/');
+    }
+  }, [user, navigate]);
+  
   const tripWithUserEmail = {
     ...tripData,
-    userEmail: user.email, // Store the user's email
+    userEmail: user?.email,
     createdAt: new Date().toISOString()
   };
-  
 
   const login = useGoogleLogin({
     onSuccess: async (codeResponse) => {
@@ -319,8 +404,6 @@ useEffect(() => {
       setIsGenerating(false);
     }
   };
-  
- 
 
   const handleHelpMeDecide = () => {
     setIsAISelected(!isAISelected);
@@ -364,7 +447,7 @@ useEffect(() => {
     }
   };
 
-   const GetUserProfile = (tokenInfo) => {
+  const GetUserProfile = (tokenInfo) => {
     axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo.access_token}`,{
       headers:{
         Authorization:`Bearer ${tokenInfo?.access_token}`,
@@ -513,18 +596,19 @@ useEffect(() => {
       >
         {/* Destination Section */}
         <DestinationInput
-      place={place}
-      setPlace={setPlace}
-      translate={translate}
-      onToggle={handleHelpMeDecide}
-      onInputClick={() => {
-        setIsAISelected(false);
-        setShowWeatherOptions(false);
-      }}
-      isAISelected={isAISelected}
-    />
-                {/* Number of Days */}
-
+          place={place}
+          setPlace={setPlace}
+          translate={translate}
+          onToggle={handleHelpMeDecide}
+          onInputClick={() => {
+            setIsAISelected(false);
+            setShowWeatherOptions(false);
+          }}
+          isAISelected={isAISelected}
+          colorMode={colorMode}
+        />
+        
+        {/* Number of Days */}
         <DaysInput
           translate={translate}
           useDates={useDates}
@@ -535,44 +619,49 @@ useEffect(() => {
           setStartDate={setStartDate}
           endDate={endDate}
           setEndDate={setEndDate}
+          colorMode={colorMode}
         />
 
-        {/* class */}
-      <div className="space-y-6">
-        <h3 className="text-xl font-bold text-white mb-4">
-          {translate("flightPreferences")}
-        </h3>
-        <div className="space-y-4">
-          <TripTypeSelector
-            selected={tripType}
-            onSelect={setTripType}
-            options={tripTypeOptions}
-          />
-          <SeatClassSelector
-            selected={seatClass}
-            onSelect={setSeatClass}
-            options={seatClassOptions}
-          />
+        {/* Flight Preferences */}
+        <div className="space-y-6">
+          <h3 className="text-xl font-bold text-white mb-4">
+            {translate("flightPreferences")}
+          </h3>
+          <div className="space-y-4">
+            <TripTypeSelector
+              selected={tripType}
+              onSelect={setTripType}
+              options={tripTypeOptions}
+              colorMode={colorMode}
+            />
+            <SeatClassSelector
+              selected={seatClass}
+              onSelect={setSeatClass}
+              options={seatClassOptions}
+              colorMode={colorMode}
+            />
+          </div>
         </div>
-      </div>
 
         {/* Additional Questions */}
         <div className="space-y-10">
           {/* Weather Options - Only show when Help Me Decide is active */}
-        {showWeatherOptions && (
-          <SelectableOptions
-            title={translate("weatherPreference")}
-            options={WeatherOptions}
-            selectedOptions={selectedWeather}
-            onSelect={(id) => handleSelect(id, "weather")}
-          />
-        )}
+          {showWeatherOptions && (
+            <SelectableOptions
+              title={translate("weatherPreference")}
+              options={WeatherOptions}
+              selectedOptions={selectedWeather}
+              onSelect={(id) => handleSelect(id, "weather")}
+              colorMode={colorMode}
+            />
+          )}
           <SelectableOptions
             title={translate("activitiesPreference")}
             options={ActivityOptions}
             selectedOptions={selectedActivities}
             onSelect={(id) => handleSelect(id, "activities")}
             gridCols="grid-cols-2 md:grid-cols-4"
+            colorMode={colorMode}
           />
           <SelectableOptions
             title={translate("sightseeingPreference")}
@@ -580,81 +669,91 @@ useEffect(() => {
             selectedOptions={selectedSightseeing}
             onSelect={(id) => handleSelect(id, "sightseeing")}
             gridCols="grid-cols-2 md:grid-cols-4"
+            colorMode={colorMode}
           />
         </div>
 
-        
-
         {/* Budget */}
         <BudgetOptions
-        title={translate("budgetTitle")}
-        options={SelectBudgetOptions}
-        selectedOptions={selectedBudgets}
-        onSelect={(id) => handleSelect(id, "budget")}
-        
-    />
+          title={translate("budgetTitle")}
+          options={SelectBudgetOptions}
+          selectedOptions={selectedBudgets}
+          onSelect={(id) => handleSelect(id, "budget")}
+          colorMode={colorMode}
+        />
 
         {/* Number of People */}
-        <PeopleInput title={translate("peopleTraveling")}
-        options={SelectTravelsList}
-        selectedOptions={selectedPeople}
-        onSelect={(id) => handleSelect(id, "people")} 
-
+        <PeopleInput 
+          title={translate("peopleTraveling")}
+          options={SelectTravelsList}
+          selectedOptions={selectedPeople}
+          onSelect={(id) => handleSelect(id, "people")}
+          colorMode={colorMode}
         />
 
         {/* Generate Trip */}
         <div className="text-center">
-        <button 
-  onClick={handleGenerateTrip}
-  disabled={isGenerating}
-  className={`
-    px-8 py-3 
-    bg-blue-600 
-    text-white 
-    font-bold 
-    text-lg 
-    transition-all 
-    duration-300
-    rounded-lfull
-    ${isGenerating ? 'animate-pulse' : 'hover:scale-105'}
-  `}
->
-  {isGenerating ? translate("generating") + "..." : translate("generateTrip")}
-</button>
+          <button 
+            onClick={handleGenerateTrip}
+            disabled={isGenerating}
+            className={`
+              px-8 py-3 
+              ${colorMode === 'default' ? 'bg-blue-600 text-white' : ''}
+              font-bold 
+              text-lg 
+              transition-all 
+              duration-300
+              rounded-full
+              ${isGenerating ? 'animate-pulse' : 'hover:scale-105'}
+            `}
+            style={colorMode !== 'default' ? getButtonStyle('primary') : {}}
+          >
+            {isGenerating ? translate("generating") + "..." : translate("generateTrip")}
+          </button>
         </div>
       </div>
 
       <Dialog open={openDialog && !isGenerating} onOpenChange={(open) => {
-  // Only allow opening/closing the dialog if not generating
-  if (!isGenerating) {
-    setOpenDialog(open);
-  }
-}}>
-  <DialogContent className="sm:max-w-md bg-white rounded-lg shadow-lg">
-    <DialogHeader>
-      <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-        <IoClose className="h-5 w-5 text-gray-600" />
-        <span className="sr-only">Close</span>
-      </DialogClose>
-      <DialogDescription>
-        <div className="flex flex-col items-center justify-center space-y-4 p-6">
-          <img src="/logo.svg" alt="Easy Travel Logo" className="h-12 w-12" />
-          <h2 className="font-bold text-lg text-gray-800">Sign In With Google</h2>
-          <p className="text-sm text-gray-600 text-center">
-            Sign in to continue generating your trip
-          </p>
-          <Button
-            className="w-full mt-4 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 flex items-center justify-center space-x-2 py-2 rounded-md"
-            onClick={login}
-          >
-            <FcGoogle className="h-5 w-5" />
-            <span>Sign In With Google</span>
-          </Button>
-        </div>
-      </DialogDescription>
-    </DialogHeader>
-  </DialogContent>
-</Dialog>
+        // Only allow opening/closing the dialog if not generating
+        if (!isGenerating) {
+          setOpenDialog(open);
+        }
+      }}>
+        <DialogContent className="sm:max-w-md bg-white rounded-lg shadow-lg">
+          <DialogHeader>
+            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+              <IoClose className="h-5 w-5 text-gray-600" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+            <DialogDescription>
+              <div className="flex flex-col items-center justify-center space-y-4 p-6">
+                <img src="/logo.svg" alt="Easy Travel Logo" className="h-12 w-12" />
+                <h2 className="font-bold text-lg text-gray-800">Sign In With Google</h2>
+                <p className="text-sm text-gray-600 text-center">
+                  Sign in to continue generating your trip
+                </p>
+                <Button
+                  className={`w-full mt-4 ${colorMode === 'default' ? 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50' : ''} flex items-center justify-center space-x-2 py-2 rounded-md`}
+                  onClick={login}
+                  style={
+                    colorMode !== 'default' 
+                      ? { 
+                          backgroundColor: 'white',
+                          color: getAccessibleColor('primary'),
+                          borderColor: getAccessibleColor('primary'),
+                          borderWidth: '1px'
+                        }
+                      : {}
+                  }
+                >
+                  <FcGoogle className="h-5 w-5" />
+                  <span>Sign In With Google</span>
+                </Button>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
