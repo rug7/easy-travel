@@ -6,11 +6,11 @@ import fallbackImage from '/moderate1.jpg';
 import destinationsData from '@/context/destinations.json';
 import ShareTripModal from "./ShareTripModal";
 
-function InfoSection({ trip }) {
+function InfoSection({ trip, onShareClick }) {
     const [photoUrl, setPhotoUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [imageError, setImageError] = useState(false);
-    const [showShareModal, setShowShareModal] = useState(false);
+    // const [showShareModal, setShowShareModal] = useState(false);
 
     useEffect(() => {
         if (trip) {
@@ -142,22 +142,22 @@ function InfoSection({ trip }) {
                     </div>
                     {/* Share Button */}
                     <Button 
-                        onClick={() => setShowShareModal(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-3 text-lg transition-all duration-300 hover:scale-105 ml-2"
-                    >
-                        <IoIosSend className="text-xl" />
-                        <span>Share</span>
-                    </Button>
+    onClick={onShareClick}
+    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-3 text-lg transition-all duration-300 hover:scale-105 ml-2"
+>
+    <IoIosSend className="text-xl" />
+    <span>Share</span>
+</Button>
                 </div>
             </div>
             
             {/* Share Trip Modal */}
-            <ShareTripModal 
+            {/* <ShareTripModal 
                 isOpen={showShareModal} 
                 onClose={() => setShowShareModal(false)}
                 tripId={trip.id}
                 tripDestination={trip.tripData?.trip?.destination || 'Trip'}
-            />
+            /> */}
         </div>
     );
 }

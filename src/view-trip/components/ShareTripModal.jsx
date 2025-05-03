@@ -95,105 +95,6 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
     return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
   };
 
-  const exportPDFandUpload = async (trip) => {
-    if (!trip?.tripData?.itinerary) return;
-        
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const destination = trip.tripData.trip?.destination || 'N/A';
-    
-    // Section: Trip Summary Title
-    doc.setFontSize(20);
-    doc.setTextColor(40, 40, 40);
-    doc.setFillColor(230, 240, 255);
-    doc.text(`${destination}'s Trip Summary`, pageWidth / 2, 20, { align: 'center' });
-    
-    let yOffset = 30;
-    
-    // Section: Hotel Table
-    const hotels = trip.tripData.hotels || [];
-    if (hotels.length > 0) {
-        // Title with background
-        doc.setFillColor(230, 240, 255);
-        doc.rect(14, yOffset, pageWidth - 28, 10, 'F');
-        doc.setTextColor(20, 60, 120);
-        doc.setFontSize(14);
-        doc.text('Hotel Recommendations', pageWidth / 2, yOffset + 7, { align: 'center' });
-        
-        yOffset += 14;
-        
-        const hotelRows = hotels.map(hotel => [
-            hotel.name || '',
-            hotel.address || '',
-            hotel.priceRange || hotel.price || '',
-            `${hotel.rating || 'N/A'} Stars`
-        ]);
-        
-        autoTable(doc, {
-            startY: yOffset,
-            head: [['Name', 'Address', 'Price', 'Rating']],
-            body: hotelRows,
-            styles: { fontSize: 9, cellPadding: 3 },
-            theme: 'striped',
-            headStyles: { fillColor: [60, 130, 200] },
-            margin: { left: 14, right: 14 },
-            didDrawPage: data => yOffset = data.cursor.y + 10
-        });
-    }
-    
-    // Section: Daily Activities Header (before Day 1)
-    doc.setFillColor(230, 255, 230);
-    doc.rect(14, yOffset, pageWidth - 28, 10, 'F');
-    doc.setTextColor(20, 100, 20);
-    doc.setFontSize(14);
-    doc.text('Daily Activities', pageWidth / 2, yOffset + 7, { align: 'center' });
-    yOffset += 14;
-    
-    // Section: Activities per Day
-    const days = Object.keys(trip.tripData.itinerary).sort((a, b) => 
-        parseInt(a.replace('day', '')) - parseInt(b.replace('day', ''))
-    );
-    
-    days.forEach((dayKey, i) => {
-        const day = trip.tripData.itinerary[dayKey];
-        if (!day?.length) return;
-        
-        doc.setFontSize(13);
-        doc.setTextColor(33);
-        doc.text(`Day ${i + 1}`, 14, yOffset);
-        
-        const rows = day.map(activity => [
-            activity.bestTime || '',
-            activity.activity || '',
-            activity.description || '',
-            activity.duration || '',
-            activity.travelTime || '',
-            activity.price || ''
-        ]);
-        
-        autoTable(doc, {
-            startY: yOffset + 4,
-            head: [['Time', 'Activity', 'Description', 'Duration', 'Travel', 'Price']],
-            body: rows,
-            styles: { fontSize: 9, cellPadding: 3 },
-            theme: 'striped',
-            headStyles: { fillColor: [41, 128, 185] },
-            margin: { left: 14, right: 14 },
-            didDrawPage: data => yOffset = data.cursor.y + 10
-        });
-    });
-    
-    doc.save('trip-details.pdf');
-  
-    const pdfBlob = doc.output("blob");
-    const storage = getStorage();
-    const storageRef = ref(storage, `trip_pdfs/${tripId}.pdf`);
-  
-    await uploadBytes(storageRef, pdfBlob);
-    const downloadURL = await getDownloadURL(storageRef);
-  
-    return downloadURL;
-  };
 
   // Function to generate HTML email template
   const generateEmailTemplate = (tripData) => {
@@ -210,15 +111,76 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
       <head>
         <meta charset="UTF-8">
         <style>
-          body { font-family: Arial, sans-serif; color: #333; padding: 20px; line-height: 1.6; max-width: 800px; margin: auto; }
-          .header { background-color: #3b82f6; color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center; }
-          .section { margin-top: 30px; }
-          .section-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-bottom: 10px; }
-          .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-          .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 14px; }
-          .table th { background-color: #f3f4f6; }
-          .highlight-list li { background-color: #fef3c7; margin: 5px 0; padding: 8px; border-radius: 6px; }
-          .footer { margin-top: 40px; font-size: 14px; text-align: center; color: #6b7280; }
+          body { 
+            font-family: Arial, sans-serif; 
+            color: #333; 
+            padding: 20px; 
+            line-height: 1.8;  /* Increased from 1.6 */
+            max-width: 800px; 
+            margin: auto; 
+            font-size: 16px;  /* Added base font size */
+          }
+          .header { 
+            background-color: #3b82f6; 
+            color: white; 
+            padding: 30px;  /* Increased from 20px */
+            border-radius: 10px 10px 0 0; 
+            text-align: center; 
+          }
+          .header h1 {
+            font-size: 32px;  /* Increased header size */
+            margin: 0 0 10px 0;
+          }
+          .header p {
+            font-size: 18px;  /* Increased subtitle size */
+            margin: 0;
+          }
+          .section { 
+            margin-top: 40px;  /* Increased from 30px */
+          }
+          .section-title { 
+            font-size: 24px;  /* Increased from 20px */
+            font-weight: bold; 
+            color: #1f2937; 
+            margin-bottom: 15px;  /* Increased from 10px */
+          }
+          .table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 15px;  /* Increased from 10px */
+          }
+          .table th, .table td { 
+            border: 1px solid #ddd; 
+            padding: 12px;  /* Increased from 8px */
+            text-align: left; 
+            font-size: 16px;  /* Increased from 14px */
+          }
+          .table th { 
+            background-color: #f3f4f6;
+            font-weight: bold;
+          }
+          .highlight-list li { 
+            background-color: #fef3c7; 
+            margin: 8px 0;  /* Increased from 5px */
+            padding: 12px;  /* Increased from 8px */
+            border-radius: 6px;
+            font-size: 16px;  /* Added font size */
+          }
+          .footer { 
+            margin-top: 50px;  /* Increased from 40px */
+            font-size: 16px;  /* Increased from 14px */
+            text-align: center; 
+            color: #6b7280; 
+          }
+          ul li {
+            font-size: 16px;  /* Added font size for list items */
+            margin-bottom: 8px;  /* Added spacing between items */
+          }
+          h3 {
+            font-size: 20px;  /* Added size for day headers */
+            color: #1f2937;
+            margin: 25px 0 15px 0;
+          }
         </style>
       </head>
       <body>
@@ -307,26 +269,7 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
     `;
   };
   
-  // Function to fetch trip data from Firebase
-  const fetchTripData = async () => {
-    try {
-      const tripDoc = await getDoc(doc(db, 'AITrips', tripId));
-      if (tripDoc.exists()) {
-        const data = tripDoc.data();
-        return {
-          destination: data.tripData?.trip?.destination || tripDestination,
-          duration: data.tripData?.trip?.duration,
-          travelers: data.userSelection?.travelers,
-          budget: data.userSelection?.budget,
-          highlights: data.tripData?.trip?.highlights || []
-        };
-      }
-      return null;
-    } catch (error) {
-      console.error("Error fetching trip data:", error);
-      return null;
-    }
-  };
+
 
   // Function to send email (you'll need to implement this with your preferred email service)
   const sendEmail = async (recipientEmail, subject, htmlContent) => {
@@ -339,7 +282,7 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
           subject: subject,
           message_html: htmlContent,
           from_name: 'Easy Travel',
-          from_email: 'noreply@easytravel.com',
+          from_email: user.email,
           reply_to: user.email || 'majdabdo43@gmail.com'
         }
       );
@@ -421,9 +364,6 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
         emailHtml
       );
   
-      // Log to sharedTrips in Firestore
-    //   await handleShareViaEmail();
-  
       toast.success('Email sent successfully!');
     } catch (error) {
       console.error("Error sending email:", error);
@@ -445,8 +385,8 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-6 text-sm sm:text-base overflow-y-auto">
+      <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg my-auto"> {/* Changed here */}
         <div className="flex justify-between items-center mb-5 border-b pb-4" style={{ borderColor: getAccessibleColor('border') }}>
           <h2 className="text-2xl font-semibold" style={{ color: getAccessibleColor('textDark') }}>Share Trip</h2>
           <button 
@@ -463,7 +403,7 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
             </svg>
           </button>
         </div>
-
+  
         <div className="flex mb-6 space-x-2">
           <button
             style={{
@@ -490,84 +430,80 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
             </div>
           </button>
         </div>
-
-        {activeTab === 'email' && (
-          <div className="space-y-4">
-            <div className="flex flex-col gap-2 ">
-              <label htmlFor="email" className="text-sm font-medium" style={{ color: getAccessibleColor('textDark') }}>
-                Recipient's Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email address"
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none"
-                style={{ 
-                  borderColor: getAccessibleColor('border'),
-                  color: getAccessibleColor('textDark')
-                }}
-              />
-            </div>
-            
-            <div className="mt-5 space-y-3">
-              <button 
-                type="button" 
-                onClick={handleSendEmail} 
-                disabled={isSendingEmail || !email}
-                className="w-full px-4 py-3 rounded-lg disabled:opacity-50 transition-colors font-medium shadow-sm"
-                style={{
-                  backgroundColor: getAccessibleColor('primary'),
-                  color: 'white'
-                }}
-              >
-                {isSendingEmail ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Sending Email...
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <IoPaperPlane className="text-lg" />
-                    Send Email with Trip Details
-                  </span>
-                )}
-              </button>
+  
+        <div className="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto"> {/* Added dynamic max-height */}
+          {activeTab === 'email' && (
+            <>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className="text-sm font-medium" style={{ color: getAccessibleColor('textDark') }}>
+                  Recipient's Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter email address"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none"
+                  style={{ 
+                    borderColor: getAccessibleColor('border'),
+                    color: getAccessibleColor('textDark')
+                  }}
+                />
+              </div>
               
-              <button 
-                type="button" 
-                onClick={handleShareViaEmail} 
-                disabled={isSharing || !email}
-                className="w-full px-4 py-3 rounded-lg disabled:opacity-50 transition-colors font-medium shadow-sm border"
-                style={{
-                  borderColor: getAccessibleColor('border'),
-                  color: getAccessibleColor('textMedium')
-                }}
-              >
-                {isSharing ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Sharing...
-                  </span>
-                ) : "Just Share Link"}
-              </button>
-              
-              <p className="text-sm text-center" style={{ color: getAccessibleColor('textLight') }}>
-                Send email with full trip details or just share the link
-              </p>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'link' && (
-          <div className="space-y-4">
+              <div className="space-y-3">
+                <button 
+                  type="button" 
+                  onClick={handleSendEmail} 
+                  disabled={isSendingEmail || !email}
+                  className="w-full px-4 py-3 rounded-xl disabled:opacity-50 transition-colors font-medium shadow-sm"
+                  style={{
+                    backgroundColor: getAccessibleColor('primary'),
+                    color: 'white'
+                  }}
+                >
+                  {isSendingEmail ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sending Email...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <IoPaperPlane className="text-lg" />
+                      Send Email with Trip Details
+                    </span>
+                  )}
+                </button>
+                
+                <button 
+                  type="button" 
+                  onClick={handleShareViaEmail} 
+                  disabled={isSharing || !email}
+                  className="w-full px-4 py-3 rounded-xl disabled:opacity-50 transition-colors font-medium shadow-sm border"
+                  style={{
+                    borderColor: getAccessibleColor('border'),
+                    color: getAccessibleColor('textMedium')
+                  }}
+                >
+                  {isSharing ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sharing...
+                    </span>
+                  ) : "Share Within App"}
+                </button>
+              </div>
+            </>
+          )}
+  
+          {activeTab === 'link' && (
             <div className="flex flex-col gap-2">
               <label htmlFor="link" className="text-sm font-medium" style={{ color: getAccessibleColor('textDark') }}>
                 Trip Link
@@ -597,12 +533,29 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
                 </button>
               </div>
             </div>
-            
-            <p className="text-sm mt-3" style={{ color: getAccessibleColor('textLight') }}>
-              Anyone with this link can view your trip.
-            </p>
+          )}
+  
+          <div className="p-4 rounded-lg" style={{ backgroundColor: getAccessibleColor('primaryBg') }}>
+            <div className="flex items-start gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mt-0.5" style={{ color: getAccessibleColor('primary') }} viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              <div className="text-sm" style={{ color: getAccessibleColor('textMedium') }}>
+                {activeTab === 'email' ? (
+                  <>
+                    <p><strong>Send Email:</strong> Sends a comprehensive email with full itinerary, hotels, and activities.</p>
+                    <p className="mt-2"><strong>Share Within App:</strong> Makes this trip visible in the recipient's "Shared Trips" section.</p>
+                  </>
+                ) : (
+                  <>
+                    <p><strong>Public Link:</strong> Anyone with this link can view your trip directly in their browser.</p>
+                    <p className="mt-2">Perfect for sharing via messaging apps, social media, or any platform outside the app.</p>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

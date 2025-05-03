@@ -10,6 +10,7 @@ import Activities from "../components/Activities";
 import WeatherForecast from "../components/WeatherForecast";
 import { useAccessibility } from "@/context/AccessibilityContext";
 import { ChevronDown } from 'lucide-react'; // Import the chevron icon (or use any other icon library)
+import ShareTripModal from "../components/ShareTripModal";
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -25,6 +26,8 @@ function Viewtrip() {
     const { colorMode } = useAccessibility();
     const [shareEmail, setShareEmail] = useState('');
     const user = JSON.parse(localStorage.getItem('user'));
+    const [showShareModal, setShowShareModal] = useState(false);
+
     
     useEffect(() => {
         // Check if user is logged in
@@ -408,7 +411,10 @@ function Viewtrip() {
                             {expandedSections.info && (
                                 <div className="content-enter w-full flex justify-center">
                                     <div className="w-full max-w-5xl">
-                                        <InfoSection trip={{...trip, id: tripId}} />
+                                    <InfoSection 
+    trip={{...trip, id: tripId}} 
+    onShareClick={() => setShowShareModal(true)} 
+/>
                                     </div>
                                 </div>
                             )}
@@ -543,7 +549,17 @@ function Viewtrip() {
                     </button>
                 </div>
             </div>
+            {showShareModal && (
+  <ShareTripModal 
+    isOpen={showShareModal} 
+    onClose={() => setShowShareModal(false)}
+    tripId={tripId}
+    tripDestination={trip.tripData?.trip?.destination || 'Trip'}
+  />
+)}
+
         </div>
+        
     );
 }
 
