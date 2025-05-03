@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@google/generative-ai": "^0.22.0",
     "@radix-ui/react-dialog": "^1.1.11",
     "@radix-ui/react-popover": "^1.1.11",
@@ -23,6 +24,8 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "firebase": "^11.6.0",
+    "firebase-admin": "^13.3.0",
+    "firebase-functions": "^6.3.2",
     "framer-motion": "^12.9.1",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.3",
