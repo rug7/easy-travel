@@ -395,7 +395,7 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
               backgroundColor: getAccessibleColor('secondaryBg'),
               color: getAccessibleColor('textMedium')
             }}
-            className="p-2 rounded-full hover:opacity-80 transition-all focus:outline-none"
+            className="p-2 rounded-full hover:opacity-80 transition-all focus:outline-none "
             aria-label="Close"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -425,115 +425,97 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
             className="flex-1 py-3 font-medium transition-colors rounded-xl hover:opacity-90"
             onClick={() => setActiveTab('link')}
           >
-            <div className="flex items-center justify-center gap-2">
-              <IoCopy className="text-lg" /> Copy Link
+            <div className="flex items-center justify-center gap-2 ">
+              <IoCopy className="text-lg " /> Copy Link
             </div>
           </button>
         </div>
   
-        <div className="space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto"> {/* Added dynamic max-height */}
-          {activeTab === 'email' && (
-            <>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-sm font-medium" style={{ color: getAccessibleColor('textDark') }}>
-                  Recipient's Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter email address"
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none"
-                  style={{ 
-                    borderColor: getAccessibleColor('border'),
-                    color: getAccessibleColor('textDark')
-                  }}
-                />
-              </div>
-              
-              <div className="space-y-3">
-                <button 
-                  type="button" 
-                  onClick={handleSendEmail} 
-                  disabled={isSendingEmail || !email}
-                  className="w-full px-4 py-3 rounded-xl disabled:opacity-50 transition-colors font-medium shadow-sm"
-                  style={{
-                    backgroundColor: getAccessibleColor('primary'),
-                    color: 'white'
-                  }}
-                >
-                  {isSendingEmail ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Sending Email...
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center gap-2">
-                      <IoPaperPlane className="text-lg" />
-                      Send Email with Trip Details
-                    </span>
-                  )}
-                </button>
-                
-                <button 
-                  type="button" 
-                  onClick={handleShareViaEmail} 
-                  disabled={isSharing || !email}
-                  className="w-full px-4 py-3 rounded-xl disabled:opacity-50 transition-colors font-medium shadow-sm border"
-                  style={{
-                    borderColor: getAccessibleColor('border'),
-                    color: getAccessibleColor('textMedium')
-                  }}
-                >
-                  {isSharing ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Sharing...
-                    </span>
-                  ) : "Share Within App"}
-                </button>
-              </div>
-            </>
-          )}
-  
-          {activeTab === 'link' && (
-            <div className="flex flex-col gap-2">
-              <label htmlFor="link" className="text-sm font-medium" style={{ color: getAccessibleColor('textDark') }}>
-                Trip Link
+        {/* Tab Content */}
+      <div className="space-y-5 max-h-[calc(100vh-250px)] overflow-y-auto">
+        {activeTab === 'email' && (
+          <>
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-semibold text-gray-700">
+                Recipient's Email
               </label>
-              <div className="flex items-center gap-2">
-                <input 
-                  id="link" 
-                  value={tripLink}
-                  readOnly
-                  className="flex-1 px-4 py-3 border rounded-lg bg-gray-50"
-                  style={{ 
-                    borderColor: getAccessibleColor('border'),
-                    color: getAccessibleColor('textMedium')
-                  }}
-                />
-                <button 
-                  type="button" 
-                  onClick={handleCopyLink}
-                  className="px-4 py-3 rounded-lg transition-colors shadow-sm"
-                  style={{
-                    backgroundColor: getAccessibleColor('primary'),
-                    color: 'white'
-                  }}
-                  aria-label="Copy link"
-                >
-                  <IoCopy className="h-5 w-5" />
-                </button>
-              </div>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter email address"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
-          )}
+
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={handleSendEmail}
+                disabled={isSendingEmail || !email}
+                className="w-full px-4 py-3 rounded-xl font-semibold transition-all shadow-md text-white 
+                  bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isSendingEmail ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0..." />
+                    </svg>
+                    Sending...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <IoPaperPlane className="text-lg" />
+                    Send Email with Trip Details
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleShareViaEmail}
+                disabled={isSharing || !email}
+                className="w-full px-4 py-3 rounded-xl font-semibold border text-gray-600 bg-white hover:bg-gray-300 transition-all disabled:opacity-50"
+              >
+                {isSharing ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0..." />
+                    </svg>
+                    Sharing...
+                  </span>
+                ) : (
+                  'Share Within App'
+                )}
+              </button>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'link' && (
+          <div className="space-y-2">
+            <label htmlFor="link" className="text-sm font-semibold text-gray-700">
+              Trip Link
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                id="link"
+                value={tripLink}
+                readOnly
+                className="flex-1 px-4 py-3 border border-gray-300 bg-gray-50 rounded-lg text-sm text-gray-600"
+              />
+              <button
+                onClick={handleCopyLink}
+                className="px-4 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md"
+              >
+                <IoCopy className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        )}
   
           <div className="p-4 rounded-lg" style={{ backgroundColor: getAccessibleColor('primaryBg') }}>
             <div className="flex items-start gap-3">
