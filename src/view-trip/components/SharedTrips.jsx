@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '@/service/firebaseConfig';
-import { collection, query, where, getDocs, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import fallbackImage from '/moderate1.jpg';
 import destinationsData from '@/context/destinations.json';
 import { toast } from 'sonner';
-import { IoTrash } from "react-icons/io5";
+import { IoTrash, IoAdd, IoCheckmark } from "react-icons/io5";
 
 function SharedTrips() {
   const [trips, setTrips] = useState([]);
   const [tripImages, setTripImages] = useState({});
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
+  const [adding, setAdding] = useState(null);
+  const [addedTrips, setAddedTrips] = useState(new Set()); // Track which trips have been added
 
   // Get current user with safe parsing
   const user = (() => {
@@ -29,20 +31,45 @@ function SharedTrips() {
   useEffect(() => {
     if (user?.email) {
       fetchSharedTrips();
+      checkExistingTrips(); // Check which trips user already has
     } else {
       // If not logged in, redirect to home
       navigate('/');
     }
   }, [user, navigate]);
 
+  const checkExistingTrips = async () => {
+    try {
+      // Query user's existing trips to see if any were copied from shared trips
+      const q = query(
+        collection(db, 'AITrips'),
+        where('userEmail', '==', user.email)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const existingCopiedTrips = new Set();
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.copiedFrom?.originalTripId) {
+          existingCopiedTrips.add(data.copiedFrom.originalTripId);
+        }
+      });
+      
+      setAddedTrips(existingCopiedTrips);
+    } catch (error) {
+      console.error('Error checking existing trips:', error);
+    }
+  };
+
   const fetchSharedTrips = async () => {
     try {
       // Create a query that specifically filters by the current user's email
       const normalizedEmail = user.email.trim().toLowerCase();
-const q = query(
-  collection(db, 'sharedTrips'), 
-  where('sharedWith', '==', normalizedEmail)
-);
+      const q = query(
+        collection(db, 'sharedTrips'), 
+        where('sharedWith', '==', normalizedEmail)
+      );
       
       const querySnapshot = await getDocs(q);
 
@@ -123,6 +150,49 @@ const q = query(
       toast.error('Failed to remove trip');
     } finally {
       setDeleting(null);
+    }
+  };
+
+  const handleAddToMyTrips = async (e, trip) => {
+    e.stopPropagation(); // Prevent navigating to trip details
+    
+    if (adding || addedTrips.has(trip.id)) return; // Prevent multiple add requests or re-adding
+    
+    try {
+      setAdding(trip.id);
+      
+      // Create a new document ID for the user's copy of the trip
+      const newTripId = Date.now().toString();
+      
+      // Create a copy of the trip data
+      const tripCopy = {
+        userSelection: trip.userSelection,
+        tripData: trip.tripData,
+        userEmail: user.email,
+        id: newTripId,
+        createdAt: new Date().toISOString(),
+        // Add a reference to the original trip if needed
+        copiedFrom: {
+          originalTripId: trip.id,
+          sharedBy: trip.sharedBy,
+          sharedByEmail: trip.sharedByEmail,
+          copiedAt: new Date().toISOString()
+        }
+      };
+      
+      // Save the trip to the user's collection
+      await setDoc(doc(db, 'AITrips', newTripId), tripCopy);
+      
+      // Update the addedTrips set
+      setAddedTrips(prev => new Set([...prev, trip.id]));
+      
+      toast.success('Trip added to your trips successfully!');
+      
+    } catch (error) {
+      console.error('Error adding trip to my trips:', error);
+      toast.error('Failed to add trip to your collection');
+    } finally {
+      setAdding(null);
     }
   };
 
@@ -218,20 +288,53 @@ const q = query(
                 )}
               </div>
               
-              {/* Delete button */}
-              <div className="absolute top-3 left-3 z-10">
-                <button
-                  className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-md transition-all transform hover:scale-105 focus:outline-none"
-                  onClick={(e) => handleDelete(e, trip.sharedId)}
-                  disabled={deleting === trip.sharedId}
-                  aria-label="Delete shared trip"
-                >
-                  {deleting === trip.sharedId ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <IoTrash className="w-4 h-4" />
-                  )}
-                </button>
+              {/* Action buttons */}
+              <div className="absolute top-3 left-3 z-10 flex gap-2">
+                {/* Delete button */}
+                <div className="relative group">
+                  <button
+                    className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-md transition-all transform hover:scale-105 focus:outline-none"
+                    onClick={(e) => handleDelete(e, trip.sharedId)}
+                    disabled={deleting === trip.sharedId}
+                    aria-label="Remove from shared trips"
+                  >
+                    {deleting === trip.sharedId ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <IoTrash className="w-4 h-4" />
+                    )}
+                  </button>
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Remove from shared trips
+                  </span>
+                </div>
+                
+                {/* Add to My Trips button */}
+                <div className="relative group">
+                  <button
+                    className={`${
+                      addedTrips.has(trip.id) 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-green-600 hover:bg-green-700'
+                    } text-white p-2 rounded-full shadow-md transition-all transform ${
+                      !addedTrips.has(trip.id) ? 'hover:scale-105' : ''
+                    } focus:outline-none`}
+                    onClick={(e) => !addedTrips.has(trip.id) && handleAddToMyTrips(e, trip)}
+                    disabled={adding === trip.id || addedTrips.has(trip.id)}
+                    aria-label={addedTrips.has(trip.id) ? "Already added to your trips" : "Add to your trips"}
+                  >
+                    {adding === trip.id ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : addedTrips.has(trip.id) ? (
+                      <IoCheckmark className="w-4 h-4" />
+                    ) : (
+                      <IoAdd className="w-4 h-4" />
+                    )}
+                  </button>
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    {addedTrips.has(trip.id) ? "Already in your trips" : "Add to your trips"}
+                  </span>
+                </div>
               </div>
             </div>
           ))}
