@@ -6,6 +6,9 @@ import fallbackImage from '/moderate1.jpg';
 import destinationsData from '@/context/destinations.json';
 import { toast } from 'sonner';
 import { IoTrash, IoAdd, IoCheckmark } from "react-icons/io5";
+import { Tooltip as ReactTooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
+
 
 function SharedTrips() {
   const [trips, setTrips] = useState([]);
@@ -60,6 +63,28 @@ function SharedTrips() {
     } catch (error) {
       console.error('Error checking existing trips:', error);
     }
+  };
+  const Tooltip = ({ children, text }) => {
+    const [showTooltip, setShowTooltip] = useState(false);
+    
+    return (
+      <div 
+        className="relative inline-block"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        {children}
+        {showTooltip && (
+          <div 
+            className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 text-xs text-white bg-gray-900 rounded-md whitespace-nowrap shadow-lg"
+            style={{ zIndex: 9999 }}
+          >
+            {text}
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   const fetchSharedTrips = async () => {
@@ -288,53 +313,49 @@ function SharedTrips() {
                 )}
               </div>
               
-              {/* Action buttons */}
-              <div className="absolute top-3 left-3 z-10 flex gap-2">
-                {/* Delete button */}
-                <div className="relative group">
-                  <button
-                    className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-md transition-all transform hover:scale-105 focus:outline-none"
-                    onClick={(e) => handleDelete(e, trip.sharedId)}
-                    disabled={deleting === trip.sharedId}
-                    aria-label="Remove from shared trips"
-                  >
-                    {deleting === trip.sharedId ? (
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <IoTrash className="w-4 h-4" />
-                    )}
-                  </button>
-                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    Remove from shared trips
-                  </span>
-                </div>
+       {/* Action buttons */}
+       <div className="absolute top-3 left-3 z-10 flex gap-2">
+       {/* Delete button */}
+       <button
+                  data-tooltip-id={`delete-tooltip-${trip.id}`}
+                  data-tooltip-content="Remove from shared trips"
+                  className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-md transition-all transform hover:scale-105 focus:outline-none"
+                  onClick={(e) => handleDelete(e, trip.sharedId)}
+                  disabled={deleting === trip.sharedId}
+                  aria-label="Remove from shared trips"
+                >
+                  {deleting === trip.sharedId ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <IoTrash className="w-4 h-4" />
+                  )}
+                </button>
                 
                 {/* Add to My Trips button */}
-                <div className="relative group">
-                  <button
-                    className={`${
-                      addedTrips.has(trip.id) 
-                        ? 'bg-gray-400 cursor-not-allowed' 
-                        : 'bg-green-600 hover:bg-green-700'
-                    } text-white p-2 rounded-full shadow-md transition-all transform ${
-                      !addedTrips.has(trip.id) ? 'hover:scale-105' : ''
-                    } focus:outline-none`}
-                    onClick={(e) => !addedTrips.has(trip.id) && handleAddToMyTrips(e, trip)}
-                    disabled={adding === trip.id || addedTrips.has(trip.id)}
-                    aria-label={addedTrips.has(trip.id) ? "Already added to your trips" : "Add to your trips"}
-                  >
-                    {adding === trip.id ? (
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : addedTrips.has(trip.id) ? (
-                      <IoCheckmark className="w-4 h-4" />
-                    ) : (
-                      <IoAdd className="w-4 h-4" />
-                    )}
-                  </button>
-                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    {addedTrips.has(trip.id) ? "Already in your trips" : "Add to your trips"}
-                  </span>
-                </div>
+                <button
+                  data-tooltip-id={`add-tooltip-${trip.id}`}
+                  data-tooltip-content={addedTrips.has(trip.id) ? "Already in your trips" : "Add to your trips"}
+                  className={`${
+                    addedTrips.has(trip.id) 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-green-600 hover:bg-green-700'
+                  } text-white p-2 rounded-full shadow-md transition-all transform ${
+                    !addedTrips.has(trip.id) ? 'hover:scale-105' : ''
+                  } focus:outline-none`}
+                  onClick={(e) => !addedTrips.has(trip.id) && handleAddToMyTrips(e, trip)}
+                  disabled={adding === trip.id || addedTrips.has(trip.id)}
+                >
+                  {adding === trip.id ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : addedTrips.has(trip.id) ? (
+                    <IoCheckmark className="w-4 h-4" />
+                  ) : (
+                    <IoAdd className="w-4 h-4" />
+                  )}
+                </button>
+                
+                <ReactTooltip id={`delete-tooltip-${trip.id}`} />
+                <ReactTooltip id={`add-tooltip-${trip.id}`} />
               </div>
             </div>
           ))}
