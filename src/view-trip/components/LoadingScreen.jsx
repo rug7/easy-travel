@@ -32,166 +32,237 @@ const ProgressItem = ({ label, complete, current }) => (
   </div>
 );
 
-// Travel Memory Card Game Component
-const TravelMemoryGame = () => {
+// Guess the Country Game Component
+const GuessTheCountryGame = () => {
   const [gameActive, setGameActive] = useState(false);
-  const [cards, setCards] = useState([]);
-  const [flipped, setFlipped] = useState([]);
-  const [matched, setMatched] = useState([]);
-  const [moves, setMoves] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [gameComplete, setGameComplete] = useState(false);
-  const [difficulty, setDifficulty] = useState('easy'); // 'easy', 'medium', 'hard'
+  const [level, setLevel] = useState('easy'); // 'easy', 'medium', 'hard'
+  const [questions, setQuestions] = useState([]); // Store shuffled questions
   
-  // Travel-themed card images
-  const cardImages = [
-    { id: 'airplane', src: '✈️', alt: 'Airplane' },
-    { id: 'beach', src: '🏖️', alt: 'Beach' },
-    { id: 'mountain', src: '🏔️', alt: 'Mountain' },
-    { id: 'hotel', src: '🏨', alt: 'Hotel' },
-    { id: 'camera', src: '📷', alt: 'Camera' },
-    { id: 'passport', src: '🛂', alt: 'Passport' },
-    { id: 'suitcase', src: '🧳', alt: 'Suitcase' },
-    { id: 'map', src: '🗺️', alt: 'Map' },
-    { id: 'compass', src: '🧭', alt: 'Compass' },
-    { id: 'train', src: '🚄', alt: 'Train' },
-    { id: 'car', src: '🚗', alt: 'Car' },
-    { id: 'ship', src: '🚢', alt: 'Ship' }
-  ];
+  // Landmarks data with placeholder images
+  const landmarks = {
+    easy: [
+      {
+        landmark: "https://images.unsplash.com/photo-1569949381669-ecf31ae8e613?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Eiffel Tower",
+        description: "A famous iron lattice tower on the Champ de Mars",
+        country: "France",
+        options: ["France", "Italy", "Spain", "Germany"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=2099&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Statue of Liberty",
+        description: "A gift from France symbolizing freedom and democracy",
+        country: "United States",
+        options: ["United States", "Canada", "United Kingdom", "Australia"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1603565816030-6b389eeb23cb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Parthenon",
+        description: "An ancient temple dedicated to the goddess Athena",
+        country: "Greece",
+        options: ["Greece", "Italy", "Turkey", "Egypt"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Taj Mahal",
+        description: "An ivory-white marble mausoleum built by Shah Jahan",
+        country: "India",
+        options: ["India", "Pakistan", "Nepal", "Bangladesh"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1671155281264-5f5a211ebd90?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Moai Statues",
+        description: "Massive stone heads created by the Rapa Nui people",
+        country: "Chile",
+        options: ["Chile", "Peru", "Mexico", "Brazil"]
+      }
+    ],
+    medium: [
+      {
+        landmark: "https://images.unsplash.com/photo-1495316364083-b5916626072e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Neuschwanstein Castle",
+        description: "A 19th-century Romanesque Revival palace",
+        country: "Germany",
+        options: ["Germany", "Austria", "Switzerland", "France"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1693378173709-2197ce8c5af3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Fushimi Inari Shrine",
+        description: "Famous for its thousands of vermillion torii gates",
+        country: "Japan",
+        options: ["Japan", "China", "South Korea", "Thailand"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1650964827770-421afa7960ac?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Sagrada Familia",
+        description: "An unfinished basilica designed by Antoni Gaudí",
+        country: "Spain",
+        options: ["Spain", "Italy", "Portugal", "France"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Colosseum",
+        description: "Ancient amphitheater and largest ever built",
+        country: "Italy",
+        options: ["Italy", "Greece", "Turkey", "Spain"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1523059623039-a9ed027e7fad?q=80&w=2032&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Sydney Opera House",
+        description: "A multi-venue performing arts center",
+        country: "Australia",
+        options: ["Australia", "New Zealand", "Canada", "United Kingdom"]
+      }
+    ],
+    hard: [
+      {
+        landmark: "https://images.unsplash.com/photo-1705628078563-966777473473?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Petra",
+        description: "An archaeological city famous for its rock-cut architecture",
+        country: "Jordan",
+        options: ["Jordan", "Syria", "Lebanon", "Iraq"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1599283787923-51b965a58b05?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Angkor Wat",
+        description: "The largest religious monument in the world",
+        country: "Cambodia",
+        options: ["Cambodia", "Thailand", "Vietnam", "Laos"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1700677866571-43199bcbc593?q=80&w=1930&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Christ the Redeemer",
+        description: "An Art Deco statue of Jesus Christ",
+        country: "Brazil",
+        options: ["Brazil", "Argentina", "Portugal", "Mexico"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1654084747154-0b21cfd57aa0?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Prague Castle",
+        description: "A castle complex dating from the 9th century",
+        country: "Czech Republic",
+        options: ["Czech Republic", "Poland", "Hungary", "Austria"]
+      },
+      {
+        landmark: "https://images.unsplash.com/photo-1706203644187-a719449587bb?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Hassan II Mosque",
+        description: "Has the world's second tallest minaret",
+        country: "Morocco",
+        options: ["Morocco", "Algeria", "Tunisia", "Egypt"]
+      }
+    ]
+  };
+  
+  // Get questions based on difficulty level and shuffle them
+  const getQuestions = (difficulty) => {
+    // Get the questions for the selected difficulty
+    const questions = [...landmarks[difficulty]];
+    
+    // Shuffle the questions using Fisher-Yates algorithm
+    for (let i = questions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
+    
+    return questions;
+  };
   
   // Initialize game
-  const initializeGame = (level = difficulty) => {
+  const startGame = (difficulty = level) => {
+    setLevel(difficulty);
+    setQuestions(getQuestions(difficulty)); // Get shuffled questions
     setGameActive(true);
-    setFlipped([]);
-    setMatched([]);
-    setMoves(0);
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowAnswer(false);
+    setSelectedAnswer(null);
     setGameComplete(false);
-    
-    // Determine number of pairs based on difficulty
-    let numPairs;
-    switch(level) {
-      case 'hard':
-        numPairs = 12;
-        break;
-      case 'medium':
-        numPairs = 8;
-        break;
-      default:
-        numPairs = 6;
-    }
-    
-    // Select random cards
-    const selectedCards = [...cardImages]
-      .sort(() => 0.5 - Math.random())
-      .slice(0, numPairs);
-    
-    // Create pairs and shuffle
-    const cardPairs = [...selectedCards, ...selectedCards]
-      .map((card, index) => ({ ...card, uniqueId: `${card.id}-${index}` }))
-      .sort(() => 0.5 - Math.random());
-    
-    setCards(cardPairs);
-    setDifficulty(level);
   };
   
-  // Handle card click
-  const handleCardClick = (uniqueId) => {
-    // Ignore if already matched or already flipped
-    if (matched.includes(uniqueId) || flipped.includes(uniqueId) || flipped.length >= 2) {
-      return;
+  // Handle answer selection
+  const handleAnswerSelect = (answer) => {
+    if (showAnswer) return;
+    
+    setSelectedAnswer(answer);
+    setShowAnswer(true);
+    
+    if (answer === questions[currentQuestion].country) {
+      setScore(prev => prev + 1);
     }
     
-    // Add to flipped cards
-    const newFlipped = [...flipped, uniqueId];
-    setFlipped(newFlipped);
-    
-    // If two cards are flipped, check for match
-    if (newFlipped.length === 2) {
-      setMoves(prev => prev + 1);
-      
-      const [firstId, secondId] = newFlipped;
-      const firstCard = cards.find(card => card.uniqueId === firstId);
-      const secondCard = cards.find(card => card.uniqueId === secondId);
-      
-      // Check if the cards match (same id)
-      if (firstCard.id === secondCard.id) {
-        setMatched(prev => [...prev, firstId, secondId]);
-        setFlipped([]);
+    // Move to next question after delay
+    setTimeout(() => {
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(prev => prev + 1);
+        setShowAnswer(false);
+        setSelectedAnswer(null);
       } else {
-        // If no match, flip back after delay
-        setTimeout(() => {
-          setFlipped([]);
-        }, 1000);
+        setGameComplete(true);
+        setGameActive(false);
       }
-    }
+    }, 2000);
   };
-  
-  // Check for game completion
-  useEffect(() => {
-    if (gameActive && matched.length > 0 && matched.length === cards.length) {
-      setGameComplete(true);
-      setGameActive(false);
-    }
-  }, [matched, cards, gameActive]);
-  
-  // Get grid class based on difficulty
-  const getGridClass = () => {
-    switch(difficulty) {
-      case 'hard':
-        return 'grid-cols-6';
-      case 'medium':
-        return 'grid-cols-4';
-      default:
-        return 'grid-cols-3';
-    }
-  };
+
   
   return (
     <div className="w-full bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-gray-700/50">
       <div className="text-center mb-4">
-        <h3 className="text-lg font-medium text-white">Travel Memory</h3>
-        <p className="text-sm text-gray-400">Match the travel-themed cards!</p>
-        <div className="flex justify-between items-center text-sm text-gray-300 mt-2">
-          <span>Moves: {moves}</span>
-          <div className="flex space-x-2">
+        <h3 className="text-lg font-medium text-white">Guess the Country</h3>
+        <p className="text-sm text-gray-400">Identify where these famous landmarks are located!</p>
+        
+        {!gameActive && (
+          <div className="flex justify-center space-x-2 mt-4">
             <button 
-              onClick={() => initializeGame('easy')}
+              onClick={() => startGame('easy')}
               className={`px-3 py-1.5 text-sm rounded-full font-medium transition-all ${
-                difficulty === 'easy' 
-                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' 
+                level === 'easy' 
+                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md' 
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
               Easy
             </button>
             <button 
-              onClick={() => initializeGame('medium')}
+              onClick={() => startGame('medium')}
               className={`px-3 py-1.5 text-sm rounded-full font-medium transition-all ${
-                difficulty === 'medium' 
-                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' 
+                level === 'medium' 
+                  ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-md' 
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
               Medium
             </button>
             <button 
-              onClick={() => initializeGame('hard')}
+              onClick={() => startGame('hard')}
               className={`px-3 py-1.5 text-sm rounded-full font-medium transition-all ${
-                difficulty === 'hard' 
-                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' 
+                level === 'hard' 
+                  ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' 
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
               Hard
             </button>
           </div>
-        </div>
+        )}
+        
+        {gameActive && (
+          <div className="flex justify-between text-sm text-gray-300 mt-2">
+            <span>Question {currentQuestion + 1}/{questions.length}</span>
+            <span>Score: {score}</span>
+          </div>
+        )}
       </div>
       
       {!gameActive && !gameComplete && (
         <div className="flex justify-center mb-4">
           <button 
             className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
-            onClick={() => initializeGame()}
+            onClick={() => startGame()}
           >
             Start Game
           </button>
@@ -199,37 +270,62 @@ const TravelMemoryGame = () => {
       )}
       
       {gameComplete && (
-        <div className="text-center mb-4">
-          <p className="text-green-500 font-bold mb-2">Congratulations!</p>
-          <p className="text-white mb-3">You completed the game in {moves} moves</p>
+        <div className="text-center mb-4 bg-gray-800 p-4 rounded-lg">
+          <p className="text-xl font-bold text-white mb-2">Game Complete!</p>
+          <p className="text-lg text-white mb-3">Your Score: {score}/{questions.length}</p>
+          <p className="text-gray-300 mb-4">
+            {score === questions.length ? "Perfect! You're a geography expert!" :
+             score >= questions.length * 0.7 ? "Great job! You know your landmarks!" :
+             score >= questions.length * 0.5 ? "Not bad! Keep exploring the world!" :
+             "Keep practicing! There's so much to discover!"}
+          </p>
           <button 
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            onClick={() => initializeGame()}
+            onClick={() => startGame()}
           >
             Play Again
           </button>
         </div>
       )}
       
-      {gameActive && (
-        <div className={`grid ${getGridClass()} gap-2`}>
-          {cards.map(card => (
-            <div 
-              key={card.uniqueId}
-              className={`aspect-square flex items-center justify-center rounded-lg cursor-pointer transition-all duration-300 transform shadow-md ${
-                flipped.includes(card.uniqueId) || matched.includes(card.uniqueId)
-                  ? 'bg-gradient-to-br from-blue-500 to-blue-700 rotate-0'
-                  : 'bg-gradient-to-br from-gray-700 to-gray-900 hover:from-gray-600 hover:to-gray-800 rotate-y-180'
-              } ${matched.includes(card.uniqueId) ? 'ring-2 ring-green-500 opacity-80' : 'opacity-100'}`}
-              onClick={() => handleCardClick(card.uniqueId)}
-            >
-              {(flipped.includes(card.uniqueId) || matched.includes(card.uniqueId)) ? (
-                <span className="text-2xl" role="img" aria-label={card.alt}>{card.src}</span>
-              ) : (
-                <span className="text-xl text-gray-400">?</span>
-              )}
+      {gameActive && questions.length > 0 && (
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg border border-gray-700/50">
+          <div className="text-center mb-6">
+            <div className="mb-4 overflow-hidden rounded-lg shadow-lg">
+              <img 
+                src={questions[currentQuestion].landmark} 
+                alt={questions[currentQuestion].title}
+                className="w-full h-48 object-cover"
+              />
             </div>
-          ))}
+            <h4 className="text-white text-xl font-semibold mb-2">{questions[currentQuestion].title}</h4>
+            <p className="text-gray-300">{questions[currentQuestion].description}</p>
+          </div>
+          
+          <p className="text-white text-xl font-medium mb-6 text-center">
+            Where is this landmark located?
+          </p>
+          
+          <div className="grid grid-cols-2 gap-3">
+            {questions[currentQuestion].options.map((option, index) => (
+              <button
+                key={index}
+                className={`p-4 text-center rounded-xl transition-all shadow-md ${
+                  selectedAnswer === option
+                    ? option === questions[currentQuestion].country
+                      ? 'bg-gradient-to-r from-green-600 to-green-700 text-white font-medium'
+                      : 'bg-gradient-to-r from-red-600 to-red-700 text-white font-medium'
+                    : showAnswer && option === questions[currentQuestion].country
+                      ? 'bg-gradient-to-r from-green-600 to-green-700 text-white font-medium'
+                      : 'bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-600 hover:to-gray-700'
+                }`}
+                onClick={() => handleAnswerSelect(option)}
+                disabled={showAnswer}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -244,6 +340,7 @@ const WorldExplorerQuiz = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [gameComplete, setGameComplete] = useState(false);
+  const [shuffledQuestions, setShuffledQuestions] = useState([]); // Store shuffled questions
   
   // Travel quiz questions
   const questions = [
@@ -296,11 +393,126 @@ const WorldExplorerQuiz = () => {
       question: "The Louvre Museum is located in which city?",
       options: ["Rome", "Paris", "London", "Madrid"],
       correctAnswer: "Paris"
+    },
+    {
+      question: "Which country has the most UNESCO World Heritage Sites?",
+      options: ["Italy", "China", "Spain", "France"],
+      correctAnswer: "Italy"
+    },
+    {
+      question: "The Northern Lights are also known as?",
+      options: ["Aurora Borealis", "Aurora Australis", "Solar Winds", "Celestial Lights"],
+      correctAnswer: "Aurora Borealis"
+    },
+    {
+      question: "Which is the smallest country in the world?",
+      options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
+      correctAnswer: "Vatican City"
+    },
+    {
+      question: "The Alhambra palace is located in which country?",
+      options: ["Portugal", "Spain", "Morocco", "Turkey"],
+      correctAnswer: "Spain"
+    },
+    {
+      question: "Which river is the longest in the world?",
+      options: ["Amazon", "Nile", "Yangtze", "Mississippi"],
+      correctAnswer: "Nile"
+    },
+    {
+      question: "The Dead Sea is bordered by which two countries?",
+      options: ["Israel and Jordan", "Egypt and Sudan", "Turkey and Syria", "Iran and Iraq"],
+      correctAnswer: "Israel and Jordan"
+    },
+    {
+      question: "Which city is famous for its Carnival celebration?",
+      options: ["Rio de Janeiro", "Buenos Aires", "Lima", "Caracas"],
+      correctAnswer: "Rio de Janeiro"
+    },
+    {
+      question: "The Great Wall of China is approximately how long?",
+      options: ["5,000 km", "13,000 km", "21,000 km", "30,000 km"],
+      correctAnswer: "21,000 km"
+    },
+    {
+      question: "Which country is known as the 'Land of a Thousand Lakes'?",
+      options: ["Sweden", "Norway", "Finland", "Iceland"],
+      correctAnswer: "Finland"
+    },
+    {
+      question: "The Sistine Chapel is located in which city?",
+      options: ["Rome", "Vatican City", "Florence", "Milan"],
+      correctAnswer: "Vatican City"
+    },
+    {
+      question: "Which is the deepest lake in the world?",
+      options: ["Lake Superior", "Lake Tanganyika", "Lake Baikal", "Lake Victoria"],
+      correctAnswer: "Lake Baikal"
+    },
+    {
+      question: "The Serengeti National Park is located in which country?",
+      options: ["Kenya", "Tanzania", "South Africa", "Botswana"],
+      correctAnswer: "Tanzania"
+    },
+    {
+      question: "Which European city is known as the 'City of a Hundred Spires'?",
+      options: ["Vienna", "Budapest", "Prague", "Warsaw"],
+      correctAnswer: "Prague"
+    },
+    {
+      question: "The Galapagos Islands belong to which country?",
+      options: ["Colombia", "Peru", "Ecuador", "Chile"],
+      correctAnswer: "Ecuador"
+    },
+    {
+      question: "Which is the highest waterfall in the world?",
+      options: ["Niagara Falls", "Victoria Falls", "Angel Falls", "Iguazu Falls"],
+      correctAnswer: "Angel Falls"
+    },
+    {
+      question: "The Blue Mosque is located in which city?",
+      options: ["Cairo", "Istanbul", "Tehran", "Dubai"],
+      correctAnswer: "Istanbul"
+    },
+    {
+      question: "Which country is home to the most volcanoes?",
+      options: ["Japan", "Indonesia", "Italy", "Iceland"],
+      correctAnswer: "Indonesia"
+    },
+    {
+      question: "The Acropolis is located in which city?",
+      options: ["Rome", "Athens", "Istanbul", "Alexandria"],
+      correctAnswer: "Athens"
+    },
+    {
+      question: "Which is the largest island in the Mediterranean Sea?",
+      options: ["Cyprus", "Crete", "Sicily", "Sardinia"],
+      correctAnswer: "Sicily"
+    },
+    {
+      question: "The Panama Canal connects which two oceans?",
+      options: ["Atlantic and Pacific", "Pacific and Indian", "Atlantic and Arctic", "Indian and Southern"],
+      correctAnswer: "Atlantic and Pacific"
     }
   ];
   
+  // Function to shuffle questions
+  const shuffleQuestions = () => {
+    // Clone the questions array
+    const shuffled = [...questions];
+    
+    // Fisher-Yates shuffle algorithm
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    return shuffled;
+  };
+  
   // Start the game
   const startGame = () => {
+    setShuffledQuestions(shuffleQuestions()); // Shuffle questions when starting
     setGameActive(true);
     setCurrentQuestion(0);
     setScore(0);
@@ -316,13 +528,13 @@ const WorldExplorerQuiz = () => {
     setSelectedAnswer(answer);
     setShowAnswer(true);
     
-    if (answer === questions[currentQuestion].correctAnswer) {
+    if (answer === shuffledQuestions[currentQuestion].correctAnswer) {
       setScore(prev => prev + 1);
     }
     
     // Move to next question after delay
     setTimeout(() => {
-      if (currentQuestion < questions.length - 1) {
+      if (currentQuestion < shuffledQuestions.length - 1) {
         setCurrentQuestion(prev => prev + 1);
         setShowAnswer(false);
         setSelectedAnswer(null);
@@ -340,7 +552,7 @@ const WorldExplorerQuiz = () => {
         <p className="text-sm text-gray-400">Test your travel knowledge!</p>
         {gameActive && (
           <div className="flex justify-between text-sm text-gray-300 mt-2">
-            <span>Question {currentQuestion + 1}/{questions.length}</span>
+            <span>Question {currentQuestion + 1}/{shuffledQuestions.length}</span>
             <span>Score: {score}</span>
           </div>
         )}
@@ -360,11 +572,11 @@ const WorldExplorerQuiz = () => {
       {gameComplete && (
         <div className="text-center mb-4 bg-gray-800 p-4 rounded-lg">
           <p className="text-xl font-bold text-white mb-2">Quiz Complete!</p>
-          <p className="text-lg text-white mb-3">Your Score: {score}/{questions.length}</p>
+          <p className="text-lg text-white mb-3">Your Score: {score}/{shuffledQuestions.length}</p>
           <p className="text-gray-300 mb-4">
-            {score === questions.length ? "Perfect score! You're a travel expert!" :
-             score >= questions.length * 0.7 ? "Great job! You know your destinations well!" :
-             score >= questions.length * 0.5 ? "Not bad! You have decent travel knowledge." :
+            {score === shuffledQuestions.length ? "Perfect score! You're a travel expert!" :
+             score >= shuffledQuestions.length * 0.7 ? "Great job! You know your destinations well!" :
+             score >= shuffledQuestions.length * 0.5 ? "Not bad! You have decent travel knowledge." :
              "Keep exploring! There's a world of places to discover."}
           </p>
           <button 
@@ -376,19 +588,19 @@ const WorldExplorerQuiz = () => {
         </div>
       )}
       
-      {gameActive && (
+      {gameActive && shuffledQuestions.length > 0 && (
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg border border-gray-700/50">
-          <p className="text-white text-xl font-medium mb-6">{questions[currentQuestion].question}</p>
+          <p className="text-white text-xl font-medium mb-6">{shuffledQuestions[currentQuestion].question}</p>
           <div className="space-y-3">
-            {questions[currentQuestion].options.map((option, index) => (
+            {shuffledQuestions[currentQuestion].options.map((option, index) => (
               <button
                 key={index}
                 className={`w-full p-4 text-left rounded-xl transition-all shadow-md ${
                   selectedAnswer === option
-                    ? option === questions[currentQuestion].correctAnswer
+                    ? option === shuffledQuestions[currentQuestion].correctAnswer
                       ? 'bg-gradient-to-r from-green-600 to-green-700 text-white font-medium'
                       : 'bg-gradient-to-r from-red-600 to-red-700 text-white font-medium'
-                    : showAnswer && option === questions[currentQuestion].correctAnswer
+                    : showAnswer && option === shuffledQuestions[currentQuestion].correctAnswer
                       ? 'bg-gradient-to-r from-green-600 to-green-700 text-white font-medium'
                       : 'bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-600 hover:to-gray-700'
                 }`}
@@ -409,19 +621,18 @@ const WorldExplorerQuiz = () => {
 };
 
 // Game selector component
-// Game selector component
 const GameSelector = ({ onSelectGame }) => {
   return (
     <div className="w-full">
       <h3 className="text-lg font-medium text-white text-center mb-4">Play a game while you wait</h3>
       <div className="grid grid-cols-1 gap-4">
         <button
-          onClick={() => onSelectGame('memory')}
+          onClick={() => onSelectGame('guess-country')}
           className="bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 p-6 rounded-xl text-center transition-all shadow-lg hover:shadow-blue-500/20 border border-blue-500/20 transform hover:scale-105"
         >
-          <div className="text-4xl mb-3">🎴</div>
-          <h4 className="text-white font-semibold text-lg">Travel Memory</h4>
-          <p className="text-blue-200 text-sm mt-1">Match travel-themed cards</p>
+          <div className="text-4xl mb-3">🌎</div>
+          <h4 className="text-white font-semibold text-lg">Guess the Country</h4>
+          <p className="text-blue-200 text-sm mt-1">Identify famous landmarks</p>
         </button>
         
         <button
@@ -567,9 +778,9 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
           <div className="flex-1 flex flex-col items-center justify-center">
             {!selectedGame ? (
               <GameSelector onSelectGame={setSelectedGame} />
-            ) : selectedGame === 'memory' ? (
+            ) : selectedGame === 'guess-country' ? (
               <div className="w-full max-w-md">
-                <TravelMemoryGame />
+                <GuessTheCountryGame />
                 <button 
                   onClick={() => setSelectedGame(null)} 
                   className="mt-6 text-gray-400 text-sm hover:text-white flex items-center mx-auto bg-gray-800/50 px-4 py-2 rounded-full hover:bg-gray-700/50 transition-all"
