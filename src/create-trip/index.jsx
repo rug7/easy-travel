@@ -31,6 +31,7 @@ function CreateTrip() {
   const [place, setPlace] = useState(null);
   const [showMoreQuestions, setShowMoreQuestions] = useState(false);
   const [startDate, setStartDate] = useState(null);
+  
   const [endDate, setEndDate] = useState(null);
   const [useDates, setUseDates] = useState(false);
   const [numDays, setNumDays] = useState("");
@@ -228,13 +229,13 @@ function CreateTrip() {
   }, [place, numDays, selectedBudgets, selectedPeople, selectedWeather, selectedActivities, selectedSightseeing]);
 
   // Add this useEffect in CreateTrip
-  useEffect(() => {
-    // Check if user is logged in
-    if (!user || !user.email) {
-      toast.error('You need to be logged in to create a trip');
-      navigate('/');
-    }
-  }, [user, navigate]);
+  // useEffect(() => {
+  //   // Check if user is logged in
+  //   if (!user || !user.email) {
+  //     toast.error('You need to be logged in to create a trip');
+  //     navigate('/');
+  //   }
+  // }, [user, navigate]);
   
   const tripWithUserEmail = {
     ...tripData,
@@ -713,47 +714,51 @@ function CreateTrip() {
         </div>
       </div>
 
-      <Dialog open={openDialog && !isGenerating} onOpenChange={(open) => {
-        // Only allow opening/closing the dialog if not generating
-        if (!isGenerating) {
-          setOpenDialog(open);
-        }
-      }}>
-        <DialogContent className="sm:max-w-md bg-white rounded-lg shadow-lg">
-          <DialogHeader>
-            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-              <IoClose className="h-5 w-5 text-gray-600" />
-              <span className="sr-only">Close</span>
-            </DialogClose>
-            <DialogDescription>
-              <div className="flex flex-col items-center justify-center space-y-4 p-6">
-                <img src="/logo.svg" alt="Easy Travel Logo" className="h-12 w-12" />
-                <h2 className="font-bold text-lg text-gray-800">Sign In With Google</h2>
-                <p className="text-sm text-gray-600 text-center">
-                  Sign in to continue generating your trip
-                </p>
-                <Button
-                  className={`w-full mt-4 ${colorMode === 'default' ? 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50' : ''} flex items-center justify-center space-x-2 py-2 rounded-md`}
-                  onClick={login}
-                  style={
-                    colorMode !== 'default' 
-                      ? { 
-                          backgroundColor: 'white',
-                          color: getAccessibleColor('primary'),
-                          borderColor: getAccessibleColor('primary'),
-                          borderWidth: '1px'
-                        }
-                      : {}
-                  }
-                >
-                  <FcGoogle className="h-5 w-5" />
-                  <span>Sign In With Google</span>
-                </Button>
+      {openDialog && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-xl p-6 max-w-md w-full">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold">Sign In</h2>
+                    <button 
+                      onClick={() => setOpenDialog(false)}
+                      className={`text-white ${colorMode === 'default' ? 'bg-gray-700' : ''} hover:scale-105 hover:shadow-lg transition-all p-1 rounded-full`}
+                      style={
+                        colorMode !== 'default' 
+                          ? { 
+                              backgroundColor: getAccessibleColor('danger'),
+                            }
+                          : {}
+                      }
+                    >
+                      <IoClose className="h-5 w-5" />
+                    </button>
+                  </div>
+                  
+                  <div className="flex flex-col items-center justify-center space-y-4 p-2">
+                    <img src="/logo.svg" alt="Easy Travel Logo" className="h-12 w-12" />
+                    <h2 className="font-bold text-lg text-gray-800">Sign In With Google</h2>
+                    <p className="text-sm text-gray-600 text-center">
+                      Sign in to the App with Google authentication securely
+                    </p>
+                    <button
+                      className="w-full mt-4 bg-white text-gray-700 border border-gray-700 hover:bg-gray-50 flex items-center justify-center space-x-2 py-2 rounded-full hover:scale-105 hover:shadow-lg transition-all"
+                      onClick={() => login()}
+                      style={
+                        colorMode !== 'default' 
+                          ? { 
+                              borderColor: getAccessibleColor('primary'),
+                              color: getAccessibleColor('primary'),
+                            }
+                          : {}
+                      }
+                    >
+                      <FcGoogle className="h-5 w-5" />
+                      <span>Sign In With Google</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+            )}
     </div>
   );
 }

@@ -270,7 +270,7 @@ const GuessTheCountryGame = () => {
       )}
       
       {gameComplete && (
-        <div className="text-center mb-4 bg-gray-800 p-4 rounded-lg">
+        <div className="text-center mb-4 bg-gray-800 p-4 rounded-xl">
           <p className="text-xl font-bold text-white mb-2">Game Complete!</p>
           <p className="text-lg text-white mb-3">Your Score: {score}/{questions.length}</p>
           <p className="text-gray-300 mb-4">
@@ -280,7 +280,7 @@ const GuessTheCountryGame = () => {
              "Keep practicing! There's so much to discover!"}
           </p>
           <button 
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
             onClick={() => startGame()}
           >
             Play Again
@@ -291,7 +291,7 @@ const GuessTheCountryGame = () => {
       {gameActive && questions.length > 0 && (
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg border border-gray-700/50">
           <div className="text-center mb-6">
-            <div className="mb-4 overflow-hidden rounded-lg shadow-lg">
+            <div className="mb-4 overflow-hidden rounded-xl shadow-xl">
               <img 
                 src={questions[currentQuestion].landmark} 
                 alt={questions[currentQuestion].title}
@@ -570,7 +570,7 @@ const WorldExplorerQuiz = () => {
       )}
       
       {gameComplete && (
-        <div className="text-center mb-4 bg-gray-800 p-4 rounded-lg">
+        <div className="text-center mb-4 bg-gray-800 p-4 rounded-xl">
           <p className="text-xl font-bold text-white mb-2">Quiz Complete!</p>
           <p className="text-lg text-white mb-3">Your Score: {score}/{shuffledQuestions.length}</p>
           <p className="text-gray-300 mb-4">
@@ -580,7 +580,7 @@ const WorldExplorerQuiz = () => {
              "Keep exploring! There's a world of places to discover."}
           </p>
           <button 
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
             onClick={startGame}
           >
             Play Again
