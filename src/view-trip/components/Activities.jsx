@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from "@/context/LanguageContext";
 
 // Collection of activity images by category
 const activityImages = {
@@ -101,6 +102,8 @@ function Activities({ trip }) {
     const [loadedActivityImages, setLoadedActivityImages] = useState({});
     const [loadingImages, setLoadingImages] = useState({});
     const destination = trip?.tripData?.trip?.destination || '';
+    const { translate, language } = useLanguage();
+const isRTL = language === "he";
 
     // Load images for current day's activities
     useEffect(() => {
@@ -281,15 +284,16 @@ function Activities({ trip }) {
             <div className="flex overflow-x-auto mb-6 pb-2 scrollbar-hide">
                 {dayKeys.map((day, index) => (
                     <button
-                        key={day}
-                        onClick={() => setSelectedDay(index + 1)}
-                        className={`px-6 py-3 rounded-full mr-3 whitespace-nowrap transition-all ${selectedDay === index + 1
-                                ? 'bg-blue-600 text-white font-medium'
-                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                            }`}
-                    >
-                        Day {index + 1}
-                    </button>
+                    key={day}
+                    onClick={() => setSelectedDay(index + 1)}
+                    className={`px-6 py-3 rounded-full mr-3 whitespace-nowrap transition-all ${selectedDay === index + 1
+                            ? 'bg-blue-600 text-white font-medium'
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                    style={{ direction: isRTL ? "rtl" : "ltr" }}
+                >
+                    {translate("activitiesSection.day")} {index + 1}
+                </button>
                 ))}
             </div>
 
@@ -374,12 +378,13 @@ function Activities({ trip }) {
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors"
+                                                style={{ direction: isRTL ? "rtl" : "ltr" }}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 015.656 0l4 4a4 4 0 01-5.656 5.656l-1.102-1.101" />
                                                 </svg>
-                                                Book Now
+                                                {translate("activitiesSection.bookNow")}
                                             </a>
                                         )}
 
@@ -389,13 +394,14 @@ function Activities({ trip }) {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                        View Map
-                                    </a>
+    style={{ direction: isRTL ? "rtl" : "ltr" }}
+>
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+    {translate("activitiesSection.viewMap")}
+</a>
 
                                                                         {/* Always show TripAdvisor button with reliable link */}
                                                                         <a
@@ -403,12 +409,13 @@ function Activities({ trip }) {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                                        </svg>
-                                        Reviews
-                                    </a>
+    style={{ direction: isRTL ? "rtl" : "ltr" }}
+>
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+    </svg>
+    {translate("activitiesSection.reviews")}
+</a>
                                 </div>
                             </div>
                         </div>
@@ -418,13 +425,13 @@ function Activities({ trip }) {
 
             {/* Empty state */}
             {(!dayKeys.length || !trip?.tripData?.itinerary[`day${selectedDay}`]?.length) && (
-                <div className="bg-gray-800 rounded-xl p-8 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
-                    <h3 className="text-xl font-medium text-white mb-2">No activities found</h3>
-                    <p className="text-gray-400">There are no activities planned for this day yet.</p>
-                </div>
+                <div className="bg-gray-800 rounded-xl p-8 text-center" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+                <h3 className="text-xl font-medium text-white mb-2">{translate("activitiesSection.noActivities")}</h3>
+                <p className="text-gray-400">{translate("activitiesSection.noActivitiesDesc")}</p>
+            </div>
             )}
         </div>
     );
