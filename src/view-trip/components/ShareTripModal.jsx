@@ -6,6 +6,7 @@ import { IoMail, IoCopy, IoPaperPlane } from "react-icons/io5";
 import { useAccessibility } from "@/context/AccessibilityContext";
 import emailjs from '@emailjs/browser';
 
+import { useLanguage } from "@/context/LanguageContext";
 
 
 function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
@@ -16,7 +17,10 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
   const tripLink = `${window.location.origin}/view-trip/${tripId}`;
   const user = JSON.parse(localStorage.getItem('user')) || {};
   const { colorMode } = useAccessibility();
+  const { translate, language } = useLanguage();
+  const isRTL = language === "he";
   emailjs.init("fcmpY_Xi4f7Byoq62");
+ 
 
 
   if (!isOpen) return null;
@@ -298,7 +302,7 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
     const docId = `${tripId}_${normalizedSenderEmail.replace(/[^a-z0-9]/g, '_')}_${normalizedRecipientEmail.replace(/[^a-z0-9]/g, '_')}`;
 
     if (!email || !email.includes('@')) {
-      toast.error('Please enter a valid email address');
+      toast.error(translate("shareModal.invalidEmail"));
       return;
     }
 
@@ -315,12 +319,12 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
         read: false
       });
 
-      toast.success(`Trip shared with ${email}`);
+      toast.success(translate("shareModal.shareSuccess").replace("{0}", email));
       setEmail('');
       onClose();
     } catch (error) {
       console.error("Error sharing trip:", error);
-      toast.error("Failed to share trip. Please try again.");
+      toast.error(translate("shareModal.shareError"));
     } finally {
       setIsSharing(false);
     }
@@ -328,7 +332,7 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
 
   const handleSendEmail = async () => {
     if (!email || !email.includes('@')) {
-      toast.error('Please enter a valid email address');
+      toast.error(translate("shareModal.invalidEmail"));
       return;
     }
   
@@ -363,10 +367,10 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
         emailHtml
       );
   
-      toast.success('Email sent successfully!');
+      toast.success(translate("shareModal.emailSuccess"));
     } catch (error) {
       console.error("Error sending email:", error);
-      toast.error("Failed to send email. Please try again.");
+      toast.error(translate("shareModal.emailError"));
     } finally {
       setIsSendingEmail(false);
     }
@@ -376,18 +380,18 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(tripLink)
       .then(() => {
-        toast.success("Link copied to clipboard!");
+        toast.success(translate("shareModal.copyLinkSuccess"));
       })
       .catch(() => {
-        toast.error("Failed to copy link. Please try manually.");
+        toast.error(translate("shareModal.copyLinkError"));
       });
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-6 text-sm sm:text-base overflow-y-auto">
       <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg my-auto"> {/* Changed here */}
-        <div className="flex justify-between items-center mb-5 border-b pb-4" style={{ borderColor: getAccessibleColor('border') }}>
-          <h2 className="text-2xl font-semibold" style={{ color: getAccessibleColor('textDark') }}>Share Trip</h2>
+        <div className="flex justify-between items-center mb-5 border-b pb-4" style={{ borderColor: getAccessibleColor('border') , direction: isRTL ? "rtl" : "ltr" }}>
+          <h2 className="text-2xl font-semibold" style={{ color: getAccessibleColor('textDark') }}>{translate("shareModal.shareTrip")}</h2>
           <button 
             onClick={onClose}
             style={{ 
@@ -395,7 +399,7 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
               color: getAccessibleColor('textMedium')
             }}
             className="p-2 rounded-full hover:opacity-80 transition-all focus:outline-none "
-            aria-label="Close"
+            aria-label={translate("shareModal.closeButton")}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -412,8 +416,8 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
             className="flex-1 py-3 font-medium transition-colors rounded-xl hover:opacity-90"
             onClick={() => setActiveTab('email')}
           >
-            <div className="flex items-center justify-center gap-2">
-              <IoMail className="text-lg" /> Email
+            <div className="flex items-center justify-center gap-2"style={{ direction: isRTL ? "rtl" : "ltr" }}>
+              <IoMail className="text-lg" />{translate("shareModal.emailTab")}
             </div>
           </button>
           <button
@@ -424,8 +428,8 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
             className="flex-1 py-3 font-medium transition-colors rounded-xl hover:opacity-90"
             onClick={() => setActiveTab('link')}
           >
-            <div className="flex items-center justify-center gap-2 ">
-              <IoCopy className="text-lg " /> Copy Link
+            <div className="flex items-center justify-center gap-2 "style={{ direction: isRTL ? "rtl" : "ltr" }}>
+              <IoCopy className="text-lg " />{translate("shareModal.linkTab")}
             </div>
           </button>
         </div>
@@ -434,21 +438,21 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
       <div className="space-y-5 max-h-[calc(100vh-250px)] overflow-y-auto">
         {activeTab === 'email' && (
           <>
-            <div className="space-y-2">
+            <div className="space-y-2"style={{ direction: isRTL ? "rtl" : "ltr" }}>
               <label htmlFor="email" className="text-sm font-semibold text-gray-700">
-                Recipient's Email
+              {translate("shareModal.recipientEmail")}
               </label>
               <input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email address"
+                placeholder={translate("shareModal.emailPlaceholder")}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3"style={{ direction: isRTL ? "rtl" : "ltr" }}>
               <button
                 type="button"
                 onClick={handleSendEmail}
@@ -463,12 +467,12 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
 </svg>
 
-                    Sending...
+{translate("shareModal.sending")}
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     <IoPaperPlane className="text-lg" />
-                    Send Email with Trip Details
+                    {translate("shareModal.sendEmailButton")}
                   </span>
                 )}
               </button>
@@ -486,10 +490,10 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
 </svg>
 
-                    Sharing...
+{translate("shareModal.sharing")}
                   </span>
                 ) : (
-                  'Share Within App'
+                  translate("shareModal.shareAppButton")
                 )}
               </button>
             </div>
@@ -497,9 +501,9 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
         )}
 
         {activeTab === 'link' && (
-          <div className="space-y-2">
+          <div className="space-y-2"style={{ direction: isRTL ? "rtl" : "ltr" }}>
             <label htmlFor="link" className="text-sm font-semibold text-gray-700">
-              Trip Link
+            {translate("shareModal.tripLink")}
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -518,23 +522,23 @@ function ShareTripModal({ isOpen, onClose, tripId, tripDestination }) {
           </div>
         )}
   
-          <div className="p-4 rounded-lg" style={{ backgroundColor: getAccessibleColor('primaryBg') }}>
+          <div className="p-4 rounded-lg"style={{ direction: isRTL ? "rtl" : "ltr" , backgroundColor: getAccessibleColor('primaryBg') }}>
             <div className="flex items-start gap-3">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mt-0.5" style={{ color: getAccessibleColor('primary') }} viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
               </svg>
-              <div className="text-sm" style={{ color: getAccessibleColor('textMedium') }}>
-                {activeTab === 'email' ? (
-                  <>
-                    <p><strong>Send Email:</strong> Sends a comprehensive email with full itinerary, hotels, and activities.</p>
-                    <p className="mt-2"><strong>Share Within App:</strong> Makes this trip visible in the recipient's "Shared Trips" section.</p>
-                  </>
-                ) : (
-                  <>
-                    <p><strong>Public Link:</strong> Anyone with this link can view your trip directly in their browser.</p>
-                    <p className="mt-2">Perfect for sharing via messaging apps, social media, or any platform outside the app.</p>
-                  </>
-                )}
+              <div className="text-sm" style={{ direction: isRTL ? "rtl" : "ltr" , color: getAccessibleColor('textMedium') }}>
+              {activeTab === 'email' ? (
+  <>
+    <p><strong>{translate("shareModal.emailInfoTitle")}</strong> {translate("shareModal.emailInfoDesc")}</p>
+    <p className="mt-2"><strong>{translate("shareModal.shareAppInfoTitle")}</strong> {translate("shareModal.shareAppInfoDesc")}</p>
+  </>
+) : (
+  <>
+    <p><strong>{translate("shareModal.linkInfoTitle")}</strong> {translate("shareModal.linkInfoDesc")}</p>
+    <p className="mt-2">{translate("shareModal.linkInfoExtra")}</p>
+  </>
+)}
               </div>
             </div>
           </div>
