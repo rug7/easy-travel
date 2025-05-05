@@ -254,6 +254,37 @@
   "shareError": "Failed to share trip. Please try again.",
   "emailSuccess": "Email sent successfully!",
   "emailError": "Failed to send email. Please try again."
+},
+"infoSection": {
+  "share": "Share",
+  "budget": "Budget",
+  "travelers": "No. Of Travelers",
+  "travelDate": "Travel Date"
+},
+"flightsSection": {
+  "bestOption": "Best Option",
+  "cheapestOption": "Cheapest Option",
+  "quickestOption": "Quickest Option",
+  "totalDuration": "Total Duration",
+  "stops": "Stops",
+  "class": "Class"
+},
+"hotelsSection": {
+  "noHotels": "No hotels available"
+},
+"activitiesSection": {
+  "day": "Day",
+  "bookNow": "Book Now",
+  "viewMap": "View Map",
+  "reviews": "Reviews",
+  "noActivities": "No activities found",
+  "noActivitiesDesc": "There are no activities planned for this day yet."
+},
+"weatherSection": {
+  "weatherForecast": "Weather Forecast for",
+  "averageWeather": "Average Weather Conditions for",
+  "forecastDisclaimer": "Forecast data is for planning purposes only. Check local weather before activities.",
+  "historicalDisclaimer": "Historical average conditions. Actual weather may vary."
 }
 
   },

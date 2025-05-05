@@ -5,11 +5,16 @@ import { Button } from "@/components/ui/button";
 import fallbackImage from '/moderate1.jpg';
 import destinationsData from '@/context/destinations.json';
 import ShareTripModal from "./ShareTripModal";
+import { useLanguage } from "@/context/LanguageContext";
+
 
 function InfoSection({ trip, onShareClick }) {
     const [photoUrl, setPhotoUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [imageError, setImageError] = useState(false);
+    const { translate, language } = useLanguage();
+const isRTL = language === "he";
+
     // const [showShareModal, setShowShareModal] = useState(false);
 
     useEffect(() => {
@@ -127,26 +132,29 @@ function InfoSection({ trip, onShareClick }) {
                 <div className="flex justify-between items-center mt-4 px-1">
                     {/* Pills Container */}
                     <div className="flex gap-3">
-                        <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2">
-                            <span>💰</span>
-                            <span className="font-medium text-gray-700">{trip.userSelection?.budget} Budget</span>
-                        </div>
-                        <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2">
-                            <span>👥</span>
-                            <span className="font-medium text-gray-700">No. Of Travelers: {trip.userSelection?.travelers}</span>
-                        </div>
-                        <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2">
-                            <span>📆</span>
-                            <span className="font-medium text-gray-700">Travel Date: {formatDate(trip.userSelection?.startDate)} ➡️ {formatDate(trip.userSelection?.endDate)}</span>
-                        </div>
+                    <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    <span>💰</span>
+    <span className="font-medium text-gray-700">{trip.userSelection?.budget} {translate("infoSection.budget")}</span>
+</div>
+
+<div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    <span>👥</span>
+    <span className="font-medium text-gray-700">{translate("infoSection.travelers")}: {trip.userSelection?.travelers}</span>
+</div>
+
+<div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    <span>📆</span>
+    <span className="font-medium text-gray-700">{translate("infoSection.travelDate")}: {formatDate(trip.userSelection?.startDate)} ➡️ {formatDate(trip.userSelection?.endDate)}</span>
+</div>
                     </div>
                     {/* Share Button */}
                     <Button 
     onClick={onShareClick}
     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-3 text-lg transition-all duration-300 hover:scale-105 ml-2"
+    style={{ direction: isRTL ? "rtl" : "ltr" }}
 >
     <IoIosSend className="text-xl" />
-    <span>Share</span>
+    <span>{translate("infoSection.share")}</span>
 </Button>
                 </div>
             </div>
