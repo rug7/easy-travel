@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { chatSession } from '@/service/AIModal';
 import dayjs from 'dayjs';
 import { useAccessibility } from "@/context/AccessibilityContext";
+import { useLanguage } from "@/context/LanguageContext";
+
 import { 
   IoCloudOutline, 
   IoSunnyOutline, 
@@ -18,6 +20,8 @@ const WeatherForecast = ({ destination, startDate, endDate }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { colorMode } = useAccessibility();
+  const { translate, language } = useLanguage();
+const isRTL = language === "he";
   
   // Function to get accessible colors
   const getAccessibleColor = (colorType) => {
@@ -124,9 +128,9 @@ return tripStart.diff(today, 'day') <= 7;
   // Get weather title based on timeframe
   const getWeatherTitle = () => {
     if (isWithinSevenDays()) {
-      return `Weather Forecast for ${destination}`;
+      return `${translate("weatherSection.weatherForecast")} ${destination}`;
     }
-    return `Average Weather Conditions for ${destination}`;
+    return `${translate("weatherSection.averageWeather")} ${destination}`;
   };
 
   useEffect(() => {
@@ -318,14 +322,17 @@ const getWeatherIcon = (condition) => {
              borderColor: getAccessibleColor('containerBorder'),
          }}>
         <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"
-                style={{ color: getAccessibleColor('text') }}>
-                <IoCloudOutline 
-                    className="w-6 h-6" 
-                    style={{ color: getAccessibleColor('primary') }} 
-                />
-                {getWeatherTitle()}
-            </h2>
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"
+    style={{ 
+        color: getAccessibleColor('text'),
+        direction: isRTL ? "rtl" : "ltr"
+    }}>
+    <IoCloudOutline 
+        className="w-6 h-6" 
+        style={{ color: getAccessibleColor('primary') }} 
+    />
+    {getWeatherTitle()}
+</h2>
   
         {/* Forecast Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-4 mb-8">
@@ -367,11 +374,12 @@ const getWeatherIcon = (condition) => {
   
         {/* Summary and Recommendations */}
         <div className="rounded-xl p-5 flex items-start gap-4"
-             style={{
-               backgroundColor: getAccessibleColor('highlightBg'),
-               borderColor: getAccessibleColor('border'),
-               borderWidth: '1px'
-             }}>
+     style={{
+       backgroundColor: getAccessibleColor('highlightBg'),
+       borderColor: getAccessibleColor('border'),
+       borderWidth: '1px',
+       direction: isRTL ? "rtl" : "ltr"
+     }}>
           <IoInformationCircleOutline 
             className="w-7 h-7 flex-shrink-0 mt-0.5 text-white"
             style={{ color: getAccessibleColor('iconPrimary') }}
@@ -391,11 +399,14 @@ const getWeatherIcon = (condition) => {
         </div>
   
         <div className="mt-3 text-xs text-right"
-             style={{ color: getAccessibleColor('lightText') }}>
-          *{isWithinSevenDays() 
-             ? 'Forecast data is for planning purposes only. Check local weather before activities.'
-             : 'Historical average conditions. Actual weather may vary.'}
-        </div>
+     style={{ 
+         color: getAccessibleColor('lightText'),
+         direction: isRTL ? "rtl" : "ltr" 
+     }}>
+  *{isWithinSevenDays() 
+     ? translate("weatherSection.forecastDisclaimer")
+     : translate("weatherSection.historicalDisclaimer")}
+</div>
       </div>
     </div>
   );
