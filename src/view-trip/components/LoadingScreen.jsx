@@ -1,6 +1,8 @@
 // src/components/LoadingScreen.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from "@/context/LanguageContext";
+
 
 // Helper component for progress items
 const ProgressItem = ({ label, complete, current }) => (
@@ -42,6 +44,8 @@ const GuessTheCountryGame = () => {
   const [gameComplete, setGameComplete] = useState(false);
   const [level, setLevel] = useState('easy'); // 'easy', 'medium', 'hard'
   const [questions, setQuestions] = useState([]); // Store shuffled questions
+  const { translate, language } = useLanguage();
+const isRTL = language === "he";
   
   // Landmarks data with placeholder images
   const landmarks = {
@@ -212,8 +216,12 @@ const GuessTheCountryGame = () => {
   return (
     <div className="w-full bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-gray-700/50">
       <div className="text-center mb-4">
-        <h3 className="text-lg font-medium text-white">Guess the Country</h3>
-        <p className="text-sm text-gray-400">Identify where these famous landmarks are located!</p>
+        <h3 className="text-lg font-medium text-white" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+          {translate("loadingScreen.guessCountry.title")}
+        </h3>
+        <p className="text-sm text-gray-400" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+          {translate("loadingScreen.guessCountry.description")}
+        </p>
         
         {!gameActive && (
           <div className="flex justify-center space-x-2 mt-4">
@@ -224,8 +232,9 @@ const GuessTheCountryGame = () => {
                   ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md' 
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
+              style={{ direction: isRTL ? "rtl" : "ltr" }}
             >
-              Easy
+              {translate("loadingScreen.guessCountry.difficulty.easy")}
             </button>
             <button 
               onClick={() => startGame('medium')}
@@ -234,8 +243,9 @@ const GuessTheCountryGame = () => {
                   ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-md' 
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
+              style={{ direction: isRTL ? "rtl" : "ltr" }}
             >
-              Medium
+              {translate("loadingScreen.guessCountry.difficulty.medium")}
             </button>
             <button 
               onClick={() => startGame('hard')}
@@ -244,16 +254,23 @@ const GuessTheCountryGame = () => {
                   ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' 
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
+              style={{ direction: isRTL ? "rtl" : "ltr" }}
             >
-              Hard
+              {translate("loadingScreen.guessCountry.difficulty.hard")}
             </button>
           </div>
         )}
         
         {gameActive && (
-          <div className="flex justify-between text-sm text-gray-300 mt-2">
-            <span>Question {currentQuestion + 1}/{questions.length}</span>
-            <span>Score: {score}</span>
+          <div className="flex justify-between text-sm text-gray-300 mt-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            <span>
+              {translate("loadingScreen.guessCountry.questionCount")
+                .replace("{0}", currentQuestion + 1)
+                .replace("{1}", questions.length)}
+            </span>
+            <span>
+              {translate("loadingScreen.guessCountry.score").replace("{0}", score)}
+            </span>
           </div>
         )}
       </div>
@@ -263,27 +280,38 @@ const GuessTheCountryGame = () => {
           <button 
             className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
             onClick={() => startGame()}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
           >
-            Start Game
+            {translate("loadingScreen.guessCountry.startGame")}
           </button>
         </div>
       )}
       
       {gameComplete && (
         <div className="text-center mb-4 bg-gray-800 p-4 rounded-xl">
-          <p className="text-xl font-bold text-white mb-2">Game Complete!</p>
-          <p className="text-lg text-white mb-3">Your Score: {score}/{questions.length}</p>
-          <p className="text-gray-300 mb-4">
-            {score === questions.length ? "Perfect! You're a geography expert!" :
-             score >= questions.length * 0.7 ? "Great job! You know your landmarks!" :
-             score >= questions.length * 0.5 ? "Not bad! Keep exploring the world!" :
-             "Keep practicing! There's so much to discover!"}
+          <p className="text-xl font-bold text-white mb-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {translate("loadingScreen.guessCountry.gameComplete")}
+          </p>
+          <p className="text-lg text-white mb-3" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {translate("loadingScreen.guessCountry.yourScore")
+              .replace("{0}", score)
+              .replace("{1}", questions.length)}
+          </p>
+          <p className="text-gray-300 mb-4" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {score === questions.length 
+              ? translate("loadingScreen.guessCountry.feedback.perfect")
+              : score >= questions.length * 0.7 
+                ? translate("loadingScreen.guessCountry.feedback.great")
+                : score >= questions.length * 0.5 
+                  ? translate("loadingScreen.guessCountry.feedback.good")
+                  : translate("loadingScreen.guessCountry.feedback.needsPractice")}
           </p>
           <button 
             className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
             onClick={() => startGame()}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
           >
-            Play Again
+            {translate("loadingScreen.guessCountry.playAgain")}
           </button>
         </div>
       )}
@@ -302,8 +330,8 @@ const GuessTheCountryGame = () => {
             <p className="text-gray-300">{questions[currentQuestion].description}</p>
           </div>
           
-          <p className="text-white text-xl font-medium mb-6 text-center">
-            Where is this landmark located?
+          <p className="text-white text-xl font-medium mb-6 text-center" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {translate("loadingScreen.guessCountry.question")}
           </p>
           
           <div className="grid grid-cols-2 gap-3">
@@ -341,6 +369,10 @@ const WorldExplorerQuiz = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [gameComplete, setGameComplete] = useState(false);
   const [shuffledQuestions, setShuffledQuestions] = useState([]); // Store shuffled questions
+  const { translate, language } = useLanguage();
+  const isRTL = language === "he";
+
+
   
   // Travel quiz questions
   const questions = [
@@ -548,12 +580,22 @@ const WorldExplorerQuiz = () => {
   return (
     <div className="w-full bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-gray-700/50">
       <div className="text-center mb-4">
-        <h3 className="text-lg font-medium text-white">World Explorer Quiz</h3>
-        <p className="text-sm text-gray-400">Test your travel knowledge!</p>
+        <h3 className="text-lg font-medium text-white" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+          {translate("loadingScreen.worldExplorer.title")}
+        </h3>
+        <p className="text-sm text-gray-400" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+          {translate("loadingScreen.worldExplorer.description")}
+        </p>
         {gameActive && (
-          <div className="flex justify-between text-sm text-gray-300 mt-2">
-            <span>Question {currentQuestion + 1}/{shuffledQuestions.length}</span>
-            <span>Score: {score}</span>
+          <div className="flex justify-between text-sm text-gray-300 mt-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            <span>
+              {translate("loadingScreen.worldExplorer.questionCount")
+                .replace("{0}", currentQuestion + 1)
+                .replace("{1}", shuffledQuestions.length)}
+            </span>
+            <span>
+              {translate("loadingScreen.worldExplorer.score").replace("{0}", score)}
+            </span>
           </div>
         )}
       </div>
@@ -563,34 +605,47 @@ const WorldExplorerQuiz = () => {
           <button 
             className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
             onClick={startGame}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
           >
-            Start Quiz
+            {translate("loadingScreen.worldExplorer.startQuiz")}
           </button>
         </div>
       )}
       
       {gameComplete && (
         <div className="text-center mb-4 bg-gray-800 p-4 rounded-xl">
-          <p className="text-xl font-bold text-white mb-2">Quiz Complete!</p>
-          <p className="text-lg text-white mb-3">Your Score: {score}/{shuffledQuestions.length}</p>
-          <p className="text-gray-300 mb-4">
-            {score === shuffledQuestions.length ? "Perfect score! You're a travel expert!" :
-             score >= shuffledQuestions.length * 0.7 ? "Great job! You know your destinations well!" :
-             score >= shuffledQuestions.length * 0.5 ? "Not bad! You have decent travel knowledge." :
-             "Keep exploring! There's a world of places to discover."}
+          <p className="text-xl font-bold text-white mb-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {translate("loadingScreen.worldExplorer.quizComplete")}
+          </p>
+          <p className="text-lg text-white mb-3" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {translate("loadingScreen.worldExplorer.yourScore")
+              .replace("{0}", score)
+              .replace("{1}", shuffledQuestions.length)}
+          </p>
+          <p className="text-gray-300 mb-4" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {score === shuffledQuestions.length 
+              ? translate("loadingScreen.worldExplorer.feedback.perfect")
+              : score >= shuffledQuestions.length * 0.7 
+                ? translate("loadingScreen.worldExplorer.feedback.great")
+                : score >= shuffledQuestions.length * 0.5 
+                  ? translate("loadingScreen.worldExplorer.feedback.good")
+                  : translate("loadingScreen.worldExplorer.feedback.needsPractice")}
           </p>
           <button 
             className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
             onClick={startGame}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
           >
-            Play Again
+            {translate("loadingScreen.worldExplorer.playAgain")}
           </button>
         </div>
       )}
       
       {gameActive && shuffledQuestions.length > 0 && (
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg border border-gray-700/50">
-          <p className="text-white text-xl font-medium mb-6">{shuffledQuestions[currentQuestion].question}</p>
+          <p className="text-white text-xl font-medium mb-6" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {shuffledQuestions[currentQuestion].question}
+          </p>
           <div className="space-y-3">
             {shuffledQuestions[currentQuestion].options.map((option, index) => (
               <button
@@ -622,17 +677,25 @@ const WorldExplorerQuiz = () => {
 
 // Game selector component
 const GameSelector = ({ onSelectGame }) => {
+  const { translate, language } = useLanguage();
+  const isRTL = language === "he";
   return (
     <div className="w-full">
-      <h3 className="text-lg font-medium text-white text-center mb-4">Play a game while you wait</h3>
+      <h3 className="text-lg font-medium text-white text-center mb-4" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+        {translate("loadingScreen.playWhileWait")}
+      </h3>
       <div className="grid grid-cols-1 gap-4">
         <button
           onClick={() => onSelectGame('guess-country')}
           className="bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 p-6 rounded-xl text-center transition-all shadow-lg hover:shadow-blue-500/20 border border-blue-500/20 transform hover:scale-105"
         >
           <div className="text-4xl mb-3">🌎</div>
-          <h4 className="text-white font-semibold text-lg">Guess the Country</h4>
-          <p className="text-blue-200 text-sm mt-1">Identify famous landmarks</p>
+          <h4 className="text-white font-semibold text-lg" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {translate("loadingScreen.gameSelector.guessCountry")}
+          </h4>
+          <p className="text-blue-200 text-sm mt-1" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {translate("loadingScreen.gameSelector.guessCountryDesc")}
+          </p>
         </button>
         
         <button
@@ -640,8 +703,12 @@ const GameSelector = ({ onSelectGame }) => {
           className="bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 p-6 rounded-xl text-center transition-all shadow-lg hover:shadow-purple-500/20 border border-purple-500/20 transform hover:scale-105"
         >
           <div className="text-4xl mb-3">🌍</div>
-          <h4 className="text-white font-semibold text-lg">World Explorer</h4>
-          <p className="text-purple-200 text-sm mt-1">Test your travel knowledge</p>
+          <h4 className="text-white font-semibold text-lg" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {translate("loadingScreen.gameSelector.worldExplorer")}
+          </h4>
+          <p className="text-purple-200 text-sm mt-1" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {translate("loadingScreen.gameSelector.worldExplorerDesc")}
+          </p>
         </button>
       </div>
     </div>
@@ -669,6 +736,8 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
   const [dots, setDots] = useState('');
   const [selectedGame, setSelectedGame] = useState(null);
   const navigate = useNavigate();
+  const { translate, language } = useLanguage();
+  const isRTL = language === "he";
   
   // Animate the dots
   useEffect(() => {
@@ -691,20 +760,22 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
   // Get loading message based on current progress
   const getLoadingMessage = () => {
     if (!progress.destination) {
-      return "Finding your perfect destination";
+      return translate("loadingScreen.findingDestination");
     } else if (progress.destination && !progress.hotels) {
-      return "Discovering amazing accommodations";
+      return translate("loadingScreen.discoveringAccommodations");
     } else if (progress.hotels && !progress.flights) {
-      return "Searching for the best flights";
+      return translate("loadingScreen.searchingFlights");
     } else if (progress.flights && !progress.activities) {
       if (progress.currentDay && progress.totalDays) {
-        return `Planning activities for day ${progress.currentDay} of ${progress.totalDays}`;
+        return translate("loadingScreen.planningActivitiesDay")
+          .replace("{0}", progress.currentDay)
+          .replace("{1}", progress.totalDays);
       }
-      return "Planning exciting activities";
+      return translate("loadingScreen.planningActivities");
     } else if (progress.finalizing) {
-      return "Finalizing your perfect trip";
+      return translate("loadingScreen.finalizingTrip");
     }
-    return "Preparing your adventure";
+    return translate("loadingScreen.preparingAdventure");
   };
   
   return (
@@ -726,7 +797,9 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
           </div>
           
           {/* Progress text */}
-          <h2 className="text-2xl font-bold text-white mb-2 text-center">{getLoadingMessage()}{dots}</h2>
+          <h2 className="text-2xl font-bold text-white mb-2 text-center" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            {getLoadingMessage()}{dots}
+          </h2>
           
           {/* Progress bar */}
           <div className="w-full max-w-md h-2 bg-gray-700 rounded-full overflow-hidden mt-4">
@@ -741,22 +814,22 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
           {/* Progress details */}
           <div className="mt-6 grid grid-cols-4 gap-4 text-center">
             <ProgressItem 
-              label="Destination" 
+              label={translate("loadingScreen.progressItems.destination")} 
               complete={progress.destination} 
               current={!progress.destination && !progress.flights && !progress.hotels && !progress.activities}
             />
             <ProgressItem 
-              label="Hotels" 
+              label={translate("loadingScreen.progressItems.hotels")} 
               complete={progress.hotels} 
               current={progress.destination && !progress.hotels}
             />
             <ProgressItem 
-              label="Flights" 
+              label={translate("loadingScreen.progressItems.flights")} 
               complete={progress.flights} 
               current={progress.hotels && !progress.flights}
             />
             <ProgressItem 
-              label="Activities" 
+              label={translate("loadingScreen.progressItems.activities")} 
               complete={progress.activities} 
               current={progress.flights && !progress.activities}
             />
@@ -764,52 +837,55 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
           
           {progress.currentDay > 0 && progress.totalDays > 0 && (
             <div className="mt-4 text-blue-400">
-              <span className="font-medium">Day {progress.currentDay}</span> of {progress.totalDays}
+            <span className="font-medium" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+              {translate("loadingScreen.progressItems.day")} {progress.currentDay}
+            </span> 
+            {" of "} {progress.totalDays}
+          </div>
+        )}
+        
+        <p className="text-gray-400 mt-8 text-sm max-w-md text-center" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+          {translate("loadingScreen.loadingMessage")}
+        </p>
+      </div>
+      
+      {/* Right side - Games */}
+      <div className="w-full md:w-1/2 h-full flex flex-col p-6 overflow-y-auto">
+        <div className="flex-1 flex flex-col items-center justify-center">
+          {!selectedGame ? (
+            <GameSelector onSelectGame={setSelectedGame} />
+          ) : selectedGame === 'guess-country' ? (
+            <div className="w-full max-w-md">
+              <GuessTheCountryGame />
+              <button 
+                onClick={() => setSelectedGame(null)} 
+                className="mt-6 text-gray-400 text-sm hover:text-white flex items-center mx-auto bg-gray-800/50 px-4 py-2 rounded-full hover:bg-gray-700/50 transition-all"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                {translate("loadingScreen.gameSelector.backToSelection")}
+              </button>
+            </div>
+          ) : (
+            <div className="w-full max-w-md">
+              <WorldExplorerQuiz />
+              <button 
+                onClick={() => setSelectedGame(null)} 
+                className="mt-6 text-gray-400 text-sm hover:text-white flex items-center mx-auto bg-gray-800/50 px-4 py-2 rounded-full hover:bg-gray-700/50 transition-all"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                {translate("loadingScreen.gameSelector.backToSelection")}
+              </button>
             </div>
           )}
-          
-          <p className="text-gray-400 mt-8 text-sm max-w-md text-center">
-            We're crafting a personalized travel experience just for you. This may take a minute or two.
-          </p>
-        </div>
-        
-        {/* Right side - Games */}
-        <div className="w-full md:w-1/2 h-full flex flex-col p-6 overflow-y-auto">
-          <div className="flex-1 flex flex-col items-center justify-center">
-            {!selectedGame ? (
-              <GameSelector onSelectGame={setSelectedGame} />
-            ) : selectedGame === 'guess-country' ? (
-              <div className="w-full max-w-md">
-                <GuessTheCountryGame />
-                <button 
-                  onClick={() => setSelectedGame(null)} 
-                  className="mt-6 text-gray-400 text-sm hover:text-white flex items-center mx-auto bg-gray-800/50 px-4 py-2 rounded-full hover:bg-gray-700/50 transition-all"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  Back to game selection
-                </button>
-              </div>
-            ) : (
-              <div className="w-full max-w-md">
-                <WorldExplorerQuiz />
-                <button 
-                  onClick={() => setSelectedGame(null)} 
-                  className="mt-6 text-gray-400 text-sm hover:text-white flex items-center mx-auto bg-gray-800/50 px-4 py-2 rounded-full hover:bg-gray-700/50 transition-all"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  Back to game selection
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default LoadingScreen;

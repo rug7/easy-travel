@@ -17,6 +17,8 @@ import dynamic from 'next/dynamic';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useAccessibility } from '@/context/AccessibilityContext';
+import { useLanguage } from "@/context/LanguageContext";
+
 
 
 
@@ -40,6 +42,8 @@ function TravelDashboard() {
   const [refreshKey, setRefreshKey] = useState(0);
   const dashboardRef = useRef(null);
   const { colorMode } = useAccessibility();
+  const { translate, language } = useLanguage();
+const isRTL = language === "he";
   const [stats, setStats] = useState({
     totalTrips: 0,
     countriesVisited: 0,
@@ -696,8 +700,8 @@ const formatedDate = (dateString) => {
         {/* Header with subtitle */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-white">Travel Analytics Dashboard</h1>
-            <p className="text-gray-400 mt-1">Insights and statistics about your travel history and plans</p>
+            <h1 className="text-3xl font-bold text-white">{translate("dashboardTitle")}</h1>
+            <p className="text-gray-400 mt-1"> {translate("dashboardDescription")}</p>
           </div>
           <div className="mt-4 md:mt-0 flex gap-4 items-center">
             <p className="text-gray-400 text-sm">Last updated: {formatedDate(new Date().toLocaleDateString())}</p>

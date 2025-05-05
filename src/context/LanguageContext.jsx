@@ -11,7 +11,21 @@ export const LanguageProvider = ({ children }) => {
   };
 
   const translate = (key) => {
-    return translations[language]?.[key] || key;
+    // Support for nested keys like "loadingScreen.findingDestination"
+    const keys = key.split('.');
+    let value = translations[language];
+    
+    // Traverse the nested structure
+    for (const k of keys) {
+      if (value && value[k]) {
+        value = value[k];
+      } else {
+        // If key not found, return the original key
+        return key;
+      }
+    }
+    
+    return value;
   };
 
   const isRTL = () => language === "he"; // Add this to determine if the language is RTL
