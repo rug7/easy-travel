@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from "@/context/LanguageContext";
 
 // Collection of hotel images
 const hotelImageCollection = [
@@ -32,6 +33,8 @@ function Hotels({ trip }) {
   const [hotelImages, setHotelImages] = useState({});
   const [loadingImages, setLoadingImages] = useState({});
   const destination = trip?.tripData?.trip?.destination || '';
+  const { translate, language } = useLanguage();
+const isRTL = language === "he";
 
   useEffect(() => {
     if (trip?.tripData?.hotels && trip.tripData.hotels.length > 0) {
@@ -125,7 +128,7 @@ function Hotels({ trip }) {
                 />
               </div>
             </a>
-            <div className='my-2'>
+            <div className='my-2'style={{ direction: isRTL ? "rtl" : "ltr" }}>
               <h2 className='text-white font-medium'>{hotel?.name}</h2>    
               <h2 className='text-gray-300 text-xs'>📍 {hotel?.address}</h2>    
               <h2 className='text-white text-sm'>💰 {hotel?.priceRange || hotel?.price}</h2>
@@ -134,7 +137,7 @@ function Hotels({ trip }) {
           </div>   
         ))
         :
-        <p>No hotels available</p>
+        <p style={{ direction: isRTL ? "rtl" : "ltr" }}>{translate("hotelsSection.noHotels")}</p>
         
         }
       </div>
