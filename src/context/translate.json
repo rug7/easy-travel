@@ -1,4 +1,60 @@
 {
+ "budgetTypeMapping": {
+  "Cheap": {
+    "he": "זול",
+    "es": "Barato",
+    "pt": "Barato",
+    "fr": "Bon marché",
+    "it": "Economico"
+  },
+  "Moderate": {
+    "en": "Moderate",
+    "he": "בינוני",
+    "es": "Moderado",
+    "pt": "Moderado",
+    "fr": "Modéré",
+    "it": "Moderato"
+  },
+  "Luxury": {
+    "he": "יוקרה",
+    "es": "Lujo",
+    "pt": "Luxo",
+    "fr": "Luxe",
+    "it": "Lusso"
+  }
+},
+
+"travelerTypeMapping": {
+  "Just Me": {
+    "he": "רק אני",
+    "es": "Solo Yo",
+    "pt": "Apenas eu",
+    "fr": "Juste moi",
+    "it": "Solo io"
+  },
+  "A Couple": {
+    "he": "זוג",
+    "es": "Una Pareja",
+    "pt": "Um Casal",
+    "fr": "Un Couple",
+    "it": "Una Coppia"
+  },
+  "Family": {
+    "he": "משפחה",
+    "es": "Familia",
+    "pt": "Família",
+    "fr": "Famille",
+    "it": "Famiglia"
+  },
+  "Friends": {
+    "he": "חברים",
+    "es": "Amigos",
+    "pt": "Amigos",
+    "fr": "Amis",
+    "it": "Amici"
+  }
+},
+ 
   "en": {
     
     "pleaseCompletePreferences": "Please complete all preferences before generating suggestions",
@@ -538,6 +594,37 @@
   "shareError": "שיתוף הטיול נכשל. אנא נסה שוב.",
   "emailSuccess": "האימייל נשלח בהצלחה!",
   "emailError": "שליחת האימייל נכשלה. אנא נסה שוב."
+},
+"infoSection": {
+  "share": "שתף",
+  "budget": "תקציב",
+  "travelers": "מספר מטיילים",
+  "travelDate": "תאריך נסיעה"
+},
+"flightsSection": {
+  "bestOption": "האפשרות הטובה ביותר",
+  "cheapestOption": "האפשרות הזולה ביותר",
+  "quickestOption": "האפשרות המהירה ביותר",
+  "totalDuration": "משך זמן כולל",
+  "stops": "עצירות",
+  "class": "מחלקה"
+},
+"hotelsSection": {
+  "noHotels": "אין מלונות זמינים"
+},
+"activitiesSection": {
+  "day": "יום",
+  "bookNow": "הזמן עכשיו",
+  "viewMap": "צפה במפה",
+  "reviews": "ביקורות",
+  "noActivities": "לא נמצאו פעילויות",
+  "noActivitiesDesc": "אין פעילויות מתוכננות ליום זה עדיין."
+},
+"weatherSection": {
+  "weatherForecast": "תחזית מזג אוויר עבור",
+  "averageWeather": "תנאי מזג אוויר ממוצעים עבור",
+  "forecastDisclaimer": "נתוני התחזית הם למטרות תכנון בלבד. בדוק את מזג האוויר המקומי לפני פעילויות.",
+  "historicalDisclaimer": "תנאים ממוצעים היסטוריים. מזג האוויר בפועל עשוי להשתנות."
 }
   },
   "es": {
@@ -790,6 +877,37 @@
   "shareError": "Error al compartir el viaje. Inténtalo de nuevo.",
   "emailSuccess": "¡Correo enviado con éxito!",
   "emailError": "Error al enviar el correo. Inténtalo de nuevo."
+},
+"infoSection": {
+  "share": "Compartir",
+  "budget": "Presupuesto",
+  "travelers": "Número de Viajeros",
+  "travelDate": "Fecha de Viaje"
+},
+"flightsSection": {
+  "bestOption": "Mejor Opción",
+  "cheapestOption": "Opción más Económica",
+  "quickestOption": "Opción más Rápida",
+  "totalDuration": "Duración Total",
+  "stops": "Escalas",
+  "class": "Clase"
+},
+"hotelsSection": {
+  "noHotels": "No hay hoteles disponibles"
+},
+"activitiesSection": {
+  "day": "Día",
+  "bookNow": "Reservar Ahora",
+  "viewMap": "Ver Mapa",
+  "reviews": "Reseñas",
+  "noActivities": "No se encontraron actividades",
+  "noActivitiesDesc": "No hay actividades planificadas para este día todavía."
+},
+"weatherSection": {
+  "weatherForecast": "Pronóstico del Tiempo para",
+  "averageWeather": "Condiciones Climáticas Promedio para",
+  "forecastDisclaimer": "Los datos de pronóstico son solo para fines de planificación. Verifique el clima local antes de realizar actividades.",
+  "historicalDisclaimer": "Condiciones promedio históricas. El clima real puede variar."
 }
   },
   "pt": {
@@ -1042,6 +1160,37 @@
   "shareError": "Falha ao compartilhar viagem. Tente novamente.",
   "emailSuccess": "Email enviado com sucesso!",
   "emailError": "Falha ao enviar email. Tente novamente."
+},
+"infoSection": {
+  "share": "Compartilhar",
+  "budget": "Orçamento",
+  "travelers": "Número de Viajantes",
+  "travelDate": "Data da Viagem"
+},
+"flightsSection": {
+  "bestOption": "Melhor Opção",
+  "cheapestOption": "Opção mais Barata",
+  "quickestOption": "Opção mais Rápida",
+  "totalDuration": "Duração Total",
+  "stops": "Paradas",
+  "class": "Classe"
+},
+"hotelsSection": {
+  "noHotels": "Nenhum hotel disponível"
+},
+"activitiesSection": {
+  "day": "Dia",
+  "bookNow": "Reservar Agora",
+  "viewMap": "Ver Mapa",
+  "reviews": "Avaliações",
+  "noActivities": "Nenhuma atividade encontrada",
+  "noActivitiesDesc": "Ainda não há atividades planejadas para este dia."
+},
+"weatherSection": {
+  "weatherForecast": "Previsão do Tempo para",
+  "averageWeather": "Condições Climáticas Médias para",
+  "forecastDisclaimer": "Os dados de previsão são apenas para fins de planejamento. Verifique o clima local antes das atividades.",
+  "historicalDisclaimer": "Condições médias históricas. O clima real pode variar."
 }
   },
   "fr": {
@@ -1294,6 +1443,37 @@
   "shareError": "Échec du partage du voyage. Veuillez réessayer.",
   "emailSuccess": "Email envoyé avec succès !",
   "emailError": "Échec de l'envoi de l'email. Veuillez réessayer."
+},
+"infoSection": {
+  "share": "Partager",
+  "budget": "Budget",
+  "travelers": "Nombre de Voyageurs",
+  "travelDate": "Date de Voyage"
+},
+"flightsSection": {
+  "bestOption": "Meilleure Option",
+  "cheapestOption": "Option la Moins Chère",
+  "quickestOption": "Option la Plus Rapide",
+  "totalDuration": "Durée Totale",
+  "stops": "Escales",
+  "class": "Classe"
+},
+"hotelsSection": {
+  "noHotels": "Aucun hôtel disponible"
+},
+"activitiesSection": {
+  "day": "Jour",
+  "bookNow": "Réserver Maintenant",
+  "viewMap": "Voir la Carte",
+  "reviews": "Avis",
+  "noActivities": "Aucune activité trouvée",
+  "noActivitiesDesc": "Aucune activité n'est encore prévue pour ce jour."
+},
+"weatherSection": {
+  "weatherForecast": "Prévisions Météo pour",
+  "averageWeather": "Conditions Météorologiques Moyennes pour",
+  "forecastDisclaimer": "Les données de prévision sont uniquement à des fins de planification. Vérifiez la météo locale avant les activités.",
+  "historicalDisclaimer": "Conditions moyennes historiques. La météo réelle peut varier."
 }
   },
   "it": {
@@ -1503,8 +1683,8 @@
         }
       }
     }
-  },
-  "viewTripPage": {
+    ,
+    "viewTripPage": {
   "tripInformation": "Informazioni sul Viaggio",
   "flightOptions": "Opzioni di Volo",
   "hotelRecommendations": "Raccomandazioni Hotel",
@@ -1547,5 +1727,38 @@
   "shareError": "Impossibile condividere il viaggio. Riprova.",
   "emailSuccess": "Email inviata con successo!",
   "emailError": "Impossibile inviare l'email. Riprova."
+},
+"infoSection": {
+  "share": "Condividi",
+  "budget": "Budget",
+  "travelers": "Numero di Viaggiatori",
+  "travelDate": "Data di Viaggio"
+},
+"flightsSection": {
+  "bestOption": "Opzione Migliore",
+  "cheapestOption": "Opzione più Economica",
+  "quickestOption": "Opzione più Veloce",
+  "totalDuration": "Durata Totale",
+  "stops": "Scali",
+  "class": "Classe"
+},
+"hotelsSection": {
+  "noHotels": "Nessun hotel disponibile"
+},
+"activitiesSection": {
+  "day": "Giorno",
+  "bookNow": "Prenota Ora",
+  "viewMap": "Visualizza Mappa",
+  "reviews": "Recensioni",
+  "noActivities": "Nessuna attività trovata",
+  "noActivitiesDesc": "Non ci sono ancora attività pianificate per questo giorno."
+},
+"weatherSection": {
+  "weatherForecast": "Previsioni Meteo per",
+  "averageWeather": "Condizioni Meteorologiche Medie per",
+  "forecastDisclaimer": "I dati previsionali sono solo a scopo di pianificazione. Controllare il meteo locale prima delle attività.",
+  "historicalDisclaimer": "Condizioni medie storiche. Il tempo effettivo può variare."
 }
+  }
+  
 }

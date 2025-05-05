@@ -1,42 +1,65 @@
-import React, { createContext, useContext, useState } from "react";
-import translations from "./translate.json";
+// LanguageContext.jsx
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import languageData from './translate.json';
 
 const LanguageContext = createContext();
 
-export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState("en");
+export function LanguageProvider({ children }) {
+  const [language, setLanguage] = useState(localStorage.getItem('language') || 'en');
+  const [listeners, setListeners] = useState([]);
 
-  const changeLanguage = (lang) => {
-    setLanguage(lang);
+  const changeLanguage = (newLanguage) => {
+    localStorage.setItem('language', newLanguage);
+    setLanguage(newLanguage);
+    // Notify all listeners about the language change
+    listeners.forEach(listener => listener(newLanguage));
   };
 
   const translate = (key) => {
-    // Support for nested keys like "loadingScreen.findingDestination"
     const keys = key.split('.');
-    let value = translations[language];
+    let value = languageData[language];
     
-    // Traverse the nested structure
     for (const k of keys) {
       if (value && value[k]) {
         value = value[k];
       } else {
-        // If key not found, return the original key
-        return key;
+        // Fallback to English if translation not found
+        let englishValue = languageData['en'];
+        for (const k of keys) {
+          if (englishValue && englishValue[k]) {
+            englishValue = englishValue[k];
+          } else {
+            return key; // Return the key if no translation found in English either
+          }
+        }
+        return englishValue;
       }
     }
     
     return value;
   };
 
-  const isRTL = () => language === "he"; // Add this to determine if the language is RTL
+  // Add a listener function that components can subscribe to
+  const addLanguageChangeListener = (callback) => {
+    setListeners(prev => [...prev, callback]);
+    return () => {
+      setListeners(prev => prev.filter(listener => listener !== callback));
+    };
+  };
+
+  const value = {
+    language,
+    changeLanguage,
+    translate,
+    addLanguageChangeListener,
+    isRTL: language === 'he',
+  };
 
   return (
-    <LanguageContext.Provider value={{ language, changeLanguage, translate, isRTL }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );
-};
+}
 
-export const useLanguage = () => {
-  return useContext(LanguageContext);
-};
+export const useLanguage = () => useContext(LanguageContext);
