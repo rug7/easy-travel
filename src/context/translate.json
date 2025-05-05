@@ -210,8 +210,52 @@
           "needsPractice": "Keep exploring! There's a world of places to discover."
         }
       }
-    }
-  
+    },
+    "viewTripPage": {
+  "tripInformation": "Trip Information",
+  "flightOptions": "Flight Options",
+  "hotelRecommendations": "Hotel Recommendations",
+  "dailyActivities": "Daily Activities",
+  "weatherForecast": "Weather Forecast",
+  "tripNotFound": "Trip not found",
+  "loading": "Loading...",
+  "printDashboard": "Print Dashboard",
+  "exportAsPDF": "Export as PDF",
+  "shareTrip": "Share Trip",
+  "shareEmail": "Share via Email",
+  "shareModalTitle": "Share Trip",
+  "shareModalClose": "Close",
+  "shareModalSuccess": "Trip shared successfully!",
+  "shareModalError": "Error sharing trip"
+},
+"shareModal": {
+  "shareTrip": "Share Trip",
+  "closeButton": "Close",
+  "emailTab": "Email",
+  "linkTab": "Copy Link",
+  "recipientEmail": "Recipient's Email",
+  "emailPlaceholder": "Enter email address",
+  "sendEmailButton": "Send Email with Trip Details",
+  "sending": "Sending...",
+  "shareAppButton": "Share Within App",
+  "sharing": "Sharing...",
+  "tripLink": "Trip Link",
+  "copyLinkSuccess": "Link copied to clipboard!",
+  "copyLinkError": "Failed to copy link. Please try manually.",
+  "emailInfoTitle": "Send Email:",
+  "emailInfoDesc": "Sends a comprehensive email with full itinerary, hotels, and activities.",
+  "shareAppInfoTitle": "Share Within App:",
+  "shareAppInfoDesc": "Makes this trip visible in the recipient's \"Shared Trips\" section.",
+  "linkInfoTitle": "Public Link:",
+  "linkInfoDesc": "Anyone with this link can view your trip directly in their browser.",
+  "linkInfoExtra": "Perfect for sharing via messaging apps, social media, or any platform outside the app.",
+  "invalidEmail": "Please enter a valid email address",
+  "shareSuccess": "Trip shared with {0}",
+  "shareError": "Failed to share trip. Please try again.",
+  "emailSuccess": "Email sent successfully!",
+  "emailError": "Failed to send email. Please try again."
+}
+
   },
   "he": {
     "heroTitle": "ההרפתקה הבאה שלך ממתינה",
@@ -419,7 +463,51 @@
           "needsPractice": "המשך לחקור! יש עולם שלם של מקומות לגלות."
         }
       }
-    }
+    },
+    "viewTripPage": {
+  "tripInformation": "מידע על הטיול",
+  "flightOptions": "אפשרויות טיסה",
+  "hotelRecommendations": "המלצות למלונות",
+  "dailyActivities": "פעילויות יומיות",
+  "weatherForecast": "תחזית מזג אוויר",
+  "tripNotFound": "הטיול לא נמצא",
+  "loading": "טוען...",
+  "printDashboard": "הדפס לוח מחוונים",
+  "exportAsPDF": "ייצא כ-PDF",
+  "shareTrip": "שתף טיול",
+  "shareEmail": "שתף באמצעות דוא\"ל",
+  "shareModalTitle": "שתף טיול",
+  "shareModalClose": "סגור",
+  "shareModalSuccess": "הטיול שותף בהצלחה!",
+  "shareModalError": "שגיאה בשיתוף הטיול"
+},
+"shareModal": {
+  "shareTrip": "שתף טיול",
+  "closeButton": "סגור",
+  "emailTab": "אימייל",
+  "linkTab": "העתק קישור",
+  "recipientEmail": "אימייל הנמען",
+  "emailPlaceholder": "הזן כתובת אימייל",
+  "sendEmailButton": "שלח אימייל עם פרטי הטיול",
+  "sending": "שולח...",
+  "shareAppButton": "שתף בתוך האפליקציה",
+  "sharing": "משתף...",
+  "tripLink": "קישור לטיול",
+  "copyLinkSuccess": "הקישור הועתק ללוח!",
+  "copyLinkError": "נכשל בהעתקת הקישור. נסה ידנית.",
+  "emailInfoTitle": "שלח אימייל:",
+  "emailInfoDesc": "שולח אימייל מקיף עם מסלול מלא, מלונות ופעילויות.",
+  "shareAppInfoTitle": "שתף בתוך האפליקציה:",
+  "shareAppInfoDesc": "הופך את הטיול לגלוי בסעיף \"טיולים משותפים\" של הנמען.",
+  "linkInfoTitle": "קישור ציבורי:",
+  "linkInfoDesc": "כל מי שיש לו את הקישור יכול לצפות בטיול שלך ישירות בדפדפן.",
+  "linkInfoExtra": "מושלם לשיתוף דרך אפליקציות מסרים, מדיה חברתית, או כל פלטפורמה מחוץ לאפליקציה.",
+  "invalidEmail": "אנא הזן כתובת אימייל תקינה",
+  "shareSuccess": "הטיול שותף עם {0}",
+  "shareError": "שיתוף הטיול נכשל. אנא נסה שוב.",
+  "emailSuccess": "האימייל נשלח בהצלחה!",
+  "emailError": "שליחת האימייל נכשלה. אנא נסה שוב."
+}
   },
   "es": {
     "heroTitle": "Tu próxima aventura te espera",
@@ -627,7 +715,51 @@
           "needsPractice": "¡Sigue explorando! Hay un mundo de lugares por descubrir."
         }
       }
-    }
+    },
+    "viewTripPage": {
+  "tripInformation": "Información del Viaje",
+  "flightOptions": "Opciones de Vuelo",
+  "hotelRecommendations": "Recomendaciones de Hotel",
+  "dailyActivities": "Actividades Diarias",
+  "weatherForecast": "Pronóstico del Tiempo",
+  "tripNotFound": "Viaje no encontrado",
+  "loading": "Cargando...",
+  "printDashboard": "Imprimir Panel",
+  "exportAsPDF": "Exportar como PDF",
+  "shareTrip": "Compartir Viaje",
+  "shareEmail": "Compartir por Correo",
+  "shareModalTitle": "Compartir Viaje",
+  "shareModalClose": "Cerrar",
+  "shareModalSuccess": "¡Viaje compartido con éxito!",
+  "shareModalError": "Error al compartir viaje"
+},
+"shareModal": {
+  "shareTrip": "Compartir Viaje",
+  "closeButton": "Cerrar",
+  "emailTab": "Correo",
+  "linkTab": "Copiar Enlace",
+  "recipientEmail": "Correo del Destinatario",
+  "emailPlaceholder": "Introduce dirección de correo",
+  "sendEmailButton": "Enviar Correo con Detalles del Viaje",
+  "sending": "Enviando...",
+  "shareAppButton": "Compartir Dentro de la App",
+  "sharing": "Compartiendo...",
+  "tripLink": "Enlace del Viaje",
+  "copyLinkSuccess": "¡Enlace copiado al portapapeles!",
+  "copyLinkError": "No se pudo copiar el enlace. Inténtalo manualmente.",
+  "emailInfoTitle": "Enviar Correo:",
+  "emailInfoDesc": "Envía un correo completo con itinerario, hoteles y actividades.",
+  "shareAppInfoTitle": "Compartir Dentro de la App:",
+  "shareAppInfoDesc": "Hace que este viaje sea visible en la sección \"Viajes Compartidos\" del destinatario.",
+  "linkInfoTitle": "Enlace Público:",
+  "linkInfoDesc": "Cualquier persona con este enlace puede ver tu viaje directamente en su navegador.",
+  "linkInfoExtra": "Perfecto para compartir a través de aplicaciones de mensajería, redes sociales o cualquier plataforma fuera de la app.",
+  "invalidEmail": "Por favor, introduce una dirección de correo válida",
+  "shareSuccess": "Viaje compartido con {0}",
+  "shareError": "Error al compartir el viaje. Inténtalo de nuevo.",
+  "emailSuccess": "¡Correo enviado con éxito!",
+  "emailError": "Error al enviar el correo. Inténtalo de nuevo."
+}
   },
   "pt": {
     "heroTitle": "Sua próxima aventura espera por você",
@@ -835,7 +967,51 @@
           "needsPractice": "Continue explorando! Há um mundo de lugares para descobrir."
         }
       }
-    }
+    },
+    "viewTripPage": {
+  "tripInformation": "Informações da Viagem",
+  "flightOptions": "Opções de Voo",
+  "hotelRecommendations": "Recomendações de Hotel",
+  "dailyActivities": "Atividades Diárias",
+  "weatherForecast": "Previsão do Tempo",
+  "tripNotFound": "Viagem não encontrada",
+  "loading": "Carregando...",
+  "printDashboard": "Imprimir Painel",
+  "exportAsPDF": "Exportar como PDF",
+  "shareTrip": "Compartilhar Viagem",
+  "shareEmail": "Compartilhar por E-mail",
+  "shareModalTitle": "Compartilhar Viagem",
+  "shareModalClose": "Fechar",
+  "shareModalSuccess": "Viagem compartilhada com sucesso!",
+  "shareModalError": "Erro ao compartilhar viagem"
+},
+"shareModal": {
+  "shareTrip": "Compartilhar Viagem",
+  "closeButton": "Fechar",
+  "emailTab": "Email",
+  "linkTab": "Copiar Link",
+  "recipientEmail": "Email do Destinatário",
+  "emailPlaceholder": "Digite o endereço de email",
+  "sendEmailButton": "Enviar Email com Detalhes da Viagem",
+  "sending": "Enviando...",
+  "shareAppButton": "Compartilhar no Aplicativo",
+  "sharing": "Compartilhando...",
+  "tripLink": "Link da Viagem",
+  "copyLinkSuccess": "Link copiado para a área de transferência!",
+  "copyLinkError": "Falha ao copiar o link. Tente manualmente.",
+  "emailInfoTitle": "Enviar Email:",
+  "emailInfoDesc": "Envia um email abrangente com itinerário completo, hotéis e atividades.",
+  "shareAppInfoTitle": "Compartilhar no Aplicativo:",
+  "shareAppInfoDesc": "Torna esta viagem visível na seção \"Viagens Compartilhadas\" do destinatário.",
+  "linkInfoTitle": "Link Público:",
+  "linkInfoDesc": "Qualquer pessoa com este link pode visualizar sua viagem diretamente no navegador.",
+  "linkInfoExtra": "Perfeito para compartilhar via aplicativos de mensagens, redes sociais ou qualquer plataforma fora do aplicativo.",
+  "invalidEmail": "Por favor, digite um endereço de email válido",
+  "shareSuccess": "Viagem compartilhada com {0}",
+  "shareError": "Falha ao compartilhar viagem. Tente novamente.",
+  "emailSuccess": "Email enviado com sucesso!",
+  "emailError": "Falha ao enviar email. Tente novamente."
+}
   },
   "fr": {
     "heroTitle": "Votre prochaine aventure vous attend",
@@ -1043,7 +1219,51 @@
           "needsPractice": "Continuez à explorer ! Il y a un monde de lieux à découvrir."
         }
       }
-    }
+    },
+    "viewTripPage": {
+  "tripInformation": "Informations sur le Voyage",
+  "flightOptions": "Options de Vol",
+  "hotelRecommendations": "Recommandations d'Hôtel",
+  "dailyActivities": "Activités Quotidiennes",
+  "weatherForecast": "Prévisions Météo",
+  "tripNotFound": "Voyage non trouvé",
+  "loading": "Chargement...",
+  "printDashboard": "Imprimer le Tableau de Bord",
+  "exportAsPDF": "Exporter en PDF",
+  "shareTrip": "Partager le Voyage",
+  "shareEmail": "Partager par E-mail",
+  "shareModalTitle": "Partager le Voyage",
+  "shareModalClose": "Fermer",
+  "shareModalSuccess": "Voyage partagé avec succès !",
+  "shareModalError": "Erreur lors du partage du voyage"
+},
+"shareModal": {
+  "shareTrip": "Partager le Voyage",
+  "closeButton": "Fermer",
+  "emailTab": "Email",
+  "linkTab": "Copier le Lien",
+  "recipientEmail": "Email du Destinataire",
+  "emailPlaceholder": "Entrez l'adresse email",
+  "sendEmailButton": "Envoyer un Email avec les Détails du Voyage",
+  "sending": "Envoi en cours...",
+  "shareAppButton": "Partager dans l'Application",
+  "sharing": "Partage en cours...",
+  "tripLink": "Lien du Voyage",
+  "copyLinkSuccess": "Lien copié dans le presse-papiers !",
+  "copyLinkError": "Échec de la copie du lien. Veuillez essayer manuellement.",
+  "emailInfoTitle": "Envoyer un Email :",
+  "emailInfoDesc": "Envoie un email complet avec l'itinéraire complet, les hôtels et les activités.",
+  "shareAppInfoTitle": "Partager dans l'Application :",
+  "shareAppInfoDesc": "Rend ce voyage visible dans la section \"Voyages Partagés\" du destinataire.",
+  "linkInfoTitle": "Lien Public :",
+  "linkInfoDesc": "Toute personne disposant de ce lien peut consulter votre voyage directement dans son navigateur.",
+  "linkInfoExtra": "Parfait pour partager via des applications de messagerie, des réseaux sociaux ou toute plateforme en dehors de l'application.",
+  "invalidEmail": "Veuillez entrer une adresse email valide",
+  "shareSuccess": "Voyage partagé avec {0}",
+  "shareError": "Échec du partage du voyage. Veuillez réessayer.",
+  "emailSuccess": "Email envoyé avec succès !",
+  "emailError": "Échec de l'envoi de l'email. Veuillez réessayer."
+}
   },
   "it": {
     "heroTitle": "La tua prossima avventura ti aspetta",
@@ -1252,5 +1472,49 @@
         }
       }
     }
-  }
+  },
+  "viewTripPage": {
+  "tripInformation": "Informazioni sul Viaggio",
+  "flightOptions": "Opzioni di Volo",
+  "hotelRecommendations": "Raccomandazioni Hotel",
+  "dailyActivities": "Attività Giornaliere",
+  "weatherForecast": "Previsioni Meteo",
+  "tripNotFound": "Viaggio non trovato",
+  "loading": "Caricamento...",
+  "printDashboard": "Stampa Dashboard",
+  "exportAsPDF": "Esporta come PDF",
+  "shareTrip": "Condividi Viaggio",
+  "shareEmail": "Condividi via Email",
+  "shareModalTitle": "Condividi Viaggio",
+  "shareModalClose": "Chiudi",
+  "shareModalSuccess": "Viaggio condiviso con successo!",
+  "shareModalError": "Errore nella condivisione del viaggio"
+},
+"shareModal": {
+  "shareTrip": "Condividi Viaggio",
+  "closeButton": "Chiudi",
+  "emailTab": "Email",
+  "linkTab": "Copia Link",
+  "recipientEmail": "Email del Destinatario",
+  "emailPlaceholder": "Inserisci indirizzo email",
+  "sendEmailButton": "Invia Email con Dettagli del Viaggio",
+  "sending": "Invio in corso...",
+  "shareAppButton": "Condividi nell'App",
+  "sharing": "Condivisione...",
+  "tripLink": "Link del Viaggio",
+  "copyLinkSuccess": "Link copiato negli appunti!",
+  "copyLinkError": "Impossibile copiare il link. Prova manualmente.",
+  "emailInfoTitle": "Invia Email:",
+  "emailInfoDesc": "Invia un'email completa con itinerario, hotel e attività.",
+  "shareAppInfoTitle": "Condividi nell'App:",
+  "shareAppInfoDesc": "Rende questo viaggio visibile nella sezione \"Viaggi Condivisi\" del destinatario.",
+  "linkInfoTitle": "Link Pubblico:",
+  "linkInfoDesc": "Chiunque abbia questo link può visualizzare il tuo viaggio direttamente nel browser.",
+  "linkInfoExtra": "Perfetto per condividere tramite app di messaggistica, social media o qualsiasi piattaforma esterna all'app.",
+  "invalidEmail": "Inserisci un indirizzo email valido",
+  "shareSuccess": "Viaggio condiviso con {0}",
+  "shareError": "Impossibile condividere il viaggio. Riprova.",
+  "emailSuccess": "Email inviata con successo!",
+  "emailError": "Impossibile inviare l'email. Riprova."
+}
 }

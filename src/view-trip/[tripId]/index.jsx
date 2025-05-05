@@ -11,6 +11,8 @@ import WeatherForecast from "../components/WeatherForecast";
 import { useAccessibility } from "@/context/AccessibilityContext";
 import { ChevronDown } from 'lucide-react'; // Import the chevron icon (or use any other icon library)
 import ShareTripModal from "../components/ShareTripModal";
+import { useLanguage } from "@/context/LanguageContext";
+
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -27,7 +29,8 @@ function Viewtrip() {
     const [shareEmail, setShareEmail] = useState('');
     const user = JSON.parse(localStorage.getItem('user'));
     const [showShareModal, setShowShareModal] = useState(false);
-
+    const { translate, language } = useLanguage();
+      const isRTL = language === "he";
     
     useEffect(() => {
         // Check if user is logged in
@@ -385,8 +388,9 @@ function Viewtrip() {
     
     if (!trip) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-red-500">Trip not found</div>
+            <div className="min-h-screen flex items-center justify-center"style={{ direction: isRTL ? "rtl" : "ltr" }}>
+                <div className="text-red-500" style={{ direction: isRTL ? "rtl" : "ltr" }}>{translate("viewTripPage.tripNotFound")} 
+                </div>
             </div>
         );
     }
@@ -396,9 +400,10 @@ function Viewtrip() {
             <div className="max-w-6xl mx-auto">
                 {/* Trip Information */}
                 {visibleSections.info && (
-                    <div className="animate-fadeIn mb-8 mt-8">
+                    <div className="animate-fadeIn mb-8 mt-8" style={{ direction: isRTL ? "rtl" : "ltr" }}>
                         <SectionHeader 
-                            title="Trip Information"
+                            title={translate("viewTripPage.tripInformation")}
+                        
                             isExpanded={expandedSections.info}
                             onToggle={() => setExpandedSections(prev => ({
                                 ...prev,
@@ -424,9 +429,9 @@ function Viewtrip() {
                 
                 {/* Flight Options */}
                 {visibleSections.flights && (
-                    <div className="animate-fadeIn mb-8">
+                    <div className="animate-fadeIn mb-8" style={{ direction: isRTL ? "rtl" : "ltr" }}>
                         <SectionHeader 
-                            title="Flight Options"
+                            title={translate("viewTripPage.flightOptions")}
                             isExpanded={expandedSections.flights}
                             onToggle={() => setExpandedSections(prev => ({...prev, flights: !prev.flights}))}
                         />
@@ -446,9 +451,9 @@ function Viewtrip() {
                 
                 {/* Hotel Recommendations */}
                 {visibleSections.hotels && (
-                    <div className="animate-fadeIn mb-8">
+                    <div className="animate-fadeIn mb-8" style={{ direction: isRTL ? "rtl" : "ltr" }}>
                         <SectionHeader 
-                            title="Hotel Recommendations"
+                            title={translate("viewTripPage.hotelRecommendations")}
                             isExpanded={expandedSections.hotels}
                             onToggle={() => setExpandedSections(prev => ({
                                 ...prev,
@@ -471,9 +476,9 @@ function Viewtrip() {
                 
                 {/* Daily Activities */}
                 {visibleSections.activities && (
-                    <div className="animate-fadeIn mb-8">
+                    <div className="animate-fadeIn mb-8" style={{ direction: isRTL ? "rtl" : "ltr" }}>
                         <SectionHeader 
-                            title="Daily Activities"
+                            title={translate("viewTripPage.dailyActivities")}
                             isExpanded={expandedSections.activities}
                             onToggle={() => setExpandedSections(prev => ({
                                 ...prev,
@@ -496,9 +501,9 @@ function Viewtrip() {
                 
                 {/* Weather Forecast */}
                 {visibleSections.weather && (
-                    <div className="animate-fadeIn mb-8">
+                    <div className="animate-fadeIn mb-8" style={{ direction: isRTL ? "rtl" : "ltr" }}>
                         <SectionHeader 
-                            title="Weather Forecast"
+                            title={translate("viewTripPage.weatherForecast")}
                             isExpanded={expandedSections.weather}
                             onToggle={() => setExpandedSections(prev => ({
                                 ...prev,
@@ -529,20 +534,20 @@ function Viewtrip() {
                         onClick={handlePrint}
                         style={{ color: getAccessibleColor('iconColor') }}
                         className="hover:opacity-80 transition-all hover:scale-105"
-                        title="Print Dashboard"
+                        title={translate("viewTripPage.printDashboard")}
                     >
-                        <span className="sr-only">Print Dashboard</span>
+                        <span className="sr-only" style={{ direction: isRTL ? "rtl" : "ltr" }}>{translate("viewTripPage.printDashboard")}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
                         </svg>
                     </button>
                     <button 
                         onClick={handleExportPDF}
-                        style={{ color: getAccessibleColor('iconColor') }}
+                        style={{ color: getAccessibleColor('iconColor') ,  direction: isRTL ? "rtl" : "ltr" }}
                         className="hover:opacity-80 transition-all hover:scale-105"
-                        title="Export as PDF"
+                        title={translate("viewTripPage.exportAsPDF")}
                     >
-                        <span className="sr-only">Export Data</span>
+                        <span className="sr-only" style={{ direction: isRTL ? "rtl" : "ltr" }}>{translate("viewTripPage.exportAsPDF")}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
