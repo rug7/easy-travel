@@ -1,7 +1,10 @@
 import { useAccessibility } from "@/context/AccessibilityContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 function Flights({trip}) {
     const { colorMode } = useAccessibility();
+    const { translate, language } = useLanguage();
+const isRTL = language === "he";
     
     const bestLink = trip?.tripData?.flights?.options?.best?.outbound?.bookingLinks?.momondo;
     const cheapestLink = trip?.tripData?.flights?.options?.cheapest?.outbound?.bookingLinks?.momondo;
@@ -70,12 +73,13 @@ function Flights({trip}) {
                     onClick={() => window.open(bestLink, '_blank', 'noopener,noreferrer')}
                 >
                     <div className='px-3 py-1 rounded-full w-fit mb-3'
-                         style={{
-                             backgroundColor: getAccessibleColor('bestBg'),
-                             color: getAccessibleColor('bestText')
-                         }}>
-                        Best Option
-                    </div>
+     style={{
+         backgroundColor: getAccessibleColor('bestBg'),
+         color: getAccessibleColor('bestText'),
+         direction: isRTL ? "rtl" : "ltr"
+     }}>
+    {translate("flightsSection.bestOption")}
+</div>
                     <div className='space-y-3'>
                         <div className='flex justify-between items-center'>
                             <span className='text-white font-medium'>
@@ -85,11 +89,11 @@ function Flights({trip}) {
                                 {trip?.tripData?.flights?.options?.best?.pricePerPerson}
                             </span>
                         </div>
-                        <div className='text-gray-400 text-sm'>
-                            <div>✈️ Total Duration: {trip?.tripData?.flights?.options?.best?.totalDuration}</div>
-                            <div>🛑 Stops: {trip?.tripData?.flights?.options?.best?.outbound?.stops}</div>
-                            <div>💺 Class: {trip?.tripData?.flights?.options?.best?.class}</div>
-                        </div>
+                        <div className='text-gray-400 text-sm' style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    <div>✈️ {translate("flightsSection.totalDuration")}: {trip?.tripData?.flights?.options?.best?.totalDuration}</div>
+    <div>🛑 {translate("flightsSection.stops")}: {trip?.tripData?.flights?.options?.best?.outbound?.stops}</div>
+    <div>💺 {translate("flightsSection.class")}: {trip?.tripData?.flights?.options?.best?.class}</div>
+</div>
                     </div>
                 </div>
 
@@ -99,12 +103,13 @@ function Flights({trip}) {
                     onClick={() => window.open(cheapestLink, '_blank', 'noopener,noreferrer')}
                 >
                     <div className='px-3 py-1 rounded-full w-fit mb-3'
-                         style={{
-                             backgroundColor: getAccessibleColor('cheapestBg'),
-                             color: getAccessibleColor('cheapestText')
-                         }}>
-                        Cheapest Option
-                    </div>
+     style={{
+         backgroundColor: getAccessibleColor('cheapestBg'),
+         color: getAccessibleColor('cheapestText'),
+         direction: isRTL ? "rtl" : "ltr"
+     }}>
+    {translate("flightsSection.cheapestOption")}
+</div>
                     <div className='space-y-3'>
                         <div className='flex justify-between items-center'>
                             <span className='text-white font-medium'>
@@ -114,11 +119,11 @@ function Flights({trip}) {
                                 {trip?.tripData?.flights?.options?.cheapest?.pricePerPerson}
                             </span>
                         </div>
-                        <div className='text-gray-400 text-sm'>
-                            <div>✈️ Total Duration: {trip?.tripData?.flights?.options?.cheapest?.totalDuration}</div>
-                            <div>🛑 Stops: {trip?.tripData?.flights?.options?.cheapest?.outbound?.stops}</div>
-                            <div>💺 Class: {trip?.tripData?.flights?.options?.cheapest?.class}</div>
-                        </div>
+                        <div className='text-gray-400 text-sm' style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    <div>✈️ {translate("flightsSection.totalDuration")}: {trip?.tripData?.flights?.options?.cheapest?.totalDuration}</div>
+    <div>🛑 {translate("flightsSection.stops")}: {trip?.tripData?.flights?.options?.cheapest?.outbound?.stops}</div>
+    <div>💺 {translate("flightsSection.class")}: {trip?.tripData?.flights?.options?.cheapest?.class}</div>
+</div>
                     </div>
                 </div>
 
@@ -128,12 +133,13 @@ function Flights({trip}) {
                     onClick={() => window.open(quickestLink, '_blank', 'noopener,noreferrer')}
                 >
                     <div className='px-3 py-1 rounded-full w-fit mb-3'
-                         style={{
-                             backgroundColor: getAccessibleColor('quickestBg'),
-                             color: getAccessibleColor('quickestText')
-                         }}>
-                        Quickest Option
-                    </div>
+     style={{
+         backgroundColor: getAccessibleColor('quickestBg'),
+         color: getAccessibleColor('quickestText'),
+         direction: isRTL ? "rtl" : "ltr"
+     }}>
+    {translate("flightsSection.quickestOption")}
+</div>
                     <div className='space-y-3'>
                         <div className='flex justify-between items-center'>
                             <span className='text-white font-medium'>
@@ -143,11 +149,11 @@ function Flights({trip}) {
                                 {trip?.tripData?.flights?.options?.quickest?.pricePerPerson}
                             </span>
                         </div>
-                        <div className='text-gray-400 text-sm'>
-                            <div>✈️ Total Duration: {trip?.tripData?.flights?.options?.quickest?.totalDuration}</div>
-                            <div>🛑 Stops: {trip?.tripData?.flights?.options?.quickest?.outbound?.stops}</div>
-                            <div>💺 Class: {trip?.tripData?.flights?.options?.quickest?.class}</div>
-                        </div>
+                        <div className='text-gray-400 text-sm' style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    <div>✈️ {translate("flightsSection.totalDuration")}: {trip?.tripData?.flights?.options?.quickest?.totalDuration}</div>
+    <div>🛑 {translate("flightsSection.stops")}: {trip?.tripData?.flights?.options?.quickest?.outbound?.stops}</div>
+    <div>💺 {translate("flightsSection.class")}: {trip?.tripData?.flights?.options?.quickest?.class}</div>
+</div>
                     </div>
                 </div>
             </div>
