@@ -11,10 +11,14 @@ import fallbackImage from '/moderate1.jpg';
 import destinationsData from '@/context/destinations.json';
 // Import accessibility context
 import { useAccessibility } from '@/context/AccessibilityContext';
+import { useLanguage } from "@/context/LanguageContext";
+
 
 function MyTrips() {
     // Get color mode from accessibility context
     const { colorMode } = useAccessibility();
+    const { translate, language } = useLanguage();
+const isRTL = language === "he";
     
     // Get the current user from localStorage
     const user = (() => {
@@ -654,25 +658,25 @@ function MyTrips() {
                         };
                         if (!user) {
                             return (
-                                <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-[100px] flex flex-col items-center justify-center">
+                                <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-[100px] flex flex-col items-center justify-center"style={{ direction: isRTL ? "rtl" : "ltr" }}>
                                     <div className="text-white text-center">
-                                        <h1 className="text-3xl font-bold mb-4">Please Log In</h1>
-                                        <p className="mb-6">You need to be logged in to view your trips</p>
-                                        <button
+                                    <h2 className="text-3xl font-bold text-white mb-4">{translate("pleaseLogIn")}</h2>
+                                    <p className="text-gray-300 mb-8">{translate("needToBeLoggedIn")}</p>
+                                    <button
                                             onClick={() => navigate('/')}
                                             className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
                                         >
-                                            Go to Home
+                                            {translate("goToHome")}
                                         </button>
                                     </div>
                                 </div>
                             );
                         }
                         return (
-                            <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+                            <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800"style={{ direction: isRTL ? "rtl" : "ltr" }}>
                                 <div className="max-w-7xl mx-auto px-4 pt-[140px] pb-12">
                                     <div className="flex justify-between items-center mb-8">
-                                        <h1 className="text-3xl font-bold text-white">My Trips</h1>
+                                        <h1 className="text-3xl font-bold text-white">{translate("myTrips")}</h1>
                     
                                         <button
                                             onClick={toggleMap}
@@ -691,8 +695,7 @@ function MyTrips() {
                                             }
                                         >
                                             {showMap ? <IoCloseOutline className="w-5 h-5" /> : <IoMapOutline className="w-5 h-5" />}
-                                            {showMap ? "Hide Map" : "Show Map"}
-                                        </button>
+                                            {showMap ? translate("hideMap") : translate("showMap")}                                        </button>
                                     </div>
                     
                                     <AnimatePresence>
@@ -728,7 +731,7 @@ function MyTrips() {
                                                                     className="px-4 py-2 rounded text-white"
                                                                     style={{ backgroundColor: getAccessibleColor('primary') }}
                                                                 >
-                                                                    Retry
+                                                                    {translate("retry")}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -745,7 +748,7 @@ function MyTrips() {
                                                     </button>
                     
                                                     <div className="absolute top-4 left-4 bg-white bg-opacity-95 p-3 rounded-lg shadow-xl z-10 min-w-[200px]">
-                                                        <h3 className="text-sm font-bold text-gray-800 mb-2">Map Legend</h3>
+                                                    <h3 className="text-sm font-bold text-gray-800 mb-2">{translate("mapLegend")}</h3>
                     
                                                         {/* Planned Trips */}
                                                         <div className="mb-2">
@@ -758,8 +761,8 @@ function MyTrips() {
                                                                 >
                                                                     <path d="M12 0C7.802 0 4 3.403 4 7.602C4 11.8 12 24 12 24S20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z" />
                                                                 </svg>
-                                                                <span className="text-xs font-medium text-gray-700">Planned Trips ({destinations.length})</span>
-                                                            </div>
+                                                                <span className="text-xs font-medium text-gray-700">{translate("plannedTrips")} ({destinations.length})</span>
+                                                                </div>
                                                         </div>
                     
                                                         {/* Location History */}
@@ -772,20 +775,20 @@ function MyTrips() {
                                                                         borderColor: getAccessibleColor('danger')
                                                                     }}
                                                                 ></div>
-                                                                <span className="text-xs font-medium text-black">Visited Places ({locationHistory.length})</span>
-                                                            </div>
+<span className="text-xs font-medium text-black">{translate("visitedPlaces")} ({locationHistory.length})</span>
+</div>
                                                         </div>
                     
                                                         {/* Stats */}
                                                         <div className="mt-2 pt-2 border-t border-gray-200">
                                                             <div className="flex justify-between text-xs text-gray-600">
                                                                 <div>
-                                                                    <span className="font-medium">Total: </span>
-                                                                    <span>{destinations.length + locationHistory.length}</span>
+                                                                <span className="font-medium">{translate("total")}: </span>
+                                                                <span>{destinations.length + locationHistory.length}</span>
                                                                 </div>
                                                                 <div>
-                                                                    <span className="font-medium">Visited: </span>
-                                                                    <span>{locationHistory.length}</span>
+                                                                <span className="font-medium">{translate("visited")}: </span>
+                                                                <span>{locationHistory.length}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -822,13 +825,14 @@ function MyTrips() {
                                                         />
                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                                                         <div className="absolute bottom-0 left-0 right-0 p-4">
-                                                            <h2 className="text-white text-xl font-bold">
-                                                                {trip.tripData?.trip?.destination || 'Unnamed Trip'}
-                                                            </h2>
-                                                            <p className="text-white/90">
-                                                                {trip.tripData?.trip?.duration || `${trip.userSelection?.numDays} days`}
-                                                            </p>
-                                                        </div>
+    <h2 className="text-white text-xl font-bold">
+        {trip.tripData?.trip?.destination || translate("unnamedTrip")}
+    </h2>
+    <p className="text-white/90">
+    {trip.tripData?.trip?.duration || 
+     translate("dayCount", { count: trip.userSelection?.numDays })}
+</p>
+</div>
                                                     </div>
                                                     <div className="p-4">
                                                         <div className="flex items-center justify-between">
@@ -879,7 +883,7 @@ function MyTrips() {
                                                                             }}
                                                                         />
                                                                     ) : (
-                                                                        "Delete"
+                                                                        translate("delete")
                                                                     )}
                                                                 </button>
                                                                 <button
@@ -898,7 +902,7 @@ function MyTrips() {
                                                                             {}
                                                                     }
                                                                 >
-                                                                    Cancel
+                                                                    {translate("cancel")}
                                                                 </button>
                                                             </motion.div>
                                                         ) : (
@@ -919,7 +923,7 @@ function MyTrips() {
                                                                         } : 
                                                                         {}
                                                                 }
-                                                                title="Delete trip"
+                                                                title={translate("deleteTrip")}
                                                             >
                                                                 <IoTrashOutline className="w-5 h-5" />
                                                             </motion.button>
@@ -933,8 +937,8 @@ function MyTrips() {
                 
                                 {!loading && trips.length === 0 && (
                                     <div className="text-center py-12 bg-gray-700/50 rounded-xl">
-                                        <p className="text-gray-300 text-lg mb-4">No trips found</p>
-                                        <button
+<p className="text-gray-300 text-lg mb-4">{translate("noTripsFound")}</p>
+<button
                                             onClick={() => navigate('/create-trip')}
                                             className={`px-6 py-2 rounded-full text-white transition-colors ${
                                                 colorMode === 'default' ? 
@@ -950,7 +954,7 @@ function MyTrips() {
                                                     {}
                                             }
                                         >
-                                            Create Your First Trip
+                                            {translate("createYourFirstTrip")}
                                         </button>
                                     </div>
                                 )}
