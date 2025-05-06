@@ -47,9 +47,9 @@ const Badge = ({ children, className, ...props }) => (
 
     
     const [exportCalendars, setExportCalendars] = useState([
-      { id: 'google', name: 'Google Calendar', selected: false },
-      { id: 'apple', name: 'Apple Calendar', selected: false },
-      { id: 'outlook', name: 'Outlook', selected: false }
+      { id: 'google', name: "googleCalendar", selected: false },
+      { id: 'apple', name: "appleCalendar", selected: false },
+      { id: 'outlook', name: "outlookCalendar", selected: false }
     ]);
 
   useEffect(() => {
@@ -83,7 +83,20 @@ const Badge = ({ children, className, ...props }) => (
     }
     
     fetchTrips();
-  }, []);
+    let momentLocale = language;
+    
+    // Hebrew needs special handling
+    if (language === 'he') {
+      momentLocale = 'he';
+      // Force RTL for Hebrew
+      document.documentElement.dir = 'rtl';
+    } else {
+      document.documentElement.dir = 'ltr';
+    }
+    
+    moment.locale(momentLocale);
+
+  }, [language]);
 
   const filteredEvents = events.filter(event => {
     if (filterType === 'all') return true;
@@ -437,9 +450,17 @@ const Badge = ({ children, className, ...props }) => (
   const DayHeaderComponent = ({ date, label }) => {
     const isToday = moment(date).isSame(new Date(), 'day');
     
+    // Get the day abbreviation from moment in lowercase
+    const dayAbbr = moment(date).format('ddd').toLowerCase();
+    console.log("Day abbreviation:", dayAbbr); // Add this for debugging
+    
+    // Try to get the translation
+    const dayName = translate(`Days.${dayAbbr}`);
+    console.log("Translated day:", dayName); // Add this for debugging
+    
     return (
       <div className={`travel-calendar-day-header ${isToday ? 'travel-calendar-today' : ''}`}>
-        <div className="travel-calendar-day-name">{moment(date).format('ddd')}</div>
+        <div className="travel-calendar-day-name">{dayName}</div>
         <div className="travel-calendar-day-number">{moment(date).format('D')}</div>
       </div>
     );
@@ -450,9 +471,11 @@ const Badge = ({ children, className, ...props }) => (
     const navigate = (action) => {
       toolbar.onNavigate(action);
     };
+    const currentMonth = translate(`months.${moment(toolbar.date).format('MMMM').toLowerCase()}`);
+  const currentYear = moment(toolbar.date).format('YYYY');
     
     return (
-      <div className="travel-calendar-toolbar">
+      <div className="travel-calendar-toolbar" style={{ direction: isRTL ? "rtl" : "ltr" }}>
         <div className="travel-calendar-toolbar-nav">
           <Button 
             variant="outline" 
@@ -508,29 +531,29 @@ const Badge = ({ children, className, ...props }) => (
         </div>
         
         <div className="travel-calendar-toolbar-label">
-          <h2>{toolbar.label}</h2>
+          <h2>{currentMonth} {currentYear}</h2>
         </div>
         
         <div className="travel-calendar-toolbar-views">
-          <div className="bg-gray-800 rounded-lg p-1 flex">
-            {['month', 'week', 'day', 'agenda'].map(viewName => (
-              <button 
-                key={viewName}
-                className={`px-4 py-2 rounded-xl transition`}
-                style={{
-                  backgroundColor: toolbar.view === viewName ? getAccessibleColor('primary') : 'transparent',
-                  color: toolbar.view === viewName ? 'white' : '#d1d5db',
-                }}
-                onClick={() => toolbar.onView(viewName)}
-              >
-                {viewName.charAt(0).toUpperCase() + viewName.slice(1)}
-              </button>
-            ))}
-          </div>
+        <div className="bg-gray-800 rounded-lg p-1 flex">
+          {['month', 'week', 'day', 'agenda'].map(viewName => (
+            <button 
+              key={viewName}
+              className={`px-4 py-2 rounded-xl transition`}
+              style={{
+                backgroundColor: toolbar.view === viewName ? getAccessibleColor('primary') : 'transparent',
+                color: toolbar.view === viewName ? 'white' : '#d1d5db',
+              }}
+              onClick={() => toolbar.onView(viewName)}
+            >
+              {translate(viewName)}
+            </button>
+          ))}
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
   
 
   if (loading) {
@@ -542,7 +565,7 @@ const Badge = ({ children, className, ...props }) => (
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-[100px] pb-10 px-4 md:px-8">
+    <div className="min-h-screen bg-gray-900 pt-[100px] pb-10 px-4 md:px-8" style={{ direction: isRTL ? "rtl" : "ltr" }}>
       <div className="max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
   <div>
@@ -574,35 +597,42 @@ const Badge = ({ children, className, ...props }) => (
 </div>
         
         <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl">
-          <div className="travel-calendar-container">
-            <Calendar
-              localizer={localizer}
-              events={filteredEvents}
-              startAccessor="start"
-              endAccessor="end"
-              onSelectEvent={handleEventClick}
-              views={['month', 'week', 'day', 'agenda']}
-              view={selectedView}
-              onView={handleViewChange}
-              date={calendarDate}
-              onNavigate={handleNavigate}
-              components={{
-                event: EventComponent,
-                toolbar: CustomToolbar,
-                day: {
-                  header: DayHeaderComponent
-                },
-                dateCellWrapper: (props) => {
-                    const { children, value } = props;
-                    const isToday = moment(value).isSame(new Date(), 'day');
-                    return (
-                      <div style={{ position: 'relative' }}>
-                        {children}
-                        {isToday && <TodayIndicator />}
-                      </div>
-                    );
-                  }
-                }}
+          <div className="travel-calendar-container" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+          <Calendar
+  localizer={localizer}
+  events={filteredEvents}
+  startAccessor="start"
+  endAccessor="end"
+  onSelectEvent={handleEventClick}
+  views={['month', 'week', 'day', 'agenda']}
+  view={selectedView}
+  onView={handleViewChange}
+  date={calendarDate}
+  onNavigate={handleNavigate}
+  // Set a lower max events number to ensure the "more" button shows up properly
+  popup={true}
+  components={{
+    event: EventComponent,
+    toolbar: CustomToolbar,
+    day: {
+      header: DayHeaderComponent
+    },
+    dateCellWrapper: (props) => {
+      const { children, value } = props;
+      const isToday = moment(value).isSame(new Date(), 'day');
+      return (
+        <div style={{ position: 'relative' }}>
+          {children}
+          {isToday && <TodayIndicator />}
+        </div>
+      );
+    }
+  }}
+  messages={{
+    showMore: (total) => (total > 0 ? `${translate("more")} +${total}` : translate("more"))
+  }}
+    length={1}
+
             
               eventPropGetter={(event) => {
                 return {
@@ -658,7 +688,7 @@ const Badge = ({ children, className, ...props }) => (
         </div>
         
         {/* Trip Legend */}
-        <div className="mt-6 bg-gray-800 rounded-xl p-6 shadow-xl">
+        <div className="mt-6 bg-gray-800 rounded-xl p-6 shadow-xl" style={{ direction: isRTL ? "rtl" : "ltr" }}>
   <h2 className="text-xl font-semibold text-white mb-4">{translate("calendarLegend")}</h2>
   
   <div className="flex flex-wrap gap-6 mb-6">
@@ -680,7 +710,7 @@ const Badge = ({ children, className, ...props }) => (
 </div>
 
         {/* Trip Statistics */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6" style={{ direction: isRTL ? "rtl" : "ltr" }}>
   <StatsCard 
     title={translate("upcomingTrips")} 
     value={events.filter(e => e.resource?.type === 'trip' && e.start > new Date()).length} 
@@ -705,7 +735,7 @@ const Badge = ({ children, className, ...props }) => (
 
             {/* Event Details Dialog */}
             <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
-  <CustomDialogContent className="bg-gray-800 border-gray-700 text-white">
+  <CustomDialogContent className="bg-gray-800 border-gray-700 text-white" style={{ direction: isRTL ? "rtl" : "ltr" }}>
     <DialogHeader>
       <DialogTitle className="text-xl font-bold">
         {selectedEvent?.title}
@@ -852,24 +882,24 @@ const Badge = ({ children, className, ...props }) => (
 </Dialog>
       
       {/* Export Calendar Dialog */}
-      <Dialog open={exportVisible} onOpenChange={setExportVisible}>
-  <CustomDialogContent className="bg-gray-800 border-gray-700 text-white">
+      <Dialog open={exportVisible} onOpenChange={setExportVisible}style={{ direction: isRTL ? "rtl" : "ltr" }}>
+  <CustomDialogContent className="bg-gray-800 border-gray-700 text-white"style={{ direction: isRTL ? "rtl" : "ltr" }}>
     <DialogHeader>
-      <DialogTitle className="text-xl font-bold">
+      <DialogTitle className={`absolute ${isRTL ? 'left-4' : 'right-4'}text-xl font-bold`}>
         {translate("calendarExport")}
       </DialogTitle>
       <DialogDescription className="sr-only">
       </DialogDescription>
-      <DialogClose className="absolute right-4 top-4 text-black bg-white hover:scale-105">
+      <DialogClose className={`absolute ${isRTL ? 'left-4' : 'right-4'} top-4 text-black bg-white hover:scale-105`}>
         <IoClose className="h-4 w-4" />
       </DialogClose>
     </DialogHeader>
     
-    <div className="py-4">
+    <div className="py-4"style={{ direction: isRTL ? "rtl" : "ltr" }}>
       <div className="mb-6">
         <p className="text-gray-300 mb-2">{translate("exportDescription")}</p>
         
-        <div className="space-y-3 mt-4">
+        <div className="space-y-3 mt-4"style={{ direction: isRTL ? "rtl" : "ltr" }}>
           {exportCalendars.map((calendar) => (
             <div 
               key={calendar.id}
@@ -882,19 +912,21 @@ const Badge = ({ children, className, ...props }) => (
                 ));
               }}
             >
-              <div className={`w-5 h-5 rounded-md mr-3 flex items-center justify-center ${
-                calendar.selected ? 'bg-blue-600' : 'border border-gray-500'
-              }`}>
-                {calendar.selected && (
-                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="font-medium">{calendar.name}</div>
+              <div 
+  className={`w-5 h-5 rounded-md ${isRTL ? 'ml-3' : 'mr-3'} flex items-center justify-center ${
+    calendar.selected ? 'bg-blue-600' : 'border border-gray-500'
+  }`}
+>
+  {calendar.selected && (
+    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+    </svg>
+  )}
+</div>
+              <div className="flex-1"style={{ direction: isRTL ? "rtl" : "ltr" }}>
+                <div className="font-medium">{translate(calendar.name)}</div>
                 <div className="text-sm text-gray-400">
-                  {calendar.id === 'google' ? 'Sync with your Google account' : 'Export as .ics file'}
+                  {calendar.id === 'google' ? `${translate("syncWithGoogle")}` : translate("exportAsIcsFile")}
                 </div>
               </div>
               {calendar.selected && (

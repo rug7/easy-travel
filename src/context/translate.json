@@ -1,3 +1,4 @@
+
 {
  "budgetTypeMapping": {
   "Cheap": {
@@ -167,8 +168,41 @@
     "description": "Description",
     "duration": "Duration",
     "price": "Price",
-    "today": "Today",
     "filter": "Filter:",
+    "activitiesOnTrip": "Activities on this Trip",
+    "more": "more",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "agenda": "Agenda",
+    "today": "Today",
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "Days": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+  
+    
+
+    
     
     "dashboardTitle": "Travel Analytics Dashboard",
     "dashboardDescription": "Insights and statistics about your travel history and plans",
@@ -253,6 +287,13 @@
     "fontSizeIncrease": "Increase font size",
     "fontSizeDecrease": "Decrease font size",
     "colorVisionTitle": "Color Vision",
+
+    "googleCalendar": "Google Calendar",
+    "syncWithGoogle": "Sync with your Google account",
+    "appleCalendar": "Apple Calendar", 
+    "outlookCalendar": "Outlook",
+    "exportAsIcsFile": "Export as .ics file",
+
     
 
     "loadingScreen": {
@@ -504,6 +545,36 @@
     "price": "מחיר",
     "today": "היום",
     "filter": "סינון:",
+    "activitiesOnTrip": "פעילויות בטיול זה",
+    "more": "עוד",
+    "month": "חודש",
+    "week": "שבוע",
+    "day": "יום",
+    "agenda": "סדר יום",
+    "months": {
+      "january": "ינואר",
+      "february": "פברואר",
+      "march": "מרץ",
+      "april": "אפריל",
+      "may": "מאי",
+      "june": "יוני",
+      "july": "יולי",
+      "august": "אוגוסט",
+      "september": "ספטמבר",
+      "october": "אוקטובר",
+      "november": "נובמבר",
+      "december": "דצמבר"
+    },
+    "Days": {
+      "sun": "ראשון",
+      "mon": "שני",
+      "tue": "שלישי",
+      "wed": "רביעי",
+      "thu": "חמישי",
+      "fri": "שישי",
+      "sat": "שבת"
+    },
+
 
     "dashboardTitle": "לוח מחוונים לניתוח נסיעות",
     "dashboardDescription": "תובנות וסטטיסטיקות על היסטוריית הנסיעות והתוכניות שלך",
@@ -587,6 +658,13 @@
     "fontSizeIncrease": "הגדל גודל גופן",
     "fontSizeDecrease": "הקטן גודל גופן",
     "colorVisionTitle": "ראיית צבעים",
+    
+    "googleCalendar": "יומן Google",
+    "syncWithGoogle": "סנכרן עם חשבון Google שלך",
+    "appleCalendar": "יומן Apple",
+    "outlookCalendar": "יומן Outlook",
+    "exportAsIcsFile": "ייצוא כקובץ .ics",
+    
     
 
     "loadingScreen": {
@@ -837,6 +915,38 @@
     "price": "Precio",
     "today": "Hoy",
     "filter": "Filtrar:",
+    "activitiesOnTrip": "Actividades en este viaje",
+    "more": "más",
+    "month": "Mes",
+    "week": "Semana",
+    "day": "Día",
+    "agenda": "Agenda",
+    
+   
+    "months": {
+      "january": "Enero",
+      "february": "Febrero",
+      "march": "Marzo",
+      "april": "Abril",
+      "may": "Mayo",
+      "june": "Junio",
+      "july": "Julio",
+      "august": "Agosto",
+      "september": "Septiembre",
+      "october": "Octubre",
+      "november": "Noviembre",
+      "december": "Diciembre"
+    },
+    "Days": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb"
+    },
+
     
     
  "dashboardTitle": "Panel de Análisis de Viajes",
@@ -921,6 +1031,13 @@
     "fontSizeIncrease": "Aumentar tamaño de fuente",
     "fontSizeDecrease": "Disminuir tamaño de fuente",
     "colorVisionTitle": "Visión del Color",
+
+    "googleCalendar": "Google Calendar",
+    "syncWithGoogle": "Sincronizar con tu cuenta de Google",
+    "appleCalendar": "Calendario de Apple", 
+    "outlookCalendar": "Outlook",
+    "exportAsIcsFile": "Exportar como archivo .ics",
+
 
     
 
@@ -1172,6 +1289,45 @@
     "price": "Preço",
     "today": "Hoje",
     "filter": "Filtrar:",
+    "activitiesOnTrip": "Atividades nesta viagem",
+    "more": "mais", 
+    "month": "Mês",
+    "week": "Semana",
+    "day": "Dia",
+    "agenda": "Agenda",
+    "googleCalendar": "Google Calendar",
+    "syncWithGoogle": "Sincronizar com sua conta Google",
+    "appleCalendar": "Calendário Apple", 
+    "outlookCalendar": "Outlook",
+    "exportAsIcsFile": "Exportar como arquivo .ics",
+  
+  
+    "months": {
+      "january": "Janeiro",
+      "february": "Fevereiro",
+      "march": "Março",
+      "april": "Abril",
+      "may": "Maio",
+      "june": "Junho",
+      "july": "Julho",
+      "august": "Agosto",
+      "september": "Setembro",
+      "october": "Outubro", 
+      "november": "Novembro",
+      "december": "Dezembro"
+    },
+    
+    "Days": {
+      "sun": "Dom",
+      "mon": "Seg",
+      "tue": "Ter",
+      "wed": "Qua",
+      "thu": "Qui",
+      "fri": "Sex",
+      "sat": "Sáb"
+    },
+
+    
     
     "dashboardTitle": "Painel Analítico de Viagens",
     "dashboardDescription": "Insights e estatísticas sobre seu histórico de viagens e planos",
@@ -1506,6 +1662,42 @@
     "price": "Prix",
     "today": "Aujourd'hui",
     "filter": "Filtrer :",
+    "activitiesOnTrip": "Activités de ce voyage",
+    "more": "plus",
+    "month": "Mois",
+    "week": "Semaine",
+    "day": "Jour",
+    "agenda": "Agenda",
+    "googleCalendar": "Google Agenda",
+    "syncWithGoogle": "Synchroniser avec votre compte Google",
+    "appleCalendar": "Calendrier Apple", 
+    "outlookCalendar": "Outlook",
+    "exportAsIcsFile": "Exporter en fichier .ics",
+   
+    "months": {
+      "january": "Janvier",
+      "february": "Février",
+      "march": "Mars",
+      "april": "Avril",
+      "may": "Mai",
+      "june": "Juin",
+      "july": "Juillet",
+      "august": "Août",
+      "september": "Septembre",
+      "october": "Octobre",
+      "november": "Novembre",
+      "december": "Décembre"
+    },
+    "Days": {
+      "sun": "Dim",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam"
+    },
+
     
     "dashboardTitle": "Tableau de Bord Analytique de Voyage",
     "dashboardDescription": "Aperçus et statistiques sur votre historique de voyages et vos plans",
@@ -1840,6 +2032,42 @@
     "price": "Prezzo",
     "today": "Oggi",
     "filter": "Filtra:",
+    "activitiesOnTrip": "Attività in questo viaggio",
+    "more": "altro",
+    "month": "Mese",
+    "week": "Settimana",
+    "day": "Giorno",
+    "agenda": "Agenda",
+    "googleCalendar": "Google Calendar",
+    "syncWithGoogle": "Sincronizza con il tuo account Google",
+    "appleCalendar": "Calendario Apple", 
+    "outlookCalendar": "Outlook",
+    "exportAsIcsFile": "Esporta come file .ics",
+   
+    "months": {
+      "january": "Gennaio",
+      "february": "Febbraio",
+      "march": "Marzo",
+      "april": "Aprile",
+      "may": "Maggio",
+      "june": "Giugno",
+      "july": "Luglio",
+      "august": "Agosto",
+      "september": "Settembre",
+      "october": "Ottobre",
+      "november": "Novembre",
+      "december": "Dicembre"
+    },
+    "Days": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Gio",
+      "fri": "Ven",
+      "sat": "Sab"
+    },
+
     
     "dashboardTitle": "Dashboard Analitica Viaggi",
     "dashboardDescription": "Approfondimenti e statistiche sulla tua storia di viaggi e i tuoi piani",

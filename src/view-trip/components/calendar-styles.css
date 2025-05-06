@@ -25,6 +25,7 @@
   background-color: var(--color-danger, #ef4444) !important;
 }
 
+
 .text-custom-danger {
   color: var(--color-danger, #ef4444) !important;
 }
@@ -36,6 +37,75 @@
 .rbc-calendar {
   background-color: #0f172a;
   color: #e2e8f0;
+}
+
+
+/* Improve the "more" button appearance and positioning */
+.rbc-row-segment .rbc-show-more {
+  display: block !important; /* Force block display */
+  clear: both !important; /* Clear any floating elements */
+  margin: 3px auto 1px !important;
+  width: fit-content !important;
+  max-width: 90% !important;
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  color: #e2e8f0 !important;
+  border-radius: 4px !important;
+  padding: 2px 8px !important;
+  font-size: 0.7rem !important;
+  text-align: center !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  position: relative !important;
+  z-index: 5 !important; /* Ensure it's above events */
+  line-height: 1.2 !important;
+}
+
+/* Add hover effect */
+.rbc-row-segment .rbc-show-more:hover {
+  background-color: rgba(59, 130, 246, 0.4) !important;
+  border-color: rgba(59, 130, 246, 0.6) !important;
+  cursor: pointer !important;
+}
+
+/* Force positioning the "more" button below events */
+.rbc-event + .rbc-show-more,
+.rbc-event ~ .rbc-show-more {
+  margin-top: 4px !important;
+}
+
+/* Add a small spacer above "more" button for better separation */
+.rbc-row-segment::after {
+  content: "";
+  display: block;
+  height: 2px;
+  clear: both;
+}
+
+/* Ensure events don't overlap with "more" button */
+.rbc-event {
+  margin-bottom: 2px !important;
+}
+
+/* Handle RTL for "more" buttons */
+[dir="rtl"] .rbc-row-segment .rbc-show-more {
+  float: right !important;
+}
+/* Fix for the "more" popup */
+.rbc-overlay {
+  background-color: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  padding: 8px;
+}
+
+.rbc-overlay-header {
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  margin: -8px -8px 8px;
+  background-color: #0f172a;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 /* Header styling */
