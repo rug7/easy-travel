@@ -2,31 +2,56 @@ import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip as MapTooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useAccessibility } from '@/context/AccessibilityContext';
+import { useLanguage } from "@/context/LanguageContext";
 
-const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
 
-    try {
-        const date = new Date(dateString);
+const formatDate = (dateString, language) => {
+  if (!dateString) return translate("noDate");
 
-        // Check if date is valid
-        if (isNaN(date.getTime())) return 'Invalid date';
+  try {
+    const date = new Date(dateString);
 
-        // Get day, month, and year
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
-        const year = date.getFullYear();
+    // Check if date is valid
+    if (isNaN(date.getTime())) return translate("invalidDate");
 
-        return `${day}/${month}/${year}`;
-    } catch (error) {
-        console.error('Error formatting date:', error);
-        return 'Error';
+    // Format based on language
+    if (language === "he") {
+      // Hebrew date format (day/month/year)
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } else if (language === "fr") {
+      // French date format (day/month/year)
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } else if (language === "es") {
+      // Spanish date format (day/month/year)
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } else {
+      // Default format for other languages
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
     }
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return translate("dateError");
+  }
 };
 
 function MapComponent({ destinations }) {
   const mapContainerRef = useRef(null);
   const { colorMode } = useAccessibility();
+  const { translate, language } = useLanguage();
+  const isRTL = language === "he";
+
 
   // Get accessible marker color based on color mode
   const getMarkerColor = () => {
@@ -98,22 +123,22 @@ function MapComponent({ destinations }) {
             
           return (
             <CircleMarker
-              key={`marker-${index}-${colorMode}`} // Add colorMode to key to force re-render
+              key={`marker-${index}-${colorMode}-${language}`} // Add language to force re-render
               center={dest.coordinates}
               radius={markerSize}
               fillColor={markerColor}
               color={getBorderColor()}
-              weight={1.5} // Slightly thicker border for better visibility
+              weight={1.5} 
               opacity={1}
               fillOpacity={0.8}
             >
               <MapTooltip>
-                <div className="p-2 bg-gray-800 text-white rounded-md shadow-md">
+                <div className="p-2 bg-gray-800 text-white rounded-md shadow-md" style={{ direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" }}>
                   <strong className="block text-sm font-bold mb-1">{dest.name}</strong>
-                  <span className="text-xs block">{dest.days} days</span>
+                  <span className="text-xs block">{dest.days} {translate("days")}</span>
                   {dest.startDate && (
                     <div className="text-xs mt-1 text-gray-300">
-                      Starting: {formatDate(dest.startDate)}
+                      {translate("startingDate")}: {formatDate(dest.startDate, language)}
                     </div>
                   )}
                 </div>
@@ -123,19 +148,22 @@ function MapComponent({ destinations }) {
         })}
       </MapContainer>
       
-      {/* Optional: Add a legend for better accessibility */}
-      <div className="absolute bottom-2 left-2 bg-gray-800 bg-opacity-80 p-2 rounded text-white text-xs z-10">
-        <div className="flex items-center gap-2 mb-1">
+      {/* Update legend with translations */}
+      <div className="absolute bottom-2 left-2 bg-gray-800 bg-opacity-80 p-2 rounded text-white text-xs z-10" style={{ direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" }}>
+        <div className="flex items-center gap-2 mb-1" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
           <div 
             className="w-3 h-3 rounded-full" 
             style={{ backgroundColor: getMarkerColor(), border: `1px solid ${getBorderColor()}` }} 
           />
-          <span>Destination</span>
+          <span>{translate("destination")}</span>
         </div>
-        <div>Size indicates duration of stay</div>
+        <div>{translate("sizeIndicatesDuration")}</div>
       </div>
     </div>
   );
 }
+
+// Update date formatting function to be language-aware
+
 
 export default MapComponent;

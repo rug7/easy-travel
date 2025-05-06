@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { translateTripData, translateTripDetails } from "@/utils/translateTripData"
+
 import { 
   Chart as ChartJS, 
   ArcElement, 
@@ -53,7 +55,13 @@ const isRTL = language === "he";
     averageTripLength: 0
   });
   const [activityData, setActivityData] = useState({
-    labels: ['Cultural', 'Adventure', 'Relaxation', 'Food & Dining', 'Nature'],
+    labels: [
+      translate("cultural"), 
+      translate("adventure"), 
+      translate("relaxation"), 
+      translate("foodAndDining"), 
+      translate("nature")
+    ],
     datasets: [{
       data: [0, 0, 0, 0, 0],
       backgroundColor: [
@@ -62,10 +70,17 @@ const isRTL = language === "he";
     }]
   });
   const [budgetData, setBudgetData] = useState({
-    labels: ['Accommodation', 'Food', 'Activities', 'Transportation', 'Shopping'],
+    labels: [
+      translate("flightCost"),
+      translate("accommodationCost"), 
+      translate("foodCost"), 
+      translate("activitiesCost"), 
+      translate("transportationCost"), 
+      translate("shoppingCost")
+    ],
     datasets: [{
-      label: 'Average Spend per Trip (USD)',
-      data: [0, 0, 0, 0, 0],
+      label: translate("averageSpendPerTrip"),
+      data: [0, 0, 0, 0, 0, 0],
       backgroundColor: 'rgba(54, 162, 235, 0.6)'
     }]
   });
@@ -181,7 +196,7 @@ const isRTL = language === "he";
     }
     
     fetchTrips();
-  }, [refreshKey]);
+  }, [refreshKey,language]);
 
 
 
@@ -631,7 +646,11 @@ const formatedDate = (dateString) => {
     
     // Update chart data
     setActivityData({
-      labels: ['Cultural', 'Adventure', 'Relaxation', 'Food & Dining', 'Nature'],
+      labels: [ translate("cultural"), 
+        translate("adventure"), 
+        translate("relaxation"), 
+        translate("foodAndDining"), 
+        translate("nature")],
       datasets: [{
         data: [
           activities.cultural, 
@@ -652,7 +671,7 @@ const formatedDate = (dateString) => {
     
     // Update budget data to include flights
     setBudgetData({
-      labels: ['Flights', 'Accommodation', 'Food', 'Activities', 'Transportation', 'Shopping'],
+      labels: [translate("flightCost"),translate("accommodationCost"), translate("foodCost"),translate("activitiesCost"),translate("transportationCost"),translate("shoppingCost")],
       datasets: [{
         label: 'Average Spend per Trip (USD)',
         data: [
@@ -695,132 +714,151 @@ const formatedDate = (dateString) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-[140px] pb-10 px-4 md:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-[140px] pb-10 px-4 md:px-8"style={{ direction: isRTL ? "rtl" : "ltr" }}>
       <div ref={dashboardRef} className="max-w-7xl mx-auto dashboard-container">
         {/* Header with subtitle */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-white">{translate("dashboardTitle")}</h1>
-            <p className="text-gray-400 mt-1"> {translate("dashboardDescription")}</p>
+          <h1 className="text-3xl font-bold text-white" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+  {translate("dashboardTitle")}
+</h1>
+<p className="text-gray-400 mt-1" style={{ direction: isRTL ? "rtl" : "ltr" }}> 
+  {translate("dashboardDescription")}
+</p>
           </div>
-          <div className="mt-4 md:mt-0 flex gap-4 items-center">
-            <p className="text-gray-400 text-sm">Last updated: {formatedDate(new Date().toLocaleDateString())}</p>
+          <div className="mt-4 md:mt-0 flex gap-4 items-center"style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            <p className="text-gray-400 text-sm">{translate("lastUpdated")}{formatedDate(new Date().toLocaleDateString())}</p>
             <button 
-  onClick={() => setRefreshKey(old => old + 1)}
-  style={{
-    backgroundColor: getAccessibleColor('primary'),
-    color: 'white',
-    padding: '0.5rem 1rem',
-    borderRadius: '0.75rem',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    transition: 'all 0.2s',
-  }}
-  className="hover:opacity-90"
->
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-  </svg>
-  Refresh Data
-</button>
-          </div>
+    onClick={() => setRefreshKey(old => old + 1)}
+    style={{
+      backgroundColor: getAccessibleColor('primary'),
+      color: 'white',
+      padding: '0.5rem 1rem',
+      borderRadius: '0.75rem',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      flexDirection: isRTL ? 'row-reverse' : 'row',
+      transition: 'all 0.2s',
+    }}
+    className="hover:opacity-90"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isRTL ? 'transform scale-x-[-1]' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+    </svg>
+    {translate("refreshData")}
+  </button>
+</div>
         </div>
           
         {/* Stats Cards - enhanced design */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-          <StatsCard
-            title="Total Trips"
-            value={stats.totalTrips}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            }
-            color="bg-gradient-to-br from-blue-600 to-blue-700"
-          />
-          <StatsCard
-            title="Countries Visited"
-            value={stats.countriesVisited}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
-              </svg>
-            }
-            color="bg-gradient-to-br from-purple-600 to-purple-700"
-          />
-          <StatsCard
-            title="Continents Explored"
-            value={stats.continentsExplored}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              </svg>
-            }
-            color="bg-gradient-to-br from-green-600 to-green-700"
-          />
-          <StatsCard
-            title="Total Spent"
-            value={`$${stats.totalSpent.toLocaleString()}`}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            }
-            color="bg-gradient-to-br from-yellow-500 to-yellow-600"
-          />
-          <StatsCard
-            title="Upcoming Trips"
-            value={stats.upcomingTrips}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            }
-            color="bg-gradient-to-br from-red-600 to-red-700"
-          />
-          <StatsCard
-            title="Avg. Trip Length"
-            value={`${stats.averageTripLength} days`}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            }
-            color="bg-gradient-to-br from-indigo-600 to-indigo-700"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"style={{ direction: isRTL ? "rtl" : "ltr" }}>
+        <StatsCard
+  title={translate("totalTrips")}
+  value={stats.totalTrips}
+  icon={
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  }
+  color="bg-gradient-to-br from-blue-600 to-blue-700"
+/>
+
+<StatsCard
+  title={translate("countriesVisited")}
+  value={stats.countriesVisited}
+  icon={
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+    </svg>
+  }
+  color="bg-gradient-to-br from-purple-600 to-purple-700"
+/>
+
+<StatsCard
+  title={translate("continentsExplored")}
+  value={stats.continentsExplored}
+  icon={
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+    </svg>
+  }
+  color="bg-gradient-to-br from-green-600 to-green-700"
+/>
+
+<StatsCard
+  title={translate("totalSpent")}
+  value={`$${stats.totalSpent.toLocaleString()}`}
+  icon={
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  }
+  color="bg-gradient-to-br from-yellow-500 to-yellow-600"
+/>
+
+<StatsCard
+  title={translate("upcomingTrips")}
+  value={stats.upcomingTrips}
+  icon={
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+    </svg>
+  }
+  color="bg-gradient-to-br from-red-600 to-red-700"
+/>
+
+<StatsCard
+  title={translate("avgTripLength")}
+  value={`${stats.averageTripLength} ${translate("days")}`}
+  icon={
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+  }
+  color="bg-gradient-to-br from-indigo-600 to-indigo-700"
+/>
         </div>
   
         {/* Add detailed spending breakdown */}
         <div className="bg-gray-800 p-6 rounded-xl shadow-xl mb-10 border border-gray-700">
-  <div className="flex justify-between items-center mb-6">
-    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-      Travel Spending Breakdown
-    </h2>
-    <div className="bg-gray-700 rounded-lg px-3 py-1 text-sm text-gray-300">
-      {stats.tripsWithFlightData} trips with flight data
-    </div>
+        <div className="flex justify-between items-center mb-6" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+  <h2 className="text-xl font-bold text-white flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    </svg>
+    {translate("spendingBreakdown")}
+  </h2>
+  <div className="bg-gray-700 rounded-lg px-3 py-1 text-sm text-gray-300">
+    {stats.tripsWithFlightData} {translate("tripsWithFlightData")}
   </div>
+</div>
   
-  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-    {budgetData.labels.map((label, index) => {
-      // Generate the accessible color on each render based on current colorMode
-      const accessibleColor = 
-        index === 0 ? getAccessibleColor('danger') + '99' : // Flights
-        index === 1 ? getAccessibleColor('primary') + '99' : // Accommodation
-        index === 2 ? getAccessibleColor('success') + '99' : // Food
-        index === 3 ? getAccessibleColor('warning') + '99' : // Activities
-        index === 4 ? getAccessibleColor('secondary') + '99' : // Transportation
-        getAccessibleColor('info') + '99'; // Shopping
-      
-      const value = budgetData.datasets[0].data[index] || 0;
-      
+<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+  {budgetData.labels.map((label, index) => {
+    // Generate the accessible color on each render based on current colorMode
+    const accessibleColor = 
+      index === 0 ? getAccessibleColor('danger') + '99' : // Flights
+      index === 1 ? getAccessibleColor('primary') + '99' : // Accommodation
+      index === 2 ? getAccessibleColor('success') + '99' : // Food
+      index === 3 ? getAccessibleColor('warning') + '99' : // Activities
+      index === 4 ? getAccessibleColor('secondary') + '99' : // Transportation
+      getAccessibleColor('info') + '99'; // Shopping
+    
+    const value = budgetData.datasets[0].data[index] || 0;
+    
+    // Translate the labels
+    const translatedLabel = 
+    index === 0 ? translate("flightCost") :
+    index === 1 ? translate("accommodationCost") :
+    index === 2 ? translate("foodCost") :
+    index === 3 ? translate("activitiesCost") :
+    index === 4 ? translate("transportationCost") :
+    translate("shoppingCost");
+    
       return (
         <div 
-          key={`spending-item-${index}-${colorMode}`}  // Add colorMode to force re-render
+          key={`spending-item-${index}-${colorMode}`}
           className={`bg-gray-700/50 rounded-lg p-4 border border-gray-600/50 transition-colors ${
             colorMode === 'default' ? 'hover:border-blue-500/30' : 'hover:border-gray-500/50'
           }`}
@@ -830,66 +868,66 @@ const formatedDate = (dateString) => {
               className="w-3 h-3 rounded-sm" 
               style={{ backgroundColor: accessibleColor }}
             ></div>
-            <span className="text-gray-300 text-sm font-medium">{label}</span>
+            <span className="text-gray-300 text-sm font-medium">{translatedLabel}</span>
           </div>
           <div className="text-white font-bold text-2xl">
             ${Math.round(value).toLocaleString()}
           </div>
           <div className="text-gray-400 text-xs mt-1">
-            per trip average
+            {translate("averageSpendPerTrip")}
           </div>
         </div>
       );
     })}
-  </div>
+</div>
 </div>
         
         {/* Map and Charts - enhanced design */}
 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
   {/* Travel Map */}
-  <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700 lg:col-span-2">
+  <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700 lg:col-span-2"style={{ direction: isRTL ? "rtl" : "ltr" }}>
     <div className="bg-gray-800/80 backdrop-blur p-4 border-b border-gray-700/50 flex justify-between items-center">
       <h2 className="text-xl font-bold text-white flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-          <circle cx="12" cy="10" r="3" />
-        </svg>
-        Your Travel Map
-      </h2>
-      <div className="text-sm text-gray-400">
-        {destinations.length} destinations mapped
-      </div>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+  {translate("travelMap")}
+</h2>
+<div className="text-sm text-gray-400">
+  {destinations.length} {translate("destinationsMapped")}
+</div>
     </div>
     <div className="h-[400px] relative bg-gray-900/70">
       {destinations.length > 0 ? (
         <MapWithNoSSR destinations={destinations} />
       ) : (
         <div className="h-full flex flex-col items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-700 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1} strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          <p className="text-gray-500 text-lg">No travel data to display</p>
-        </div>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-700 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+  <p className="text-gray-500 text-lg">{translate("noTravelData")}</p>
+</div>
       )}
     </div>
   </div>
   
   {/* Travel Style */}
-  <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
+  <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700"style={{ direction: isRTL ? "rtl" : "ltr" }}>
     <div className="bg-gray-800/80 backdrop-blur p-4 border-b border-gray-700/50 flex justify-between items-center">
-      <h2 className="text-xl font-bold text-white flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
-        Travel Style
-      </h2>
+    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+  {translate("travelStyle")}
+</h2>
     </div>
     <div className="p-6 flex flex-col items-center">
   <div className="h-[260px] w-[260px] relative">
     <Pie 
-      key={`pie-chart-${colorMode}`} // This forces complete re-render when colorMode changes
+      key={`pie-chart-${colorMode}-${language}`} // This forces complete re-render when colorMode changes
       data={{
         ...activityData,
         datasets: [{
@@ -959,25 +997,25 @@ const formatedDate = (dateString) => {
 </div>
           
         {/* Budget Breakdown - enhanced design */}
-        <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700 mb-10">
+        <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700 mb-10"style={{ direction: isRTL ? "rtl" : "ltr" }}>
           <div className="p-4 border-b border-gray-700">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Budget Breakdown
+                {translate("budgetBreakdown")}
               </h2>
-              <div className="text-sm text-gray-400">
-                Average spend per category, per trip
-              </div>
+              <div className="text-gray-400 text-xs mt-1">
+  {translate("avgSpendCategory")}
+</div>
             </div>
           </div>
           
-          <div className="p-6">
+          <div className="p-6"style={{ direction: isRTL ? "rtl" : "ltr" }}>
           <div className="h-[300px]">
   <Bar 
-    key={`budget-chart-${colorMode}`} // Force re-render on colorMode change
+    key={`budget-chart-${colorMode}-${language}`} // Force re-render on colorMode change
     data={{
       ...budgetData,
       datasets: [{
@@ -1004,14 +1042,16 @@ const formatedDate = (dateString) => {
                       grid: { 
                         color: 'rgba(255,255,255,0.1)',
                         drawBorder: false
-                      }
+                      },
+                      position: isRTL ? 'right' : 'left', 
                     },
                     x: {
                       ticks: { color: 'rgba(255,255,255,0.7)' },
                       grid: { 
                         display: false,
                         drawBorder: false
-                      }
+                      },
+                      reverse: isRTL,
                     }
                   },
                   plugins: {
@@ -1062,6 +1102,9 @@ const formatedDate = (dateString) => {
     backgroundColor: `${getAccessibleColor('primary')}15`,
     borderWidth: '1px',
     borderColor: `${getAccessibleColor('primary')}30`,
+    direction: isRTL ? "rtl" : "ltr",
+    textAlign: isRTL ? "right" : "left"
+    
   }}
 >
   <svg 
@@ -1076,11 +1119,10 @@ const formatedDate = (dateString) => {
   </svg>
   <div style={{ color: `${getAccessibleColor('primary')}ee` }}>
     <p className="text-sm">
-      Flight costs are based on {stats.tripsWithFlightData} trips with available flight data. 
-      For trips without flight information, estimates are derived from destinations and budget preferences.
+      {translate("flightDataInfo1")} {stats.tripsWithFlightData} {translate("flightDataInfo2")}
     </p>
     <p className="text-sm mt-1">
-      All other expenses are calculated based on your selected budget level for each trip.
+      {translate("flightDataInfo3")}
     </p>
   </div>
 </div>
@@ -1088,18 +1130,18 @@ const formatedDate = (dateString) => {
         </div>
           
         {/* Recent Trips Timeline - enhanced design */}
-        <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
+        <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700"style={{ direction: isRTL ? "rtl" : "ltr" }}>
           <div className="p-4 border-b border-gray-700">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                Trip Timeline
-              </h2>
-              <div className="text-sm text-gray-400">
-                {trips.length} total trips
-              </div>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+  </svg>
+  {translate("tripTimeline")}
+</h2>
+<div className="text-sm text-gray-400">
+  {trips.length} {translate("totalTripsCount")}
+</div>
             </div>
           </div>
           
@@ -1133,13 +1175,13 @@ const formatedDate = (dateString) => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
-                    <p className="text-gray-400 mb-3">No trips found in your account</p>
-                  <a 
-                    href="/create-trip" 
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow-md transition-colors"
-                  >
-                    Create Your First Trip
-                  </a>
+                    <p className="text-gray-400 mb-3">{translate("noTripsFound")}</p>
+<a 
+  href="/create-trip" 
+  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow-md transition-colors"
+>
+  {translate("createFirstTrip")}
+</a>
                 </div>
               )
             }
@@ -1149,10 +1191,10 @@ const formatedDate = (dateString) => {
           {trips.length > 10 && (
             <div className="mt-6 text-center">
               <a 
-                href="/my-trips" 
-                className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors font-medium"
-              >
-                View all trips
+  href="/my-trips" 
+  className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors font-medium"
+>
+  {translate("viewAllTrips")}
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
@@ -1165,34 +1207,29 @@ const formatedDate = (dateString) => {
       {/* Footer with user experience info */}
       <div className="mt-10 flex items-center justify-between text-gray-500 text-sm">
           <div>
-            Dashboard updated at {new Date().toLocaleTimeString()}
+          {translate("dashboardUpdated")} {new Date().toLocaleTimeString()}
           </div>
           <div className="flex items-center gap-4">
-            <button className="text-white hover:text-white transition-all hover:scale-105">
-              <span className="sr-only">Accessibility Settings</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-              </svg>
-            </button>
+            
             <button 
-    onClick={handlePrint}
-    style={{ color: getAccessibleColor('iconColor') }}
-    className="hover:opacity-80 transition-all hover:scale-105"
-    title="Print Dashboard"
+  onClick={handlePrint}
+  style={{ color: getAccessibleColor('iconColor') }}
+  className="hover:opacity-80 transition-all hover:scale-105"
+  title={translate("print")}
 >
-    <span className="sr-only">Print Dashboard</span>
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
-    </svg>
+  <span className="sr-only">{translate("print")}</span>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
+  </svg>
 </button>
 
 <button 
-    onClick={handleExportPDF}
-    style={{ color: getAccessibleColor('iconColor') }}
-    className="hover:opacity-80 transition-all hover:scale-105"
-    title="Export as PDF"
+  onClick={handleExportPDF}
+  style={{ color: getAccessibleColor('iconColor') }}
+  className="hover:opacity-80 transition-all hover:scale-105"
+  title={translate("export")}
 >
-  <span className="sr-only">Export Data</span>
+  <span className="sr-only">{translate("export")}</span>
   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
     <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
   </svg>
@@ -1248,11 +1285,20 @@ const formatedDate = (dateString) => {
     );
   }
 
-  function TimelineItem({ trip, index }) {
+  function TimelineItem({ trip:originalTrip, index }) {
+    
+    const { language } = useLanguage();
+    const { colorMode } = useAccessibility();
+    const isRTL = language === "he";
+    
+    // Translate trip data
+    const trip = translateTripDetails(originalTrip, language);
+    
     const destination = trip.tripData?.trip?.destination || 'Unknown Destination';
     const startDate = trip.userSelection?.startDate ? new Date(trip.userSelection?.startDate) : null;
     const isUpcoming = startDate && startDate > new Date();
-    const { colorMode } = useAccessibility();
+    
+    
   
     
     const formatDate = (date) => {
@@ -1275,7 +1321,7 @@ const formatedDate = (dateString) => {
       const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
       
       if (daysDiff <= 0) return null;
-      return daysDiff === 1 ? 'Tomorrow' : `in ${daysDiff} days`;
+      return daysDiff === 1 ? translate("tomorrow") : translate("daysAway").replace("{days}", daysDiff);
     };
     
     const daysUntil = getDaysUntil(startDate);
@@ -1345,8 +1391,8 @@ const formatedDate = (dateString) => {
                 color: 'rgba(255, 255, 255, 0.9)'
               }}
             >
-              {isUpcoming ? 'Upcoming' : 'Completed'}
-            </span>
+{isUpcoming ? translate("upcoming") : translate("completed")}
+</span>
           </div>
           <div className="text-gray-300 text-sm mt-2 flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1366,42 +1412,44 @@ const formatedDate = (dateString) => {
           </div>
           
           <div className="flex gap-2 mt-3">
-            <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              {trip.userSelection?.travelers || 'Solo'}
-            </div>
-            <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {trip.userSelection?.budget || 'Standard'} Budget
-            </div>
-            {trip.tripData?.trip?.duration && (
-              <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {trip.tripData?.trip?.duration}
-              </div>
-            )}
+        <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          {trip.userSelection?.travelers || translate("solo")}
+        </div>
+        
+        <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          {trip.userSelection?.budget || 'Standard'} {translate("budgetType")}
+        </div>
+        
+        {trip.tripData?.trip?.duration && (
+          <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800/70 px-2 py-1 rounded">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {trip.tripData?.trip?.duration}
           </div>
+        )}
+      </div>
           
           {/* Flight data if available */}
           {trip.tripData?.flights?.options?.best?.pricePerPerson && (
-            <div className="mt-3 flex items-center gap-2 text-xs text-gray-300">
-              <div className="flex items-center gap-1 bg-blue-900/30 text-blue-300 px-2 py-1 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 transform rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-                Flight: {trip.tripData?.flights?.options?.best?.pricePerPerson}
-              </div>
-              <div className="text-gray-400">
-                {trip.tripData?.flights?.options?.best?.airline}
-              </div>
-            </div>
-          )}
+  <div className="mt-3 flex items-center gap-2 text-xs text-gray-300">
+    <div className="flex items-center gap-1 bg-blue-900/30 text-blue-300 px-2 py-1 rounded">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 transform rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+      </svg>
+      {translate("flightPrice")} {trip.tripData?.flights?.options?.best?.pricePerPerson}
+    </div>
+    <div className="text-gray-400">
+      {translate("flyingWith")} {trip.tripData?.flights?.options?.best?.airline}
+    </div>
+  </div>
+)}
           
           {/* View button */}
           <div className="mt-3 flex justify-end">
@@ -1422,8 +1470,8 @@ const formatedDate = (dateString) => {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
     </svg>
-    View Trip Details
-  </button>
+    {translate("viewTripDetails")}
+    </button>
 </div>
         </div>
       </motion.div>

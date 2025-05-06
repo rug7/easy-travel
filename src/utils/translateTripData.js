@@ -1,5 +1,31 @@
 // translateTripData.js
-
+export const translateTripDetails = (trip, currentLanguage) => {
+  // Translate the full trip object
+  const translatedTrip = translateTripData(trip, currentLanguage);
+  
+  // Additional translations for dashboard display
+  if (translatedTrip.tripData?.trip?.duration) {
+    // If duration contains a number followed by "days", translate just the "days" part
+    const durationMatch = translatedTrip.tripData.trip.duration.match(/(\d+)\s*(days|ימים|días|dias|jours|giorni)/i);
+    
+    if (durationMatch) {
+      const daysTranslation = {
+        "en": "days",
+        "he": "ימים",
+        "es": "días",
+        "pt": "dias",
+        "fr": "jours",
+        "it": "giorni"
+      };
+      
+      if (currentLanguage && daysTranslation[currentLanguage]) {
+        translatedTrip.tripData.trip.duration = `${durationMatch[1]} ${daysTranslation[currentLanguage]}`;
+      }
+    }
+  }
+  
+  return translatedTrip;
+};
 export const translateTripData = (data, currentLanguage) => {
     // Define mappings to normalize values to English
     const budgetMappings = {
