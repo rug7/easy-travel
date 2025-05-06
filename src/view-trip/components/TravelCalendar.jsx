@@ -15,6 +15,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { CustomDialogContent } from '@/components/ui/custom-dialog-content';
 import { useAccessibility } from '@/context/AccessibilityContext';
+import { useLanguage } from "@/context/LanguageContext";
+
 
 
 
@@ -40,6 +42,8 @@ const Badge = ({ children, className, ...props }) => (
     const [calendarDate, setCalendarDate] = useState(new Date());
     const [exportVisible, setExportVisible] = useState(false);
     const [filterType, setFilterType] = useState('all'); // 'all', 'trip', 'activity'
+     const { translate, language } = useLanguage();
+    const isRTL = language === "he";
 
     
     const [exportCalendars, setExportCalendars] = useState([
@@ -153,7 +157,7 @@ const Badge = ({ children, className, ...props }) => (
     return (
       <div className="absolute top-2 right-2 text-white text-xs font-bold px-2 py-1 rounded-full"
            style={{ backgroundColor: getAccessibleColor('primary') }}>
-        Today
+        {translate("today")}
       </div>
     );
   };
@@ -455,7 +459,7 @@ const Badge = ({ children, className, ...props }) => (
             className="calendar-nav-button"
             onClick={() => navigate('TODAY')}
           >
-            Today
+            {translate("today")}
           </Button>
           <div className="flex gap-1">
             <Button 
@@ -479,7 +483,7 @@ const Badge = ({ children, className, ...props }) => (
             <PopoverTrigger asChild>
               <Button variant="outline" className="ml-2 calendar-nav-button">
                 <IoCalendarOutline className="mr-2" />
-                Jump to Date
+                {translate("jumpToDate")}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-700">
@@ -508,21 +512,21 @@ const Badge = ({ children, className, ...props }) => (
         </div>
         
         <div className="travel-calendar-toolbar-views">
-        <div className="bg-gray-800 rounded-lg p-1 flex">
-  {['month', 'week', 'day', 'agenda'].map(viewName => (
-    <button 
-      key={viewName}
-      className={`px-4 py-2 rounded-xl transition`}
-      style={{
-        backgroundColor: toolbar.view === viewName ? getAccessibleColor('primary') : 'transparent',
-        color: toolbar.view === viewName ? 'white' : '#d1d5db',
-      }}
-      onClick={() => toolbar.onView(viewName)}
-    >
-      {viewName.charAt(0).toUpperCase() + viewName.slice(1)}
-    </button>
-  ))}
-</div>
+          <div className="bg-gray-800 rounded-lg p-1 flex">
+            {['month', 'week', 'day', 'agenda'].map(viewName => (
+              <button 
+                key={viewName}
+                className={`px-4 py-2 rounded-xl transition`}
+                style={{
+                  backgroundColor: toolbar.view === viewName ? getAccessibleColor('primary') : 'transparent',
+                  color: toolbar.view === viewName ? 'white' : '#d1d5db',
+                }}
+                onClick={() => toolbar.onView(viewName)}
+              >
+                {viewName.charAt(0).toUpperCase() + viewName.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -540,35 +544,34 @@ const Badge = ({ children, className, ...props }) => (
   return (
     <div className="min-h-screen bg-gray-900 pt-[100px] pb-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-white">Travel Calendar</h1>
-            <p className="text-gray-400 mt-1">View and manage your travel schedule</p>
-          </div>
-          <div className="flex items-center gap-2 ml-4">
-  <span className="text-gray-400 text-sm">Filter:</span>
-  <select 
-    value={filterType} 
-    onChange={e => setFilterType(e.target.value)}
-    className="bg-gray-800 border-gray-700 text-white rounded-xl px-3 py-1.5 text-sm"
-  >
-    <option value="all">All Events</option>
-    <option value="trip">Trips Only</option>
-    <option value="activity">Activities Only</option>
-  </select>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+  <div>
+    <h1 className="text-3xl font-bold text-white">{translate("travelCalendar")}</h1>
+    <p className="text-gray-400 mt-1">{translate("calendarDescription")}</p>
+  </div>
+  <div className="flex items-center gap-2 ml-4">
+    <span className="text-gray-400 text-sm">{translate("filter")}</span>
+    <select 
+      value={filterType} 
+      onChange={e => setFilterType(e.target.value)}
+      className="bg-gray-800 border-gray-700 text-white rounded-xl px-3 py-1.5 text-sm"
+    >
+      <option value="all">{translate("filterAll")}</option>
+      <option value="trip">{translate("filterTrips")}</option>
+      <option value="activity">{translate("filterActivities")}</option>
+    </select>
+  </div>
+  
+  <div className="flex gap-4">
+    <Button 
+      variant="outline" 
+      className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+      onClick={handleExportCalendar}
+    >
+      {translate("exportGoogleCalendar")}
+    </Button>
+  </div>
 </div>
-
-          
-          <div className="flex gap-4">
-            <Button 
-              variant="outline" 
-              className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
-              onClick={handleExportCalendar}
-            >
-              Export to Google Calendar
-            </Button>
-          </div>
-        </div>
         
         <div className="bg-gray-800 rounded-xl overflow-hidden shadow-xl">
           <div className="travel-calendar-container">
@@ -656,42 +659,42 @@ const Badge = ({ children, className, ...props }) => (
         
         {/* Trip Legend */}
         <div className="mt-6 bg-gray-800 rounded-xl p-6 shadow-xl">
-  <h2 className="text-xl font-semibold text-white mb-4">Calendar Legend</h2>
+  <h2 className="text-xl font-semibold text-white mb-4">{translate("calendarLegend")}</h2>
   
   <div className="flex flex-wrap gap-6 mb-6">
-  <div className="flex items-center gap-2">
-    <div 
-      className="w-4 h-4 rounded-sm" 
-      style={{ backgroundColor: getAccessibleColor('primary') }}
-    ></div>
-    <span className="text-gray-300">Trip Duration</span>
+    <div className="flex items-center gap-2">
+      <div 
+        className="w-4 h-4 rounded-sm" 
+        style={{ backgroundColor: getAccessibleColor('primary') }}
+      ></div>
+      <span className="text-gray-300">{translate("tripDuration")}</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <div 
+        className="w-4 h-4 rounded-sm" 
+        style={{ backgroundColor: getAccessibleColor('danger') }}
+      ></div>
+      <span className="text-gray-300">{translate("plannedActivities")}</span>
+    </div>
   </div>
-  <div className="flex items-center gap-2">
-    <div 
-      className="w-4 h-4 rounded-sm" 
-      style={{ backgroundColor: getAccessibleColor('danger') }}
-    ></div>
-    <span className="text-gray-300">Activities</span>
-  </div>
-</div>
 </div>
 
         {/* Trip Statistics */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
   <StatsCard 
-    title="Upcoming Trips" 
+    title={translate("upcomingTrips")} 
     value={events.filter(e => e.resource?.type === 'trip' && e.start > new Date()).length} 
     icon={<IoCalendarOutline className="w-6 h-6" />}
     type="upcoming-trips"
   />
   <StatsCard 
-    title="Planned Activities" 
+    title={translate("plannedActivities")} 
     value={events.filter(e => e.resource?.type === 'activity').length} 
     icon={<IoTimeOutline className="w-6 h-6" />}
     type="planned-activities"
   />
   <StatsCard 
-    title="Destinations" 
+    title={translate("destinations")} 
     value={new Set(trips.map(t => t.tripData?.trip?.destination).filter(Boolean)).size} 
     icon={<IoLocationOutline className="w-6 h-6" />}
     type="destinations"
@@ -702,245 +705,240 @@ const Badge = ({ children, className, ...props }) => (
 
             {/* Event Details Dialog */}
             <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
-        <CustomDialogContent  className="bg-gray-800 border-gray-700 text-white">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
-              {selectedEvent?.title}
-            </DialogTitle>
-            <DialogDescription className="sr-only">
+  <CustomDialogContent className="bg-gray-800 border-gray-700 text-white">
+    <DialogHeader>
+      <DialogTitle className="text-xl font-bold">
+        {selectedEvent?.title}
+      </DialogTitle>
+      <DialogDescription className="sr-only">
         Event details and information
       </DialogDescription>
-            <DialogClose className="absolute right-4 top-4 text-black  bg-white hover:scale-105">
-  <IoClose className="h-4 w-4" />
-</DialogClose>
-          </DialogHeader>
-          
-          <div className="mt-2">
-            {selectedEvent?.resource?.type === 'trip' ? (
-              <div className="event-dialog-section">
-              <div className="event-dialog-header">
-                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
-                  <IoCalendarOutline className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-gray-400 text-sm">Trip Duration</p>
-                  <p className="text-white font-medium">
-                    {moment(selectedEvent.start).format('MMM D, YYYY')} - {moment(selectedEvent.end).subtract(1, 'day').format('MMM D, YYYY')}
-                  </p>
-                </div>
-              </div>
+      <DialogClose className="absolute right-4 top-4 text-black bg-white hover:scale-105">
+        <IoClose className="h-4 w-4" />
+      </DialogClose>
+    </DialogHeader>
     
-                  
-                
-                <div className="p-4 bg-gray-700 rounded-lg">
-                  <h3 className="font-medium text-white mb-2">Activities on This Trip</h3>
-                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
-                  {events
-  .filter(e => e.resource?.type === 'activity' && e.resource?.tripId === selectedEvent.resource.tripId)
-  .sort((a, b) => a.start - b.start)
-  .map((activity, index) => (
-    <div key={index} className="p-3 bg-gray-800 rounded-lg flex items-center gap-3">
-      <div 
-        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
-        style={{ backgroundColor: getAccessibleColor('danger') }}
-      >
-        {moment(activity.start).format('HH:mm')}
-      </div>
-      <div className="flex-1">
-        <p className="font-medium text-white">{activity.title}</p>
-        <p className="text-sm text-gray-400">
-          {moment(activity.start).format('ddd, MMM D')} • {moment(activity.start).format('HH:mm')} - {moment(activity.end).format('HH:mm')}
-        </p>
-      </div>
-    </div>
-  ))}
+    <div className="mt-2">
+      {selectedEvent?.resource?.type === 'trip' ? (
+        <div className="event-dialog-section">
+          <div className="event-dialog-header">
+            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
+              <IoCalendarOutline className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <p className="text-gray-400 text-sm">{translate("tripDuration")}</p>
+              <p className="text-white font-medium">
+                {moment(selectedEvent.start).format('MMM D, YYYY')} - {moment(selectedEvent.end).subtract(1, 'day').format('MMM D, YYYY')}
+              </p>
+            </div>
+          </div>
+          
+          <div className="p-4 bg-gray-700 rounded-lg">
+            <h3 className="font-medium text-white mb-2">{translate("activitiesOnTrip")}</h3>
+            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+              {events
+                .filter(e => e.resource?.type === 'activity' && e.resource?.tripId === selectedEvent.resource.tripId)
+                .sort((a, b) => a.start - b.start)
+                .map((activity, index) => (
+                  <div key={index} className="p-3 bg-gray-800 rounded-lg flex items-center gap-3">
+                    <div 
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                      style={{ backgroundColor: getAccessibleColor('danger') }}
+                    >
+                      {moment(activity.start).format('HH:mm')}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-white">{activity.title}</p>
+                      <p className="text-sm text-gray-400">
+                        {moment(activity.start).format('ddd, MMM D')} • {moment(activity.start).format('HH:mm')} - {moment(activity.end).format('HH:mm')}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="flex justify-end">
-                <Button 
-  className="w-full"
-  style={{ 
-    backgroundColor: getAccessibleColor('primary'),
-    color: 'white'
-  }}
-  onClick={() => window.location.href = `/view-trip/${selectedEvent?.resource?.tripId}`}
->
-  View Full Itinerary
-</Button>
-</div>
+                ))}
+            </div>
+          </div>
+          
+          <div className="flex justify-end">
+            <Button 
+              className="w-full"
+              style={{ 
+                backgroundColor: getAccessibleColor('primary'),
+                color: 'white'
+              }}
+              onClick={() => window.location.href = `/view-trip/${selectedEvent?.resource?.tripId}`}
+            >
+              {translate("viewFullItinerary")}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        /* Activity Details */
+        <div className="space-y-4">
+          <div className="mb-4 p-4 bg-gray-700/50 rounded-lg">
+            <div className="flex justify-between items-center mb-2">
+              <Badge 
+                style={{ 
+                  backgroundColor: getAccessibleColor('danger'),
+                }}
+              >
+                {translate("activity")}
+              </Badge>
+              <span className="text-sm text-gray-400">
+                {moment(selectedEvent?.start).format('dddd, MMMM D, YYYY')}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mb-1">
+              <IoTimeOutline className="text-gray-400" />
+              <span className="text-white">
+                {moment(selectedEvent?.start).format('HH:mm')} - {moment(selectedEvent?.end).format('HH:mm')}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <IoLocationOutline className="text-gray-400" />
+              <span className="text-white">{selectedEvent?.resource?.location || 'Location not specified'}</span>
+            </div>
+          </div>
+          
+          {selectedEvent?.resource?.description && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-400 mb-1">{translate("description")}</h3>
+              <p className="text-white">{selectedEvent.resource.description}</p>
+            </div>
+          )}
+          
+          <div className="grid grid-cols-2 gap-3">
+            {selectedEvent?.resource?.duration && (
+              <div className="p-3 bg-gray-700/50 rounded-lg">
+                <p className="text-sm text-gray-400">{translate("duration")}</p>
+                <p className="text-white font-medium">{selectedEvent.resource.duration}</p>
               </div>
-            ) : (
-              /* Activity Details */
-              <div className="space-y-4">
-                <div className="mb-4 p-4 bg-gray-700/50 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                  <Badge 
-  style={{ 
-    backgroundColor: getAccessibleColor('danger'),
-  }}
->
-  Activity
-</Badge>
-                    <span className="text-sm text-gray-400">
-                      {moment(selectedEvent?.start).format('dddd, MMMM D, YYYY')}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <IoTimeOutline className="text-gray-400" />
-                    <span className="text-white">
-                      {moment(selectedEvent?.start).format('HH:mm')} - {moment(selectedEvent?.end).format('HH:mm')}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <IoLocationOutline className="text-gray-400" />
-                    <span className="text-white">{selectedEvent?.resource?.location || 'Location not specified'}</span>
-                  </div>
-                </div>
-                
-                {selectedEvent?.resource?.description && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-400 mb-1">Description</h3>
-                    <p className="text-white">{selectedEvent.resource.description}</p>
-                  </div>
-                )}
-                
-                <div className="grid grid-cols-2 gap-3">
-                  {selectedEvent?.resource?.duration && (
-                    <div className="p-3 bg-gray-700/50 rounded-lg">
-                      <p className="text-sm text-gray-400">Duration</p>
-                      <p className="text-white font-medium">{selectedEvent.resource.duration}</p>
-                    </div>
-                  )}
-                  
-                  {selectedEvent?.resource?.price && (
-                    <div className="p-3 bg-gray-700/50 rounded-lg">
-                      <p className="text-sm text-gray-400">Price</p>
-                      <p className="text-white font-medium">{selectedEvent.resource.price}</p>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex justify-end gap-3 mt-4">
-  <Button 
-    variant="outline" 
-    className="flex-1"
-    style={{ 
-      borderColor: getAccessibleColor('primary') + '80',
-      color: getAccessibleColor('primary'),
-    }}
-    onClick={() => handleAddToPersonalCalendar(selectedEvent)}
-  >
-    Add to Personal Calendar
-  </Button>
-  <Button 
-    className="flex-1"
-    style={{ 
-      backgroundColor: getAccessibleColor('primary'),
-      color: 'white'
-    }}
-    onClick={() => window.location.href = `/view-trip/${selectedEvent?.resource?.tripId}`}
-  >
-    View Trip Details
-  </Button>
-</div>
+            )}
+            
+            {selectedEvent?.resource?.price && (
+              <div className="p-3 bg-gray-700/50 rounded-lg">
+                <p className="text-sm text-gray-400">{translate("price")}</p>
+                <p className="text-white font-medium">{selectedEvent.resource.price}</p>
               </div>
             )}
           </div>
-        </CustomDialogContent >
-      </Dialog>
-      
-      {/* Export Calendar Dialog */}
-      <Dialog open={exportVisible} onOpenChange={setExportVisible}>
-        <CustomDialogContent className="bg-gray-800 border-gray-700 text-white" >
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
-              Export Calendar
-            </DialogTitle>
-            <DialogDescription className="sr-only">
-      </DialogDescription>
-            <DialogClose className="absolute right-4 top-4 text-black  bg-white hover:scale-105">
-              <IoClose className="h-4 w-4" />
-            </DialogClose>
-          </DialogHeader>
           
-          <div className="py-4">
-            <div className="mb-6">
-              <p className="text-gray-300 mb-2">Select which calendar services you want to export your travel schedule to:</p>
-              
-              <div className="space-y-3 mt-4">
-  {exportCalendars.map((calendar) => (
-    <div 
-      key={calendar.id}
-      className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
-        calendar.selected ? 'bg-blue-900/30 border border-blue-700' : 'bg-gray-700/50 hover:bg-gray-700'
-      }`}
-      onClick={() => {
-        setExportCalendars(exportCalendars.map(cal => 
-          cal.id === calendar.id ? {...cal, selected: !cal.selected} : cal
-        ));
-      }}
-    >
-      <div className={`w-5 h-5 rounded-md mr-3 flex items-center justify-center ${
-        calendar.selected ? 'bg-blue-600' : 'border border-gray-500'
-      }`}>
-        {calendar.selected && (
-          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-          </svg>
-        )}
-      </div>
-      <div className="flex-1">
-        <div className="font-medium">{calendar.name}</div>
-        <div className="text-sm text-gray-400">
-          {calendar.id === 'google' ? 'Sync with your Google account' : 'Export as .ics file'}
-        </div>
-      </div>
-      {calendar.selected && (
-        <div className="w-6 h-6 rounded-full bg-blue-600/20 flex items-center justify-center">
-          <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
+          <div className="flex justify-end gap-3 mt-4">
+            <Button 
+              variant="outline" 
+              className="flex-1"
+              style={{ 
+                borderColor: getAccessibleColor('primary') + '80',
+                color: getAccessibleColor('primary'),
+              }}
+              onClick={() => handleAddToPersonalCalendar(selectedEvent)}
+            >
+              {translate("addToPersonalCalendar")}
+            </Button>
+            <Button 
+              className="flex-1"
+              style={{ 
+                backgroundColor: getAccessibleColor('primary'),
+                color: 'white'
+              }}
+              onClick={() => window.location.href = `/view-trip/${selectedEvent?.resource?.tripId}`}
+            >
+              {translate("viewTripDetails")}
+            </Button>
+          </div>
         </div>
       )}
     </div>
-  ))}
-                
-              
+  </CustomDialogContent>
+</Dialog>
+      
+      {/* Export Calendar Dialog */}
+      <Dialog open={exportVisible} onOpenChange={setExportVisible}>
+  <CustomDialogContent className="bg-gray-800 border-gray-700 text-white">
+    <DialogHeader>
+      <DialogTitle className="text-xl font-bold">
+        {translate("calendarExport")}
+      </DialogTitle>
+      <DialogDescription className="sr-only">
+      </DialogDescription>
+      <DialogClose className="absolute right-4 top-4 text-black bg-white hover:scale-105">
+        <IoClose className="h-4 w-4" />
+      </DialogClose>
+    </DialogHeader>
+    
+    <div className="py-4">
+      <div className="mb-6">
+        <p className="text-gray-300 mb-2">{translate("exportDescription")}</p>
+        
+        <div className="space-y-3 mt-4">
+          {exportCalendars.map((calendar) => (
+            <div 
+              key={calendar.id}
+              className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
+                calendar.selected ? 'bg-blue-900/30 border border-blue-700' : 'bg-gray-700/50 hover:bg-gray-700'
+              }`}
+              onClick={() => {
+                setExportCalendars(exportCalendars.map(cal => 
+                  cal.id === calendar.id ? {...cal, selected: !cal.selected} : cal
+                ));
+              }}
+            >
+              <div className={`w-5 h-5 rounded-md mr-3 flex items-center justify-center ${
+                calendar.selected ? 'bg-blue-600' : 'border border-gray-500'
+              }`}>
+                {calendar.selected && (
+                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
               </div>
+              <div className="flex-1">
+                <div className="font-medium">{calendar.name}</div>
+                <div className="text-sm text-gray-400">
+                  {calendar.id === 'google' ? 'Sync with your Google account' : 'Export as .ics file'}
+                </div>
+              </div>
+              {calendar.selected && (
+                <div className="w-6 h-6 rounded-full bg-blue-600/20 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              )}
             </div>
-            
-            <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-4 flex items-start gap-3">
-            <IoInformationCircleOutline 
-    className="w-5 h-5 flex-shrink-0 mt-0.5" 
-    style={{ color: getAccessibleColor('primary') }}
-  />
-              <p className="text-blue-300 text-sm">
-                Exporting your travel calendar will create events in your preferred calendar application. 
-                You can choose to export all trips or just selected ones.
-              </p>
-            </div>
-            
-            <div className="flex justify-end gap-3 mt-6">
-              <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700" onClick={() => setExportVisible(false)}>
-                Cancel
-              </Button>
-              <Button 
-  className=""
-  style={{ 
-    backgroundColor: getAccessibleColor('primary'),
-    color: 'white',
-    opacity: exportCalendars.some(cal => cal.selected) ? 1 : 0.5
-  }}
-  onClick={handleExportSelected}
-  disabled={!exportCalendars.some(cal => cal.selected)}
->
-  Export Selected
-</Button>
-            </div>
-          </div>
-        </CustomDialogContent >
-      </Dialog>
+          ))}
+        </div>
+      </div>
+      
+      <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-4 flex items-start gap-3">
+        <IoInformationCircleOutline 
+          className="w-5 h-5 flex-shrink-0 mt-0.5" 
+          style={{ color: getAccessibleColor('primary') }}
+        />
+        <p className="text-blue-300 text-sm">
+          {translate("calendarExportInfo")}
+        </p>
+      </div>
+      
+      <div className="flex justify-end gap-3 mt-6">
+        <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700" onClick={() => setExportVisible(false)}>
+          {translate("cancel")}
+        </Button>
+        <Button 
+          className=""
+          style={{ 
+            backgroundColor: getAccessibleColor('primary'),
+            color: 'white',
+            opacity: exportCalendars.some(cal => cal.selected) ? 1 : 0.5
+          }}
+          onClick={handleExportSelected}
+          disabled={!exportCalendars.some(cal => cal.selected)}
+        >
+          {translate("exportSelected")}
+        </Button>
+      </div>
+    </div>
+  </CustomDialogContent>
+</Dialog>
     </div>
   );
 
