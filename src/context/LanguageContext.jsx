@@ -15,7 +15,7 @@ export function LanguageProvider({ children }) {
     listeners.forEach(listener => listener(newLanguage));
   };
 
-  const translate = (key) => {
+  const translate = (key, params = {}) => {
     const keys = key.split('.');
     let value = languageData[language];
     
@@ -32,8 +32,16 @@ export function LanguageProvider({ children }) {
             return key; // Return the key if no translation found in English either
           }
         }
-        return englishValue;
+        value = englishValue;
       }
+    }
+    
+    // Replace parameters in the translation string
+    if (params && typeof value === 'string') {
+      Object.keys(params).forEach(param => {
+        const regex = new RegExp(`{${param}}`, 'g');
+        value = value.replace(regex, params[param]);
+      });
     }
     
     return value;

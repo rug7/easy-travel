@@ -12,6 +12,8 @@ import destinationsData from '@/context/destinations.json';
 // Import accessibility context
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { useLanguage } from "@/context/LanguageContext";
+import { translateTripDetails } from '@/utils/translateTripData';
+
 
 
 function MyTrips() {
@@ -114,6 +116,7 @@ const isRTL = language === "he";
         // Use colorMode-specific colors, falling back to default
         return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
     };
+    
 
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -511,20 +514,27 @@ const isRTL = language === "he";
                                         // Create info window with accessible colors
                                         const infoWindow = new window.google.maps.InfoWindow({
                                             content: `
-                                                <div style="padding: 8px; max-width: 150px; text-align: center; color: #333; font-family: system-ui, sans-serif;">
-                                                    <h3 style="margin: 0 0 5px; font-size: 14px; font-weight: bold; color: #000000;">
+                                                <div style="padding: 6px; max-width: 120px; text-align: center; color: #333; font-family: system-ui, sans-serif;">
+                                                    <h3 style="margin: 0 0 3px; font-size: 12px; font-weight: bold; color: #000000;">
                                                         ${destination.name}
                                                     </h3>
-                                                    <p style="margin: 2px 0 6px; color: black; font-size: 12px; font-weight: 400">${destination.days.toString().replace(' days', '')} days</p>
+                                                    <p style="margin: 2px 0 4px; color: black; font-size: 11px; font-weight: 400">
+                                                        ${translate("dayCount", { count: destination.days.toString().replace(' days', '') })}
+                                                    </p>
                                                     <button 
-                                                        style="background: ${getAccessibleColor('danger')}; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; width: 100%;"
+                                                        style="background: ${getAccessibleColor('danger')}; color: white; border: none; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 11px; width: 100%;"
                                                         onclick="window.viewTrip('${destination.id}')"
                                                     >
-                                                        View Trip
+                                                        ${translate("viewTrip")}
                                                     </button>
                                                 </div>
-                                            `
+                                            `,
+                                            pixelOffset: new google.maps.Point(0, -5),
+                                            disableAutoPan: true  // Add this option
+
                                         });
+                                        
+                                        
                     
                                         marker.addListener('click', () => {
                                             if (window.currentInfoWindow) {
@@ -566,14 +576,18 @@ const isRTL = language === "he";
                                         // Add info window for history locations with accessible colors
                                         const historyInfoWindow = new window.google.maps.InfoWindow({
                                             content: `
-                                                <div style="padding: 8px; text-align: center; font-family: system-ui, sans-serif;">
-                                                    <p style="margin: 0; font-weight: 500;">${location.destination}</p>
-                                                    <p style="margin: 4px 0 0; font-size: 12px; color: #000000;">
-                                                        Visited on ${formatDate(location.visitedAt)}
+                                                <div style="padding: 6px; text-align: center; font-family: system-ui, sans-serif;">
+                                                    <p style="margin: 0; font-weight: 500; font-size: 12px;">${location.destination}</p>
+                                                    <p style="margin: 3px 0 0; font-size: 11px; color: #000000;">
+                                                        ${translate("visitedOn")} ${formatDate(location.visitedAt)}
                                                     </p>
                                                 </div>
-                                            `
+                                            `,
+                                            pixelOffset: new google.maps.Point(0, -5),
+                                            disableAutoPan: true  // Add this option
+
                                         });
+                                        
                     
                                         historyMarker.addListener('click', () => {
                                             if (window.currentInfoWindow) {
@@ -807,7 +821,9 @@ const isRTL = language === "he";
                                         </div>
                                     ) : (
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                            {trips.map((trip) => (
+                                            {trips.map((trip) => {
+                                                    const translatedTrip = translateTripDetails(trip, language);
+                                                    return(
                                                 <div
                                                     key={trip.id}
                                                     onClick={() => navigate(`/view-trip/${trip.id}`)}
@@ -826,11 +842,10 @@ const isRTL = language === "he";
                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                                                         <div className="absolute bottom-0 left-0 right-0 p-4">
     <h2 className="text-white text-xl font-bold">
-        {trip.tripData?.trip?.destination || translate("unnamedTrip")}
-    </h2>
+    {translatedTrip.tripData?.trip?.destination || translate("unnamedTrip")}    </h2>
     <p className="text-white/90">
-    {trip.tripData?.trip?.duration || 
-     translate("dayCount", { count: trip.userSelection?.numDays })}
+    {translatedTrip.tripData?.trip?.duration || 
+                     translate("dayCount", { count: translatedTrip.userSelection?.numDays })}
 </p>
 </div>
                                                     </div>
@@ -843,7 +858,7 @@ const isRTL = language === "he";
                                                                 </div>
                                                                 <div className="flex items-center">
                                                                     <span className="mr-1">👥</span>
-                                                                    {trip.userSelection?.travelers}
+                                                                    {translatedTrip.userSelection?.travelers}
                                                                 </div>
                                                             </div>
                     
@@ -931,7 +946,7 @@ const isRTL = language === "he";
                                                     </div>
                                                 </div>
                                             </div>
-                                        ))}
+                                        );})}
                                     </div>
                                 )}
                 

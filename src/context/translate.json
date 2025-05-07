@@ -217,6 +217,8 @@
      "retry": "Retry",
     "deleteTrip": "Delete Trip",
     "createYourFirstTrip": "Create Your First Trip",
+     "visitedOn": "Visited on",
+    "viewTrip": "View Trip",
     "dayCount": "{count} days",
     "pleaseLogIn": "Please Log In",
     "needToBeLoggedIn": "You need to be logged in to view your trips",
@@ -601,7 +603,8 @@
     "unnamedTrip": "טיול ללא שם",
     "delete": "מחק",
     "dayCount": "{count} ימים",
-
+     "visitedOn": "ביקר ב",
+    "viewTrip": "צפה במסלול",
    
     "createYourFirstTrip": "צור את הטיול הראשון שלך",
     "pleaseLogIn": "אנא התחבר",
@@ -991,8 +994,10 @@
     "delete": "Eliminar",
     
     "createYourFirstTrip": "Crea tu primer viaje",
+     "visitedOn": "Visitado el",
+    "viewTrip": "Ver Viaje",
     "pleaseLogIn": "Por favor inicia sesión",
-    "dayCount": "{count} days",
+    "dayCount": "{count} días",
     "retry": "Reintentar",
     "deleteTrip": "Eliminar Viaje",
     "needToBeLoggedIn": "Necesitas iniciar sesión para ver tus viajes",
@@ -1388,7 +1393,9 @@
     "delete": "Excluir",
    
     "createYourFirstTrip": "Crie sua primeira viagem",
-    "dayCount": "{count} days",
+    "visitedOn": "Visitado em",
+    "viewTrip": "Ver Viagem",
+    "dayCount": "{count} dias",
     "pleaseLogIn": "Por favor, faça login",
      "retry": "Tentar Novamente",
     "deleteTrip": "Excluir Viagem",
@@ -1774,7 +1781,10 @@
     "delete": "Supprimer",
    
     "createYourFirstTrip": "Créez votre premier voyage",
-    "dayCount": "{count} days",
+     "visitedOn": "Visité le",
+    "viewTrip": "Voir le Voyage",
+
+    "dayCount": "{count} jours",
     "pleaseLogIn": "Veuillez vous connecter",
     "retry": "Réessayer",
     "deleteTrip": "Supprimer le Voyage",
@@ -2159,7 +2169,9 @@
     "delete": "Elimina",
     
     "createYourFirstTrip": "Crea il tuo primo viaggio",
-    "dayCount": "{count} days",
+     "visitedOn": "Visitato il",
+    "viewTrip": "Vedi Viaggio",
+    "dayCount": "{count} giorni",
     "pleaseLogIn": "Per favore accedi",
      "retry": "Riprova",
     "deleteTrip": "Elimina Viaggio",
