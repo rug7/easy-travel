@@ -211,7 +211,7 @@ const isRTL = language === "he";
 
     useEffect(() => {
         const initializeData = async () => {
-            if (user?.id && !dataLoaded) {
+            if (user?.id && !dataLoaded || language) {
                 try {
                     // console.log("Initializing data with user:", user.id);
                     await Promise.all([fetchTrips(), fetchLocationHistory()]);
@@ -244,7 +244,14 @@ const isRTL = language === "he";
                 markersRef.current = [];
             }
         };
-    }, [user, dataLoaded]); 
+    }, [user, dataLoaded,language]); 
+    useEffect(() => {
+        if (trips.length > 0) {
+            // Update the trips with the new translations
+            const updatedTrips = trips.map(trip => translateTripDetails(trip, language));
+            setTrips(updatedTrips);
+        }
+    }, [language]);
 
     const fetchLocationHistory = async () => {
         // Don't get user again here - use the one from component state
