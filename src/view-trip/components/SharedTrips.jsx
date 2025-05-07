@@ -41,7 +41,13 @@ function SharedTrips() {
       // If not logged in, redirect to home
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, navigate,language]);
+  useEffect(() => {
+    if (trips.length > 0) {
+      // Force a re-render of the trips when language changes
+      setTrips([...trips]);
+    }
+  }, [language]);
 
   const checkExistingTrips = async () => {
     try {
@@ -157,7 +163,10 @@ function SharedTrips() {
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString();
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   const handleDelete = async (e, sharedId) => {
@@ -294,25 +303,27 @@ function SharedTrips() {
                   {trip.tripData?.trip?.destination || translate("unnamedTrip")}
                   </h2>
                   <p className="text-white/90 text-sm">
-                    {trip.tripData?.trip?.duration || `${trip.userSelection?.numDays} days`}
-                  </p>
+    {`${trip.userSelection?.numDays} ${translate("days")}`}
+  </p>
                 </div>
               </div>
               
               <div className="p-4 cursor-pointer" onClick={() => handleCardClick(trip.id)}>
-                <p className="text-sm text-gray-700 mb-1">
-                {translate("from")}: {trip.userSelection?.startDate?.slice(0, 10)} → {translate("to")}: {trip.userSelection?.endDate?.slice(0, 10)}
-                </p>
-                <p className="text-xs text-gray-600 italic">
-                {translate("sharedBy")}: <span className="font-medium">{trip.sharedBy}</span>
-                <span className="text-gray-400 ml-1">({trip.sharedByEmail})</span>
-                </p>
-                {trip.sharedAt && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {translate("received")} {formatDate(trip.sharedAt)}
-                  </p>
-                )}
-              </div>
+  <p className="text-sm text-gray-700 mb-1" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    {translate("from")}: {formatDate(trip.userSelection?.startDate)} 
+    <span className="mx-2">{isRTL ? '←' : '→'}</span> 
+    {translate("to")}: {formatDate(trip.userSelection?.endDate)}
+  </p>
+  <p className="text-xs text-gray-600 italic" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    {translate("sharedBy")}: <span className="font-medium">{trip.sharedBy}</span>
+    <span className="text-gray-400 ml-1">({trip.sharedByEmail})</span>
+  </p>
+  {trip.sharedAt && (
+    <p className="text-xs text-gray-500 mt-1" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+      {translate("received")} {formatDate(trip.sharedAt)}
+    </p>
+  )}
+</div>
               
        {/* Action buttons */}
        <div className="absolute top-3 left-3 z-10 flex gap-2">
