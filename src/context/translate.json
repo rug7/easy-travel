@@ -305,6 +305,18 @@
     "fontSizeIncrease": "Increase font size",
     "fontSizeDecrease": "Decrease font size",
     "colorVisionTitle": "Color Vision",
+    "noSharedTrips": "No shared trips yet.",
+   
+    "loadingSharedTrips": "Loading shared trips...",
+   
+    "from": "From",
+    "to": "To",
+    "sharedBy": "Shared by",
+    "received": "Received",
+    "removeFromShared": "Remove from shared trips",
+    "addToYourTrips": "Add to your trips",
+    "alreadyInYourTrips": "Already in your trips",
+    "new": "NEW",
 
     "googleCalendar": "Google Calendar",
     "syncWithGoogle": "Sync with your Google account",
@@ -694,6 +706,18 @@
     "fontSizeIncrease": "הגדל גודל גופן",
     "fontSizeDecrease": "הקטן גודל גופן",
     "colorVisionTitle": "ראיית צבעים",
+    "noSharedTrips": "אין עדיין טיולים משותפים.",
+   
+    "loadingSharedTrips": "טוען טיולים משותפים...",
+
+    "from": "מתאריך",
+    "to": "עד תאריך",
+    "sharedBy": "שותף על ידי",
+    "received": "התקבל",
+    "removeFromShared": "הסר מהטיולים המשותפים",
+    "addToYourTrips": "הוסף לטיולים שלך",
+    "alreadyInYourTrips": "כבר בטיולים שלך",
+    "new": "חדש",
     
     "googleCalendar": "יומן Google",
     "syncWithGoogle": "סנכרן עם חשבון Google שלך",
@@ -1085,6 +1109,18 @@
     "fontSizeIncrease": "Aumentar tamaño de fuente",
     "fontSizeDecrease": "Disminuir tamaño de fuente",
     "colorVisionTitle": "Visión del Color",
+    "noSharedTrips": "Aún no hay viajes compartidos.",
+   
+    "loadingSharedTrips": "Cargando viajes compartidos...",
+    
+    "from": "Desde",
+    "to": "Hasta",
+    "sharedBy": "Compartido por",
+    "received": "Recibido",
+    "removeFromShared": "Eliminar de viajes compartidos",
+    "addToYourTrips": "Agregar a tus viajes",
+    "alreadyInYourTrips": "Ya está en tus viajes",
+    "new": "NUEVO",
 
     "googleCalendar": "Google Calendar",
     "syncWithGoogle": "Sincronizar con tu cuenta de Google",
@@ -1484,6 +1520,18 @@
     "fontSizeIncrease": "Aumentar tamanho da fonte",
     "fontSizeDecrease": "Diminuir tamanho da fonte",
     "colorVisionTitle": "Visão de Cores",
+    "noSharedTrips": "Ainda não há viagens compartilhadas.",
+    
+    "loadingSharedTrips": "Carregando viagens compartilhadas...",
+   
+    "from": "De",
+    "to": "Até",
+    "sharedBy": "Compartilhado por",
+    "received": "Recebido",
+    "removeFromShared": "Remover das viagens compartilhadas",
+    "addToYourTrips": "Adicionar às suas viagens",
+    "alreadyInYourTrips": "Já está nas suas viagens",
+    "new": "NOVO",
     
 
     "loadingScreen": {
@@ -1873,6 +1921,18 @@
     "fontSizeIncrease": "Augmenter la taille de police",
     "fontSizeDecrease": "Diminuer la taille de police",
     "colorVisionTitle": "Vision des Couleurs",
+    "noSharedTrips": "Pas encore de voyages partagés.",
+    
+    "loadingSharedTrips": "Chargement des voyages partagés...",
+   
+    "from": "Du",
+    "to": "Au",
+    "sharedBy": "Partagé par",
+    "received": "Reçu",
+    "removeFromShared": "Retirer des voyages partagés",
+    "addToYourTrips": "Ajouter à vos voyages",
+    "alreadyInYourTrips": "Déjà dans vos voyages",
+    "new": "NOUVEAU",
 
     "loadingScreen": {
       "playWhileWait": "Jouez pendant que vous attendez",
@@ -2260,6 +2320,18 @@
     "fontSizeIncrease": "Aumenta dimensione testo",
     "fontSizeDecrease": "Riduci dimensione testo",
     "colorVisionTitle": "Visione dei Colori",
+    "noSharedTrips": "Nessun viaggio condiviso ancora.",
+   
+    "loadingSharedTrips": "Caricamento viaggi condivisi...",
+    
+    "from": "Dal",
+    "to": "Al",
+    "sharedBy": "Condiviso da",
+    "received": "Ricevuto",
+    "removeFromShared": "Rimuovi dai viaggi condivisi",
+    "addToYourTrips": "Aggiungi ai tuoi viaggi",
+    "alreadyInYourTrips": "Già nei tuoi viaggi",
+    "new": "NUOVO",
     
 
     "loadingScreen": {

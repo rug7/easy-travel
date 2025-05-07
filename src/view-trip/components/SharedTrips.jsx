@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { IoTrash, IoAdd, IoCheckmark } from "react-icons/io5";
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
+import { useLanguage } from "@/context/LanguageContext";
 
 
 function SharedTrips() {
@@ -17,7 +18,8 @@ function SharedTrips() {
   const [deleting, setDeleting] = useState(null);
   const [adding, setAdding] = useState(null);
   const [addedTrips, setAddedTrips] = useState(new Set()); // Track which trips have been added
-
+  const { translate, language } = useLanguage();
+  const isRTL = language === "he";
   // Get current user with safe parsing
   const user = (() => {
     try {
@@ -230,13 +232,13 @@ function SharedTrips() {
     return (
       <div className="pt-[72px] p-10 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen flex justify-center items-center">
         <div className="text-white text-center">
-          <h1 className="text-3xl font-bold mb-4">Please Log In</h1>
-          <p className="mb-6">You need to be logged in to view shared trips</p>
+          <h1 className="text-3xl font-bold mb-4">{translate("pleaseLogIn")}</h1>
+          <p className="mb-6">{translate("needToBeLoggedIn")}</p>
           <button
             onClick={() => navigate('/')}
             className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
           >
-            Go to Home
+            {translate("goToHome")}
           </button>
         </div>
       </div>
@@ -247,19 +249,18 @@ function SharedTrips() {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         <div className="flex flex-col items-center space-y-4">
-          {/* Spinner */}
           <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-white text-lg font-medium">Loading shared trips...</p>
+          <p className="text-white text-lg font-medium">{translate("loadingSharedTrips")}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="pt-[72px] p-10 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen mt-8">
-      <h1 className="text-3xl font-bold text-white mb-8">Trips Shared With You</h1>
-      {trips.length === 0 ? (
-        <p className="text-white">No shared trips yet.</p>
+    <div className="pt-[72px] p-10 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen mt-8" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    <h1 className="text-3xl font-bold text-white mb-8">{translate("sharedTrips")}</h1>
+    {trips.length === 0 ? (
+      <p className="text-white">{translate("noSharedTrips")}</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {trips.map((trip) => (
@@ -270,8 +271,8 @@ function SharedTrips() {
             >
               {!trip.read && (
                 <div className="absolute top-3 right-3 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
-                  NEW
-                </div>
+            {translate("new")}
+            </div>
               )}
 
               <div 
@@ -290,7 +291,7 @@ function SharedTrips() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <h2 className="text-white text-xl font-bold">
-                    {trip.tripData?.trip?.destination || 'Unnamed Trip'}
+                  {trip.tripData?.trip?.destination || translate("unnamedTrip")}
                   </h2>
                   <p className="text-white/90 text-sm">
                     {trip.tripData?.trip?.duration || `${trip.userSelection?.numDays} days`}
@@ -300,15 +301,15 @@ function SharedTrips() {
               
               <div className="p-4 cursor-pointer" onClick={() => handleCardClick(trip.id)}>
                 <p className="text-sm text-gray-700 mb-1">
-                  From: {trip.userSelection?.startDate?.slice(0, 10)} → To: {trip.userSelection?.endDate?.slice(0, 10)}
+                {translate("from")}: {trip.userSelection?.startDate?.slice(0, 10)} → {translate("to")}: {trip.userSelection?.endDate?.slice(0, 10)}
                 </p>
                 <p className="text-xs text-gray-600 italic">
-                  Shared by: <span className="font-medium">{trip.sharedBy}</span> 
-                  <span className="text-gray-400 ml-1">({trip.sharedByEmail})</span>
+                {translate("sharedBy")}: <span className="font-medium">{trip.sharedBy}</span>
+                <span className="text-gray-400 ml-1">({trip.sharedByEmail})</span>
                 </p>
                 {trip.sharedAt && (
                   <p className="text-xs text-gray-500 mt-1">
-                    Received: {formatDate(trip.sharedAt)}
+                    {translate("received")} {formatDate(trip.sharedAt)}
                   </p>
                 )}
               </div>
@@ -318,11 +319,11 @@ function SharedTrips() {
        {/* Delete button */}
        <button
                   data-tooltip-id={`delete-tooltip-${trip.id}`}
-                  data-tooltip-content="Remove from shared trips"
+                  data-tooltip-content={translate("removeFromShared")}
                   className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-md transition-all transform hover:scale-105 focus:outline-none"
                   onClick={(e) => handleDelete(e, trip.sharedId)}
                   disabled={deleting === trip.sharedId}
-                  aria-label="Remove from shared trips"
+                  aria-label={translate("removeFromShared")}
                 >
                   {deleting === trip.sharedId ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -334,7 +335,7 @@ function SharedTrips() {
                 {/* Add to My Trips button */}
                 <button
                   data-tooltip-id={`add-tooltip-${trip.id}`}
-                  data-tooltip-content={addedTrips.has(trip.id) ? "Already in your trips" : "Add to your trips"}
+                  data-tooltip-content={addedTrips.has(trip.id) ? translate("alreadyInYourTrips") : translate("addToYourTrips")}
                   className={`${
                     addedTrips.has(trip.id) 
                       ? 'bg-gray-400 cursor-not-allowed' 

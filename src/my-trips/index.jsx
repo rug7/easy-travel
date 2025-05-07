@@ -211,7 +211,7 @@ const isRTL = language === "he";
 
     useEffect(() => {
         const initializeData = async () => {
-            if (user?.id && !dataLoaded || language) {
+            if (user?.id && !dataLoaded && language) {
                 try {
                     // console.log("Initializing data with user:", user.id);
                     await Promise.all([fetchTrips(), fetchLocationHistory()]);
