@@ -31,7 +31,16 @@ body {
 .hero-container .swiper-slide::after {
   @apply absolute inset-0 bg-gradient-to-t from-black/30 to-transparent;
 }
+.accessibility-button {
+  @apply rounded-full p-2 h-9 w-9 flex items-center justify-center bg-blue-500 text-white hover:bg-blue-600 transition-all;
+}
 
+/* For mobile */
+@media screen and (max-width: 768px) {
+  .accessibility-button {
+    @apply h-8 w-8;
+  }
+}
 /* How It Works Section */
 #how-it-works {
   @apply bg-[var(--background)] text-center relative scroll-mt-20; 
@@ -214,4 +223,53 @@ width: 100%;
 
 .content-enter {
   animation: slideDown 0.3s ease-out forwards;
+}
+
+@media screen and (max-width: 768px) {
+  .header-container {
+    padding: 0.5rem 1rem !important;
+    height: 60px !important;
+  }
+
+  .mobile-menu {
+    display: flex !important;
+    align-items: center;
+  }
+
+  .desktop-menu {
+    display: none !important;
+  }
+
+  .logo-text {
+    font-size: 1.25rem !important;
+  }
+
+  .header-buttons {
+    gap: 0.5rem !important;
+  }
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700 transition-all;
+}
+
+.btn-secondary {
+  @apply bg-purple-600 text-white hover:bg-purple-700 transition-all;
+}
+
+.btn-success {
+  @apply bg-green-600 text-white hover:bg-green-700 transition-all;
+}
+
+/* Button states */
+.btn-primary:hover {
+  @apply transform scale-105;
+}
+
+.btn-secondary:hover {
+  @apply transform scale-105;
+}
+
+.btn-success:hover {
+  @apply transform scale-105;
 }

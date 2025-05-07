@@ -6,6 +6,7 @@ import { useAccessibility } from "@/context/AccessibilityContext";
 import { IoClose, IoAccessibility, IoNotifications } from "react-icons/io5";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
+import { IoMenu } from "react-icons/io5"; // Add this import
 
 import axios from "axios";
 import { toast } from "sonner";
@@ -24,6 +25,8 @@ function Header() {
   const [openDialog, setOpenDialog] = useState(false);
   const [accessibilityMenuOpen, setAccessibilityMenuOpen] = useState(false);
   const [newSharedTrips, setNewSharedTrips] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const navigate = useNavigate();
       const isRTL = language === "he";
   
@@ -157,6 +160,127 @@ function Header() {
   const handleSignIn = () => {
     setOpenDialog(true);
   };
+  
+  const renderMobileMenu = () => {
+    if (!isMobileMenuOpen) return null;
+    
+    return (
+      <div className="fixed inset-x-0 top-[60px] bg-white shadow-lg rounded-b-xl animate-fadeIn z-40 max-h-[80vh] overflow-y-auto">
+      <div className="flex flex-col p-4 space-y-3">
+          {user && (
+            <>
+              <Button 
+                variant="outline" 
+                className="w-full justify-start text-gray-800 hover:bg-gray-100"
+                onClick={goToSharedTrips}
+              >
+                {translate("sharedTrips")}
+                {newSharedTrips > 0 && (
+                  <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                    {newSharedTrips}
+                  </span>
+                )}
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full justify-start text-gray-800 hover:bg-gray-100"
+                onClick={goToMyTrips}
+              >
+                {translate("myTrips")}
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full justify-start text-gray-800 hover:bg-gray-100"
+                onClick={goToDashboard}
+              >
+                {translate("dashboard")}
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full justify-start text-gray-800 hover:bg-gray-100"
+                onClick={goToCalendar}
+              >
+                {translate("calendar")}
+              </Button>
+            </>
+          )}
+          
+          {/* Language selector */}
+          <select
+          value={language}
+          onChange={(e) => changeLanguage(e.target.value)}
+          className="w-full p-2 rounded-lg border text-gray-800 hover:bg-gray-100 mb-2"
+        >
+          <option value="en">English</option>
+          <option value="he">עברית</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <option value="pt">Português</option>
+          <option value="it">Italiano</option>
+        </select>
+  
+          {/* Accessibility Options */}
+          <div className="border-t border-gray-200 pt-3">
+          <h3 className="font-medium text-sm text-gray-700 mb-2">
+            {translate("colorVisionTitle")}
+          </h3>
+          <div className="grid grid-cols-1 gap-2 mb-4">
+            {colorSchemes.map(scheme => (
+              <button
+                key={scheme}
+                onClick={() => setColorMode(scheme)}
+                className={`w-full px-3 py-2 text-left text-sm font-medium rounded-md transition-all text-gray-800 ${
+                  colorMode === scheme 
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-50 hover:bg-gray-100'
+                }`}
+              >
+                {translate(scheme)}
+              </button>
+            ))}
+          </div>
+          
+          <div className="mt-4 sticky bottom-0 bg-white pb-2">
+            <h3 className="font-medium text-sm text-gray-700 mb-2">
+              {translate("textSize")}
+            </h3>
+            <div className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
+              <button
+                onClick={decreaseFont}
+                className="p-2 hover:bg-gray-200 rounded-full text-black bg-white transition-all flex-shrink-0"
+                aria-label={translate("fontSizeDecrease")}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+              
+              <button
+                onClick={resetFont}
+                className="mx-2 px-3 py-1 hover:bg-gray-200 rounded text-sm text-black transition-all whitespace-nowrap bg-white"
+              >
+                {translate("reset")}
+              </button>
+              
+              <button
+                onClick={increaseFont}
+                className="p-2 hover:bg-gray-200 rounded-full text-black bg-white transition-all flex-shrink-0"
+                aria-label={translate("fontSizeIncrease")}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
   const handleLogout = () => {
     googleLogout();
@@ -181,6 +305,7 @@ function Header() {
     navigate('/shared-trips');
   };
   
+  
   // Render user section with accessible colors
   const renderUserSection = () => {
     if (user) {
@@ -188,9 +313,8 @@ function Header() {
         <div className="flex items-center gap-3"style={{ direction: isRTL ? "rtl" : "ltr" }}>
           <div className="relative">
           <Button 
-  variant="outline" 
   className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105 ${
-    colorMode === 'default' ? 'bg-indigo-600 hover:bg-indigo-600 hover:text-white' : ''
+    colorMode === 'default' ? 'bg-blue-600 hover:bg-blue-700' : ''
   }`}
   style={
     colorMode !== 'default' 
@@ -206,20 +330,16 @@ function Header() {
     </span>
   )}
 </Button>
-          </div>
+</div>
 
-          {/* My Trips Button */}
+{/* My Trips Button */}
 <Button 
-  variant="outline" 
-  className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105  ${
-    colorMode === 'default' ? 'bg-blue-600 hover:bg-blue-600 hover:text-white' : ''
+  className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105 ${
+    colorMode === 'default' ? 'bg-purple-600 hover:bg-purple-700' : ''
   }`}
   style={
     colorMode !== 'default' 
-      ? { 
-          backgroundColor: getAccessibleColor('primary'),
-          color: 'white',
-        }
+      ? { backgroundColor: getAccessibleColor('primary'), color: 'white' }
       : {}
   }
   onClick={goToMyTrips}
@@ -229,16 +349,12 @@ function Header() {
 
 {/* Dashboard Button */}
 <Button 
-  variant="outline" 
   className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105 ${
-    colorMode === 'default' ? 'bg-purple-600 hover:bg-purple-600 hover:text-white' : ''
+    colorMode === 'default' ? 'bg-blue-600 hover:bg-blue-700' : ''
   }`}
   style={
     colorMode !== 'default' 
-      ? { 
-          backgroundColor: getAccessibleColor('secondary'),
-          color: 'white',
-        }
+      ? { backgroundColor: getAccessibleColor('secondary'), color: 'white' }
       : {}
   }
   onClick={goToDashboard}
@@ -248,16 +364,12 @@ function Header() {
 
 {/* Calendar Button */}
 <Button 
-  variant="outline" 
-  className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105  ${
-    colorMode === 'default' ? 'bg-green-600 hover:bg-green-600 hover:text-white' : ''
+  className={`px-4 py-2 rounded-full text-white transition-all hover:scale-105 ${
+    colorMode === 'default' ? 'bg-green-600 hover:bg-green-700' : ''
   }`}
   style={
     colorMode !== 'default' 
-      ? { 
-          backgroundColor: getAccessibleColor('success'),
-          color: 'white',
-        }
+      ? { backgroundColor: getAccessibleColor('success'), color: 'white' }
       : {}
   }
   onClick={goToCalendar}
@@ -357,42 +469,41 @@ function Header() {
   };
   
   return (
-    <div 
-      className={`h-[72px] p-4 shadow-md justify-between flex items-center px-10 bg-white fixed top-0 left-0 right-0 z-50`}
-      style={{ direction: isRTL ? "rtl" : "ltr" }}
-    >
+    <>
+      <div className="header-container h-[72px] shadow-md justify-between flex items-center bg-white fixed top-0 left-0 right-0 z-50"
+        style={{ direction: isRTL ? "rtl" : "ltr", padding: "0.5rem 2rem" }}      >
       <div className="flex items-center">
-  <Link to="/" className="flex items-center">
-    <img src="/logo.svg" alt="Logo" className={`h-10 w-auto ${isRTL ? 'ml-3' : 'mr-3'}`} />
-    <span className="text-xl font-bold text-gray-800">Easy Travel</span>
-  </Link>
-</div>
+          <Link to="/" className="flex items-center">
+            <img src="/logo.svg" alt="Logo" className={`h-8 w-auto ${isRTL ? 'ml-3' : 'mr-3'}`} />
+            <span className="logo-text text-xl font-bold text-gray-800">Easy Travel</span>
+          </Link>
+        </div>
 
-<div className={`flex ${isRTL ? 'space-x-reverse space-x-4' : 'space-x-4'} items-center`}>
-  {renderUserSection()}
-        
+        <div className="desktop-menu header-buttons flex items-center space-x-4">
+        {renderUserSection()}
         {/* Language selector */}
         <select
-    value={language}
-    onChange={(e) => changeLanguage(e.target.value)}
-    className="bg-gray-100 text-gray-800 px-4 py-2 rounded-full border border-gray-300 focus:outline-none hover:text-gray-800 hover:scale-105 transition-all"
-    style={{ 
-      ...(colorMode !== 'default' && { borderColor: getAccessibleColor('primary') }),
-      ...(colorMode !== 'default' && { boxShadow: `0 0 0 1px ${getAccessibleColor('primary')}30` }),
-    }}
-  >
-          <option value="en">English</option>
-          <option value="he">עברית</option>
-          <option value="fr">Français</option>
-          <option value="es">Español</option>
-          <option value="pt">Português</option>
-          <option value="it">Italiano</option>
-        </select>  
-        
-        {/* Accessibility Button */}
-        <Popover open={accessibilityMenuOpen} onOpenChange={setAccessibilityMenuOpen}>
-          <PopoverTrigger asChild>
-          <Button 
+            value={language}
+            onChange={(e) => changeLanguage(e.target.value)}
+            className="bg-gray-100 text-gray-800 px-4 py-2 rounded-full border border-gray-300 focus:outline-none hover:text-gray-800 hover:scale-105 transition-all"
+            style={{ 
+              ...(colorMode !== 'default' && { 
+                borderColor: getAccessibleColor('primary'),
+                boxShadow: `0 0 0 1px ${getAccessibleColor('primary')}30` 
+              })
+            }}
+          >
+            <option value="en">English</option>
+            <option value="he">עברית</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <option value="pt">Português</option>
+            <option value="it">Italiano</option>
+          </select>
+
+          <Popover open={accessibilityMenuOpen} onOpenChange={setAccessibilityMenuOpen}>
+            <PopoverTrigger asChild>
+            <Button 
   variant="outline" 
   className="rounded-full p-2 h-9 w-9 flex items-center justify-center text-black bg-white hover:bg-gray-100 hover:text-gray-800 hover:scale-105 transition-all"
   aria-label={translate("accessibilityOptions")}
@@ -405,9 +516,9 @@ function Header() {
       : {}
   }
 >
-  <IoAccessibility className="h-5 w-5" />
-</Button>
-          </PopoverTrigger>
+                <IoAccessibility className="h-5 w-5" />
+              </Button>
+            </PopoverTrigger>
           <PopoverContent 
             className="w-64 p-4 bg-white rounded-xl shadow-lg border border-gray-200" 
             align="end"
@@ -505,8 +616,28 @@ function Header() {
           </PopoverContent>
         </Popover>
       </div>
-      
-      {/* Render login modal with accessible colors */}
+       {/* Mobile Menu Button */}
+       <div className="mobile-menu hidden md:hidden">
+  <Button
+    variant="ghost"
+    className="p-2 bg-white text-black "
+    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+  >
+    <IoMenu className="h-6 w-6" />
+  </Button>
+  {user && (
+    <img 
+      src={user?.picture} 
+      className="h-8 w-8 rounded-full ml-2"
+      alt="Profile" 
+    />
+  )}
+</div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {renderMobileMenu()}
+
       {openDialog && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white rounded-xl p-6 max-w-md w-full">
@@ -552,7 +683,7 @@ function Header() {
     </div>
   </div>
 )}
-    </div>
+</>
   );
 }
 
