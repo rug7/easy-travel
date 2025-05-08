@@ -110,14 +110,14 @@ function InfoSection({ trip, onShareClick }) {
     if (!trip) return null;
 
     return (
-        <div className="relative w-full mt-4">
+        <div className="relative w-full mt-4 px-4 sm:px-6 lg:px-8">
             <div className="relative w-full max-w-[1400px] mx-auto overflow-hidden">
-                <div className="aspect-[16/6] relative rounded-xl overflow-hidden">
+                {/* Hero Image Section */}
+                <div className="aspect-[16/9] sm:aspect-[16/6] relative rounded-xl overflow-hidden">
                     <div
                         className="absolute inset-0 w-full h-full transform transition-transform duration-300 hover:scale-105"
                         style={getBackgroundStyle()}
                         onError={() => {
-                            console.error("Background image failed to load");
                             setImageError(true);
                             setPhotoUrl(fallbackImage);
                         }}
@@ -130,41 +130,67 @@ function InfoSection({ trip, onShareClick }) {
                         </div>
                     )}
 
-                    <div className="absolute bottom-0 left-0 right-0 p-8">
-                        <h1 className="text-5xl font-bold text-white mb-2">
+                    {/* Destination Title and Duration */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
                             {trip.tripData?.trip?.destination || 'Your Trip'}
                         </h1>
                         <div className="flex items-center gap-2">
-                        <span className="text-xl font-semibold text-white/90">
-                                📅 {trip.tripData?.trip?.duration || `\${trip.userSelection?.numDays} days`}
+                            <span className="text-lg sm:text-xl font-semibold text-white/90">
+                                📅 {trip.tripData?.trip?.duration || `${trip.userSelection?.numDays} days`}
                             </span>
                         </div>
                     </div>
                 </div>
 
-                {/* Trip Details Pills - Below the image */}
-                <div className="flex justify-between items-center mt-4 px-1">
-                    {/* Pills Container */}
-                    <div className="flex gap-3">
-                        <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+                {/* Trip Details Section */}
+                <div className="mt-4 space-y-4 sm:space-y-0 sm:flex sm:justify-between sm:items-center">
+                    {/* Details Pills - Stack on mobile, row on desktop */}
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        {/* Budget Pill */}
+                        <div 
+                            className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2 justify-center sm:justify-start"
+                            style={{ direction: isRTL ? "rtl" : "ltr" }}
+                        >
                             <span>💰</span>
-                            <span className="font-medium text-gray-700">{formatBudgetDisplay()}</span>
+                            <span className="font-medium text-gray-700 text-sm sm:text-base">
+                                {formatBudgetDisplay()}
+                            </span>
                         </div>
 
-                        <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+                        {/* Travelers Pill */}
+                        <div 
+                            className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2 justify-center sm:justify-start"
+                            style={{ direction: isRTL ? "rtl" : "ltr" }}
+                        >
                             <span>👥</span>
-                            <span className="font-medium text-gray-700">{translate("infoSection.travelers")}: {translatedTrip.userSelection?.travelers}</span>
+                            <span className="font-medium text-gray-700 text-sm sm:text-base">
+                                {translate("infoSection.travelers")}: {translatedTrip.userSelection?.travelers}
+                            </span>
                         </div>
 
-                        <div className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+                        {/* Date Pill */}
+                        <div 
+                            className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-2 justify-center sm:justify-start"
+                            style={{ direction: isRTL ? "rtl" : "ltr" }}
+                        >
                             <span>📆</span>
-                            <span className="font-medium text-gray-700">{translate("infoSection.travelDate")}: {formatDate(trip.userSelection?.startDate)} ➡️ {formatDate(trip.userSelection?.endDate)}</span>
+                            <span className="font-medium text-gray-700 text-sm sm:text-base whitespace-nowrap">
+                                {translate("infoSection.travelDate")}: 
+                                <span className="hidden sm:inline">
+                                    {formatDate(trip.userSelection?.startDate)} ➡️ {formatDate(trip.userSelection?.endDate)}
+                                </span>
+                                <span className="sm:hidden">
+                                    {formatDate(trip.userSelection?.startDate)}
+                                </span>
+                            </span>
                         </div>
                     </div>
+
                     {/* Share Button */}
                     <Button 
                         onClick={onShareClick}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center gap-3 text-lg transition-all duration-300 hover:scale-105 ml-2"
+                        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full flex items-center justify-center gap-3 text-base sm:text-lg transition-all duration-300 hover:scale-105"
                         style={{ direction: isRTL ? "rtl" : "ltr" }}
                     >
                         <IoIosSend className="text-xl" />
@@ -172,14 +198,6 @@ function InfoSection({ trip, onShareClick }) {
                     </Button>
                 </div>
             </div>
-            
-            {/* Share Trip Modal */}
-            {/* <ShareTripModal 
-                isOpen={showShareModal} 
-                onClose={() => setShowShareModal(false)}
-                tripId={trip.id}
-                tripDestination={trip.tripData?.trip?.destination || 'Trip'}
-            /> */}
         </div>
     );
 }
