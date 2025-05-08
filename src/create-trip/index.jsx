@@ -19,6 +19,7 @@ import axios from "axios";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import FlightPreferences from "./FlightPreferences";
 import { 
   generateTrip, 
   saveLocationToHistory, 
@@ -623,27 +624,14 @@ function CreateTrip() {
           colorMode={colorMode}
         />
 
-        {/* Flight Preferences */}
-        <div className="space-y-6">
-          <h3 className="text-xl font-bold text-white mb-4">
-            {translate("flightPreferences")}
-          </h3>
-          <div className="space-y-4">
-            <TripTypeSelector
-              selected={tripType}
-              onSelect={setTripType}
-              options={tripTypeOptions}
-              colorMode={colorMode}
-            />
-            <SeatClassSelector
-              selected={seatClass}
-              onSelect={setSeatClass}
-              options={seatClassOptions}
-              colorMode={colorMode}
-            />
-          </div>
-        </div>
-
+<FlightPreferences
+  translate={translate}
+  tripType={tripType}
+  setTripType={setTripType}
+  seatClass={seatClass}
+  setSeatClass={setSeatClass}
+  isRTL={isRTL}
+/>
         {/* Additional Questions */}
         <div className="space-y-10">
           {/* Weather Options - Only show when Help Me Decide is active */}
