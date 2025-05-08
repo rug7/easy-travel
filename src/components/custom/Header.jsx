@@ -167,7 +167,7 @@ function Header() {
     return (
       <div className="fixed inset-x-0 top-[60px] bg-white shadow-lg rounded-b-xl animate-fadeIn z-40 max-h-[80vh] overflow-y-auto">
       <div className="flex flex-col p-4 space-y-3">
-          {user && (
+          {user ? (
             <>
               <Button 
                 variant="outline" 
@@ -206,12 +206,20 @@ function Header() {
                 {translate("calendar")}
               </Button>
             </>
-          )}
+          ):(
+            // If user is not logged in, show sign in button
+          <Button 
+          className="w-full justify-center bg-blue-600 text-white hover:bg-blue-700 rounded-xl"
+          onClick={handleSignIn}
+        >
+          {translate("signIn")}
+        </Button>
+      )}
           
           {/* Language selector */}
           <select
           value={language}
-          onChange={(e) => changeLanguage(e.target.value)}
+          onChange={handleLanguageChange}
           className="w-full p-2 rounded-lg border text-gray-800 hover:bg-gray-100 mb-2"
         >
           <option value="en">English</option>
@@ -231,7 +239,7 @@ function Header() {
             {colorSchemes.map(scheme => (
               <button
                 key={scheme}
-                onClick={() => setColorMode(scheme)}
+                onClick={() => handleColorModeChange(scheme)}
                 className={`w-full px-3 py-2 text-left text-sm font-medium rounded-md transition-all text-gray-800 ${
                   colorMode === scheme 
                     ? 'bg-blue-100 text-blue-700'
@@ -277,6 +285,21 @@ function Header() {
             </div>
           </div>
         </div>
+
+        {user && (
+          <div className="border-t border-gray-200 pt-3">
+            <Button 
+              variant="outline"
+              className="w-full justify-center text-red-600 hover:bg-red-50"
+              onClick={handleLogout}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              {translate("signOut")}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -288,20 +311,34 @@ function Header() {
     toast.success('Successfully logged out');
     window.location.reload();
   };
+  const handleLanguageChange = (e) => {
+    setIsMobileMenuOpen(false); // Add this line
+    changeLanguage(e.target.value);
+  };
+  
+  // Update the color mode handler
+  const handleColorModeChange = (scheme) => {
+    setIsMobileMenuOpen(false); // Add this line
+    setColorMode(scheme);
+  };
 
   const goToMyTrips = () => {
+    setIsMobileMenuOpen(false);
     navigate('/my-trips');
   };
   
   const goToDashboard = () => {
+    setIsMobileMenuOpen(false);
     navigate('/dashboard');
   };
   
   const goToCalendar = () => {
+    setIsMobileMenuOpen(false);
     navigate('/calendar');
   };
   
   const goToSharedTrips = () => {
+    setIsMobileMenuOpen(false);
     navigate('/shared-trips');
   };
   

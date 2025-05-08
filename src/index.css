@@ -273,3 +273,24 @@ width: 100%;
 .btn-success:hover {
   @apply transform scale-105;
 }
+
+/* Mobile menu styles */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+@media screen and (max-width: 768px) {
+  .mobile-menu button {
+    @apply text-gray-800 transition-all;
+  }
+  
+  .mobile-menu select {
+    @apply text-gray-800;
+  }
+}
