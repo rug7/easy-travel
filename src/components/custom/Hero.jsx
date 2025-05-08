@@ -119,33 +119,40 @@ function Hero() {
         {/* Gradient Fade Effect */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-[var(--background)]"></div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
-          <h1 className="text-5xl font-bold text-white mb-4">
-            {translate("heroTitle")}
-          </h1>
-          <p className="text-lg text-gray-300 max-w-2xl mb-6" style={{ direction: isRTL ? "rtl" : "ltr" }}>
-            {translate("heroDescription")}
-          </p>
-          <div className="space-x-4">
-            <Link to={'/create-trip'}>
-              <button 
-                className={`px-6 py-3 ${colorMode === 'default' ? 'bg-blue-600 text-white hover:bg-blue-700' : ''} text-lg font-medium rounded-full shadow-md transition-transform transform hover:scale-105`}
-                style={getButtonStyles('primary')}
-              >
-                {translate("planTripButton")}
-              </button>
-            </Link>
-            <button
-              className={`px-6 py-3 ${colorMode === 'default' ? 'bg-white text-blue-600 hover:bg-gray-100' : ''} text-lg font-medium rounded-full shadow-md transition-transform transform hover:scale-105`}
-              style={getButtonStyles('secondary')}
-              onClick={() => {
-                document
-                  .getElementById('how-it-works')
-                  .scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              {translate("howItWorksButton")}
-            </button>
-          </div>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4 leading-tight">
+    {translate("heroTitle")}
+  </h1>
+
+  {/* Description - Adjusted line height and spacing for better mobile readability */}
+  <p className="text-base sm:text-lg text-gray-300 max-w-2xl mb-6 leading-relaxed sm:leading-loose px-2 sm:px-0" 
+     style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    {translate("heroDescription")}
+  </p>
+          <div className="flex flex-col sm:flex-row gap-4 sm:space-x-4">
+  <Link to={'/create-trip'}>
+    <button 
+      className={`w-full sm:w-auto px-6 py-3 ${
+        colorMode === 'default' ? 'bg-blue-600 text-white hover:bg-blue-700' : ''
+      } text-lg font-medium rounded-full shadow-md transition-transform transform hover:scale-105`}
+      style={getButtonStyles('primary')}
+    >
+      {translate("planTripButton")}
+    </button>
+  </Link>
+  <button
+    className={`w-full sm:w-auto px-6 py-3 ${
+      colorMode === 'default' ? 'bg-white text-blue-600 hover:bg-gray-100' : ''
+    } text-lg font-medium rounded-full shadow-md transition-transform transform hover:scale-105`}
+    style={getButtonStyles('secondary')}
+    onClick={() => {
+      document
+        .getElementById('how-it-works')
+        .scrollIntoView({ behavior: 'smooth' });
+    }}
+  >
+    {translate("howItWorksButton")}
+  </button>
+</div>
         </div>
       </div>
 
