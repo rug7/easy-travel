@@ -21,6 +21,7 @@ import html2canvas from 'html2canvas';
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { useLanguage } from "@/context/LanguageContext";
 
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -45,6 +46,7 @@ function TravelDashboard() {
   const dashboardRef = useRef(null);
   const { colorMode } = useAccessibility();
   const { translate, language } = useLanguage();
+  const navigate = useNavigate();
 const isRTL = language === "he";
   const [stats, setStats] = useState({
     totalTrips: 0,
@@ -69,6 +71,7 @@ const isRTL = language === "he";
       ]
     }]
   });
+  
   const [budgetData, setBudgetData] = useState({
     labels: [
       translate("flightCost"),
@@ -151,6 +154,14 @@ const isRTL = language === "he";
     // Use CSS variables if they exist, otherwise fall back to the hardcoded colors
     return colorMap[colorMode]?.[colorType] || colorMap.default[colorType];
   };
+   // Add this useEffect at the beginning of your component
+   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user?.email) {
+      navigate('/');
+      return;
+    }
+  }, [navigate]);
 
   useEffect(() => {
     async function fetchTrips() {

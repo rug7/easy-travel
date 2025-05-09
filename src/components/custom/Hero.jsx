@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -9,11 +9,84 @@ import Faq from './Faq';
 import { Link } from 'react-router-dom';
 import { useLanguage } from "@/context/LanguageContext";
 import { useAccessibility } from "@/context/AccessibilityContext";
+import FeedbackModal from '@/view-trip/components/FeedbackModal';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { db } from '@/service/firebaseConfig';
+
+const defaultTestimonials = [
+  {
+    rating: 5,
+    feedback: "This app made planning my trip to Paris so easy! The AI suggestions were spot-on and saved me hours of research.",
+    destination: "Paris",
+    userEmail: "demo@example.com",
+    createdAt: new Date().toISOString()
+  },
+  {
+    rating: 5,
+    feedback: "I loved how the app handled all the details for my Japan trip. The itinerary was perfect and well-balanced.",
+    destination: "Japan",
+    userEmail: "demo@example.com",
+    createdAt: new Date().toISOString()
+  },
+  {
+    rating: 5,
+    feedback: "The personalized recommendations for restaurants and activities in Barcelona were amazing! Highly recommend!",
+    destination: "Barcelona",
+    userEmail: "demo@example.com",
+    createdAt: new Date().toISOString()
+  },
+];
+
+// Modify your useEffect
+
+
 
 function Hero() {
   const { translate, language } = useLanguage();
   const { colorMode, colorSchemes } = useAccessibility();
   const isRTL = language === "he";
+  const [isLoading, setIsLoading] = useState(true);
+  const [testimonials, setTestimonials] = useState([]);
+
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const feedbackRef = collection(db, 'feedback');
+        const q = query(feedbackRef, orderBy('rating', 'desc'), limit(5));
+        const snapshot = await getDocs(q);
+        const realTestimonials = snapshot.docs.map(doc => doc.data());
+        
+        // If we have real testimonials, use them; otherwise, use defaults
+        setTestimonials(realTestimonials.length > 0 ? realTestimonials : defaultTestimonials);
+      } catch (error) {
+        console.error('Error fetching testimonials:', error);
+        // If there's an error, show default testimonials
+        setTestimonials(defaultTestimonials);
+      }
+    };
+    
+    fetchTestimonials();
+  }, []);
+
+  // Modify your testimonials section to include star ratings
+const StarRating = ({ rating }) => {
+  return (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span
+          key={star}
+          className={`text-lg ${star <= rating ? 'text-yellow-400' : 'text-gray-400'}`}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+};
+const handleFeedbackSubmitted = (newFeedback) => {
+  setTestimonials(prev => [newFeedback, ...prev]);
+};
 
   // Function to get accessible colors based on color mode
   const getAccessibleColor = (colorType) => {
@@ -108,6 +181,15 @@ function Hero() {
     // Return class names for default mode
     return {};
   };
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
 
   return (
     <div>
@@ -198,27 +280,90 @@ function Hero() {
         </Swiper>
       </div>
 
-      {/* How It Works Section */}
-      <div
-        id="how-it-works"
-        className="p-8 bg-[var(--background)] text-center relative scroll-mt-20"
+      {testimonials.length > 0 && (
+  <div className="bg-gray-900 py-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 className="text-3xl font-bold text-center text-white mb-12">
+        {translate("whatTravellersSay")}
+      </h2>
+      
+      <Swiper
+        modules={[Autoplay, Pagination, Navigation]}
+        spaceBetween={30}
+        slidesPerView={1}
+        breakpoints={{
+          640: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 }
+        }}
+        autoplay={{
+          delay: 3000,
+          disableOnInteraction: false,
+        }}
+        pagination={{ clickable: true }}
+        navigation
+        className="testimonials-swiper"
       >
-        <h2 className="text-4xl font-bold mb-6 text-[var(--foreground)]" style={{ direction: isRTL ? "rtl" : "ltr" }}>
-          {translate("howItWorksTitle")}
-        </h2>
-        <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto" style={{ direction: isRTL ? "rtl" : "ltr" }}>
-          {translate("videoDescription")}
-        </p>
-        <div className="video-container relative mx-auto max-w-2xl">
-          <video
-            src="/chicken-video.mp4"
-            controls
-            className="rounded-lg shadow-md w-full max-h-[400px]"
-          >
-            {translate("videoFallback")}
-          </video>
+        {testimonials.map((testimonial, index) => (
+          <SwiperSlide key={index}>
+            <div className="bg-gray-800 p-6 rounded-xl h-full">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span
+                      key={star}
+                      className={`text-lg ${
+                        star <= testimonial.rating ? 'text-yellow-400' : 'text-gray-400'
+                      }`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <span className="text-blue-400 font-medium">
+                  {testimonial.destination}
+                </span>
+              </div>
+              <p className="text-gray-300 text-lg mb-4">"{testimonial.feedback}"</p>
+              <div className="text-gray-400 text-sm">
+                {formatDate(new Date(testimonial.createdAt).toLocaleDateString())}
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
+  </div>
+)}
+
+      {/* How It Works Section */}
+      <div id="how-it-works" className="p-8 bg-[var(--background)] text-center relative">
+      <h2 className="text-4xl font-bold mb-6 text-[var(--foreground)]"style={{ direction: isRTL ? "rtl" : "ltr" }}>
+        {translate("howItWorksTitle") || "How It Works"}
+      </h2>
+      <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto"style={{ direction: isRTL ? "rtl" : "ltr" }}>
+        {translate("videoDescription") || "Watch this short video tutorial to learn how to use Easy Travel and get started with planning your dream trip effortlessly."}
+      </p>
+      {/* Reduced max-width and added mx-auto for centering */}
+      <div className="video-container relative mx-auto max-w-2xl"> {/* Changed from max-w-4xl to max-w-2xl */}
+        <div className="relative w-full pb-[56.25%]">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-900 rounded-lg">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          )}
+          <iframe
+            className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+            src="https://www.youtube.com/embed/HRTSmus2H3A?autoplay=1&mute=1&rel=0&modestbranding=1"
+            title="Easy Travel Tutorial"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            onLoad={() => setIsLoading(false)}
+          ></iframe>
         </div>
       </div>
+    </div>
+  
       <div className="text-center">
         <Link to={'/create-trip'}>
           <button 

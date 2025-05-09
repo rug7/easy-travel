@@ -301,3 +301,28 @@ width: 100%;
 .hover-scale:hover {
   transform: scale(1.02);
 }
+
+.testimonials-swiper {
+  padding: 20px 10px 40px !important;
+}
+
+.testimonials-swiper .swiper-slide {
+  height: auto !important;
+}
+
+.testimonials-swiper .swiper-pagination-bullet {
+  background: #ffffff;
+}
+
+.testimonials-swiper .swiper-button-next,
+.testimonials-swiper .swiper-button-prev {
+  color: #ffffff;
+}
+
+/* Optional: Hide navigation on mobile */
+@media (max-width: 640px) {
+  .testimonials-swiper .swiper-button-next,
+  .testimonials-swiper .swiper-button-prev {
+    display: none;
+  }
+}

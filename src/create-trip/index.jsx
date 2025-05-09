@@ -19,6 +19,8 @@ import axios from "axios";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+
 import FlightPreferences from "./FlightPreferences";
 import { 
   generateTrip, 
@@ -32,7 +34,8 @@ function CreateTrip() {
   const [place, setPlace] = useState(null);
   const [showMoreQuestions, setShowMoreQuestions] = useState(false);
   const [startDate, setStartDate] = useState(null);
-  
+  const location = useLocation();
+
   const [endDate, setEndDate] = useState(null);
   const [useDates, setUseDates] = useState(false);
   const [numDays, setNumDays] = useState("");
@@ -228,6 +231,17 @@ function CreateTrip() {
       sightseeing: selectedSightseeing
     });
   }, [place, numDays, selectedBudgets, selectedPeople, selectedWeather, selectedActivities, selectedSightseeing]);
+  
+  useEffect(() => {
+    if (location.state?.destination) {
+      setPlace(location.state.destination);
+      // Optionally scroll to the form
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [location.state]);
 
   // Add this useEffect in CreateTrip
   // useEffect(() => {

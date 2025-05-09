@@ -15,6 +15,8 @@ import MyTrips from "./my-trips";
 import TravelDashboard from "./view-trip/components/TravelDashboard";
 import TravelCalendar from "./view-trip/components/TravelCalendar";
 import SharedTrips from "./view-trip/components/SharedTrips";
+import { FeedbackProvider } from "./context/FeedbackContext";
+
 
 // Animation styles code...
 
@@ -91,8 +93,10 @@ createRoot(document.getElementById("root")).render(
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}>
       <AccessibilityProvider>
         <LanguageProvider>
-          <Toaster />
-          <RouterProvider router={router} />
+          <FeedbackProvider>
+            <Toaster />
+            <RouterProvider router={router} />
+          </FeedbackProvider>
         </LanguageProvider>
       </AccessibilityProvider>
     </GoogleOAuthProvider>

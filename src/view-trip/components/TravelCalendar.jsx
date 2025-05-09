@@ -16,6 +16,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { CustomDialogContent } from '@/components/ui/custom-dialog-content';
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { useLanguage } from "@/context/LanguageContext";
+import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -44,6 +46,8 @@ const Badge = ({ children, className, ...props }) => (
     const [filterType, setFilterType] = useState('all'); // 'all', 'trip', 'activity'
      const { translate, language } = useLanguage();
     const isRTL = language === "he";
+      const navigate = useNavigate();
+    
 
     
     const [exportCalendars, setExportCalendars] = useState([
@@ -81,6 +85,8 @@ const Badge = ({ children, className, ...props }) => (
         setLoading(false);
       }
     }
+     // Add this useEffect at the beginning of your component
+  
     
     fetchTrips();
     let momentLocale = language;
@@ -97,6 +103,14 @@ const Badge = ({ children, className, ...props }) => (
     moment.locale(momentLocale);
 
   }, [language]);
+  
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user?.email) {
+      navigate('/');
+      return;
+    }
+  }, [navigate]);
 
   const filteredEvents = events.filter(event => {
     if (filterType === 'all') return true;
