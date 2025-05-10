@@ -510,10 +510,23 @@ function Header() {
       <div className="header-container h-[72px] shadow-md justify-between flex items-center bg-white fixed top-0 left-0 right-0 z-50"
         style={{ direction: isRTL ? "rtl" : "ltr", padding: "0.5rem 2rem" }}      >
       <div className="flex items-center">
-          <Link to="/" className="flex items-center"onClick={() => setIsMobileMenuOpen(false)}>
-            <img src="/logo.svg" alt="Logo" className={`h-8 w-auto ${isRTL ? 'ml-3' : 'mr-3'}`} />
-            <span className="logo-text text-xl font-bold text-gray-800">Easy Travel</span>
-          </Link>
+      <Link 
+  to="/" 
+  className="flex items-center"
+  onClick={() => {
+    setIsMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }}
+>
+  <img 
+    src="/logo.svg" 
+    alt="Logo" 
+    className={`h-8 w-auto ${isRTL ? 'ml-3' : 'mr-3'}`} 
+  />
+  <span className="logo-text text-xl font-bold text-gray-800">
+    Easy Travel
+  </span>
+</Link>
         </div>
 
         <div className="desktop-menu header-buttons flex items-center space-x-4">
