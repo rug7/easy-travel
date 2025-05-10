@@ -17,7 +17,9 @@ import TravelCalendar from "./view-trip/components/TravelCalendar";
 import SharedTrips from "./view-trip/components/SharedTrips";
 import { FeedbackProvider } from "./context/FeedbackContext";
 
-
+window.onbeforeunload = function () {
+  window.scrollTo(0, 0);
+}
 // Animation styles code...
 
 // Modify your routes without nested AccessibilityProviders
