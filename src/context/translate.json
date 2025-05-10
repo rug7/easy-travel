@@ -154,6 +154,41 @@
 "feedbackSubmitted": "Thank you for your feedback!",
 "feedbackError": "Failed to submit feedback",
 "whatTravellersSay": "What Travellers Say",
+"privacyPolicy": {
+  "title": "Privacy Policy",
+  "introduction": {
+    "title": "Introduction",
+    "content": "Welcome to Easy Travel. We are committed to protecting your privacy and handling your data in a transparent manner."
+  },
+  "dataCollection": {
+    "title": "Information We Collect",
+    "item1": "Personal information (name, email) when you create an account",
+    "item2": "Travel preferences and trip details",
+    "item3": "Usage data and interaction with our services",
+    "item4": "Location data when you use our trip planning features"
+  },
+  "dataUse": {
+    "title": "How We Use Your Information",
+    "content": "We use your information to provide and improve our travel planning services, personalize your experience, and communicate with you about your trips."
+  },
+  "security": {
+    "title": "Data Security",
+    "content": "We implement appropriate technical and organizational measures to protect your personal data against unauthorized access or loss."
+  },
+  "cookies": {
+    "title": "Cookies and Similar Technologies",
+    "content": "We use cookies and similar tracking technologies to track activity on our service and hold certain information to improve user experience."
+  },
+  "contact": {
+    "title": "Contact Us",
+    "content": "If you have any questions about this Privacy Policy, please contact us at:"
+  },
+  "updates": {
+    "title": "Changes to This Policy",
+    "content": "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page."
+  },
+  "lastUpdated": "Last Updated"
+},
     "travelCalendarTitle": "Travel Calendar",
     "travelCalendarDescription": "View and manage your travel schedule",
     "exportCalendar": "Export to Google Calendar",
@@ -577,6 +612,41 @@
     "feedbackSubmitted": "תודה על המשוב שלך!",
     "feedbackError": "שגיאה בשליחת המשוב",
     "whatTravellersSay": "מה אומרים המטיילים",
+    "privacyPolicy": {
+    "title": "מדיניות פרטיות",
+    "introduction": {
+      "title": "מבוא",
+      "content": "ברוכים הבאים ל-Easy Travel. אנו מחויבים להגן על פרטיותך ולטפל במידע שלך באופן שקוף."
+    },
+    "dataCollection": {
+      "title": "מידע שאנו אוספים",
+      "item1": "מידע אישי (שם, אימייל) בעת יצירת חשבון",
+      "item2": "העדפות נסיעה ופרטי טיול",
+      "item3": "נתוני שימוש ואינטראקציה עם השירותים שלנו",
+      "item4": "נתוני מיקום בעת שימוש בתכונות תכנון הטיול"
+    },
+    "dataUse": {
+      "title": "כיצד אנו משתמשים במידע שלך",
+      "content": "אנו משתמשים במידע שלך כדי לספק ולשפר את שירותי תכנון הטיולים שלנו, להתאים אישית את החוויה שלך ולתקשר איתך בנוגע לטיולים שלך."
+    },
+    "security": {
+      "title": "אבטחת מידע",
+      "content": "אנו מיישמים אמצעים טכניים וארגוניים מתאימים כדי להגן על המידע האישי שלך מפני גישה בלתי מורשית או אובדן."
+    },
+    "cookies": {
+      "title": "עוגיות וטכנולוגיות דומות",
+      "content": "אנו משתמשים בעוגיות וטכנולוגיות מעקב דומות כדי לעקוב אחר פעילות בשירות שלנו ולשמור מידע מסוים לשיפור חוויית המשתמש."
+    },
+    "contact": {
+      "title": "צור קשר",
+      "content": "אם יש לך שאלות בנוגע למדיניות הפרטיות, אנא צור קשר ב:"
+    },
+    "updates": {
+      "title": "שינויים במדיניות זו",
+      "content": "אנו עשויים לעדכן את מדיניות הפרטיות שלנו מעת לעת. נודיע לך על כל שינוי על ידי פרסום מדיניות הפרטיות החדשה בדף זה."
+    },
+    "lastUpdated": "עודכן לאחרונה"
+  },
     "travelCalendarTitle": "יומן נסיעות",
     "travelCalendarDescription": "צפה ונהל את לוח הזמנים של הנסיעות שלך",
     "exportCalendar": "ייצא ליומן גוגל",
@@ -995,6 +1065,41 @@
   "feedbackSubmitted": "¡Gracias por tu comentario!",
   "feedbackError": "Error al enviar el comentario",
   "whatTravellersSay": "Lo Que Dicen Los Viajeros",
+  "privacyPolicy": {
+    "title": "Política de Privacidad",
+    "introduction": {
+      "title": "Introducción",
+      "content": "Bienvenido a Easy Travel. Nos comprometemos a proteger su privacidad y manejar sus datos de manera transparente."
+    },
+    "dataCollection": {
+      "title": "Información que Recopilamos",
+      "item1": "Información personal (nombre, correo electrónico) al crear una cuenta",
+      "item2": "Preferencias de viaje y detalles del itinerario",
+      "item3": "Datos de uso e interacción con nuestros servicios",
+      "item4": "Datos de ubicación cuando utiliza nuestras funciones de planificación"
+    },
+    "dataUse": {
+      "title": "Cómo Utilizamos su Información",
+      "content": "Utilizamos su información para proporcionar y mejorar nuestros servicios de planificación de viajes, personalizar su experiencia y comunicarnos con usted sobre sus viajes."
+    },
+    "security": {
+      "title": "Seguridad de Datos",
+      "content": "Implementamos medidas técnicas y organizativas apropiadas para proteger sus datos personales contra accesos no autorizados o pérdidas."
+    },
+    "cookies": {
+      "title": "Cookies y Tecnologías Similares",
+      "content": "Utilizamos cookies y tecnologías de seguimiento similares para rastrear la actividad en nuestro servicio y mantener cierta información para mejorar la experiencia del usuario."
+    },
+    "contact": {
+      "title": "Contáctenos",
+      "content": "Si tiene alguna pregunta sobre esta Política de Privacidad, contáctenos en:"
+    },
+    "updates": {
+      "title": "Cambios en esta Política",
+      "content": "Podemos actualizar nuestra Política de Privacidad periódicamente. Le notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página."
+    },
+    "lastUpdated": "Última Actualización"
+  },
     "travelCalendarTitle": "Calendario de Viajes",
     "travelCalendarDescription": "Visualiza y gestiona tu horario de viajes",
     "exportCalendar": "Exportar a Google Calendar",
@@ -1417,6 +1522,41 @@
   "feedbackSubmitted": "Obrigado pelo seu feedback!",
   "feedbackError": "Falha ao enviar feedback",
   "whatTravellersSay": "O Que Dizem Os Viajantes",
+  "privacyPolicy": {
+    "title": "Política de Privacidade",
+    "introduction": {
+      "title": "Introdução",
+      "content": "Bem-vindo ao Easy Travel. Estamos comprometidos em proteger sua privacidade e lidar com seus dados de forma transparente."
+    },
+    "dataCollection": {
+      "title": "Informações que Coletamos",
+      "item1": "Informações pessoais (nome, e-mail) ao criar uma conta",
+      "item2": "Preferências de viagem e detalhes do itinerário",
+      "item3": "Dados de uso e interação com nossos serviços",
+      "item4": "Dados de localização ao usar recursos de planejamento"
+    },
+    "dataUse": {
+      "title": "Como Usamos Suas Informações",
+      "content": "Usamos suas informações para fornecer e melhorar nossos serviços de planejamento de viagens, personalizar sua experiência e comunicar sobre suas viagens."
+    },
+    "security": {
+      "title": "Segurança dos Dados",
+      "content": "Implementamos medidas técnicas e organizacionais apropriadas para proteger seus dados pessoais contra acesso não autorizado ou perda."
+    },
+    "cookies": {
+      "title": "Cookies e Tecnologias Similares",
+      "content": "Usamos cookies e tecnologias de rastreamento similares para monitorar atividades em nosso serviço e manter certas informações para melhorar a experiência do usuário."
+    },
+    "contact": {
+      "title": "Contate-nos",
+      "content": "Se você tiver dúvidas sobre esta Política de Privacidade, entre em contato em:"
+    },
+    "updates": {
+      "title": "Alterações nesta Política",
+      "content": "Podemos atualizar nossa Política de Privacidade periodicamente. Notificaremos você sobre quaisquer alterações publicando a nova Política de Privacidade nesta página."
+    },
+    "lastUpdated": "Última Atualização"
+  },
     "travelCalendarTitle": "Calendário de Viagens",
     "travelCalendarDescription": "Visualize e gerencie seu cronograma de viagens",
     "exportCalendar": "Exportar para o Google Calendar",
@@ -1838,6 +1978,41 @@
   "feedbackSubmitted": "Merci pour votre retour !",
   "feedbackError": "Échec de l'envoi du retour",
   "whatTravellersSay": "Ce Que Disent Les Voyageurs",
+  "privacyPolicy": {
+    "title": "Politique de Confidentialité",
+    "introduction": {
+      "title": "Introduction",
+      "content": "Bienvenue sur Easy Travel. Nous nous engageons à protéger votre vie privée et à traiter vos données de manière transparente."
+    },
+    "dataCollection": {
+      "title": "Informations que nous Collectons",
+      "item1": "Informations personnelles (nom, email) lors de la création d'un compte",
+      "item2": "Préférences de voyage et détails d'itinéraire",
+      "item3": "Données d'utilisation et d'interaction avec nos services",
+      "item4": "Données de localisation lors de l'utilisation des fonctions de planification"
+    },
+    "dataUse": {
+      "title": "Comment nous Utilisons vos Informations",
+      "content": "Nous utilisons vos informations pour fournir et améliorer nos services de planification de voyage, personnaliser votre expérience et communiquer avec vous concernant vos voyages."
+    },
+    "security": {
+      "title": "Sécurité des Données",
+      "content": "Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données personnelles contre l'accès non autorisé ou la perte."
+    },
+    "cookies": {
+      "title": "Cookies et Technologies Similaires",
+      "content": "Nous utilisons des cookies et des technologies de suivi similaires pour suivre l'activité sur notre service et conserver certaines informations pour améliorer l'expérience utilisateur."
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "content": "Si vous avez des questions concernant cette Politique de Confidentialité, contactez-nous à:"
+    },
+    "updates": {
+      "title": "Modifications de cette Politique",
+      "content": "Nous pouvons mettre à jour notre Politique de Confidentialité périodiquement. Nous vous informerons de tout changement en publiant la nouvelle Politique de Confidentialité sur cette page."
+    },
+    "lastUpdated": "Dernière Mise à Jour"
+  },
     "travelCalendarTitle": "Calendrier de Voyage",
     "travelCalendarDescription": "Consultez et gérez votre planning de voyage",
     "exportCalendar": "Exporter vers Google Agenda",
@@ -2256,6 +2431,41 @@
   "feedbackSubmitted": "Grazie per il tuo feedback!",
   "feedbackError": "Errore nell'invio del feedback",
   "whatTravellersSay": "Cosa Dicono I Viaggiatori",
+  "privacyPolicy": {
+    "title": "Informativa sulla Privacy",
+    "introduction": {
+      "title": "Introduzione",
+      "content": "Benvenuto su Easy Travel. Ci impegniamo a proteggere la tua privacy e a gestire i tuoi dati in modo trasparente."
+    },
+    "dataCollection": {
+      "title": "Informazioni che Raccogliamo",
+      "item1": "Informazioni personali (nome, email) durante la creazione dell'account",
+      "item2": "Preferenze di viaggio e dettagli dell'itinerario",
+      "item3": "Dati di utilizzo e interazione con i nostri servizi",
+      "item4": "Dati sulla posizione durante l'utilizzo delle funzioni di pianificazione"
+    },
+    "dataUse": {
+      "title": "Come Utilizziamo le tue Informazioni",
+      "content": "Utilizziamo le tue informazioni per fornire e migliorare i nostri servizi di pianificazione viaggi, personalizzare la tua esperienza e comunicare con te riguardo ai tuoi viaggi."
+    },
+    "security": {
+      "title": "Sicurezza dei Dati",
+      "content": "Implementiamo misure tecniche e organizzative appropriate per proteggere i tuoi dati personali da accessi non autorizzati o perdite."
+    },
+    "cookies": {
+      "title": "Cookie e Tecnologie Simili",
+      "content": "Utilizziamo cookie e tecnologie di tracciamento simili per monitorare l'attività sul nostro servizio e conservare determinate informazioni per migliorare l'esperienza utente."
+    },
+    "contact": {
+      "title": "Contattaci",
+      "content": "Se hai domande su questa Informativa sulla Privacy, contattaci all'indirizzo:"
+    },
+    "updates": {
+      "title": "Modifiche a questa Informativa",
+      "content": "Potremmo aggiornare periodicamente la nostra Informativa sulla Privacy. Ti informeremo di eventuali modifiche pubblicando la nuova Informativa sulla Privacy su questa pagina."
+    },
+    "lastUpdated": "Ultimo Aggiornamento"
+  },
     
     "travelCalendarTitle": "Calendario Viaggi",
     "travelCalendarDescription": "Visualizza e gestisci il tuo programma di viaggio",

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "@/context/LanguageContext";
+import { Link } from 'react-router-dom';
 
 function Footer() {
   const { translate } = useLanguage();
@@ -67,30 +68,41 @@ function Footer() {
 
           {/* Resources Links */}
           <div className="text-center">
-            <h3 className="text-lg font-bold mb-4">{translate("footerResources")}</h3>
-            <ul className="space-y-2">
-              <li>
-                <a href="/contact" className="hover:underline">
-                  {translate("footerResourcesLink1")}
-                </a>
-              </li>
-              <li>
-                <a href="/blog" className="hover:underline">
-                  {translate("footerResourcesLink2")}
-                </a>
-              </li>
-              <li>
-                <a href="/twitter" className="hover:underline">
-                  {translate("footerResourcesLink3")}
-                </a>
-              </li>
-              <li>
-                <a href="/privacy-policy" className="hover:underline">
-                  {translate("footerResourcesLink4")}
-                </a>
-              </li>
-            </ul>
-          </div>
+  <h3 className="text-lg font-bold mb-4">{translate("footerResources")}</h3>
+  <ul className="space-y-2">
+    <li>
+      <a 
+        href="mailto:majdad@post.jce.ac.il" 
+        className="hover:underline transition-colors duration-200 hover:text-blue-500"
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        {translate("footerResourcesLink1")}
+      </a>
+    </li>
+    <li>
+      <a 
+        href="https://twitter.com/easytravel" 
+        className="hover:underline transition-colors duration-200 hover:text-blue-500"
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        {translate("footerResourcesLink3")}
+      </a>
+    </li>
+    <li>
+      <Link 
+        to="/privacy-policy" 
+        className="hover:underline transition-colors duration-200 hover:text-blue-500"
+        onClick={() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      >
+        {translate("footerResourcesLink4")}
+      </Link>
+    </li>
+  </ul>
+</div>
         </div>
 
         {/* Copyright Section */}

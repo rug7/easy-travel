@@ -16,10 +16,9 @@ import TravelDashboard from "./view-trip/components/TravelDashboard";
 import TravelCalendar from "./view-trip/components/TravelCalendar";
 import SharedTrips from "./view-trip/components/SharedTrips";
 import { FeedbackProvider } from "./context/FeedbackContext";
+import PrivacyPolicy from "./components/custom/PrivacyPolicy";
 
-window.onbeforeunload = function () {
-  window.scrollTo(0, 0);
-}
+
 // Animation styles code...
 
 // Modify your routes without nested AccessibilityProviders
@@ -48,6 +47,15 @@ const router = createBrowserRouter([
       <>
         <Header />
         <Viewtrip/>
+      </>
+    ),
+  },
+  {
+    path: "/privacy-policy",
+    element: (
+      <>
+        <Header />
+        <PrivacyPolicy />
       </>
     ),
   },
