@@ -6,25 +6,25 @@ import { useLanguage } from "@/context/LanguageContext";
 
 // Helper component for progress items
 const ProgressItem = ({ label, complete, current }) => (
-  <div className="flex flex-col items-center">
-    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
+  <div className="flex flex-col items-center justify-center p-2">
+    <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center mb-2 ${
       complete ? 'bg-green-500 text-white' : 
       current ? 'bg-blue-500 text-white animate-pulse' : 
       'bg-gray-700 text-gray-500'
     }`}>
       {complete ? (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
       ) : current ? (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
       ) : (
-        <span>{label.charAt(0)}</span>
+        <span className="text-sm md:text-base">{label.charAt(0)}</span>
       )}
     </div>
-    <span className={`text-xs ${
+    <span className={`text-xs md:text-sm ${
       complete ? 'text-green-400' : 
       current ? 'text-blue-400' : 
       'text-gray-500'
@@ -813,28 +813,30 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
           </div>
           
           {/* Progress details */}
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center w-full max-w-xl mx-auto">
-          <ProgressItem 
-              label={translate("loadingScreen.progressItems.destination")} 
-              complete={progress.destination} 
-              current={!progress.destination && !progress.flights && !progress.hotels && !progress.activities}
-            />
-            <ProgressItem 
-              label={translate("loadingScreen.progressItems.hotels")} 
-              complete={progress.hotels} 
-              current={progress.destination && !progress.hotels}
-            />
-            <ProgressItem 
-              label={translate("loadingScreen.progressItems.flights")} 
-              complete={progress.flights} 
-              current={progress.hotels && !progress.flights}
-            />
-            <ProgressItem 
-              label={translate("loadingScreen.progressItems.activities")} 
-              complete={progress.activities} 
-              current={progress.flights && !progress.activities}
-            />
-          </div>
+       
+{/* Progress details */}
+<div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 text-center w-full max-w-2xl mx-auto px-4">
+  <ProgressItem 
+    label={translate("loadingScreen.progressItems.destination")} 
+    complete={progress.destination} 
+    current={!progress.destination && !progress.flights && !progress.hotels && !progress.activities}
+  />
+  <ProgressItem 
+    label={translate("loadingScreen.progressItems.hotels")} 
+    complete={progress.hotels} 
+    current={progress.destination && !progress.hotels}
+  />
+  <ProgressItem 
+    label={translate("loadingScreen.progressItems.flights")} 
+    complete={progress.flights} 
+    current={progress.hotels && !progress.flights}
+  />
+  <ProgressItem 
+    label={translate("loadingScreen.progressItems.activities")} 
+    complete={progress.activities} 
+    current={progress.flights && !progress.activities}
+  />
+</div>
           
           {progress.currentDay > 0 && progress.totalDays > 0 && (
             <div className="mt-4 text-blue-400">

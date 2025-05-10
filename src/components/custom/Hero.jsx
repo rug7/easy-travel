@@ -352,11 +352,11 @@ const handleFeedbackSubmitted = (newFeedback) => {
             </div>
           )}
           <iframe
-            className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-            src="https://www.youtube.com/embed/HRTSmus2H3A?autoplay=1&mute=1&rel=0&modestbranding=1"
+            className="absolute top-0 left-0 w-full h-full rounded-xl shadow-lg"
+            src="https://www.youtube.com/embed/HRTSmus2H3A?mute=1&rel=0&modestbranding=1"
             title="Easy Travel Tutorial"
             frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             onLoad={() => setIsLoading(false)}
           ></iframe>
