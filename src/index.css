@@ -326,3 +326,12 @@ width: 100%;
     display: none;
   }
 }
+@layer utilities {
+  .touch-action-none {
+    touch-action: none;
+  }
+  
+  .tap-highlight-transparent {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

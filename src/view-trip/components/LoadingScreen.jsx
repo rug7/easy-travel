@@ -214,8 +214,8 @@ const isRTL = language === "he";
 
   
   return (
-    <div className="w-full bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-gray-700/50">
-      <div className="text-center mb-4">
+<div className="w-full max-w-xl mx-auto bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 lg:p-6 shadow-xl border border-gray-700/50">
+<div className="text-center mb-4">
         <h3 className="text-lg font-medium text-white" style={{ direction: isRTL ? "rtl" : "ltr" }}>
           {translate("loadingScreen.guessCountry.title")}
         </h3>
@@ -334,11 +334,11 @@ const isRTL = language === "he";
             {translate("loadingScreen.guessCountry.question")}
           </p>
           
-          <div className="grid grid-cols-2 gap-3">
-            {questions[currentQuestion].options.map((option, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+          {questions[currentQuestion].options.map((option, index) => (
               <button
                 key={index}
-                className={`p-4 text-center rounded-xl transition-all shadow-md ${
+                className={`p-4 text-center rounded-xl transition-all text-lg" ${
                   selectedAnswer === option
                     ? option === questions[currentQuestion].country
                       ? 'bg-gradient-to-r from-green-600 to-green-700 text-white font-medium'
@@ -578,8 +578,8 @@ const WorldExplorerQuiz = () => {
   };
   
   return (
-    <div className="w-full bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-gray-700/50">
-      <div className="text-center mb-4">
+<div className="w-full max-w-xl mx-auto bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 lg:p-6 shadow-xl border border-gray-700/50">
+<div className="text-center mb-4">
         <h3 className="text-lg font-medium text-white" style={{ direction: isRTL ? "rtl" : "ltr" }}>
           {translate("loadingScreen.worldExplorer.title")}
         </h3>
@@ -646,11 +646,11 @@ const WorldExplorerQuiz = () => {
           <p className="text-white text-xl font-medium mb-6" style={{ direction: isRTL ? "rtl" : "ltr" }}>
             {shuffledQuestions[currentQuestion].question}
           </p>
-          <div className="space-y-3">
-            {shuffledQuestions[currentQuestion].options.map((option, index) => (
+          <div className="space-y-3 mt-4">
+          {shuffledQuestions[currentQuestion].options.map((option, index) => (
               <button
                 key={index}
-                className={`w-full p-4 text-left rounded-xl transition-all shadow-md ${
+                className={`w-full p-4 text-left rounded-xl transition-all text-lg ${
                   selectedAnswer === option
                     ? option === shuffledQuestions[currentQuestion].correctAnswer
                       ? 'bg-gradient-to-r from-green-600 to-green-700 text-white font-medium'
@@ -680,36 +680,37 @@ const GameSelector = ({ onSelectGame }) => {
   const { translate, language } = useLanguage();
   const isRTL = language === "he";
   return (
-    <div className="w-full">
-      <h3 className="text-lg font-medium text-white text-center mb-4" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    <div className="w-full max-w-xl mx-auto px-4">
+      <h3 className="text-xl lg:text-2xl font-medium text-white text-center mb-6">
         {translate("loadingScreen.playWhileWait")}
       </h3>
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-6">
         <button
           onClick={() => onSelectGame('guess-country')}
-          className="bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 p-6 rounded-xl text-center transition-all shadow-lg hover:shadow-blue-500/20 border border-blue-500/20 transform hover:scale-105"
+          className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-xl text-center transition-all shadow-lg hover:shadow-blue-500/20 border border-blue-500/20 active:scale-95 hover:scale-105"
+
         >
-          <div className="text-4xl mb-3">🌎</div>
-          <h4 className="text-white font-semibold text-lg" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+          <div className="text-5xl mb-4">🌎</div>
+          <h4 className="text-white font-semibold text-xl mb-2">
             {translate("loadingScreen.gameSelector.guessCountry")}
           </h4>
-          <p className="text-blue-200 text-sm mt-1" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+          <p className="text-blue-200 text-base">
             {translate("loadingScreen.gameSelector.guessCountryDesc")}
           </p>
         </button>
         
         <button
-          onClick={() => onSelectGame('quiz')}
-          className="bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 p-6 rounded-xl text-center transition-all shadow-lg hover:shadow-purple-500/20 border border-purple-500/20 transform hover:scale-105"
-        >
-          <div className="text-4xl mb-3">🌍</div>
-          <h4 className="text-white font-semibold text-lg" style={{ direction: isRTL ? "rtl" : "ltr" }}>
-            {translate("loadingScreen.gameSelector.worldExplorer")}
-          </h4>
-          <p className="text-purple-200 text-sm mt-1" style={{ direction: isRTL ? "rtl" : "ltr" }}>
-            {translate("loadingScreen.gameSelector.worldExplorerDesc")}
-          </p>
-        </button>
+  onClick={() => onSelectGame('quiz')}
+  className="bg-gradient-to-br from-purple-600 to-purple-800 p-6 rounded-xl text-center transition-all shadow-lg hover:shadow-purple-500/20 border border-purple-500/20 active:scale-95 hover:scale-105"
+>
+  <div className="text-5xl mb-4">🌍</div>
+  <h4 className="text-white font-semibold text-xl mb-2" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    {translate("loadingScreen.gameSelector.worldExplorer")}
+  </h4>
+  <p className="text-purple-200 text-base" style={{ direction: isRTL ? "rtl" : "ltr" }}>
+    {translate("loadingScreen.gameSelector.worldExplorerDesc")}
+  </p>
+</button>
       </div>
     </div>
   );
@@ -779,11 +780,11 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
   };
   
   return (
-    <div className="fixed inset-0 bg-gray-900 z-50 overflow-hidden">
-      <div className="h-full flex flex-col md:flex-row">
+    <div className="fixed inset-0 bg-gray-900 z-50 overflow-auto">
+      <div className="min-h-screen flex flex-col lg:flex-row">
         {/* Left side - Loading progress */}
-        <div className="w-full md:w-1/2 h-full flex flex-col items-center justify-center p-6 border-r border-gray-800">
-          {/* Animated globe */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 lg:p-6 lg:border-r lg:border-gray-800 min-h-[50vh] lg:min-h-screen">
+        {/* Animated globe */}
           <div className="w-48 h-48 mb-8 relative">
             <div className="absolute inset-0 bg-blue-500 rounded-full opacity-20 animate-ping"></div>
             <div className="absolute inset-4 bg-blue-600 rounded-full opacity-30 animate-pulse"></div>
@@ -812,8 +813,8 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
           </div>
           
           {/* Progress details */}
-          <div className="mt-6 grid grid-cols-4 gap-4 text-center">
-            <ProgressItem 
+          <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center w-full max-w-xl mx-auto">
+          <ProgressItem 
               label={translate("loadingScreen.progressItems.destination")} 
               complete={progress.destination} 
               current={!progress.destination && !progress.flights && !progress.hotels && !progress.activities}
@@ -850,7 +851,7 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
       </div>
       
       {/* Right side - Games */}
-      <div className="w-full md:w-1/2 h-full flex flex-col p-6 overflow-y-auto">
+      <div className="w-full lg:w-1/2 flex flex-col p-4 lg:p-6 min-h-[50vh] lg:min-h-screen">
         <div className="flex-1 flex flex-col items-center justify-center">
           {!selectedGame ? (
             <GameSelector onSelectGame={setSelectedGame} />
