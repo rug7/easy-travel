@@ -5,751 +5,953 @@ import { useLanguage } from "@/context/LanguageContext";
 const activityImageData = {
     // Adventure Activities
     adventure: {
-      // Ziplining & Aerial Activities
-      "zipline": [
-        "https://images.unsplash.com/photo-1541512416146-3c2f5262fd85?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1629469957146-6ae6eaad1ce1?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1622631211624-78057f8ef6fa?auto=format&fit=crop&w=1200"
-      ],
-      "ziplining": [
-        "https://images.unsplash.com/photo-1541512416146-3c2f5262fd85?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1629469957146-6ae6eaad1ce1?auto=format&fit=crop&w=1200"
-      ],
-      "paragliding": [
-        "https://images.unsplash.com/photo-1622760342278-53cf3e29ecb0?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1548575426-b7552a258e6a?auto=format&fit=crop&w=1200"
-      ],
-      "skydiving": [
-        "https://images.unsplash.com/photo-1521673252667-e05da380b252?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1597013216032-9e1166ffa85b?auto=format&fit=crop&w=1200"
-      ],
-      "bungee": [
-        "https://images.unsplash.com/photo-1526385159909-196a9ac0ef64?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1542144649-c4bb0466dfff?auto=format&fit=crop&w=1200"
-      ],
-      "helicopter": [
-        "https://images.unsplash.com/photo-1540962351504-03099e0a754b?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1608322462661-43210f9b386c?auto=format&fit=crop&w=1200"
-      ],
-      
-      // Hiking & Mountain Activities
-      "hike": [
-        "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?auto=format&fit=crop&w=1200"
-      ],
-      "hiking": [
-        "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?auto=format&fit=crop&w=1200"
-      ],
-      "trek": [
-        "https://images.unsplash.com/photo-1598542777052-81eb0e69914f?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1619024027602-2433d502f569?auto=format&fit=crop&w=1200" 
-      ],
-      "trekking": [
-        "https://images.unsplash.com/photo-1598542777052-81eb0e69914f?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1606846614493-422e5fbd474e?auto=format&fit=crop&w=1200"
-      ],
-      "trail": [
-        "https://images.unsplash.com/photo-1500964757637-c85e8a162699?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1624090809476-9614faad3a96?auto=format&fit=crop&w=1200"
-      ],
-      "mountain": [
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1579864629879-7179a1254b28?auto=format&fit=crop&w=1200"
-      ],
-      "climbing": [
-        "https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1601224748193-d3f3c1d01b48?auto=format&fit=crop&w=1200"
-      ],
-      "rock climbing": [
-        "https://images.unsplash.com/photo-1601224748193-d3f3c1d01b48?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1593103106028-3ded3edbac57?auto=format&fit=crop&w=1200"
-      ],
-      "mountaineering": [
-        "https://images.unsplash.com/photo-1543922596-b3bbaba80649?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1604756311361-ed50cf9893c4?auto=format&fit=crop&w=1200"
-      ],
-      "summit": [
-        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1586958991731-a7dfa012ec8a?auto=format&fit=crop&w=1200"
-      ],
-      "volcano": [
-        "https://images.unsplash.com/photo-1621935093281-2b174612a55c?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1621935183012-a1b3253b4789?auto=format&fit=crop&w=1200"
-      ],
-      
-      // Animal & Wildlife Activities
-      "safari": [
-        "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1574236170880-db99a7a39672?auto=format&fit=crop&w=1200"
-      ],
-      "wildlife": [
-        "https://images.unsplash.com/photo-1504173010664-32509aeebb62?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1510379374754-332d668cbfa6?auto=format&fit=crop&w=1200"
-      ],
-      "horseback": [
-        "https://images.unsplash.com/photo-1611516818236-1e5f910905a5?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1602440348612-2c2cfe1bfbf8?auto=format&fit=crop&w=1200"
-      ],
-      "horseback riding": [
-        "https://images.unsplash.com/photo-1611516818236-1e5f910905a5?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1602440348612-2c2cfe1bfbf8?auto=format&fit=crop&w=1200"
-      ],
-      "riding": [
-        "https://images.unsplash.com/photo-1602440348612-2c2cfe1bfbf8?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1584323213357-469cc000ec41?auto=format&fit=crop&w=1200"
-      ],
-      "animal": [
-        "https://images.unsplash.com/photo-1591824438708-ce405f36ba3d?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1548506446-86bfddac5620?auto=format&fit=crop&w=1200"
-      ],
-      "birdwatching": [
-        "https://images.unsplash.com/photo-1605351770859-86ab2e6658d2?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1600416909748-d98c16dc1ae4?auto=format&fit=crop&w=1200"
-      ],
-      "dolphin": [
-        "https://images.unsplash.com/photo-1607153333879-c174d265f1d2?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1566249278656-f52d03e8e4ae?auto=format&fit=crop&w=1200"
-      ],
-      "whale": [
-        "https://images.unsplash.com/photo-1568430462989-44163eb1752f?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1548365328-8c6db3220e4c?auto=format&fit=crop&w=1200"
-      ]
-    },
+        // Ziplining & Aerial Activities
+        "zipline": [
+           "https://images.unsplash.com/photo-1692205959816-d75d4a7b89d4?q=80&w=2133&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+           "https://images.unsplash.com/photo-1648853070657-6d58398bee93?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+           "https://images.unsplash.com/photo-1640278838346-8b243bafa199?q=80&w=1928&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "ziplining": [
+            "https://images.unsplash.com/photo-1692205959816-d75d4a7b89d4?q=80&w=2133&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1648853070657-6d58398bee93?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "paragliding": [
+            "https://images.unsplash.com/photo-1592208128295-5aaa34f1d72b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1694811401894-59f6a0f5237e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "skydiving": [
+            "https://images.unsplash.com/photo-1521673252667-e05da380b252?auto=format&fit=crop&w=1200",
+            "",
+        ],
+        "bungee": [
+            "https://images.unsplash.com/photo-1549221360-456a9c197d5b?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+           "https://images.unsplash.com/photo-1497470888337-ded683b67494?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "helicopter": [
+            "https://images.unsplash.com/photo-1495554698253-681539e9ea84?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1579118559062-39e94a22dbb8?q=80&w=2012&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+
+        // Hiking & Mountain Activities
+        "hike": [
+            "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200",
+            "https://images.unsplash.com/uploads/141148589884100082977/a816dbd7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "hiking": [
+            "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200",
+            "https://images.unsplash.com/photo-1502126324834-38f8e02d7160?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "trek": [
+            "https://images.unsplash.com/photo-1545652985-5edd365b12eb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "trekking": [
+            "https://images.unsplash.com/photo-1545652985-5edd365b12eb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "trail": [
+            "https://images.unsplash.com/photo-1456613820599-bfe244172af5?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1498581444814-7e44d2fbe0e2?q=80&w=1998&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "mountain": [
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200",
+            
+        ],
+        "climbing": [
+            "https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=1200",
+            "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?q=80&w=2144&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            
+        ],
+        "rock climbing": [
+            "https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=2003&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1516372048654-2e06f99e1382?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "mountaineering": [
+            "https://images.unsplash.com/photo-1478255940606-20f49a495e8d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+           "https://images.unsplash.com/photo-1611154046036-cd91e50978be?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "summit": [
+            "https://images.unsplash.com/photo-1534685785745-60a2cea0ec34?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+           "https://images.unsplash.com/photo-1524281423221-234569bc0438?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "volcano": [
+            "https://images.unsplash.com/photo-1619266465172-02a857c3556d?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1580250642511-1660fe42ad58?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+
+        // Animal & Wildlife Activities
+        "safari": [
+            "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200",
+            
+        ],
+        "wildlife": [
+            "https://images.unsplash.com/photo-1504173010664-32509aeebb62?auto=format&fit=crop&w=1200",
+            
+        ],
+        "horseback": [
+            "https://images.unsplash.com/photo-1609128231746-356e747a53bc?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+           "https://images.unsplash.com/photo-1566673186995-e3f5e6fbaf80?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "horseback riding": [
+            "https://images.unsplash.com/photo-1609128231746-356e747a53bc?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+           "https://images.unsplash.com/photo-1566673186995-e3f5e6fbaf80?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "riding": [
+            "https://images.unsplash.com/photo-1613937104241-1fdd18aeb908?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+           "https://images.unsplash.com/photo-1678026038177-74330c556d20?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "animal": [
+            "https://images.unsplash.com/photo-1591824438708-ce405f36ba3d?auto=format&fit=crop&w=1200",
+            "https://images.unsplash.com/photo-1548506446-86bfddac5620?auto=format&fit=crop&w=1200"
+        ],
+        "birdwatching": [
+            "https://images.unsplash.com/photo-1621612630169-ce3c95582b3b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1621070668993-148f3364642f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "dolphin": [
+            "https://images.unsplash.com/photo-1607153333879-c174d265f1d2?auto=format&fit=crop&w=1200",
+           
+        ],
+        "whale": [
+            "https://images.unsplash.com/photo-1568430462989-44163eb1752f?auto=format&fit=crop&w=1200",
     
+        ],
+        "canyoning": 
+        ["https://images.unsplash.com/photo-1690291900903-1bf8f6f54c50?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+             "https://images.unsplash.com/photo-1689180983514-ebd9b1e4ba1b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+
+        "sandboarding": 
+        ["https://images.unsplash.com/photo-1643856545126-a20f97392fc9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1729946713976-8734076e49ea?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+            
+        "wingsuit": 
+        ["https://images.unsplash.com/photo-1533652475678-12f52b4fdd53?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1696085084339-1e2df9609385?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+            
+        "hang gliding": 
+        ["https://images.unsplash.com/photo-1551891587-d8e5ce1731f1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1551891588-73c0bf66be48?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+            
+        "ice climbing": 
+        ["https://images.unsplash.com/photo-1548789997-82da68437ad8?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1647601294667-5a5948b6cd93?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+            
+        "via ferrata": 
+        ["https://images.unsplash.com/photo-1545212586-f25d3631b77f?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1543688531-441b5e0d2004?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+            
+        "caving":
+         ["https://images.unsplash.com/photo-1600201319330-e99245e614c5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1628746404106-4d3843b231b3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+            
+        "spelunking": 
+        ["https://images.unsplash.com/photo-1702064874499-c9fc28b2d9d7?q=80&w=1930&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1702064874499-c9fc28b2d9d7?q=80&w=1930&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+            
+        "rappelling":
+         ["https://images.unsplash.com/photo-1696347191385-cb5d068bdca9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1696347191385-cb5d068bdca9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+            
+        "zorbing": 
+        ["https://images.unsplash.com/photo-1661779062990-73c2d9cb58e5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""],
+            
+    },
+
     // Water Activities
     water: {
-      // Beach Activities
-      "beach": [
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1520942702018-0862200e6873?auto=format&fit=crop&w=1200"
-      ],
-      "beachfront": [
-        "https://images.unsplash.com/photo-1591017403286-fd8493524e1e?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1509233725247-49e657c54213?auto=format&fit=crop&w=1200"
-      ],
-      "shore": [
-        "https://images.unsplash.com/photo-1468413253725-0d5181091126?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=1200"
-      ],
-      "coast": [
-        "https://images.unsplash.com/photo-1566024164372-0281f1133aa6?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1511848727439-9c607a74e539?auto=format&fit=crop&w=1200"
-      ],
-      "picnic": [
-        "https://images.unsplash.com/photo-1529080133550-1f94b4bdb364?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1595034522784-56c086026ea6?auto=format&fit=crop&w=1200"
-      ],
-      "sunset": [
-        "https://images.unsplash.com/photo-1570099664936-2784ba4db9f8?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1475113548554-5a36f1f523d6?auto=format&fit=crop&w=1200"
-      ],
-      
-      // Water Sports
-      "surf": [
-        "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1581000197348-77e75c0c1fb5?auto=format&fit=crop&w=1200"
-      ],
-      "surfing": [
-        "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1505459668311-8dfac7952bf0?auto=format&fit=crop&w=1200"
-      ],
-      "swimming": [
-        "https://images.unsplash.com/photo-1560090995-01632a28895b?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?auto=format&fit=crop&w=1200"
-      ],
-      "swim": [
-        "https://images.unsplash.com/photo-1560090995-01632a28895b?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1200"
-      ],
-      "snorkel": [
-        "https://images.unsplash.com/photo-1516474061198-4da33839d665?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1535537334961-8f39d39f4b09?auto=format&fit=crop&w=1200"
-      ],
-      "snorkeling": [
-        "https://images.unsplash.com/photo-1516474061198-4da33839d665?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1535537334961-8f39d39f4b09?auto=format&fit=crop&w=1200"
-      ],
-      "dive": [
-        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200"
-      ],
-      "diving": [
-        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1544551763-a9d429dcbbc9?auto=format&fit=crop&w=1200"
-      ],
-      "scuba": [
-        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1586043827731-b87d0f442590?auto=format&fit=crop&w=1200"
-      ],
-      "paddleboard": [
-        "https://images.unsplash.com/photo-1526046881250-dbea46099c67?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1512519716973-3c5bd02a3256?auto=format&fit=crop&w=1200"
-      ],
-      "kayak": [
-      "https://images.unsplash.com/photo-1620903669944-de50fbe78210?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "https://images.unsplash.com/photo-1465310477141-6fb93167a273?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    ],
-    "kayaking": [
-      "https://images.unsplash.com/photo-1463694775559-eea25626346d?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1511098266841-cad50fbd1f1f?auto=format&fit=crop&w=1200"
-    ],
-    "canoe": [
-      "https://images.unsplash.com/photo-1542856391-010fb87dcfed?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1485389556422-01a3a1cb9db0?auto=format&fit=crop&w=1200"
-    ],
-    "canoeing": [
-      "https://images.unsplash.com/photo-1542856391-010fb87dcfed?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1511386363918-676a6a4d6e7a?auto=format&fit=crop&w=1200"
-    ],
-    "rafting": [
-      "https://images.unsplash.com/photo-1559524098-90a1f01c637b?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1574166465903-1edf6dfbf749?auto=format&fit=crop&w=1200"
-    ],
-    "waterfall": [
-      "https://images.unsplash.com/photo-1431794062232-2a99a5431c6c?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1564710654729-ff358191c127?auto=format&fit=crop&w=1200"
-    ],
-    
-    // Marine & Sailing Activities
-    "sea": [
-      "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1518132006340-7b97233d3cd4?auto=format&fit=crop&w=1200"
-    ],
-    "ocean": [
-      "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1468581264429-2548ef9eb732?auto=format&fit=crop&w=1200"
-    ],
-    "boat": [
-      "https://images.unsplash.com/photo-1527431293370-0cd7ef7c90f3?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1593351415075-3bac9f45c877?auto=format&fit=crop&w=1200"
-    ],
-    "boating": [
-      "https://images.unsplash.com/photo-1527431293370-0cd7ef7c90f3?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1593351415075-3bac9f45c877?auto=format&fit=crop&w=1200"
-    ],
-    "cruise": [
-      "https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1200"
-    ],
-    "cruising": [
-      "https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1200"
-    ],
-    "sailing": [
-      "https://images.unsplash.com/photo-1500514966906-fe245eea9344?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1630344743700-2bf9e394f5a0?auto=format&fit=crop&w=1200"
-    ],
-    "yacht": [
-      "https://images.unsplash.com/photo-1566846128021-b940b0eec910?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?auto=format&fit=crop&w=1200"
-    ],
-    "catamaran": [
-      "https://images.unsplash.com/photo-1570735380162-2e2ffc835b21?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1635858991718-38f58a721dbb?auto=format&fit=crop&w=1200"
-    ],
-    "fishing": [
-      "https://images.unsplash.com/photo-1541742425281-c1d3fc8aff96?q=80&w=2012&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "https://images.unsplash.com/photo-1545285446-a9c1b22039f7?auto=format&fit=crop&w=1200"
-    ],
-    "maritime": [
-      "https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1511884642898-4c92249e20b6?auto=format&fit=crop&w=1200"
-    ],
-    "harbor": [
-      "https://images.unsplash.com/photo-1520443240718-fce21901db79?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1569579712579-f7b880a3c406?auto=format&fit=crop&w=1200"
-    ],
-    "harbour": [
-      "https://images.unsplash.com/photo-1520443240718-fce21901db79?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1569579712579-f7b880a3c406?auto=format&fit=crop&w=1200"
-    ],
-    "marina": [
-      "https://images.unsplash.com/photo-1585735633302-ea202b0d4513?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1585759036745-6fa72e338d1a?auto=format&fit=crop&w=1200"
-    ]
-  },
-  
-  // Cultural & Urban Activities
-  cultural: {
-    // Museums & Art
-    "museum": [
-        "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=1200"
-    ],
-    "gallery": [
-      "https://images.unsplash.com/photo-1594388572748-608588c3c145?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1574217013471-c32c6846cef7?auto=format&fit=crop&w=1200"
-    ],
-    "art": [
-      "https://images.unsplash.com/photo-1594388572748-608588c3c145?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1545989253-02cc26577f88?auto=format&fit=crop&w=1200"
-    ],
-    "exhibition": [
-      "https://images.unsplash.com/photo-1563804447971-6e113ab80713?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1579683707581-5abc99b8a0fb?auto=format&fit=crop&w=1200"
-    ],
-    
-    // Historical Sites
-    "castle": [
-      "https://images.unsplash.com/photo-1583778176476-4a8b02a64c01?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1573108037329-5cd321f72d0e?auto=format&fit=crop&w=1200"
-    ],
-    "palace": [
-      "https://images.unsplash.com/photo-1548248823-ce16a73b6d49?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1587974728375-67d203a83f20?auto=format&fit=crop&w=1200"
-    ],
-    "cathedral": [
-      "https://images.unsplash.com/photo-1543348750-466b55f32f16?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1548248522-dc0b87a9307a?auto=format&fit=crop&w=1200"
-    ],
-    "church": [
-      "https://images.unsplash.com/photo-1543348750-466b55f32f16?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1461301214746-1e109215d6d3?auto=format&fit=crop&w=1200"
-    ],
-    "temple": [
-      "https://images.unsplash.com/photo-1580889272861-dc2dbea5468d?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1504934124608-518fabaaa5b0?auto=format&fit=crop&w=1200"
-    ],
-    "mosque": [
-      "https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1545167496-c1e5198543de?auto=format&fit=crop&w=1200"
-    ],
-    "ruins": [
-      "https://images.unsplash.com/photo-1548080819-68c6ab23e822?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1569584139337-3434e121c06c?auto=format&fit=crop&w=1200"
-    ],
-    "historic": [
-      "https://images.unsplash.com/photo-1558526944-1f9be3bea5a9?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200"
-    ],
-    "monument": [
-      "https://images.unsplash.com/photo-1568668392383-c923811e4ad7?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1562671753-6360e96c7915?auto=format&fit=crop&w=1200"
-    ],
-    "memorial": [
-      "https://images.unsplash.com/photo-1556794285-11695ab89d68?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1566231346068-8e643bb315a2?auto=format&fit=crop&w=1200"
-    ],
-    "archaeology": [
-        "https://images.unsplash.com/photo-1601378660502-88538e5b783d?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1601379107138-9e8f8af0ae4d?auto=format&fit=crop&w=1200"
-    ],
+        // Beach Activities
+        "beach": [
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "beachfront": [
+            "https://images.unsplash.com/photo-1622396090075-ab6b8396fe9b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "shore": [
+            "https://images.unsplash.com/photo-1525154199452-245d16abd9fe?q=80&w=1933&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "coast":  [
+            "https://images.unsplash.com/photo-1433567212640-211efabc03e1?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "picnic":  [
+            "https://images.unsplash.com/photo-1578359968130-76b59bb5af13?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "sunset": [
+            "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
 
-    // Urban Exploration
-    "city": [
-      "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1200"
-    ],
-    "downtown": [
-      "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200"
-    ],
-    "urban": [
-      "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1490642914619-7955a3fd483c?auto=format&fit=crop&w=1200"
-    ],
-    "skyline": [
-      "https://images.unsplash.com/photo-1470219556762-1771e7f9427d?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1200"
-    ],
-    "architecture": [
-      "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?auto=format&fit=crop&w=1200"
-    ],
-    "shopping": [
-      "https://images.unsplash.com/photo-1482192505345-5655af888cc4?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=1200"
-    ],
-    "market": [
-      "https://images.unsplash.com/photo-1513125370-3460ebe3401b?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=1200"
-    ],
-    "bazaar": [
-      "https://images.unsplash.com/photo-1555072956-7758afb20e8f?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=1200"
-    ],
-    "street": [
-      "https://images.unsplash.com/photo-1522083165195-3424ed129620?auto=format&fit=crop&w=1200",
-      ""
-    ],
-    "walking": [
-      ""
-    ],
-    "walking tour": [
-      "",
-      ""
-    ],
-    "tour": [
-      "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1558980394-4c7c9299fe96?auto=format&fit=crop&w=1200"
-    ],
-    "guide": [
-      "https://images.unsplash.com/photo-1558980394-4c7c9299fe96?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1200"
-    ],
-    
-    // Cultural Experiences
-    "performance": [
-      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=1200"
-    ],
-    "concert": [
-      "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1200"
-    ],
-    "theater": [
-      "https://images.unsplash.com/photo-1503095396549-807759245b35?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?auto=format&fit=crop&w=1200"
-    ],
-    "cinema": [
-      "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=1200"
-    ],
-    "movie": [
-      "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1522609925277-66fea332c575?auto=format&fit=crop&w=1200"
-    ],
-    "opera": [
-      "https://images.unsplash.com/photo-1580809361436-42a7ec5c14fe?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1200"
-    ],
-    "ballet": [
-      "https://images.unsplash.com/photo-1532871286412-6309983e2506?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1546704864-07229a472782?auto=format&fit=crop&w=1200"
-    ],
-    "dance": [
-      "https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1520367445093-50dc08a59d9d?auto=format&fit=crop&w=1200"
-    ],
-    "festival": [
-      "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&w=1200"
-    ],
-    "celebration": [
-      "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1481162854517-d9e353af153d?auto=format&fit=crop&w=1200"
-    ],
-    "parade": [
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1541423408854-5df732b6f6d1?auto=format&fit=crop&w=1200"
-    ],
-    "cultural": [
-      "https://images.unsplash.com/photo-1511735643442-503bb3bd348a?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1625985335355-d2384d3b527e?auto=format&fit=crop&w=1200"
-    ],
-    "traditional": [
-      "https://images.unsplash.com/photo-1516687605123-a218f18f3738?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1530373239086-f6c073019ec3?auto=format&fit=crop&w=1200"
-    ],
-    "ceremony": [
-      "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200"
-    ]
-  },
-  
-  // Food & Relaxation Activities
-  lifestyle: {
-    // Food & Drink
-    "restaurant": [
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200"
-    ],
-    "dining": [
-      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200"
-    ],
-    "dinner": [
-      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1518619745898-597f52cf5564?auto=format&fit=crop&w=1200"
-    ],
-    "lunch": [
-      "https://images.unsplash.com/photo-1600335895229-6e75511892c8?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?auto=format&fit=crop&w=1200"
-    ],
-    "breakfast": [
-      "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1495214783159-3503f1c2610d?auto=format&fit=crop&w=1200"
-    ],
-    "food": [
-      "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200"
-    ],
-    "meal": [
-      "https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1529566652340-2c41a1eb6d93?auto=format&fit=crop&w=1200"
-    ],
-    "culinary": [
-      "https://images.unsplash.com/photo-1583225214464-9296029427aa?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1505935428862-770b6f24f629?auto=format&fit=crop&w=1200"
-    ],
-    "tasting": [
-      "https://images.unsplash.com/photo-1559842438-2942c907c8fe?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=1200"
-    ],
-    "cooking": [
-      "https://images.unsplash.com/photo-1556909172-8c2f041fca1e?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1542010589005-d1eacc3918f2?auto=format&fit=crop&w=1200"
-    ],
-    "class": [
-      "https://images.unsplash.com/photo-1527690789675-4ea7d8da4fe6?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200"
-    ],
-    "wine": [
-      "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1553361371-9513901d383f?auto=format&fit=crop&w=1200"
-    ],
-    "winery": [
-      "https://images.unsplash.com/photo-1588694392556-6138fe9ae436?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1598306442928-4d90f32c6866?auto=format&fit=crop&w=1200"
-    ],
-    "vineyard": [
-        "https://images.unsplash.com/photo-1558920559-907042618f5b?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1561657915-0991dfbf69a3?auto=format&fit=crop&w=1200"
-      ],
-      "brewery": [
-        "https://images.unsplash.com/photo-1559526324-593bc073d938?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200"
-      ],
-      "beer": [
-        "https://images.unsplash.com/photo-1574711852243-5a88231b77fa?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1618183479302-1e0aa382c36b?auto=format&fit=crop&w=1200"
-      ],
-      "bar": [
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=1200"
-      ],
-      "cafe": [
-        "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200"
-      ],
-      "coffee": [
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1525480122447-64809d765ec4?auto=format&fit=crop&w=1200"
-      ],
-      
-      // Wellness & Relaxation
-      "spa": [
-        "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200"
-      ],
-      "massage": [
-        "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200"
-      ],
-      "wellness": [
-        "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200"
-      ],
-      "relaxation": [
-        "https://images.unsplash.com/photo-1531685250784-7569952593d2?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200"
-      ],
-      "hot spring": [
-        "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1504318805949-0b90e6a96dc7?auto=format&fit=crop&w=1200"
-      ],
-      "thermal": [
-        "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1621855403100-701fb7ea5c67?auto=format&fit=crop&w=1200"
-      ],
-      "bath": [
-        "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200"
-      ],
-      "onsen": [
-        "https://images.unsplash.com/photo-1572130321181-81f689113d58?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1596465923969-a6cb35b0f55f?auto=format&fit=crop&w=1200"
-      ],
-      "yoga": [
-        "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200",
-        "https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?auto=format&fit=crop&w=1200"
-      ],
-      "meditation": [
-"https://images.unsplash.com/photo-1508672019048-805c876b67e3?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1470137237906-d8a4f71e1966?auto=format&fit=crop&w=1200"
-    ],
-    "mindfulness": [
-      "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200"
-    ],
-    "retreat": [
-      "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1200"
-    ]
-  },
-  
-  // Nature & Landscape
-  nature: {
-    // Natural Landscapes
-    "forest": [
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=1200"
-    ],
-    "woods": [
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?auto=format&fit=crop&w=1200"
-    ],
-    "park": [
-      "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1468810527216-532db6db4a10?auto=format&fit=crop&w=1200"
-    ],
-    "garden": [
-      "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200"
-    ],
-    "botanical": [
-      "https://images.unsplash.com/photo-1590837132963-cce65070f342?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1501684691657-cf3012635478?auto=format&fit=crop&w=1200"
-    ],
-    "field": [
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1535911062114-764574491173?auto=format&fit=crop&w=1200"
-    ],
-    "meadow": [
-      "https://images.unsplash.com/photo-1501685532562-aa6846b31a3e?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1502517607734-2684929589b3?auto=format&fit=crop&w=1200"
-    ],
-    "valley": [
-      "https://images.unsplash.com/photo-1606045752886-e56218d45afd?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1573551565922-aec98de55fe2?auto=format&fit=crop&w=1200"
-    ],
-    "river": [
-      "https://images.unsplash.com/photo-1558196209-7894cc40f7b3?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1623345805780-8f01f714e65f?auto=format&fit=crop&w=1200"
-    ],
-    "lake": [
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1543097692-fa13c6cd8595?auto=format&fit=crop&w=1200"
-    ],
-    "cave": [
-      "https://images.unsplash.com/photo-1504516586076-3393005c9894?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1529076461912-ac29e83df0b1?auto=format&fit=crop&w=1200"
-    ],
-    "canyon": [
-      "https://images.unsplash.com/photo-1578249949606-e0d15d536442?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1530126483408-aa533e55bdb2?auto=format&fit=crop&w=1200"
-    ],
-    "desert": [
-      "https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?auto=format&fit=crop&w=1200"
-    ],
-    "dune": [
-      "https://images.unsplash.com/photo-1519516125073-111ee7692f91?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1610050028661-b34a83d8e12f?auto=format&fit=crop&w=1200"
-    ],
-    "beach": [
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1200"
-    ],
-    "countryside": [
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1520262494112-9fe481d36ec3?auto=format&fit=crop&w=1200"
-    ],
-    "landscape": [
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200"
-    ],
-    
-    // Celestial & Weather Events
-    "astronomy": [
-      "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1540198163009-7afde3ce3ebf?auto=format&fit=crop&w=1200"
-    ],
-    "stargazing": [
-      "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1580152040942-85a21f89d305?auto=format&fit=crop&w=1200"
-    ],
-    "northern lights": [
-      "https://images.unsplash.com/photo-1566408669374-5a6b32bd6cd7?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1517332956732-541df6cbc1a9?auto=format&fit=crop&w=1200"
-    ],
-    "aurora": [
-      "https://images.unsplash.com/photo-1566408669374-5a6b32bd6cd7?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1581211865647-703647fa78f7?auto=format&fit=crop&w=1200"
-    ],
-    "sunrise": [
-      "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1504466334719-af4ae9f12ad0?auto=format&fit=crop&w=1200"
-    ],
-    "sunset": [
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1475113548554-5a36f1f523d6?auto=format&fit=crop&w=1200"
-    ],
-    "rainbow": [
-      "https://images.unsplash.com/photo-1558662413-6ddb5a22bd53?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1629214831861-c1f5fec4bae6?auto=format&fit=crop&w=1200"
-    ]
-  },
-  
-  // Sports & Recreation
-  sports: {
-    // Various Sports
-    "golf": [
-      "https://images.unsplash.com/photo-1587174786073-ae5e5cff23aa?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1535131749006-b7d58ee532cc?auto=format&fit=crop&w=1200"
-    ],
-    "tennis": [
-      "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1622279457486-28f307b153ce?auto=format&fit=crop&w=1200"
-    ],
-    "skiing": [
-      "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1605540436563-5bca919ee766?auto=format&fit=crop&w=1200"
-    ],
-    "snowboarding": [
-      "https://images.unsplash.com/photo-1522056615691-da7b8106c045?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1605540436330-9a7469361480?auto=format&fit=crop&w=1200"
-    ],
-    "biking": [
-      "https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1608990827289-31f477255dd5?auto=format&fit=crop&w=1200"
-    ],
-    "cycling": [
-      "https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200"
-    ],
-    "running": [
-      "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1559166631-ef208440c75a?auto=format&fit=crop&w=1200"
-    ],
-    "basketball": [
-      "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1518650845922-77a989b38afc?auto=format&fit=crop&w=1200"
-    ],
-    "football": [
-      "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=1200"
-    ],
-    "soccer": [
-      "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?auto=format&fit=crop&w=1200", 
-      "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?auto=format&fit=crop&w=1200"
-    ],
-    "volleyball": [
-      "https://images.unsplash.com/photo-1562552052-4e9f2d8e8a42?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1592656094267-764a45160876?auto=format&fit=crop&w=1200"
-    ],
-    "baseball": [
-      "https://images.unsplash.com/photo-1508344928928-7165b0c40ae7?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1513267048331-5611cad62e41?auto=format&fit=crop&w=1200"
-    ],
-    "hockey": [
-      "https://images.unsplash.com/photo-1580412581600-9b8f1bb49db4?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1541426062480-22e56abbc8c9?auto=format&fit=crop&w=1200"
-    ],
-    "surfing": [
-      "https://images.unsplash.com/photo-1531722569936-825d3dd91b15?auto=format&fit=crop&w=1200",
-      "https://images.unsplash.com/photo-1623103848683-33856fcb6196?auto=format&fit=crop&w=1200"
-    ],
-}
-    };
+        // Water Sports
+        "surf":  [
+            "https://images.unsplash.com/photo-1502680390469-be75c86b636f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1459745930869-b3d0d72c3cbb?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "surfing":  [
+            "https://images.unsplash.com/photo-1502680390469-be75c86b636f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1459745930869-b3d0d72c3cbb?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "swimming":  [
+            "https://images.unsplash.com/photo-1438029071396-1e831a7fa6d8?q=80&w=2050&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1600965962361-9035dbfd1c50?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "swim":  [
+            "https://images.unsplash.com/photo-1438029071396-1e831a7fa6d8?q=80&w=2050&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1600965962361-9035dbfd1c50?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+
+        "snorkel": [
+            "https://images.unsplash.com/photo-1621432253147-464524b9eaa1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1664922114319-4700c0ef74b1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "snorkeling": [
+            "https://images.unsplash.com/photo-1621432253147-464524b9eaa1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1664922114319-4700c0ef74b1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "dive":  [
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1682687982502-1529b3b33f85?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "diving":  [
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1682687982502-1529b3b33f85?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "scuba":  [
+            "https://images.unsplash.com/photo-1682687981922-7b55dbb30892?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1682686581030-7fa4ea2b96c3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "paddleboard": [
+            "https://images.unsplash.com/photo-1514944137161-db35a1a43935?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1514944137161-db35a1a43935?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "kayak":  [
+            "https://images.unsplash.com/photo-1480480565647-1c4385c7c0bf?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1588472235276-7638965471e2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "kayaking":  [
+            "https://images.unsplash.com/photo-1480480565647-1c4385c7c0bf?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1588472235276-7638965471e2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "canoe": [
+            "photo-1698338873280-c446cc6944bf?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1523287281576-5b596107a6ae?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "canoeing":  [
+            "photo-1698338873280-c446cc6944bf?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1523287281576-5b596107a6ae?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "rafting":  [
+            "https://images.unsplash.com/photo-1629248457649-b082812aea6c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1642933196504-62107dac9258?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "waterfall":  [
+            "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+
+        // Marine & Sailing Activities
+        "sea":  [
+            "https://images.unsplash.com/photo-1471922694854-ff1b63b20054?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+        "ocean":  [
+            "https://images.unsplash.com/photo-1488278905738-514111aa236c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+        "boat": [
+            "https://images.unsplash.com/photo-1520255870062-bd79d3865de7?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1559075479-e8da6f6fc3fb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "boating": [
+            "https://images.unsplash.com/photo-1520255870062-bd79d3865de7?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1559075479-e8da6f6fc3fb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "cruise":  [
+            "https://images.unsplash.com/photo-1589420241438-38271f7d3cea?q=80&w=1946&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1634847224877-9fe68ae54940?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "cruising": [
+            "https://images.unsplash.com/photo-1589420241438-38271f7d3cea?q=80&w=1946&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1634847224877-9fe68ae54940?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "sailing":  [
+            "https://images.unsplash.com/photo-1452065656801-6c60b6e7cbc5?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1526761122248-c31c93f8b2b9?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+            
+        "yacht":  [
+            "https://images.unsplash.com/photo-1562281302-809108fd533c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+        "catamaran":  [
+            "https://images.unsplash.com/photo-1581271164789-7c97932822d3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+        "fishing":  [
+            "https://images.unsplash.com/photo-1541742425281-c1d3fc8aff96?q=80&w=2012&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+        "maritime": [
+            "https://images.unsplash.com/photo-1718314786551-798f1398a7b1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+        "harbor":  [
+            "https://images.unsplash.com/photo-1582658170611-ef7975c4f0ff?q=80&w=1962&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+        "harbour": [
+            "https://images.unsplash.com/photo-1582658170611-ef7975c4f0ff?q=80&w=1962&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+        "marina": [
+            "https://images.unsplash.com/photo-1541777594744-addc2de9d110?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+            
+        "wakeboarding":  [
+            "https://images.unsplash.com/photo-1531001602318-1916852b9205?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "windsurfing":  [
+            "https://images.unsplash.com/photo-1722847024325-7b75aa1e26fa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1726735979221-b4b54efb139a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "jet skiing":  [
+            "https://images.unsplash.com/photo-1660642481220-3b435d98759a?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1721798974342-7b2b859493a0?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "flyboarding":  [
+            "https://images.unsplash.com/photo-1505408990643-cb9bbf4bfe2c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1732243395390-2805b61d4af1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "paddling":  [
+            "https://images.unsplash.com/photo-1523287281576-5b596107a6ae?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1591805021133-a0441817ea27?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "bodyboarding": [
+            "https://images.unsplash.com/flagged/photo-1594743707995-0ba996d2bbb8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "freediving":  [
+            "https://images.unsplash.com/photo-1603259860985-5dfe6bf9a1fd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "kite surfing":  [
+            "https://images.unsplash.com/photo-1519399224017-87a75eb50df9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "pearl diving":  [
+            "https://images.unsplash.com/photo-1727346646094-8d13afb384c1?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "white water": [
+            "https://images.unsplash.com/photo-1561187708-6424a4a6c689?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+    },
+
+    // Cultural & Urban Activities
+    cultural: {
+        // Museums & Art
+        "museum": [
+            "https://images.unsplash.com/photo-1554907984-15263bfd63bd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1554907984-15263bfd63bd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "gallery": [
+            "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=1200",
+            ""
+        ],
+        "art": [
+            "https://images.unsplash.com/photo-1459908676235-d5f02a50184b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "exhibition": [
+            "https://images.unsplash.com/photo-1621685743771-fd5e13734ae6?q=80&w=2053&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        // Historical Sites
+        "castle": [
+            "https://images.unsplash.com/photo-1449452198679-05c7fd30f416?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "palace":[
+            "https://images.unsplash.com/photo-1549895058-36748fa6c6a7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "cathedral": [
+            "https://images.unsplash.com/photo-1585749176286-1d825e34fdae?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "church": [
+            "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "temple": [
+            "https://images.unsplash.com/photo-1603766806347-54cdf3745953?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "mosque":[
+            "https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "ruins": [
+            "https://images.unsplash.com/photo-1559489110-40a90ee4e70a?q=80&w=2062&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1559489110-40a90ee4e70a?q=80&w=2062&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "historic": [
+            "https://images.unsplash.com/photo-1579762593251-07c01abb6599?q=80&w=1933&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1579762593251-07c01abb6599?q=80&w=1933&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "monument": [
+            "https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "memorial": [
+            "https://images.unsplash.com/photo-1720525056663-e55be8caaa4c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1720525056663-e55be8caaa4c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "archaeology": [
+            "https://images.unsplash.com/photo-1613059312885-8a758073461b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+
+        // Urban Exploration
+        "city":[
+            "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2144&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "downtown": [
+            "https://images.unsplash.com/photo-1696556009844-2d7ef3c3e116?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "urban": [
+            "https://images.unsplash.com/photo-1487452066049-a710f7296400?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "skyline": [
+            "https://images.unsplash.com/photo-1496588152823-86ff7695e68f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "architecture": [
+            "https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "shopping":[
+            "https://images.unsplash.com/photo-1481437156560-3205f6a55735?q=80&w=2095&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "market": [
+            "https://images.unsplash.com/photo-1576562331281-d09e46af9854?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "bazaar": [
+            "https://images.unsplash.com/photo-1571060492916-93b251851ca5?q=80&w=2086&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "street": [
+            "https://images.unsplash.com/photo-1482859454392-1b5326395032?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "walking": [
+            "https://images.unsplash.com/photo-1506751470038-e579eb91f580?q=80&w=1928&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "walking tour": [
+            "https://images.unsplash.com/photo-1536607961765-592e80bcc19e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "tour":[
+            "https://images.unsplash.com/photo-1512704515581-de233a09dae8?q=80&w=2120&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "guide": [
+            "https://images.unsplash.com/photo-1600714480856-dc99b28892eb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+
+        // Cultural Experiences
+        "performance": [
+            "https://images.unsplash.com/photo-1522694013927-350c454fa94b?q=80&w=2094&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "concert":[
+            "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "theater": [
+            "https://images.unsplash.com/photo-1562329265-95a6d7a83440?q=80&w=1970&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "cinema": [
+            "https://images.unsplash.com/photo-1693173509659-98992bc44d09?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "movie": [
+            "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "opera":[
+            "https://images.unsplash.com/photo-1516307365426-bea591f05011?q=80&w=2059&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "ballet": [
+            "https://images.unsplash.com/photo-1516737488405-7b6d6868fad3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "dance": [
+            "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "festival": [
+            "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "celebration": [
+            "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "parade":[
+            "https://images.unsplash.com/photo-1609051589207-264fb1f91000?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "cultural": [
+            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "traditional": [
+            "https://images.unsplash.com/photo-1594717686871-e21e79229681?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "ceremony": [
+            "https://images.unsplash.com/photo-1696204868916-cda7380ae72b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "amphitheater": [
+            "https://images.unsplash.com/photo-1594592135972-13c757367680?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "poetry reading": [
+            "https://images.unsplash.com/photo-1576238580501-f21ccaaa83ac?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "calligraphy": [
+            "https://images.unsplash.com/photo-1546638008-efbe0b62c730?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "pottery making": [
+            "https://images.unsplash.com/photo-1554638795-42c2bcd2533b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "weaving": [
+            "https://images.unsplash.com/photo-1597371140946-cfd3dd5a76b9?q=80&w=2093&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "glass blowing": [
+            "https://images.unsplash.com/photo-1506902039157-1a7e7374b077?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "street food": [
+            "https://images.unsplash.com/photo-1552912470-ee2e96439539?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "night market": [
+            "https://images.unsplash.com/photo-1535898331935-2d274aff0fbc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "lantern festival":[
+            "https://images.unsplash.com/photo-1628024564458-b3dfcceb3f34?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "traditional dance":[
+            "https://images.unsplash.com/photo-1700324781657-bb71b4534ad0?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+
+    },
+
+    // Food & Relaxation Activities
+    lifestyle: {
+        // Food & Drink
+        "restaurant": [
+            "52566626-52f8b828add9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "dining": [
+            "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "dinner": [
+            "https://images.unsplash.com/photo-1536392706976-e486e2ba97af?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "lunch":[
+            "https://images.unsplash.com/photo-1576867757603-05b134ebc379?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "Lunch at":[
+            "https://images.unsplash.com/photo-1576867757603-05b134ebc379?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "breakfast":[
+            "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "food":[
+            "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "meal": [
+            "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "culinary": [
+            "https://images.unsplash.com/photo-1594046243098-0fceea9d451e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "tasting": [
+            "https://images.unsplash.com/photo-1561986863-60b73438b5c1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "cooking": [
+            "https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "class": [
+            "https://images.unsplash.com/photo-1683624328172-88fb24625ec1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "cooking class": [
+            "https://images.unsplash.com/photo-1683624328172-88fb24625ec1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "wine": [
+            "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "winery": [
+            "https://images.unsplash.com/photo-1572913017567-02f0649bc4fd?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "vineyard": [
+            "https://images.unsplash.com/photo-1558138818-34316d616e44?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "brewery": [
+            "https://images.unsplash.com/photo-1555658636-6e4a36218be7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "beer":[
+            "https://images.unsplash.com/photo-1566633806327-68e152aaf26d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "bar": [
+            "https://images.unsplash.com/photo-1597290282695-edc43d0e7129?q=80&w=2075&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "cafe":[
+            "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "coffee":[
+            "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=1937&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+
+        // Wellness & Relaxation
+        "spa": [
+            "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "massage": [
+            "https://images.unsplash.com/photo-1611073615452-4889cb93422e?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "wellness": [
+            "https://images.unsplash.com/photo-1535914254981-b5012eebbd15?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "relaxation": [
+            "https://images.unsplash.com/photo-1559414131-b0aa53919648?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "hot spring": [
+            "https://images.unsplash.com/photo-1470010762743-1fa2363f65ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "thermal": [
+            "https://images.unsplash.com/photo-1500163638764-6f9378de0c8d?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "bath":[
+            "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "onsen":[
+            "https://images.unsplash.com/photo-1644413638617-02369c89c156?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "yoga": [
+            "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "meditation":[
+            "https://images.unsplash.com/photo-1559595500-e15296bdbb48?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "mindfulness":[
+            "https://images.unsplash.com/photo-1592895792095-85fa785192a9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+        "retreat": [
+            "https://images.unsplash.com/photo-1517363898874-737b62a7db91?q=80&w=1963&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "",
+        ],
+    },
+
+    // Nature & Landscape
+    nature: {
+        // Natural Landscapes
+        "forest": [
+            "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "woods": [
+            "https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "park": [
+            "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "garden":[
+            "https://images.unsplash.com/photo-1601654253194-260e0b6984f9?q=80&w=1999&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "botanical":[
+            "https://images.unsplash.com/photo-1466781783364-36c955e42a7f?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "field":[
+            "https://images.unsplash.com/photo-1498408040764-ab6eb772a145?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "meadow": [
+            "https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "valley": [
+            "https://images.unsplash.com/photo-1531252582519-2d7e6795be96?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "river": [
+            "https://images.unsplash.com/photo-1437482078695-73f5ca6c96e2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "lake": [
+            "https://images.unsplash.com/photo-1439066290691-510066268af5?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "cave": [
+            "https://images.unsplash.com/photo-1560403442-d141ff60800d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "canyon": [
+            "https://images.unsplash.com/photo-1460302293840-dc1a23a7b226?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "desert": [
+            "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "dune": [
+            "https://images.unsplash.com/photo-1488197047962-b48492212cda?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "beach": [
+            "https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "countryside":[
+            "https://images.unsplash.com/photo-1588152850700-c82ecb8ba9b1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "landscape": [
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+
+        // Celestial & Weather Events
+        "astronomy": [
+            "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?q=80&w=2113&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "stargazing": [
+            "https://images.unsplash.com/photo-1527871899604-f1425bcce779?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "northern lights": [
+            "https://images.unsplash.com/photo-1483347756197-71ef80e95f73?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "aurora": [
+            "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "sunrise": [
+            "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "sunset": [
+            "https://images.unsplash.com/photo-1481988535861-271139e06469?q=80&w=2090&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "rainbow":[
+            "https://images.unsplash.com/photo-1593362831502-5c3ad1c05f57?q=80&w=2012&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "fjord": [
+            "https://images.unsplash.com/photo-1673219498962-26df0c20dd97?q=80&w=2060&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "geyser":[
+            "https://images.unsplash.com/photo-1554748794-953974aa06da?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "salt flat": [
+            "https://images.unsplash.com/photo-1621315892013-f32af7358947?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "mangrove": [
+            "https://images.unsplash.com/photo-1589556183130-530470785fab?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "glacier":[
+            "https://images.unsplash.com/photo-1494564605686-2e931f77a8e2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "reef": [
+            "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "coral": [
+            "https://images.unsplash.com/photo-1546026423-cc4642628d2b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "wetland":[
+            "https://images.unsplash.com/photo-1528732262645-b06fa3a79c9e?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "savanna": [
+            "https://images.unsplash.com/photo-1535940360221-641a69c43bac?q=80&w=2066&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "tundra": [
+            "https://images.unsplash.com/photo-1670517301637-80f59360282b?q=80&w=1967&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+    },
+
+    // Sports & Recreation
+    sports: {
+        // Various Sports
+        "golf":  ["https://images.unsplash.com/photo-1535131749006-b7f58c99034b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "tennis":  ["https://images.unsplash.com/flagged/photo-1576972405668-2d020a01cbfa?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "skiing":  ["https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "snowboarding":  ["https://images.unsplash.com/photo-1518608774889-b04d2abe7702?q=80&w=2012&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "biking": ["https://images.unsplash.com/photo-1576858574144-9ae1ebcf5ae5?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "cycling":  ["https://images.unsplash.com/photo-1600403477955-2b8c2cfab221?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "running": ["https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "basketball": ["https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2090&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "football": ["https://images.unsplash.com/photo-1566577739112-5180d4bf9390?q=80&w=1926&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "soccer": ["https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "volleyball":  ["https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=2014&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "baseball":  ["https://images.unsplash.com/photo-1529768167801-9173d94c2a42?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "hockey":  ["https://images.unsplash.com/photo-1545471977-94cac22e71ed?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "surfing":  ["https://images.unsplash.com/photo-1530870110042-98b2cb110834?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "archery": ["https://images.unsplash.com/photo-1641531105535-1ead3c1784ab?q=80&w=2011&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "axe throwing": ["https://images.unsplash.com/photo-1670011021674-1078f41ef4a2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "parkour": ["https://images.unsplash.com/photo-1495160101476-62b90f5fc1c1?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "rock wall": ["https://images.unsplash.com/photo-1513083457273-8ea7b2a045c4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "bouldering": ["https://images.unsplash.com/photo-1564769662533-4f00a87b4056?q=80&w=2144&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "fencing": ["https://images.unsplash.com/photo-1505619656705-59ebc350b547?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "martial arts": ["https://images.unsplash.com/photo-1555597408-26bc8e548a46?q=80&w=2123&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "trampoline": ["https://images.unsplash.com/photo-1632163570616-8699e344f486?q=80&w=2026&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "skateboarding": ["https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "roller skating": ["https://images.unsplash.com/photo-1692150972658-6f7a54122676?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+    },
+    // New category: Wellness & Mindfulness
+    wellness: {
+        "acupuncture": ["https://images.unsplash.com/photo-1598555763574-dca77e10427e?q=80&w=2097&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",],
+
+        "sound healing": ["https://images.unsplash.com/photo-1593810451410-8fbb422cc15e?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "forest bathing": ["https://images.unsplash.com/photo-1606825004533-dbfb13be4cb5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "tai chi": ["https://images.unsplash.com/photo-1576237652526-111d7669d9cc?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "aromatherapy": ["https://images.unsplash.com/photo-1492552181161-62217fc3076d?q=80&w=2097&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "crystal healing": ["https://images.unsplash.com/photo-1567113463224-37cf03ba4577?q=80&w=2051&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "reiki": ["https://images.unsplash.com/photo-1562026700-3425431ecb5b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "flotation tank": ["https://images.unsplash.com/photo-1605158743762-f887b36eef11?q=80&w=1956&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+        "mud bath": ["https://images.unsplash.com/photo-1631801754345-8b998163dc1d?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+
+
+    },
+
+    // New category: Educational Activities
+    educational: {
+        "astronomy class": ["https://images.unsplash.com/photo-1743147177981-2ae6f1f97e2a?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "cooking workshop": ["https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "wine tasting": ["https://images.unsplash.com/photo-1558670460-cad0c19b1840?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "tea ceremony": ["https://images.unsplash.com/photo-1613217138844-1dae03c64d89?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "perfume making": ["https://images.unsplash.com/photo-1709660274859-7f1b42c2c3fa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "chocolate making": ["https://images.unsplash.com/photo-1590080875852-ba44f83ff2db?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "bread baking": ["https://images.unsplash.com/photo-1630329777937-e0de732a893c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "cheese making": ["https://images.unsplash.com/photo-1663841365334-06805f34af15?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "craft workshop": ["https://images.unsplash.com/photo-1513785077084-84adb77e90ab?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "language class": ["https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""]
+    },
+
+    // New category: Agricultural & Rural
+    rural: {
+        "farm stay": ["https://images.unsplash.com/photo-1679984743122-82e0f372e748?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "olive harvesting": ["https://images.unsplash.com/photo-1592069200809-90266ffaf0f5?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "grape picking": ["https://images.unsplash.com/photo-1727063186730-eb555baaf039?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "beekeeping": ["https://images.unsplash.com/photo-1647427060148-ea2b8f7c6bb3?q=80&w=2013&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "truffle hunting": ["https://images.unsplash.com/photo-1589208310452-7cf38ba4d109?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "rice farming": ["https://images.unsplash.com/photo-1593442809186-35c768d100d3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "organic farming": ["https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "sheep herding": ["https://images.unsplash.com/photo-1511771426841-8119ef5f32fd?q=80&w=2022&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "maple tapping": ["https://images.unsplash.com/photo-1713700878349-ff78b22a640e?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""],
+        "lavender field": ["https://images.unsplash.com/photo-1499002238440-d264edd596ec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", ""]
+    }
+};
 
 // Default images based on time of day
 const timeOfDayImages = {
   "morning": "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1200",
-  "afternoon": "https://images.unsplash.com/photo-1502209524164-acea936639a2?auto=format&fit=crop&w=1200",
-  "evening": "https://images.unsplash.com/photo-1507400492013-162706c8c05e?auto=format&fit=crop&w=1200"
+  "afternoon": "https://images.unsplash.com/photo-1709442956059-5bc5b601624e?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "evening": "https://images.unsplash.com/photo-1504261025028-554905831f45?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 };
 
 // Fallback image
