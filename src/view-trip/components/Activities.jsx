@@ -32,6 +32,7 @@ const activityImageData = {
             "https://images.unsplash.com/photo-1579118559062-39e94a22dbb8?q=80&w=2012&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         ],
         "air balloon":["https://images.unsplash.com/photo-1522943854798-7ea1c5464eba?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+        "cable car":["https://images.unsplash.com/photo-1579699806448-2c59418850ae?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
 
         // Hiking & Mountain Activities
         "hike": [
@@ -315,6 +316,10 @@ const activityImageData = {
             "https://images.unsplash.com/photo-1541742425281-c1d3fc8aff96?q=80&w=2012&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             ""
         ],
+        "museum": [
+            "https://images.unsplash.com/photo-1554907984-15263bfd63bd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1554907984-15263bfd63bd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
             
         "maritime": [
             "https://images.unsplash.com/photo-1718314786551-798f1398a7b1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -439,6 +444,10 @@ const activityImageData = {
         ],
         "archaeology": [
             "https://images.unsplash.com/photo-1613059312885-8a758073461b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ""
+        ],
+        "shopping":[
+            "https://images.unsplash.com/photo-1481437156560-3205f6a55735?q=80&w=2095&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             ""
         ],
 
@@ -605,6 +614,23 @@ const activityImageData = {
         "departure":[
                 "https://images.unsplash.com/photo-1490430657723-4d607c1503fc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         ],
+        "departure from":[
+                "https://images.unsplash.com/photo-1490430657723-4d607c1503fc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "Ferry Transfer":[
+                "https://images.unsplash.com/photo-1710661428083-2bdb61d37aaa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "Ferry ":[
+                "https://images.unsplash.com/photo-1676889128827-5f9a1f5d213b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        
+
+        "travel to":[
+                "https://images.unsplash.com/photo-1647286383067-6e2ae17e5b16?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "fly to":[
+                "https://images.unsplash.com/photo-1647286383067-6e2ae17e5b16?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
         "railway":["https://images.unsplash.com/uploads/1413387158190559d80f7/6108b580?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
         "visit":["https://images.unsplash.com/photo-1495551759417-98076011672b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
         "explore":["https://images.unsplash.com/photo-1603714196939-6f6436c8d0c5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
@@ -757,6 +783,12 @@ const activityImageData = {
         // Natural Landscapes
         "forest": [
             "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "rainforest": [
+            "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
+        "island": [
+            "https://images.unsplash.com/photo-1502085671122-2d218cd434e6?q=80&w=2126&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         ],
         "woods": [
             "https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -1336,19 +1368,23 @@ const isRTL = language === "he";
      */
     const getImageForActivity = (activity, destination = '') => {
         if (!activity) {
-          console.log('Warning: Activity is undefined');
+        //   console.log('Warning: Activity is undefined');
           return fallbackImage;
         }
         
         try {
           // Extract activity text for matching
           const activityText = `${activity.activity || ''}`.toLowerCase();
+          const lowercaseDestination = destination.toLowerCase();  // THIS LINE IS MISSING
+
           
           // First, try direct matches from your existing data structure
           for (const category in activityImageData) {
             for (const [keyword, imageUrls] of Object.entries(activityImageData[category])) {
-              if (activityText.includes(keyword.toLowerCase()) && imageUrls && imageUrls.length > 0) {
-                console.log(`Direct match found for "${keyword}"`);
+                // Use word boundary check with regex
+                const keywordRegex = new RegExp(`\\b${keyword.toLowerCase()}\\b`);
+                if (keywordRegex.test(activityText) && imageUrls && imageUrls.length > 0) {
+                //   console.log(`Direct match found for "${keyword}"`);
                 
                 // Important fix: Check if the URL is valid before returning it
                 const imageUrl = imageUrls[0];
@@ -1704,8 +1740,9 @@ const isRTL = language === "he";
             
             // Check each keyword for a match
             for (const [keyword, mapping] of Object.entries(categoryMapping)) {
-                if (activityText.includes(keyword)) {
-                    matchedKeywords.push({
+                const keywordRegex = new RegExp(`\\b${keyword.toLowerCase()}\\b`);
+                if (keywordRegex.test(activityText)) {
+                  matchedKeywords.push({
                         keyword,
                         category: mapping.category,
                         subcategory: mapping.subcategory,
@@ -1720,7 +1757,7 @@ const isRTL = language === "he";
             // If we have matches, use the best (longest) match
             if (matchedKeywords.length > 0) {
                 const bestMatch = matchedKeywords[0];
-                console.log(`Best keyword match: "${bestMatch.keyword}" -> ${bestMatch.category}.${bestMatch.subcategory}`);
+                // console.log(`Best keyword match: "${bestMatch.keyword}" -> ${bestMatch.category}.${bestMatch.subcategory}`);
                 
                 // Safely access image data with fallbacks
                 const categoryData = activityImageData[bestMatch.category] || {};
@@ -1833,7 +1870,7 @@ const isRTL = language === "he";
                 if (lowercaseDestination.includes(destKey)) {
                     for (const [location, imageUrl] of Object.entries(locations)) {
                         if (activityText.includes(location)) {
-                            console.log(`Location match found for destination ${destKey}: "${location}"`);
+                            // console.log(`Location match found for destination ${destKey}: "${location}"`);
                             return imageUrl;
                         }
                     }
@@ -1841,7 +1878,7 @@ const isRTL = language === "he";
             }
             
             // STEP 5: Time-based fallback if nothing else matched
-            console.log("Using time-based fallback image selection");
+            // console.log("Using time-based fallback image selection");
             let hour = 12; // Default to noon if no time specified
             
             if (activity.bestTime) {
@@ -1853,13 +1890,13 @@ const isRTL = language === "he";
             }
             
             if (hour >= 5 && hour < 11) {
-                console.log("Morning activity (5-11 AM)");
+                // console.log("Morning activity (5-11 AM)");
                 return timeOfDayImages.morning || fallbackImage;
             } else if (hour >= 11 && hour < 17) {
-                console.log("Afternoon activity (11 AM-5 PM)");
+                // console.log("Afternoon activity (11 AM-5 PM)");
                 return timeOfDayImages.afternoon || fallbackImage;
             } else {
-                console.log("Evening activity (5 PM onwards or before 5 AM)");
+                // console.log("Evening activity (5 PM onwards or before 5 AM)");
                 return timeOfDayImages.evening || fallbackImage;
             }
         } catch (error) {
@@ -1921,7 +1958,7 @@ const isRTL = language === "he";
   className="w-full h-full object-cover"
   onError={(e) => {
     e.target.onerror = null; // Prevent infinite error loops
-    console.log('Image failed to load for:', activity.activity);
+    // console.log('Image failed to load for:', activity.activity);
     e.target.src = fallbackImage;
   }}
   loading="lazy"
