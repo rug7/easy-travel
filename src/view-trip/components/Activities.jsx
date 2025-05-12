@@ -31,6 +31,7 @@ const activityImageData = {
             "https://images.unsplash.com/photo-1495554698253-681539e9ea84?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             "https://images.unsplash.com/photo-1579118559062-39e94a22dbb8?q=80&w=2012&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         ],
+        "air balloon":["https://images.unsplash.com/photo-1522943854798-7ea1c5464eba?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
 
         // Hiking & Mountain Activities
         "hike": [
@@ -185,7 +186,6 @@ const activityImageData = {
             "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             ""
         ],
-
         // Water Sports
         "surf":  [
             "https://images.unsplash.com/photo-1502680390469-be75c86b636f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -601,6 +601,24 @@ const activityImageData = {
         "restaurant": [
             "52566626-52f8b828add9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             "",
+        ],
+        "departure":[
+                "https://images.unsplash.com/photo-1490430657723-4d607c1503fc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "railway":["https://images.unsplash.com/uploads/1413387158190559d80f7/6108b580?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+        "visit":["https://images.unsplash.com/photo-1495551759417-98076011672b?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+        "explore":["https://images.unsplash.com/photo-1603714196939-6f6436c8d0c5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+        "arrival":[
+            "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    ],
+    "landing":[
+        "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+],
+        "check in":[
+                "https://images.unsplash.com/photo-1553369728-15ec6971afaf?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        "check out":[
+                "https://images.unsplash.com/photo-1589568365171-77cdf21d2ed6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         ],
         "dining": [
             "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -1318,28 +1336,28 @@ const isRTL = language === "he";
      */
     const getImageForActivity = (activity, destination = '') => {
         if (!activity) {
-            console.log('Warning: Activity is undefined');
-            return fallbackImage;
+          console.log('Warning: Activity is undefined');
+          return fallbackImage;
         }
-    
-        // Extract activity text with description for matching
-        const activityText = `${activity.activity || ''} ${activity.description || ''}`.toLowerCase();
-        const lowercaseDestination = destination.toLowerCase();
         
-        console.log('Finding image for activity:', activityText, 'in destination:', destination);
-        
-        // Safety checks and defensive programming
         try {
-            // STEP 1: Build destination-aware direct matches map
-            const directMatchMap = buildDirectMatchMap(destination);
-            
-            // STEP 2: Check for direct matches first (exact phrase matching)
-            for (const [phrase, imageUrl] of Object.entries(directMatchMap)) {
-                if (activityText.includes(phrase.toLowerCase())) {
-                    console.log(`Direct match found for "${phrase}"`);
-                    return imageUrl;
+          // Extract activity text for matching
+          const activityText = `${activity.activity || ''}`.toLowerCase();
+          
+          // First, try direct matches from your existing data structure
+          for (const category in activityImageData) {
+            for (const [keyword, imageUrls] of Object.entries(activityImageData[category])) {
+              if (activityText.includes(keyword.toLowerCase()) && imageUrls && imageUrls.length > 0) {
+                console.log(`Direct match found for "${keyword}"`);
+                
+                // Important fix: Check if the URL is valid before returning it
+                const imageUrl = imageUrls[0];
+                if (imageUrl && imageUrl.startsWith('http')) {
+                  return imageUrl; // Return the first valid URL in the array
                 }
+              }
             }
+          }
             
             // STEP 3: If no direct match, search by destination-aware keywords
             // Define category mapping for keywords
@@ -1348,61 +1366,116 @@ const isRTL = language === "he";
                 "sea": { category: "water", subcategory: "sea" },
                 "ocean": { category: "water", subcategory: "ocean" },
                 "beach": { category: "water", subcategory: "beach" },
+                "beachfront": { category: "water", subcategory: "beachfront" },
+                "shore": { category: "water", subcategory: "shore" },
                 "coast": { category: "water", subcategory: "coast" },
                 "surf": { category: "water", subcategory: "surfing" },
+                "surfing": { category: "water", subcategory: "surfing" },
                 "wave": { category: "water", subcategory: "surfing" },
                 "swim": { category: "water", subcategory: "swimming" },
-                "snorkel": { category: "water", subcategory: "snorkeling" },
+                "swimming": { category: "water", subcategory: "swimming" },
+                "snorkel": { category: "water", subcategory: "snorkel" },
+                "snorkeling": { category: "water", subcategory: "snorkeling" },
                 "dive": { category: "water", subcategory: "diving" },
+                "diving": { category: "water", subcategory: "diving" },
                 "scuba": { category: "water", subcategory: "scuba" },
                 "boat": { category: "water", subcategory: "boat" },
+                "boating": { category: "water", subcategory: "boating" },
                 "yacht": { category: "water", subcategory: "yacht" },
                 "sail": { category: "water", subcategory: "sailing" },
+                "sailing": { category: "water", subcategory: "sailing" },
                 "cruise": { category: "water", subcategory: "cruise" },
+                "cruising": { category: "water", subcategory: "cruising" },
                 "island": { category: "water", subcategory: "island" },
                 "bay": { category: "water", subcategory: "coast" },
                 "lagoon": { category: "water", subcategory: "beach" },
                 "reef": { category: "nature", subcategory: "reef" },
                 "coral": { category: "nature", subcategory: "coral" },
                 "kayak": { category: "water", subcategory: "kayak" },
+                "kayaking": { category: "water", subcategory: "kayaking" },
                 "paddle": { category: "water", subcategory: "paddleboard" },
+                "paddleboard": { category: "water", subcategory: "paddleboard" },
+                "paddling": { category: "water", subcategory: "paddling" },
                 "canoe": { category: "water", subcategory: "canoe" },
+                "canoeing": { category: "water", subcategory: "canoeing" },
                 "raft": { category: "water", subcategory: "rafting" },
+                "rafting": { category: "water", subcategory: "rafting" },
                 "jet ski": { category: "water", subcategory: "jet skiing" },
+                "jet skiing": { category: "water", subcategory: "jet skiing" },
                 "waterfall": { category: "water", subcategory: "waterfall" },
                 "cenote": { category: "water", subcategory: "swimming" },
+                "maritime": { category: "water", subcategory: "maritime" },
+                "harbour": { category: "water", subcategory: "harbour" },
+                "harbor": { category: "water", subcategory: "harbor" },
+                "marina": { category: "water", subcategory: "marina" },
+                "bodyboarding": { category: "water", subcategory: "bodyboarding" },
+                "white water": { category: "water", subcategory: "white water" },
+                "catamaran": { category: "water", subcategory: "catamaran" },
+                "fishing": { category: "water", subcategory: "fishing" },
+                "wakeboarding": { category: "water", subcategory: "wakeboarding" },
+                "windsurfing": { category: "water", subcategory: "windsurfing" },
+                "flyboarding": { category: "water", subcategory: "flyboarding" },
+                "freediving": { category: "water", subcategory: "freediving" },
+                "kite surfing": { category: "water", subcategory: "kite surfing" },
+                "pearl diving": { category: "water", subcategory: "pearl diving" },
+                "picnic": { category: "water", subcategory: "picnic" },
                 
                 // Adventure activities keywords
-                "hike": { category: "adventure", subcategory: "hiking" },
-                "trek": { category: "adventure", subcategory: "trekking" },
+                "hike": { category: "adventure", subcategory: "hike" },
+                "hiking": { category: "adventure", subcategory: "hiking" },
+                "air balloon": { category: "adventure", subcategory: "air balloon" },
+                "trek": { category: "adventure", subcategory: "trek" },
+                "trekking": { category: "adventure", subcategory: "trekking" },
                 "climb": { category: "adventure", subcategory: "climbing" },
+                "climbing": { category: "adventure", subcategory: "climbing" },
+                "rock climbing": { category: "adventure", subcategory: "rock climbing" },
+                "ice climbing": { category: "adventure", subcategory: "ice climbing" },
                 "mountain": { category: "adventure", subcategory: "mountain" },
+                "mountaineering": { category: "adventure", subcategory: "mountaineering" },
                 "valley": { category: "nature", subcategory: "valley" },
                 "volcano": { category: "adventure", subcategory: "volcano" },
                 "summit": { category: "adventure", subcategory: "summit" },
                 "trail": { category: "adventure", subcategory: "trail" },
                 "zipline": { category: "adventure", subcategory: "zipline" },
-                "ziplining": { category: "adventure", subcategory: "zipline" },
+                "ziplining": { category: "adventure", subcategory: "ziplining" },
                 "bungee": { category: "adventure", subcategory: "bungee" },
                 "bungy": { category: "adventure", subcategory: "bungee" },
                 "paraglid": { category: "adventure", subcategory: "paragliding" },
+                "paragliding": { category: "adventure", subcategory: "paragliding" },
                 "skydiv": { category: "adventure", subcategory: "skydiving" },
+                "skydiving": { category: "adventure", subcategory: "skydiving" },
+                "wingsuit": { category: "adventure", subcategory: "wingsuit" },
+                "hang gliding": { category: "adventure", subcategory: "hang gliding" },
                 "horse": { category: "adventure", subcategory: "horseback" },
-                "riding": { category: "adventure", subcategory: "horseback" },
+                "horseback": { category: "adventure", subcategory: "horseback" },
+                "riding": { category: "adventure", subcategory: "riding" },
+                "horseback riding": { category: "adventure", subcategory: "horseback riding" },
                 "safari": { category: "adventure", subcategory: "safari" },
                 "wildlife": { category: "adventure", subcategory: "wildlife" },
                 "animal": { category: "adventure", subcategory: "animal" },
                 "bird": { category: "adventure", subcategory: "birdwatching" },
+                "birdwatching": { category: "adventure", subcategory: "birdwatching" },
+                "dolphin": { category: "adventure", subcategory: "dolphin" },
+                "whale": { category: "adventure", subcategory: "whale" },
                 "canyon": { category: "adventure", subcategory: "canyoning" },
+                "canyoning": { category: "adventure", subcategory: "canyoning" },
                 "sand": { category: "adventure", subcategory: "sandboarding" },
+                "sandboarding": { category: "adventure", subcategory: "sandboarding" },
                 "dune": { category: "nature", subcategory: "dune" },
                 "cave": { category: "adventure", subcategory: "caving" },
+                "caving": { category: "adventure", subcategory: "caving" },
+                "spelunking": { category: "adventure", subcategory: "spelunking" },
+                "helicopter": { category: "adventure", subcategory: "helicopter" },
+                "via ferrata": { category: "adventure", subcategory: "via ferrata" },
+                "rappelling": { category: "adventure", subcategory: "rappelling" },
+                "zorbing": { category: "adventure", subcategory: "zorbing" },
                 
                 // Cultural & urban keywords
                 "museum": { category: "cultural", subcategory: "museum" },
                 "gallery": { category: "cultural", subcategory: "gallery" },
                 "art": { category: "cultural", subcategory: "art" },
                 "exhibit": { category: "cultural", subcategory: "exhibition" },
+                "exhibition": { category: "cultural", subcategory: "exhibition" },
                 "temple": { category: "cultural", subcategory: "temple" },
                 "shrine": { category: "cultural", subcategory: "temple" },
                 "church": { category: "cultural", subcategory: "church" },
@@ -1442,12 +1515,29 @@ const isRTL = language === "he";
                 "ceremony": { category: "cultural", subcategory: "ceremony" },
                 "traditional": { category: "cultural", subcategory: "traditional" },
                 "crafts": { category: "cultural", subcategory: "traditional" },
+                "downtown": { category: "cultural", subcategory: "downtown" },
+                "walking": { category: "cultural", subcategory: "walking" },
+                "walking tour": { category: "cultural", subcategory: "walking tour" },
+                "celebration": { category: "cultural", subcategory: "celebration" },
+                "cultural": { category: "cultural", subcategory: "cultural" },
+                "amphitheater": { category: "cultural", subcategory: "amphitheater" },
+                "poetry reading": { category: "cultural", subcategory: "poetry reading" },
+                "calligraphy": { category: "cultural", subcategory: "calligraphy" },
+                "pottery making": { category: "cultural", subcategory: "pottery making" },
+                "weaving": { category: "cultural", subcategory: "weaving" },
+                "glass blowing": { category: "cultural", subcategory: "glass blowing" },
+                "street food": { category: "cultural", subcategory: "street food" },
+                "night market": { category: "cultural", subcategory: "night market" },
+                "parade": { category: "cultural", subcategory: "parade" },
+                "lantern festival": { category: "cultural", subcategory: "lantern festival" },
+                "traditional dance": { category: "cultural", subcategory: "traditional dance" },
                 
                 // Food & dining keywords
                 "restaurant": { category: "lifestyle", subcategory: "restaurant" },
                 "dining": { category: "lifestyle", subcategory: "dining" },
                 "dinner": { category: "lifestyle", subcategory: "dinner" },
                 "lunch": { category: "lifestyle", subcategory: "lunch" },
+                "Lunch at": { category: "lifestyle", subcategory: "Lunch at" },
                 "breakfast": { category: "lifestyle", subcategory: "breakfast" },
                 "brunch": { category: "lifestyle", subcategory: "breakfast" },
                 "food": { category: "lifestyle", subcategory: "food" },
@@ -1464,6 +1554,13 @@ const isRTL = language === "he";
                 "bar": { category: "lifestyle", subcategory: "bar" },
                 "cafe": { category: "lifestyle", subcategory: "cafe" },
                 "coffee": { category: "lifestyle", subcategory: "coffee" },
+                "departure": { category: "lifestyle", subcategory: "departure" },
+                "arrival": { category: "lifestyle", subcategory: "arrival" },
+                "landing": { category: "lifestyle", subcategory: "landing" },
+                "check in": { category: "lifestyle", subcategory: "check in" },
+                "check out": { category: "lifestyle", subcategory: "check out" },
+                "meal": { category: "lifestyle", subcategory: "meal" },
+                "cooking class": { category: "lifestyle", subcategory: "cooking class" },
                 
                 // Nature & landscape keywords
                 "forest": { category: "nature", subcategory: "forest" },
@@ -1478,7 +1575,6 @@ const isRTL = language === "he";
                 "lake": { category: "nature", subcategory: "lake" },
                 "stream": { category: "nature", subcategory: "river" },
                 "desert": { category: "nature", subcategory: "desert" },
-                "dune": { category: "nature", subcategory: "dune" },
                 "canyon": { category: "nature", subcategory: "canyon" },
                 "cave": { category: "nature", subcategory: "cave" },
                 "countryside": { category: "nature", subcategory: "countryside" },
@@ -1489,6 +1585,7 @@ const isRTL = language === "he";
                 "stargazing": { category: "nature", subcategory: "stargazing" },
                 "aurora": { category: "nature", subcategory: "aurora" },
                 "northern light": { category: "nature", subcategory: "northern lights" },
+                "northern lights": { category: "nature", subcategory: "northern lights" },
                 "sunrise": { category: "nature", subcategory: "sunrise" },
                 "sunset": { category: "nature", subcategory: "sunset" },
                 "rainbow": { category: "nature", subcategory: "rainbow" },
@@ -1499,6 +1596,9 @@ const isRTL = language === "he";
                 "mangrove": { category: "nature", subcategory: "mangrove" },
                 "glacier": { category: "nature", subcategory: "glacier" },
                 "ice": { category: "nature", subcategory: "glacier" },
+                "savanna": { category: "nature", subcategory: "savanna" },
+                "tundra": { category: "nature", subcategory: "tundra" },
+                "wetland": { category: "nature", subcategory: "wetland" },
                 
                 // Wellness & relaxation keywords
                 "spa": { category: "lifestyle", subcategory: "spa" },
@@ -1519,15 +1619,23 @@ const isRTL = language === "he";
                 "forest bathing": { category: "wellness", subcategory: "forest bathing" },
                 "tai chi": { category: "wellness", subcategory: "tai chi" },
                 "aromatherapy": { category: "wellness", subcategory: "aromatherapy" },
+                "crystal healing": { category: "wellness", subcategory: "crystal healing" },
+                "reiki": { category: "wellness", subcategory: "reiki" },
+                "flotation tank": { category: "wellness", subcategory: "flotation tank" },
+                "mud bath": { category: "wellness", subcategory: "mud bath" },
                 
                 // Sports & recreation keywords
                 "golf": { category: "sports", subcategory: "golf" },
                 "tennis": { category: "sports", subcategory: "tennis" },
                 "ski": { category: "sports", subcategory: "skiing" },
+                "skiing": { category: "sports", subcategory: "skiing" },
                 "snowboard": { category: "sports", subcategory: "snowboarding" },
+                "snowboarding": { category: "sports", subcategory: "snowboarding" },
                 "bike": { category: "sports", subcategory: "biking" },
+                "biking": { category: "sports", subcategory: "biking" },
                 "cycling": { category: "sports", subcategory: "cycling" },
                 "run": { category: "sports", subcategory: "running" },
+                "running": { category: "sports", subcategory: "running" },
                 "basketball": { category: "sports", subcategory: "basketball" },
                 "football": { category: "sports", subcategory: "football" },
                 "soccer": { category: "sports", subcategory: "soccer" },
@@ -1536,17 +1644,23 @@ const isRTL = language === "he";
                 "hockey": { category: "sports", subcategory: "hockey" },
                 "archery": { category: "sports", subcategory: "archery" },
                 "axe": { category: "sports", subcategory: "axe throwing" },
+                "axe throwing": { category: "sports", subcategory: "axe throwing" },
                 "parkour": { category: "sports", subcategory: "parkour" },
                 "bouldering": { category: "sports", subcategory: "bouldering" },
                 "fencing": { category: "sports", subcategory: "fencing" },
                 "martial art": { category: "sports", subcategory: "martial arts" },
+                "martial arts": { category: "sports", subcategory: "martial arts" },
                 "trampoline": { category: "sports", subcategory: "trampoline" },
                 "skate": { category: "sports", subcategory: "skateboarding" },
+                "skateboarding": { category: "sports", subcategory: "skateboarding" },
                 "roller": { category: "sports", subcategory: "roller skating" },
+                "roller skating": { category: "sports", subcategory: "roller skating" },
+                "rock wall": { category: "sports", subcategory: "rock wall" },
                 
                 // Educational & workshop keywords
                 "class": { category: "educational", subcategory: "class" },
                 "workshop": { category: "educational", subcategory: "craft workshop" },
+                "craft workshop": { category: "educational", subcategory: "craft workshop" },
                 "lesson": { category: "educational", subcategory: "class" },
                 "teach": { category: "educational", subcategory: "class" },
                 "learn": { category: "educational", subcategory: "class" },
@@ -1559,20 +1673,31 @@ const isRTL = language === "he";
                 "bread baking": { category: "educational", subcategory: "bread baking" },
                 "cheese making": { category: "educational", subcategory: "cheese making" },
                 "language": { category: "educational", subcategory: "language class" },
+                "language class": { category: "educational", subcategory: "language class" },
                 
                 // Rural & agricultural keywords
                 "farm": { category: "rural", subcategory: "farm stay" },
+                "farm stay": { category: "rural", subcategory: "farm stay" },
                 "olive": { category: "rural", subcategory: "olive harvesting" },
+                "olive harvesting": { category: "rural", subcategory: "olive harvesting" },
                 "grape": { category: "rural", subcategory: "grape picking" },
+                "grape picking": { category: "rural", subcategory: "grape picking" },
                 "harvest": { category: "rural", subcategory: "organic farming" },
                 "bee": { category: "rural", subcategory: "beekeeping" },
+                "beekeeping": { category: "rural", subcategory: "beekeeping" },
                 "truffle": { category: "rural", subcategory: "truffle hunting" },
+                "truffle hunting": { category: "rural", subcategory: "truffle hunting" },
                 "rice": { category: "rural", subcategory: "rice farming" },
+                "rice farming": { category: "rural", subcategory: "rice farming" },
                 "organic": { category: "rural", subcategory: "organic farming" },
+                "organic farming": { category: "rural", subcategory: "organic farming" },
                 "sheep": { category: "rural", subcategory: "sheep herding" },
+                "sheep herding": { category: "rural", subcategory: "sheep herding" },
                 "maple": { category: "rural", subcategory: "maple tapping" },
-                "lavender": { category: "rural", subcategory: "lavender field" }
-            };
+                "maple tapping": { category: "rural", subcategory: "maple tapping" },
+                "lavender": { category: "rural", subcategory: "lavender field" },
+                "lavender field": { category: "rural", subcategory: "lavender field" }
+};
             
             // Build an array of keyword matches for the activity text
             const matchedKeywords = [];
@@ -1790,16 +1915,16 @@ const isRTL = language === "he";
                                         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                                     </div>
                                 )}
-                                <img 
-    src={getImageForActivity(activity) || fallbackImage}
-    alt={activity.activity}
-    className="w-full h-full object-cover"
-    onError={(e) => {
-        console.log('Image failed to load for:', activity.activity); // Debug line
-        e.target.onerror = null;
-        e.target.src = fallbackImage;
-    }}
-    loading="lazy"
+                               <img 
+  src={getImageForActivity(activity, destination)}
+  alt={activity.activity}
+  className="w-full h-full object-cover"
+  onError={(e) => {
+    e.target.onerror = null; // Prevent infinite error loops
+    console.log('Image failed to load for:', activity.activity);
+    e.target.src = fallbackImage;
+  }}
+  loading="lazy"
 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
                                 
