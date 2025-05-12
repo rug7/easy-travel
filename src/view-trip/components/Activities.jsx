@@ -373,8 +373,7 @@ const activityImageData = {
             ""
         ],
         "white water": [
-            "https://images.unsplash.com/photo-1561187708-6424a4a6c689?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            ""
+            "https://images.unsplash.com/photo-1561187708-6424a4a6c689?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         ],
     },
 
@@ -970,203 +969,780 @@ const isRTL = language === "he";
     // Load images for current day's activities
     useEffect(() => {
         if (dayKeys.length && trip?.tripData?.itinerary[`day${selectedDay}`]) {
-            assignActivityImages();
+            const activities = trip.tripData.itinerary[`day${selectedDay}`];
+            activities.forEach(activity => {
+                const activityId = `${selectedDay}_${activity.activity}`;
+                setLoadingImages(prev => ({
+                    ...prev,
+                    [activityId]: false
+                }));
+            });
         }
     }, [selectedDay, trip]);
 
-    // Function to find the best image for an activity
-    const getActivityImage = (activity) => {
-        // Check activity name and description for keywords
-        const activityText = `${activity.activity} ${activity.description}`.toLowerCase();
 
-        // Find matching image based on keywords
-        for (const [keyword, url] of Object.entries(activityImageData)) {
-            if (activityText.includes(keyword.toLowerCase())) {
-                return url;
-            }
-        }
+    // const getImageForActivity = (activity) => {
 
-        // Default images based on time of day
-        const timeOfDay = activity.bestTime.toLowerCase();
-        if (timeOfDay.includes('am') || timeOfDay.includes('morning')) {
-            return timeOfDayImages.morning;
-        } else if (timeOfDay.includes('pm') && parseInt(activity.bestTime.split(':')[0]) < 6) {
-            return timeOfDayImages.afternoon;
-        } else {
-            return timeOfDayImages.evening;
-        }
-    };
-
-    // Assign images to activities with simulated loading
-    const assignActivityImages = () => {
-        const activities = trip.tripData.itinerary[`day${selectedDay}`];
-        const newImages = { ...loadedActivityImages };
-        const newLoadingStates = { ...loadingImages };
-        const usedImagesForDay = new Set();
+    //     const activityText = `${activity.activity} ${activity.description || ''}`.toLowerCase();
+    //     console.log('Processing:', activityText);
     
-        // Set loading states for all activities in this day
-        activities.forEach(activity => {
-            const activityId = `${selectedDay}_${activity.activity}`;
-            if (!newImages[activityId]) {
-                newLoadingStates[activityId] = true;
-            }
-        });
-        setLoadingImages(newLoadingStates);
+    //     // Helper function to find longest matching keyword
+    //     const findLongestMatch = (text) => {
+    //         let longestMatch = {
+    //             keyword: '',
+    //             category: '',
+    //             images: null
+    //         };
     
-        // Simulate loading delay (remove this setTimeout for instant loading)
-        setTimeout(() => {
-            // Process each activity
-            activities.forEach((activity, index) => {
-                const activityId = `${selectedDay}_${activity.activity}`;
-                
-                if (!newImages[activityId]) {
-                    try {
-                      // Use the same matching logic as getImageForActivity
-                      const imageUrl = getImageForActivity(activity, index);
-                      newImages[activityId] = imageUrl;
-                    } catch (error) {
-                      console.error(`Error assigning image for ${activity.activity}:`, error);
-                      newImages[activityId] = fallbackImage;
-                    } finally {
-                      newLoadingStates[activityId] = false;
-                    }
-                  }
-                });
-                
-                setLoadedActivityImages(newImages);
-                setLoadingImages(newLoadingStates);
-        }, 300); // 300ms simulated loading for a smoother experience
-    };
-
-    // Function to get image for a specific activity
-    const getImageForActivity = (activity, index) => {
-        const activityId = `${selectedDay}_${activity.activity}`;
-        
-        // If image is already loaded, return it
-        if (loadedActivityImages[activityId]) {
-          return loadedActivityImages[activityId];
-        }
-        
-        const activityText = `${activity.activity} ${activity.description || ''}`.toLowerCase();
-        
-        // Track already used images to avoid duplicates
-        const usedImagesForCurrentDay = new Set();
-        trip?.tripData?.itinerary[`day${selectedDay}`]?.forEach((act, i) => {
-          if (i < index && loadedActivityImages[`${selectedDay}_${act.activity}`]) {
-            usedImagesForCurrentDay.add(loadedActivityImages[`${selectedDay}_${act.activity}`]);
-          }
-        });
-        
-        // Store all potential matches with their priority scores
-        const matches = [];
-        
-        // 1. First search for multi-word exact matches (highest priority)
-        for (const category in activityImageData) {
-          for (const keyword in activityImageData[category]) {
-            if (keyword.includes(' ') && activityText.includes(keyword.toLowerCase())) {
-              matches.push({
-                keyword,
-                category,
-                images: activityImageData[category][keyword],
-                priority: 100 + keyword.length // Multi-word exact matches get highest priority
-              });
-            }
-          }
-        }
-        
-        // 2. Then look for single-word exact matches
-        for (const category in activityImageData) {
-          for (const keyword in activityImageData[category]) {
-            if (!keyword.includes(' ') && activityText.includes(keyword.toLowerCase())) {
-              // Check if this is a whole word match, not part of another word
-              const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`);
-              if (regex.test(activityText)) {
-                matches.push({
-                  keyword,
-                  category,
-                  images: activityImageData[category][keyword],
-                  priority: 50 + keyword.length // Single-word exact matches get medium priority
-                });
-              }
-            }
-          }
-        }
-        
-        // 3. Finally check partial matches for longer words
-        if (matches.length === 0) {
-          const words = activityText.split(/\s+/);
-          
-          for (const word of words) {
-            if (word.length < 4) continue; // Skip very short words
-            
-            for (const category in activityImageData) {
-              for (const keyword in activityImageData[category]) {
-                if (keyword.toLowerCase().includes(word) || word.includes(keyword.toLowerCase())) {
-                  matches.push({
-                    keyword,
-                    category,
-                    images: activityImageData[category][keyword],
-                    priority: 10 + Math.min(word.length, keyword.length) // Partial matches get lowest priority
-                  });
-                }
-              }
-            }
-          }
-        }
-        
-        // Sort matches by priority (descending)
-        matches.sort((a, b) => b.priority - a.priority);
-        
-        // Special case handling for common activities
-        const activityLower = activity.activity.toLowerCase();
-        
-        // Handle specific cases like "Fish Market" = combination of "fish" and "market"
-        if (activityLower.includes('market')) {
-          if (activityLower.includes('fish market') || activityLower.includes('fish') || activityLower.includes('seafood')) {
-            // Try to find fish market or market images
-            const marketImages = activityImageData.cultural?.market || [];
-            if (marketImages.length > 0) {
-              for (const img of marketImages) {
-                if (!usedImagesForCurrentDay.has(img)) {
-                  return img;
-                }
-              }
-              return marketImages[0];
-            }
-          }
-        }
-        
-        // Go through matches in priority order
-        for (const match of matches) {
-          if (!match.images || !Array.isArray(match.images) || match.images.length === 0) {
-            continue;
-          }
-          
-          // Try to find an unused image
-          for (const img of match.images) {
-            if (img && !usedImagesForCurrentDay.has(img)) {
-              return img;
-            }
-          }
-          
-          // If all images used, just return the first valid one
-          if (match.images[0]) {
-            return match.images[0];
-          }
-        }
-        
-        // Fallback based on time of day if no matches
-        const timeOfDay = (activity.bestTime || '').toLowerCase();
-        if (timeOfDay.includes('am') || timeOfDay.includes('morning')) {
-          return timeOfDayImages.morning;
-        } else if (timeOfDay.includes('pm') && parseInt((activity.bestTime || '0:00').split(':')[0]) < 6) {
-          return timeOfDayImages.afternoon;
-        } else {
-          return timeOfDayImages.evening;
-        }
-      };
+    //         // Go through each category
+    //         for (const category in activityImageData) {
+    //             // Check each keyword in the category
+    //             for (const [keyword, images] of Object.entries(activityImageData[category])) {
+    //                 // If this keyword is in the text and longer than our current match
+    //                 if (text.includes(keyword.toLowerCase()) && 
+    //                     keyword.length > longestMatch.keyword.length) {
+    //                     longestMatch = {
+    //                         keyword,
+    //                         category,
+    //                         images
+    //                     };
+    //                 }
+    //             }
+    //         }
+    
+    //         return longestMatch;
+    //     };
+    
+    //     // Find the best match
+    //     const match = findLongestMatch(activityText);
+    //     console.log('Found match:', match.keyword, 'in category:', match.category);
+    
+    //     // If we found a match, use it
+    //     if (match.images && match.images.length > 0) {
+    //         return match.images[0];
+    //     }
+    
+    //     // Fallback to time-based images
+    //     const hour = parseInt(activity.bestTime?.split(':')[0] || '12');
+    //     if (hour >= 5 && hour < 12) {
+    //         return timeOfDayImages.morning;
+    //     } else if (hour >= 12 && hour < 17) {
+    //         return timeOfDayImages.afternoon;
+    //     } else {
+    //         return timeOfDayImages.evening;
+    //     }
+    // };
 
     // Function to create reliable Google Maps link
+    
+    const buildDirectMatchMap = (destination = '') => {
+        // Normalize and prepare destination string
+        const lowercaseDestination = destination.toLowerCase();
+        
+        // Initialize the direct match map
+        const directMatchMap = {};
+        
+        // Common activities across all destinations
+        const commonActivities = {
+            // Water activities
+            "snorkeling": activityImageData.water.snorkeling?.[0] || fallbackImage,
+            "swimming": activityImageData.water.swimming?.[0] || fallbackImage,
+            "diving": activityImageData.water.diving?.[0] || fallbackImage,
+            "scuba diving": activityImageData.water.diving?.[0] || fallbackImage,
+            "surfing": activityImageData.water.surfing?.[0] || fallbackImage,
+            "surf lesson": activityImageData.water.surfing?.[0] || fallbackImage,
+            "paddleboarding": activityImageData.water.paddleboard?.[0] || fallbackImage,
+            "stand-up paddleboarding": activityImageData.water.paddleboard?.[0] || fallbackImage,
+            "rafting": activityImageData.water.rafting?.[0] || fallbackImage,
+            "boat tour": activityImageData.water.boat?.[0] || fallbackImage,
+            "island tour": activityImageData.water.boat?.[0] || fallbackImage,
+            "kayaking": activityImageData.water.kayaking?.[0] || fallbackImage,
+            "canoeing": activityImageData.water.canoeing?.[0] || fallbackImage,
+            "fishing": activityImageData.water.fishing?.[0] || fallbackImage,
+            "whale watching": activityImageData.adventure.whale?.[0] || fallbackImage,
+            "dolphin watching": activityImageData.adventure.dolphin?.[0] || fallbackImage,
+            "jet skiing": activityImageData.water["jet skiing"]?.[0] || fallbackImage,
+            "sailing": activityImageData.water.sailing?.[0] || fallbackImage,
+            "cruise": activityImageData.water.cruise?.[0] || fallbackImage,
+            
+            // Beach and coastal activities
+            "beach day": activityImageData.water.beach?.[0] || fallbackImage,
+            "beach exploration": activityImageData.water.beach?.[0] || fallbackImage,
+            "beach visit": activityImageData.water.beach?.[0] || fallbackImage,
+            "coastline tour": activityImageData.water.coast?.[0] || fallbackImage,
+            "sunset viewing": activityImageData.water.sunset?.[0] || activityImageData.nature.sunset?.[0] || fallbackImage,
+            "sunset cruise": activityImageData.water.sunset?.[0] || activityImageData.water.cruise?.[0] || fallbackImage,
+            
+            // Land adventures
+            "horseback riding": activityImageData.adventure.horseback?.[0] || fallbackImage,
+            "hiking": activityImageData.adventure.hiking?.[0] || fallbackImage,
+            "trekking": activityImageData.adventure.trekking?.[0] || fallbackImage,
+            "mountain biking": activityImageData.sports.cycling?.[0] || fallbackImage,
+            "rock climbing": activityImageData.adventure["rock climbing"]?.[0] || activityImageData.adventure.climbing?.[0] || fallbackImage,
+            "zip lining": activityImageData.adventure.zipline?.[0] || fallbackImage,
+            "ziplining": activityImageData.adventure.zipline?.[0] || fallbackImage,
+            "zipline": activityImageData.adventure.zipline?.[0] || fallbackImage,
+            "bungee jumping": activityImageData.adventure.bungee?.[0] || fallbackImage,
+            "bungy jumping": activityImageData.adventure.bungee?.[0] || fallbackImage,
+            "paragliding": activityImageData.adventure.paragliding?.[0] || fallbackImage,
+            "skydiving": activityImageData.adventure.skydiving?.[0] || fallbackImage,
+            "safari": activityImageData.adventure.safari?.[0] || fallbackImage,
+            "wildlife viewing": activityImageData.adventure.wildlife?.[0] || fallbackImage,
+            "wildlife safari": activityImageData.adventure.safari?.[0] || fallbackImage,
+            "birdwatching": activityImageData.adventure.birdwatching?.[0] || fallbackImage,
+            "canyoning": activityImageData.adventure.canyoning?.[0] || fallbackImage,
+            "sandboarding": activityImageData.adventure.sandboarding?.[0] || fallbackImage,
+            "caving": activityImageData.adventure.caving?.[0] || fallbackImage,
+            "cave exploration": activityImageData.nature.cave?.[0] || activityImageData.adventure.caving?.[0] || fallbackImage,
+            
+            // Food & dining
+            "dinner": activityImageData.lifestyle.dinner?.[0] || fallbackImage,
+            "lunch": activityImageData.lifestyle.lunch?.[0] || fallbackImage,
+            "breakfast": activityImageData.lifestyle.breakfast?.[0] || fallbackImage,
+            "farewell dinner": activityImageData.lifestyle.dinner?.[0] || fallbackImage,
+            "welcome dinner": activityImageData.lifestyle.dinner?.[0] || fallbackImage,
+            "food tour": activityImageData.lifestyle.food?.[0] || fallbackImage,
+            "cooking class": activityImageData.lifestyle["cooking class"]?.[0] || fallbackImage,
+            "wine tasting": activityImageData.educational["wine tasting"]?.[0] || activityImageData.lifestyle.wine?.[0] || fallbackImage,
+            "beer tasting": activityImageData.lifestyle.beer?.[0] || fallbackImage,
+            "brewery tour": activityImageData.lifestyle.brewery?.[0] || fallbackImage,
+            "café visit": activityImageData.lifestyle.cafe?.[0] || fallbackImage,
+            "coffee shop": activityImageData.lifestyle.coffee?.[0] || fallbackImage,
+            
+            // Markets & shopping
+            "night market": activityImageData.cultural["night market"]?.[0] || activityImageData.cultural.market?.[0] || fallbackImage,
+            "market visit": activityImageData.cultural.market?.[0] || fallbackImage,
+            "shopping": activityImageData.cultural.shopping?.[0] || fallbackImage,
+            "bazaar": activityImageData.cultural.bazaar?.[0] || fallbackImage,
+            "souvenir shopping": activityImageData.cultural.shopping?.[0] || fallbackImage,
+            
+            // Urban & city exploration
+            "city tour": activityImageData.cultural.city?.[0] || fallbackImage,
+            "walking tour": activityImageData.cultural.walking?.[0] || fallbackImage,
+            "sightseeing": activityImageData.cultural.tour?.[0] || fallbackImage,
+            "guided tour": activityImageData.cultural.tour?.[0] || fallbackImage,
+            "architecture tour": activityImageData.cultural.architecture?.[0] || fallbackImage,
+            "skyline view": activityImageData.cultural.skyline?.[0] || fallbackImage,
+            
+            // Cultural activities
+            "museum visit": activityImageData.cultural.museum?.[0] || fallbackImage,
+            "art gallery": activityImageData.cultural.gallery?.[0] || fallbackImage, 
+            "temple visit": activityImageData.cultural.temple?.[0] || fallbackImage,
+            "church visit": activityImageData.cultural.church?.[0] || fallbackImage,
+            "mosque visit": activityImageData.cultural.mosque?.[0] || fallbackImage,
+            "cathedral visit": activityImageData.cultural.cathedral?.[0] || fallbackImage,
+            "historic site": activityImageData.cultural.historic?.[0] || fallbackImage,
+            "ruins": activityImageData.cultural.ruins?.[0] || fallbackImage,
+            "archaeological site": activityImageData.cultural.archaeology?.[0] || fallbackImage,
+            "cultural show": activityImageData.cultural.performance?.[0] || fallbackImage,
+            "traditional dance": activityImageData.cultural["traditional dance"]?.[0] || fallbackImage,
+            "festival": activityImageData.cultural.festival?.[0] || fallbackImage,
+            "cultural experience": activityImageData.cultural.cultural?.[0] || fallbackImage,
+            "ceremony": activityImageData.cultural.ceremony?.[0] || fallbackImage,
+            
+            // Nature & landscapes
+            "national park": activityImageData.nature.park?.[0] || fallbackImage,
+            "garden": activityImageData.nature.garden?.[0] || fallbackImage,
+            "botanical garden": activityImageData.nature.botanical?.[0] || fallbackImage,
+            "waterfall": activityImageData.water.waterfall?.[0] || fallbackImage,
+            "lake": activityImageData.nature.lake?.[0] || fallbackImage,
+            "river cruise": activityImageData.nature.river?.[0] || activityImageData.water.cruise?.[0] || fallbackImage,
+            "forest walk": activityImageData.nature.forest?.[0] || fallbackImage,
+            "nature trail": activityImageData.adventure.trail?.[0] || fallbackImage,
+            "canyon": activityImageData.nature.canyon?.[0] || fallbackImage,
+            "desert": activityImageData.nature.desert?.[0] || fallbackImage,
+            "stargazing": activityImageData.nature.stargazing?.[0] || fallbackImage,
+            "aurora viewing": activityImageData.nature.aurora?.[0] || fallbackImage,
+            "northern lights": activityImageData.nature["northern lights"]?.[0] || fallbackImage,
+            "glacier": activityImageData.nature.glacier?.[0] || fallbackImage,
+            "hot spring": activityImageData.lifestyle["hot spring"]?.[0] || fallbackImage,
+            "thermal bath": activityImageData.lifestyle.thermal?.[0] || fallbackImage,
+            
+            // Sports & recreation
+            "golf": activityImageData.sports.golf?.[0] || fallbackImage,
+            "tennis": activityImageData.sports.tennis?.[0] || fallbackImage,
+            "skiing": activityImageData.sports.skiing?.[0] || fallbackImage,
+            "snowboarding": activityImageData.sports.snowboarding?.[0] || fallbackImage,
+            "running": activityImageData.sports.running?.[0] || fallbackImage,
+            "yoga": activityImageData.lifestyle.yoga?.[0] || fallbackImage,
+            "meditation": activityImageData.lifestyle.meditation?.[0] || fallbackImage,
+            
+            // Wellness & relaxation
+            "spa": activityImageData.lifestyle.spa?.[0] || fallbackImage,
+            "massage": activityImageData.lifestyle.massage?.[0] || fallbackImage,
+            "wellness": activityImageData.lifestyle.wellness?.[0] || fallbackImage,
+            "relaxation": activityImageData.lifestyle.relaxation?.[0] || fallbackImage,
+            "retreat": activityImageData.lifestyle.retreat?.[0] || fallbackImage,
+            "tai chi": activityImageData.wellness["tai chi"]?.[0] || fallbackImage,
+            "sound healing": activityImageData.wellness["sound healing"]?.[0] || fallbackImage,
+            "aromatherapy": activityImageData.wellness.aromatherapy?.[0] || fallbackImage,
+            
+            // Educational activities
+            "cooking workshop": activityImageData.educational["cooking workshop"]?.[0] || fallbackImage,
+            "language class": activityImageData.educational["language class"]?.[0] || fallbackImage,
+            "craft workshop": activityImageData.educational["craft workshop"]?.[0] || fallbackImage,
+            "pottery making": activityImageData.cultural["pottery making"]?.[0] || fallbackImage,
+            "weaving": activityImageData.cultural.weaving?.[0] || fallbackImage,
+            "glass blowing": activityImageData.cultural["glass blowing"]?.[0] || fallbackImage,
+            
+            // Rural & agricultural
+            "farm visit": activityImageData.rural["farm stay"]?.[0] || fallbackImage,
+            "organic farming": activityImageData.rural["organic farming"]?.[0] || fallbackImage,
+            "beekeeping": activityImageData.rural.beekeeping?.[0] || fallbackImage,
+            "olive harvesting": activityImageData.rural["olive harvesting"]?.[0] || fallbackImage,
+            "grape picking": activityImageData.rural["grape picking"]?.[0] || fallbackImage,
+            "vineyard tour": activityImageData.lifestyle.vineyard?.[0] || fallbackImage,
+            "winery tour": activityImageData.lifestyle.winery?.[0] || fallbackImage
+        };
+        
+        // Add all common activities to the direct match map
+        Object.assign(directMatchMap, commonActivities);
+        
+        // Destination-specific activity mappings
+        const destinationMappings = {
+            // Nepal related
+            "nepal": {
+                "annapurna": activityImageData.adventure.trekking?.[0] || fallbackImage,
+                "everest": activityImageData.adventure.trekking?.[0] || fallbackImage,
+                "everest base camp": activityImageData.adventure.trekking?.[0] || fallbackImage,
+                "thamel": activityImageData.cultural.city?.[0] || fallbackImage,
+                "chitwan": activityImageData.adventure.safari?.[0] || fallbackImage,
+                "pokhara": activityImageData.nature.lake?.[0] || fallbackImage,
+                "phewa lake": activityImageData.nature.lake?.[0] || fallbackImage,
+                "nagarkot sunrise": activityImageData.nature.sunrise?.[0] || fallbackImage,
+                "durbar square": activityImageData.cultural.historic?.[0] || fallbackImage,
+                "patan": activityImageData.cultural.temple?.[0] || fallbackImage,
+                "bhaktapur": activityImageData.cultural.historic?.[0] || fallbackImage,
+                "pashupati": activityImageData.cultural.temple?.[0] || fallbackImage,
+                "bungee jumping at the last resort": activityImageData.adventure.bungee?.[0] || fallbackImage,
+                "white water rafting on the trishuli river": activityImageData.water.rafting?.[0] || fallbackImage,
+                "mountain flight": activityImageData.adventure.helicopter?.[0] || fallbackImage
+            },
+            
+            // Thailand related
+            "thailand": {
+                "grand palace": activityImageData.cultural.palace?.[0] || fallbackImage,
+                "wat pho": activityImageData.cultural.temple?.[0] || fallbackImage,
+                "ayutthaya": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                "chatuchak": activityImageData.cultural.market?.[0] || fallbackImage,
+                "phi phi": activityImageData.water.beach?.[0] || fallbackImage,
+                "maya bay": activityImageData.water.beach?.[0] || fallbackImage,
+                "patong": activityImageData.water.beach?.[0] || fallbackImage,
+                "floating market": activityImageData.cultural.market?.[0] || fallbackImage,
+                "khao san": activityImageData.cultural.street?.[0] || fallbackImage,
+                "muay thai": activityImageData.sports["martial arts"]?.[0] || fallbackImage,
+                "elephant sanctuary": activityImageData.adventure.animal?.[0] || fallbackImage,
+                "longtail boat": activityImageData.water.boat?.[0] || fallbackImage,
+                "tuk tuk": activityImageData.cultural.street?.[0] || fallbackImage,
+                "thai massage": activityImageData.lifestyle.massage?.[0] || fallbackImage
+            },
+            
+            // Japan related
+            "japan": {
+                "fushimi inari": activityImageData.cultural.temple?.[0] || fallbackImage,
+                "arashiyama": activityImageData.nature.forest?.[0] || fallbackImage,
+                "bamboo forest": activityImageData.nature.forest?.[0] || fallbackImage,
+                "teamlab": activityImageData.cultural.art?.[0] || fallbackImage,
+                "shibuya crossing": activityImageData.cultural.city?.[0] || fallbackImage,
+                "sensoji": activityImageData.cultural.temple?.[0] || fallbackImage,
+                "mount fuji": activityImageData.adventure.mountain?.[0] || fallbackImage,
+                "shinjuku": activityImageData.cultural.city?.[0] || fallbackImage,
+                "akihabara": activityImageData.cultural.city?.[0] || fallbackImage,
+                "harajuku": activityImageData.cultural.shopping?.[0] || fallbackImage,
+                "meiji shrine": activityImageData.cultural.temple?.[0] || fallbackImage,
+                "onsen": activityImageData.lifestyle.onsen?.[0] || fallbackImage,
+                "tea ceremony": activityImageData.educational["tea ceremony"]?.[0] || fallbackImage,
+                "sumo": activityImageData.cultural.traditional?.[0] || fallbackImage,
+                "ryokan": activityImageData.lifestyle.relaxation?.[0] || fallbackImage
+            },
+            
+            // Mexico related
+            "mexico": {
+                "chichen itza": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                "tulum": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                "cenote": activityImageData.water.swimming?.[0] || fallbackImage,
+                "lucha libre": activityImageData.cultural.performance?.[0] || fallbackImage,
+                "mariachi": activityImageData.cultural.performance?.[0] || fallbackImage,
+                "frida kahlo": activityImageData.cultural.museum?.[0] || fallbackImage,
+                "zocalo": activityImageData.cultural.city?.[0] || fallbackImage,
+                "dia de los muertos": activityImageData.cultural.festival?.[0] || fallbackImage,
+                "puerto escondido": activityImageData.water.surfing?.[0] || fallbackImage,
+                "zicatela": activityImageData.water.surfing?.[0] || fallbackImage,
+                "mezcal tasting": activityImageData.lifestyle.tasting?.[0] || fallbackImage,
+                "coyoacan": activityImageData.cultural.market?.[0] || fallbackImage,
+                "teotihuacan": activityImageData.cultural.ruins?.[0] || fallbackImage
+            },
+            
+            // Italy related
+            "italy": {
+                "colosseum": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                "roman forum": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                "vatican": activityImageData.cultural.museum?.[0] || fallbackImage,
+                "sistine chapel": activityImageData.cultural.church?.[0] || fallbackImage,
+                "st peter": activityImageData.cultural.church?.[0] || fallbackImage,
+                "trevi fountain": activityImageData.cultural.monument?.[0] || fallbackImage,
+                "spanish steps": activityImageData.cultural.monument?.[0] || fallbackImage,
+                "gondola": activityImageData.water.boat?.[0] || fallbackImage,
+                "grand canal": activityImageData.water.boat?.[0] || fallbackImage,
+                "rialto": activityImageData.cultural.historic?.[0] || fallbackImage,
+                "duomo": activityImageData.cultural.church?.[0] || fallbackImage,
+                "uffizi": activityImageData.cultural.museum?.[0] || fallbackImage,
+                "ponte vecchio": activityImageData.cultural.historic?.[0] || fallbackImage,
+                "cinque terre": activityImageData.water.coast?.[0] || fallbackImage,
+                "pasta making": activityImageData.educational["cooking workshop"]?.[0] || fallbackImage,
+                "wine tour": activityImageData.lifestyle.winery?.[0] || fallbackImage
+            },
+            
+            // Add more destinations as needed
+        };
+        
+        // For each destination keyword, check if it's in the trip destination
+        // and if so, add its specific activities to the direct match map
+        Object.entries(destinationMappings).forEach(([destinationKey, activities]) => {
+            if (lowercaseDestination.includes(destinationKey)) {
+                Object.assign(directMatchMap, activities);
+            }
+        });
+        
+        return directMatchMap;
+    };
+    
+    /**
+     * Enhanced getImageForActivity function that adapts to the trip destination
+     * This function searches for the most appropriate image for an activity
+     * based on the activity text and destination context
+     * 
+     * @param {Object} activity - The activity object containing activity name, description, etc.
+     * @param {string} destination - The trip destination to provide context (e.g., "Thailand", "Japan")
+     * @returns {string} - URL of the selected image or fallback image
+     */
+    const getImageForActivity = (activity, destination = '') => {
+        if (!activity) {
+            console.log('Warning: Activity is undefined');
+            return fallbackImage;
+        }
+    
+        // Extract activity text with description for matching
+        const activityText = `${activity.activity || ''} ${activity.description || ''}`.toLowerCase();
+        const lowercaseDestination = destination.toLowerCase();
+        
+        console.log('Finding image for activity:', activityText, 'in destination:', destination);
+        
+        // Safety checks and defensive programming
+        try {
+            // STEP 1: Build destination-aware direct matches map
+            const directMatchMap = buildDirectMatchMap(destination);
+            
+            // STEP 2: Check for direct matches first (exact phrase matching)
+            for (const [phrase, imageUrl] of Object.entries(directMatchMap)) {
+                if (activityText.includes(phrase.toLowerCase())) {
+                    console.log(`Direct match found for "${phrase}"`);
+                    return imageUrl;
+                }
+            }
+            
+            // STEP 3: If no direct match, search by destination-aware keywords
+            // Define category mapping for keywords
+            const categoryMapping = {
+                // Water activities keywords
+                "sea": { category: "water", subcategory: "sea" },
+                "ocean": { category: "water", subcategory: "ocean" },
+                "beach": { category: "water", subcategory: "beach" },
+                "coast": { category: "water", subcategory: "coast" },
+                "surf": { category: "water", subcategory: "surfing" },
+                "wave": { category: "water", subcategory: "surfing" },
+                "swim": { category: "water", subcategory: "swimming" },
+                "snorkel": { category: "water", subcategory: "snorkeling" },
+                "dive": { category: "water", subcategory: "diving" },
+                "scuba": { category: "water", subcategory: "scuba" },
+                "boat": { category: "water", subcategory: "boat" },
+                "yacht": { category: "water", subcategory: "yacht" },
+                "sail": { category: "water", subcategory: "sailing" },
+                "cruise": { category: "water", subcategory: "cruise" },
+                "island": { category: "water", subcategory: "island" },
+                "bay": { category: "water", subcategory: "coast" },
+                "lagoon": { category: "water", subcategory: "beach" },
+                "reef": { category: "nature", subcategory: "reef" },
+                "coral": { category: "nature", subcategory: "coral" },
+                "kayak": { category: "water", subcategory: "kayak" },
+                "paddle": { category: "water", subcategory: "paddleboard" },
+                "canoe": { category: "water", subcategory: "canoe" },
+                "raft": { category: "water", subcategory: "rafting" },
+                "jet ski": { category: "water", subcategory: "jet skiing" },
+                "waterfall": { category: "water", subcategory: "waterfall" },
+                "cenote": { category: "water", subcategory: "swimming" },
+                
+                // Adventure activities keywords
+                "hike": { category: "adventure", subcategory: "hiking" },
+                "trek": { category: "adventure", subcategory: "trekking" },
+                "climb": { category: "adventure", subcategory: "climbing" },
+                "mountain": { category: "adventure", subcategory: "mountain" },
+                "valley": { category: "nature", subcategory: "valley" },
+                "volcano": { category: "adventure", subcategory: "volcano" },
+                "summit": { category: "adventure", subcategory: "summit" },
+                "trail": { category: "adventure", subcategory: "trail" },
+                "zipline": { category: "adventure", subcategory: "zipline" },
+                "ziplining": { category: "adventure", subcategory: "zipline" },
+                "bungee": { category: "adventure", subcategory: "bungee" },
+                "bungy": { category: "adventure", subcategory: "bungee" },
+                "paraglid": { category: "adventure", subcategory: "paragliding" },
+                "skydiv": { category: "adventure", subcategory: "skydiving" },
+                "horse": { category: "adventure", subcategory: "horseback" },
+                "riding": { category: "adventure", subcategory: "horseback" },
+                "safari": { category: "adventure", subcategory: "safari" },
+                "wildlife": { category: "adventure", subcategory: "wildlife" },
+                "animal": { category: "adventure", subcategory: "animal" },
+                "bird": { category: "adventure", subcategory: "birdwatching" },
+                "canyon": { category: "adventure", subcategory: "canyoning" },
+                "sand": { category: "adventure", subcategory: "sandboarding" },
+                "dune": { category: "nature", subcategory: "dune" },
+                "cave": { category: "adventure", subcategory: "caving" },
+                
+                // Cultural & urban keywords
+                "museum": { category: "cultural", subcategory: "museum" },
+                "gallery": { category: "cultural", subcategory: "gallery" },
+                "art": { category: "cultural", subcategory: "art" },
+                "exhibit": { category: "cultural", subcategory: "exhibition" },
+                "temple": { category: "cultural", subcategory: "temple" },
+                "shrine": { category: "cultural", subcategory: "temple" },
+                "church": { category: "cultural", subcategory: "church" },
+                "mosque": { category: "cultural", subcategory: "mosque" },
+                "cathedral": { category: "cultural", subcategory: "cathedral" },
+                "palace": { category: "cultural", subcategory: "palace" },
+                "castle": { category: "cultural", subcategory: "castle" },
+                "ruins": { category: "cultural", subcategory: "ruins" },
+                "ancient": { category: "cultural", subcategory: "ruins" },
+                "historic": { category: "cultural", subcategory: "historic" },
+                "heritage": { category: "cultural", subcategory: "historic" },
+                "monument": { category: "cultural", subcategory: "monument" },
+                "memorial": { category: "cultural", subcategory: "memorial" },
+                "archaeology": { category: "cultural", subcategory: "archaeology" },
+                "city": { category: "cultural", subcategory: "city" },
+                "town": { category: "cultural", subcategory: "city" },
+                "village": { category: "cultural", subcategory: "city" },
+                "urban": { category: "cultural", subcategory: "urban" },
+                "skyline": { category: "cultural", subcategory: "skyline" },
+                "architecture": { category: "cultural", subcategory: "architecture" },
+                "shopping": { category: "cultural", subcategory: "shopping" },
+                "market": { category: "cultural", subcategory: "market" },
+                "bazaar": { category: "cultural", subcategory: "bazaar" },
+                "street": { category: "cultural", subcategory: "street" },
+                "tour": { category: "cultural", subcategory: "tour" },
+                "guide": { category: "cultural", subcategory: "guide" },
+                "performance": { category: "cultural", subcategory: "performance" },
+                "show": { category: "cultural", subcategory: "performance" },
+                "concert": { category: "cultural", subcategory: "concert" },
+                "theater": { category: "cultural", subcategory: "theater" },
+                "cinema": { category: "cultural", subcategory: "cinema" },
+                "movie": { category: "cultural", subcategory: "movie" },
+                "opera": { category: "cultural", subcategory: "opera" },
+                "ballet": { category: "cultural", subcategory: "ballet" },
+                "dance": { category: "cultural", subcategory: "dance" },
+                "festival": { category: "cultural", subcategory: "festival" },
+                "ceremony": { category: "cultural", subcategory: "ceremony" },
+                "traditional": { category: "cultural", subcategory: "traditional" },
+                "crafts": { category: "cultural", subcategory: "traditional" },
+                
+                // Food & dining keywords
+                "restaurant": { category: "lifestyle", subcategory: "restaurant" },
+                "dining": { category: "lifestyle", subcategory: "dining" },
+                "dinner": { category: "lifestyle", subcategory: "dinner" },
+                "lunch": { category: "lifestyle", subcategory: "lunch" },
+                "breakfast": { category: "lifestyle", subcategory: "breakfast" },
+                "brunch": { category: "lifestyle", subcategory: "breakfast" },
+                "food": { category: "lifestyle", subcategory: "food" },
+                "cuisine": { category: "lifestyle", subcategory: "food" },
+                "culinary": { category: "lifestyle", subcategory: "culinary" },
+                "tasting": { category: "lifestyle", subcategory: "tasting" },
+                "cooking": { category: "lifestyle", subcategory: "cooking" },
+                "chef": { category: "lifestyle", subcategory: "cooking" },
+                "wine": { category: "lifestyle", subcategory: "wine" },
+                "winery": { category: "lifestyle", subcategory: "winery" },
+                "vineyard": { category: "lifestyle", subcategory: "vineyard" },
+                "brewery": { category: "lifestyle", subcategory: "brewery" },
+                "beer": { category: "lifestyle", subcategory: "beer" },
+                "bar": { category: "lifestyle", subcategory: "bar" },
+                "cafe": { category: "lifestyle", subcategory: "cafe" },
+                "coffee": { category: "lifestyle", subcategory: "coffee" },
+                
+                // Nature & landscape keywords
+                "forest": { category: "nature", subcategory: "forest" },
+                "woods": { category: "nature", subcategory: "woods" },
+                "jungle": { category: "nature", subcategory: "forest" },
+                "park": { category: "nature", subcategory: "park" },
+                "garden": { category: "nature", subcategory: "garden" },
+                "botanical": { category: "nature", subcategory: "botanical" },
+                "meadow": { category: "nature", subcategory: "meadow" },
+                "field": { category: "nature", subcategory: "field" },
+                "river": { category: "nature", subcategory: "river" },
+                "lake": { category: "nature", subcategory: "lake" },
+                "stream": { category: "nature", subcategory: "river" },
+                "desert": { category: "nature", subcategory: "desert" },
+                "dune": { category: "nature", subcategory: "dune" },
+                "canyon": { category: "nature", subcategory: "canyon" },
+                "cave": { category: "nature", subcategory: "cave" },
+                "countryside": { category: "nature", subcategory: "countryside" },
+                "landscape": { category: "nature", subcategory: "landscape" },
+                "scenic": { category: "nature", subcategory: "landscape" },
+                "astronomy": { category: "nature", subcategory: "astronomy" },
+                "stars": { category: "nature", subcategory: "stargazing" },
+                "stargazing": { category: "nature", subcategory: "stargazing" },
+                "aurora": { category: "nature", subcategory: "aurora" },
+                "northern light": { category: "nature", subcategory: "northern lights" },
+                "sunrise": { category: "nature", subcategory: "sunrise" },
+                "sunset": { category: "nature", subcategory: "sunset" },
+                "rainbow": { category: "nature", subcategory: "rainbow" },
+                "fjord": { category: "nature", subcategory: "fjord" },
+                "geyser": { category: "nature", subcategory: "geyser" },
+                "salt flat": { category: "nature", subcategory: "salt flat" },
+                "salt pan": { category: "nature", subcategory: "salt flat" },
+                "mangrove": { category: "nature", subcategory: "mangrove" },
+                "glacier": { category: "nature", subcategory: "glacier" },
+                "ice": { category: "nature", subcategory: "glacier" },
+                
+                // Wellness & relaxation keywords
+                "spa": { category: "lifestyle", subcategory: "spa" },
+                "massage": { category: "lifestyle", subcategory: "massage" },
+                "wellness": { category: "lifestyle", subcategory: "wellness" },
+                "relaxation": { category: "lifestyle", subcategory: "relaxation" },
+                "resort": { category: "lifestyle", subcategory: "relaxation" },
+                "hot spring": { category: "lifestyle", subcategory: "hot spring" },
+                "thermal": { category: "lifestyle", subcategory: "thermal" },
+                "bath": { category: "lifestyle", subcategory: "bath" },
+                "onsen": { category: "lifestyle", subcategory: "onsen" },
+                "yoga": { category: "lifestyle", subcategory: "yoga" },
+                "meditation": { category: "lifestyle", subcategory: "meditation" },
+                "mindfulness": { category: "lifestyle", subcategory: "mindfulness" },
+                "retreat": { category: "lifestyle", subcategory: "retreat" },
+                "acupuncture": { category: "wellness", subcategory: "acupuncture" },
+                "sound healing": { category: "wellness", subcategory: "sound healing" },
+                "forest bathing": { category: "wellness", subcategory: "forest bathing" },
+                "tai chi": { category: "wellness", subcategory: "tai chi" },
+                "aromatherapy": { category: "wellness", subcategory: "aromatherapy" },
+                
+                // Sports & recreation keywords
+                "golf": { category: "sports", subcategory: "golf" },
+                "tennis": { category: "sports", subcategory: "tennis" },
+                "ski": { category: "sports", subcategory: "skiing" },
+                "snowboard": { category: "sports", subcategory: "snowboarding" },
+                "bike": { category: "sports", subcategory: "biking" },
+                "cycling": { category: "sports", subcategory: "cycling" },
+                "run": { category: "sports", subcategory: "running" },
+                "basketball": { category: "sports", subcategory: "basketball" },
+                "football": { category: "sports", subcategory: "football" },
+                "soccer": { category: "sports", subcategory: "soccer" },
+                "volleyball": { category: "sports", subcategory: "volleyball" },
+                "baseball": { category: "sports", subcategory: "baseball" },
+                "hockey": { category: "sports", subcategory: "hockey" },
+                "archery": { category: "sports", subcategory: "archery" },
+                "axe": { category: "sports", subcategory: "axe throwing" },
+                "parkour": { category: "sports", subcategory: "parkour" },
+                "bouldering": { category: "sports", subcategory: "bouldering" },
+                "fencing": { category: "sports", subcategory: "fencing" },
+                "martial art": { category: "sports", subcategory: "martial arts" },
+                "trampoline": { category: "sports", subcategory: "trampoline" },
+                "skate": { category: "sports", subcategory: "skateboarding" },
+                "roller": { category: "sports", subcategory: "roller skating" },
+                
+                // Educational & workshop keywords
+                "class": { category: "educational", subcategory: "class" },
+                "workshop": { category: "educational", subcategory: "craft workshop" },
+                "lesson": { category: "educational", subcategory: "class" },
+                "teach": { category: "educational", subcategory: "class" },
+                "learn": { category: "educational", subcategory: "class" },
+                "astronomy class": { category: "educational", subcategory: "astronomy class" },
+                "cooking workshop": { category: "educational", subcategory: "cooking workshop" },
+                "wine tasting": { category: "educational", subcategory: "wine tasting" },
+                "tea ceremony": { category: "educational", subcategory: "tea ceremony" },
+                "perfume making": { category: "educational", subcategory: "perfume making" },
+                "chocolate making": { category: "educational", subcategory: "chocolate making" },
+                "bread baking": { category: "educational", subcategory: "bread baking" },
+                "cheese making": { category: "educational", subcategory: "cheese making" },
+                "language": { category: "educational", subcategory: "language class" },
+                
+                // Rural & agricultural keywords
+                "farm": { category: "rural", subcategory: "farm stay" },
+                "olive": { category: "rural", subcategory: "olive harvesting" },
+                "grape": { category: "rural", subcategory: "grape picking" },
+                "harvest": { category: "rural", subcategory: "organic farming" },
+                "bee": { category: "rural", subcategory: "beekeeping" },
+                "truffle": { category: "rural", subcategory: "truffle hunting" },
+                "rice": { category: "rural", subcategory: "rice farming" },
+                "organic": { category: "rural", subcategory: "organic farming" },
+                "sheep": { category: "rural", subcategory: "sheep herding" },
+                "maple": { category: "rural", subcategory: "maple tapping" },
+                "lavender": { category: "rural", subcategory: "lavender field" }
+            };
+            
+            // Build an array of keyword matches for the activity text
+            const matchedKeywords = [];
+            
+            // Check each keyword for a match
+            for (const [keyword, mapping] of Object.entries(categoryMapping)) {
+                if (activityText.includes(keyword)) {
+                    matchedKeywords.push({
+                        keyword,
+                        category: mapping.category,
+                        subcategory: mapping.subcategory,
+                        length: keyword.length // Track length for sorting
+                    });
+                }
+            }
+            
+            // Sort matches by keyword length (longer = more specific)
+            matchedKeywords.sort((a, b) => b.length - a.length);
+            
+            // If we have matches, use the best (longest) match
+            if (matchedKeywords.length > 0) {
+                const bestMatch = matchedKeywords[0];
+                console.log(`Best keyword match: "${bestMatch.keyword}" -> ${bestMatch.category}.${bestMatch.subcategory}`);
+                
+                // Safely access image data with fallbacks
+                const categoryData = activityImageData[bestMatch.category] || {};
+                const subcategoryData = categoryData[bestMatch.subcategory] || [];
+                
+                if (subcategoryData.length > 0 && subcategoryData[0]) {
+                    return subcategoryData[0];
+                }
+            }
+            
+            // STEP 4: If still no match, try specific location matches based on destination
+            const destinationSpecificLocations = {
+                // Thailand locations
+                "thailand": {
+                    "bangkok": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "phuket": activityImageData.water.beach?.[0] || fallbackImage,
+                    "chiang mai": activityImageData.cultural.temple?.[0] || fallbackImage,
+                    "koh samui": activityImageData.water.beach?.[0] || fallbackImage,
+                    "koh phi phi": activityImageData.water.beach?.[0] || fallbackImage,
+                    "pattaya": activityImageData.water.beach?.[0] || fallbackImage,
+                    "hua hin": activityImageData.water.beach?.[0] || fallbackImage,
+                    "koh tao": activityImageData.water.diving?.[0] || fallbackImage,
+                    "krabi": activityImageData.water.beach?.[0] || fallbackImage,
+                    "ao nang": activityImageData.water.beach?.[0] || fallbackImage,
+                    "railay": activityImageData.adventure.climbing?.[0] || fallbackImage,
+                    "ayutthaya": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                    "sukhothai": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                    "khao yai": activityImageData.nature.park?.[0] || fallbackImage
+                },
+                
+                // Japan locations
+                "japan": {
+                    "tokyo": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "kyoto": activityImageData.cultural.temple?.[0] || fallbackImage,
+                    "osaka": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "nara": activityImageData.adventure.animal?.[0] || fallbackImage,
+                    "hokkaido": activityImageData.sports.skiing?.[0] || fallbackImage,
+                    "okinawa": activityImageData.water.beach?.[0] || fallbackImage,
+                    "hakone": activityImageData.nature.mountain?.[0] || fallbackImage,
+                    "fuji": activityImageData.adventure.mountain?.[0] || fallbackImage,
+                    "hiroshima": activityImageData.cultural.memorial?.[0] || fallbackImage,
+                    "miyajima": activityImageData.cultural.temple?.[0] || fallbackImage,
+                    "shibuya": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "shinjuku": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "harajuku": activityImageData.cultural.shopping?.[0] || fallbackImage,
+                    "akihabara": activityImageData.cultural.city?.[0] || fallbackImage
+                },
+                
+                // Mexico locations
+                "mexico": {
+                    "cancun": activityImageData.water.beach?.[0] || fallbackImage,
+                    "tulum": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                    "playa del carmen": activityImageData.water.beach?.[0] || fallbackImage,
+                    "isla mujeres": activityImageData.water.beach?.[0] || fallbackImage,
+                    "mexico city": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "oaxaca": activityImageData.cultural.traditional?.[0] || fallbackImage,
+                    "guanajuato": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "san miguel": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "guadalajara": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "puerto vallarta": activityImageData.water.beach?.[0] || fallbackImage,
+                    "cabo": activityImageData.water.beach?.[0] || fallbackImage,
+                    "baja": activityImageData.water.beach?.[0] || fallbackImage,
+                    "puerto escondido": activityImageData.water.surfing?.[0] || fallbackImage,
+                    "huatulco": activityImageData.water.beach?.[0] || fallbackImage,
+                    "sayulita": activityImageData.water.beach?.[0] || fallbackImage
+                },
+                
+                // Italy locations
+                "italy": {
+                    "rome": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                    "vatican": activityImageData.cultural.church?.[0] || fallbackImage,
+                    "florence": activityImageData.cultural.art?.[0] || fallbackImage,
+                    "venice": activityImageData.water.boat?.[0] || fallbackImage,
+                    "milan": activityImageData.cultural.city?.[0] || fallbackImage,
+                    "amalfi": activityImageData.water.coast?.[0] || fallbackImage,
+                    "positano": activityImageData.water.coast?.[0] || fallbackImage,
+                    "cinque terre": activityImageData.water.coast?.[0] || fallbackImage,
+                    "tuscany": activityImageData.lifestyle.winery?.[0] || fallbackImage,
+                    "siena": activityImageData.cultural.historic?.[0] || fallbackImage,
+                    "pisa": activityImageData.cultural.monument?.[0] || fallbackImage,
+                    "naples": activityImageData.lifestyle.food?.[0] || fallbackImage,
+                    "pompeii": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                    "sicily": activityImageData.cultural.ruins?.[0] || fallbackImage,
+                    "sardinia": activityImageData.water.beach?.[0] || fallbackImage
+                },
+                
+                // Nepal locations
+                "nepal": {
+                    "kathmandu": activityImageData.cultural.temple?.[0] || fallbackImage,
+                    "pokhara": activityImageData.adventure.paragliding?.[0] || fallbackImage,
+                    "chitwan": activityImageData.adventure.safari?.[0] || fallbackImage,
+                    "everest": activityImageData.adventure.trekking?.[0] || fallbackImage,
+                    "annapurna": activityImageData.adventure.trekking?.[0] || fallbackImage,
+                    "lumbini": activityImageData.cultural.temple?.[0] || fallbackImage,
+                    "nagarkot": activityImageData.nature.sunrise?.[0] || fallbackImage,
+                    "bhaktapur": activityImageData.cultural.historic?.[0] || fallbackImage,
+                    "patan": activityImageData.cultural.temple?.[0] || fallbackImage,
+                    "pashupatinath": activityImageData.cultural.temple?.[0] || fallbackImage,
+                    "thamel": activityImageData.cultural.market?.[0] || fallbackImage,
+                    "langtang": activityImageData.adventure.trekking?.[0] || fallbackImage,
+                    "gokyo": activityImageData.adventure.trekking?.[0] || fallbackImage,
+                    "lukla": activityImageData.adventure.trekking?.[0] || fallbackImage
+                }
+                
+                // Add more destinations and their specific locations as needed
+            };
+            
+            // Check location matches for the current destination
+            for (const [destKey, locations] of Object.entries(destinationSpecificLocations)) {
+                if (lowercaseDestination.includes(destKey)) {
+                    for (const [location, imageUrl] of Object.entries(locations)) {
+                        if (activityText.includes(location)) {
+                            console.log(`Location match found for destination ${destKey}: "${location}"`);
+                            return imageUrl;
+                        }
+                    }
+                }
+            }
+            
+            // STEP 5: Time-based fallback if nothing else matched
+            console.log("Using time-based fallback image selection");
+            let hour = 12; // Default to noon if no time specified
+            
+            if (activity.bestTime) {
+                const timeParts = activity.bestTime.split(':');
+                if (timeParts.length > 0) {
+                    hour = parseInt(timeParts[0], 10);
+                    if (isNaN(hour)) hour = 12;
+                }
+            }
+            
+            if (hour >= 5 && hour < 11) {
+                console.log("Morning activity (5-11 AM)");
+                return timeOfDayImages.morning || fallbackImage;
+            } else if (hour >= 11 && hour < 17) {
+                console.log("Afternoon activity (11 AM-5 PM)");
+                return timeOfDayImages.afternoon || fallbackImage;
+            } else {
+                console.log("Evening activity (5 PM onwards or before 5 AM)");
+                return timeOfDayImages.evening || fallbackImage;
+            }
+        } catch (error) {
+            console.error("Error in getImageForActivity:", error);
+            return fallbackImage; // Return fallback image on any error
+        }
+    };
+    
     const createGoogleMapsLink = (activity) => {
         const searchQuery = encodeURIComponent(`${activity.activity} ${destination}`);
         return `https://www.google.com/maps/search/${searchQuery}`;
@@ -1215,10 +1791,11 @@ const isRTL = language === "he";
                                     </div>
                                 )}
                                 <img 
-    src={getImageForActivity(activity, index)} 
+    src={getImageForActivity(activity) || fallbackImage}
     alt={activity.activity}
     className="w-full h-full object-cover"
     onError={(e) => {
+        console.log('Image failed to load for:', activity.activity); // Debug line
         e.target.onerror = null;
         e.target.src = fallbackImage;
     }}
