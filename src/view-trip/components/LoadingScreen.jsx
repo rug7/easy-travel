@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "@/context/LanguageContext";
 
 
+
 // Helper component for progress items
 const ProgressItem = ({ label, complete, current }) => (
   <div className="flex flex-col items-center justify-center p-2">
@@ -46,6 +47,7 @@ const GuessTheCountryGame = () => {
   const [questions, setQuestions] = useState([]); // Store shuffled questions
   const { translate, language } = useLanguage();
 const isRTL = language === "he";
+
   
   // Landmarks data with placeholder images
   const landmarks = {
@@ -161,20 +163,47 @@ const isRTL = language === "he";
       }
     ]
   };
+
+useEffect(() => {
+  if (gameActive) {
+    setQuestions(getQuestions(level));
+  }
+}, [language]);
   
   // Get questions based on difficulty level and shuffle them
-  const getQuestions = (difficulty) => {
-    // Get the questions for the selected difficulty
-    const questions = [...landmarks[difficulty]];
+const getQuestions = (difficulty) => {
+  // Get the questions for the selected difficulty
+  const questions = [...landmarks[difficulty]].map(item => {
+    // Find matching landmark in translations
+    const translatedLandmark = translate(`landmarks.${difficulty}`)?.[findLandmarkIndex(item, difficulty)];
     
-    // Shuffle the questions using Fisher-Yates algorithm
-    for (let i = questions.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [questions[i], questions[j]] = [questions[j], questions[i]];
-    }
-    
-    return questions;
-  };
+    // If translation exists, use it; otherwise, fall back to original
+    return {
+      landmark: item.landmark, // Keep original image URL
+      title: translatedLandmark?.title || item.title,
+      description: translatedLandmark?.description || item.description,
+      country: translatedLandmark?.country || item.country,
+      options: translatedLandmark?.options || item.options
+    };
+  });
+  
+  // Shuffle the questions using Fisher-Yates algorithm
+  for (let i = questions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [questions[i], questions[j]] = [questions[j], questions[i]];
+  }
+  
+  return questions;
+};
+
+// Helper function to find the index of a landmark in the translations
+const findLandmarkIndex = (originalLandmark, difficulty) => {
+  // Find the index of the original English landmark
+  const index = landmarks[difficulty].findIndex(
+    item => item.title === originalLandmark.title
+  );
+  return index;
+};
   
   // Initialize game
   const startGame = (difficulty = level) => {
@@ -747,6 +776,7 @@ const LoadingScreen = ({ progress, tripData, onComplete }) => {
     }, 500);
     return () => clearInterval(interval);
   }, []);
+  
   
   // Navigate to trip view when complete
   useEffect(() => {

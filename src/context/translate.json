@@ -241,6 +241,105 @@
       "fri": "Fri",
       "sat": "Sat"
     },
+    
+"landmarks": {
+"easy": [
+{
+"title": "Eiffel Tower",
+"description": "A famous iron lattice tower on the Champ de Mars",
+"country": "France",
+"options": ["France", "Italy", "Spain", "Germany"]
+},
+{
+"title": "Statue of Liberty",
+"description": "A gift from France symbolizing freedom and democracy",
+"country": "United States",
+"options": ["United States", "Canada", "United Kingdom", "Australia"]
+},
+{
+"title": "Parthenon",
+"description": "An ancient temple dedicated to the goddess Athena",
+"country": "Greece",
+"options": ["Greece", "Italy", "Turkey", "Egypt"]
+},
+{
+"title": "Taj Mahal",
+"description": "An ivory-white marble mausoleum built by Shah Jahan",
+"country": "India",
+"options": ["India", "Pakistan", "Nepal", "Bangladesh"]
+},
+{
+"title": "Moai Statues",
+"description": "Massive stone heads created by the Rapa Nui people",
+"country": "Chile",
+"options": ["Chile", "Peru", "Mexico", "Brazil"]
+}
+],
+"medium": [
+{
+"title": "Neuschwanstein Castle",
+"description": "A 19th-century Romanesque Revival palace",
+"country": "Germany",
+"options": ["Germany", "Austria", "Switzerland", "France"]
+},
+{
+"title": "Fushimi Inari Shrine",
+"description": "Famous for its thousands of vermillion torii gates",
+"country": "Japan",
+"options": ["Japan", "China", "South Korea", "Thailand"]
+},
+{
+"title": "Sagrada Familia",
+"description": "An unfinished basilica designed by Antoni Gaudí",
+"country": "Spain",
+"options": ["Spain", "Italy", "Portugal", "France"]
+},
+{
+"title": "Colosseum",
+"description": "Ancient amphitheater and largest ever built",
+"country": "Italy",
+"options": ["Italy", "Greece", "Turkey", "Spain"]
+},
+{
+"title": "Sydney Opera House",
+"description": "A multi-venue performing arts center",
+"country": "Australia",
+"options": ["Australia", "New Zealand", "Canada", "United Kingdom"]
+}
+],
+"hard": [
+{
+"title": "Petra",
+"description": "An archaeological city famous for its rock-cut architecture",
+"country": "Jordan",
+"options": ["Jordan", "Syria", "Lebanon", "Iraq"]
+},
+{
+"title": "Angkor Wat",
+"description": "The largest religious monument in the world",
+"country": "Cambodia",
+"options": ["Cambodia", "Thailand", "Vietnam", "Laos"]
+},
+{
+"title": "Christ the Redeemer",
+"description": "An Art Deco statue of Jesus Christ",
+"country": "Brazil",
+"options": ["Brazil", "Argentina", "Portugal", "Mexico"]
+},
+{
+"title": "Prague Castle",
+"description": "A castle complex dating from the 9th century",
+"country": "Czech Republic",
+"options": ["Czech Republic", "Poland", "Hungary", "Austria"]
+},
+{
+"title": "Hassan II Mosque",
+"description": "Has the world's second tallest minaret",
+"country": "Morocco",
+"options": ["Morocco", "Algeria", "Tunisia", "Egypt"]
+}
+]
+},
   
     
 
@@ -720,6 +819,107 @@
     "needToBeLoggedIn": "עליך להיות מחובר כדי לצפות בטיולים שלך",
     "goToHome": "חזור לדף הבית",
     "dashboardTitle": "לוח מחוונים לניתוח נסיעות",
+
+    "landmarks": {
+"easy": [
+{
+"title": "מגדל אייפל",
+"description": "מגדל סורג ברזל מפורסם בשדרת שאן דה מארס",
+"country": "צרפת",
+"options": ["צרפת", "איטליה", "ספרד", "גרמניה"]
+},
+{
+"title": "פסל החירות",
+"description": "מתנה מצרפת המסמלת חופש ודמוקרטיה",
+"country": "ארצות הברית",
+"options": ["ארצות הברית", "קנדה", "בריטניה", "אוסטרליה"]
+},
+{
+"title": "הפרתנון",
+"description": "מקדש עתיק המוקדש לאלה אתנה",
+"country": "יוון",
+"options": ["יוון", "איטליה", "טורקיה", "מצרים"]
+},
+{
+"title": "טאג' מאהל",
+"description": "מאוזוליאום משיש לבן-שנהבי שנבנה על ידי שאה ג'האן",
+"country": "הודו",
+"options": ["הודו", "פקיסטן", "נפאל", "בנגלדש"]
+},
+{
+"title": "פסלי מואי",
+"description": "ראשי אבן ענקיים שנוצרו על ידי אנשי ראפא נוי",
+"country": "צ'ילה",
+"options": ["צ'ילה", "פרו", "מקסיקו", "ברזיל"]
+}
+],
+"medium": [
+{
+"title": "טירת נוישוונשטיין",
+"description": "ארמון בסגנון תחייה רומנסקי מהמאה ה-19",
+"country": "גרמניה",
+"options": ["גרמניה", "אוסטריה", "שווייץ", "צרפת"]
+},
+{
+"title": "מקדש פושימי אינארי",
+"description": "מפורסם באלפי שערי טוריי באדום-כתום",
+"country": "יפן",
+"options": ["יפן", "סין", "דרום קוריאה", "תאילנד"]
+},
+{
+"title": "סגרדה פמיליה",
+"description": "בזיליקה שטרם הושלמה בעיצוב אנטוני גאודי",
+"country": "ספרד",
+"options": ["ספרד", "איטליה", "פורטוגל", "צרפת"]
+},
+{
+"title": "הקולוסיאום",
+"description": "אמפיתיאטרון עתיק והגדול ביותר שנבנה אי פעם",
+"country": "איטליה",
+"options": ["איטליה", "יוון", "טורקיה", "ספרד"]
+},
+{
+"title": "בית האופרה של סידני",
+"description": "מרכז אמנויות במה רב-אולמות",
+"country": "אוסטרליה",
+"options": ["אוסטרליה", "ניו זילנד", "קנדה", "בריטניה"]
+}
+],
+"hard": [
+{
+"title": "פטרה",
+"description": "עיר ארכיאולוגית מפורסמת באדריכלות חצובה בסלע",
+"country": "ירדן",
+"options": ["ירדן", "סוריה", "לבנון", "עיראק"]
+},
+{
+"title": "אנגקור ואט",
+"description": "המונומנט הדתי הגדול ביותר בעולם",
+"country": "קמבודיה",
+"options": ["קמבודיה", "תאילנד", "וייטנאם", "לאוס"]
+},
+{
+"title": "פסל ישו הגואל",
+"description": "פסל ארט דקו של ישו",
+"country": "ברזיל",
+"options": ["ברזיל", "ארגנטינה", "פורטוגל", "מקסיקו"]
+},
+{
+"title": "טירת פראג",
+"description": "מתחם טירה המתוארך מהמאה ה-9",
+"country": "צ'כיה",
+"options": ["צ'כיה", "פולין", "הונגריה", "אוסטריה"]
+},
+{
+"title": "מסגד חסן השני",
+"description": "בעל הצריח השני בגובהו בעולם",
+"country": "מרוקו",
+"options": ["מרוקו", "אלג'יריה", "תוניסיה", "מצרים"]
+}
+]
+}
+  ,
+
     "dashboardDescription": "תובנות וסטטיסטיקות על היסטוריית הנסיעות והתוכניות שלך",
     "lastUpdated": "עדכון אחרון:",
     "refreshData": "רענן נתונים",
@@ -1176,6 +1376,105 @@
     "goToHome": "Ir a inicio",
     
  "dashboardTitle": "Panel de Análisis de Viajes",
+
+ "landmarks": {
+"easy": [
+{
+"title": "Torre Eiffel",
+"description": "Una famosa torre de celosía de hierro en el Campo de Marte",
+"country": "Francia",
+"options": ["Francia", "Italia", "España", "Alemania"]
+},
+{
+"title": "Estatua de la Libertad",
+"description": "Un regalo de Francia que simboliza la libertad y la democracia",
+"country": "Estados Unidos",
+"options": ["Estados Unidos", "Canadá", "Reino Unido", "Australia"]
+},
+{
+"title": "Partenón",
+"description": "Un antiguo templo dedicado a la diosa Atenea",
+"country": "Grecia",
+"options": ["Grecia", "Italia", "Turquía", "Egipto"]
+},
+{
+"title": "Taj Mahal",
+"description": "Un mausoleo de mármol blanco marfil construido por Shah Jahan",
+"country": "India",
+"options": ["India", "Pakistán", "Nepal", "Bangladesh"]
+},
+{
+"title": "Estatuas Moai",
+"description": "Enormes cabezas de piedra creadas por el pueblo Rapa Nui",
+"country": "Chile",
+"options": ["Chile", "Perú", "México", "Brasil"]
+}
+],
+"medium": [
+{
+"title": "Castillo de Neuschwanstein",
+"description": "Un palacio del siglo XIX de estilo revival románico",
+"country": "Alemania",
+"options": ["Alemania", "Austria", "Suiza", "Francia"]
+},
+{
+"title": "Santuario Fushimi Inari",
+"description": "Famoso por sus miles de puertas torii bermellón",
+"country": "Japón",
+"options": ["Japón", "China", "Corea del Sur", "Tailandia"]
+},
+{
+"title": "Sagrada Familia",
+"description": "Una basílica inacabada diseñada por Antoni Gaudí",
+"country": "España",
+"options": ["España", "Italia", "Portugal", "Francia"]
+},
+{
+"title": "Coliseo",
+"description": "Anfiteatro antiguo y el más grande jamás construido",
+"country": "Italia",
+"options": ["Italia", "Grecia", "Turquía", "España"]
+},
+{
+"title": "Ópera de Sídney",
+"description": "Un centro de artes escénicas con múltiples salas",
+"country": "Australia",
+"options": ["Australia", "Nueva Zelanda", "Canadá", "Reino Unido"]
+}
+],
+"hard": [
+{
+"title": "Petra",
+"description": "Una ciudad arqueológica famosa por su arquitectura tallada en roca",
+"country": "Jordania",
+"options": ["Jordania", "Siria", "Líbano", "Irak"]
+},
+{
+"title": "Angkor Wat",
+"description": "El monumento religioso más grande del mundo",
+"country": "Camboya",
+"options": ["Camboya", "Tailandia", "Vietnam", "Laos"]
+},
+{
+"title": "Cristo Redentor",
+"description": "Una estatua de Jesucristo en estilo Art Deco",
+"country": "Brasil",
+"options": ["Brasil", "Argentina", "Portugal", "México"]
+},
+{
+"title": "Castillo de Praga",
+"description": "Un complejo de castillo que data del siglo IX",
+"country": "República Checa",
+"options": ["República Checa", "Polonia", "Hungría", "Austria"]
+},
+{
+"title": "Mezquita Hassan II",
+"description": "Tiene el segundo minarete más alto del mundo",
+"country": "Marruecos",
+"options": ["Marruecos", "Argelia", "Túnez", "Egipto"]
+}
+]
+},
     "dashboardDescription": "Información y estadísticas sobre tu historial de viajes y planes",
     "lastUpdated": "Última actualización:",
     "refreshData": "Actualizar Datos",
@@ -1639,6 +1938,106 @@
     "needToBeLoggedIn": "Você precisa estar logado para ver suas viagens",
     "goToHome": "Ir para Início",
     "dashboardTitle": "Painel Analítico de Viagens",
+
+
+"landmarks": {
+"easy": [
+{
+"title": "Torre Eiffel",
+"description": "Uma famosa torre treliçada de ferro no Campo de Marte",
+"country": "França",
+"options": ["França", "Itália", "Espanha", "Alemanha"]
+},
+{
+"title": "Estátua da Liberdade",
+"description": "Um presente da França simbolizando liberdade e democracia",
+"country": "Estados Unidos",
+"options": ["Estados Unidos", "Canadá", "Reino Unido", "Austrália"]
+},
+{
+"title": "Partenon",
+"description": "Um templo antigo dedicado à deusa Atena",
+"country": "Grécia",
+"options": ["Grécia", "Itália", "Turquia", "Egito"]
+},
+{
+"title": "Taj Mahal",
+"description": "Um mausoléu de mármore branco-marfim construído por Shah Jahan",
+"country": "Índia",
+"options": ["Índia", "Paquistão", "Nepal", "Bangladesh"]
+},
+{
+"title": "Estátuas Moai",
+"description": "Enormes cabeças de pedra criadas pelo povo Rapa Nui",
+"country": "Chile",
+"options": ["Chile", "Peru", "México", "Brasil"]
+}
+],
+"medium": [
+{
+"title": "Castelo de Neuschwanstein",
+"description": "Um palácio do século XIX em estilo de renascimento românico",
+"country": "Alemanha",
+"options": ["Alemanha", "Áustria", "Suíça", "França"]
+},
+{
+"title": "Santuário Fushimi Inari",
+"description": "Famoso por seus milhares de portões torii vermelho-alaranjados",
+"country": "Japão",
+"options": ["Japão", "China", "Coreia do Sul", "Tailândia"]
+},
+{
+"title": "Sagrada Família",
+"description": "Uma basílica inacabada projetada por Antoni Gaudí",
+"country": "Espanha",
+"options": ["Espanha", "Itália", "Portugal", "França"]
+},
+{
+"title": "Coliseu",
+"description": "Anfiteatro antigo e o maior já construído",
+"country": "Itália",
+"options": ["Itália", "Grécia", "Turquia", "Espanha"]
+},
+{
+"title": "Ópera de Sydney",
+"description": "Um centro de artes cênicas com múltiplos locais",
+"country": "Austrália",
+"options": ["Austrália", "Nova Zelândia", "Canadá", "Reino Unido"]
+}
+],
+"hard": [
+{
+"title": "Petra",
+"description": "Uma cidade arqueológica famosa por sua arquitetura esculpida na rocha",
+"country": "Jordânia",
+"options": ["Jordânia", "Síria", "Líbano", "Iraque"]
+},
+{
+"title": "Angkor Wat",
+"description": "O maior monumento religioso do mundo",
+"country": "Camboja",
+"options": ["Camboja", "Tailândia", "Vietnã", "Laos"]
+},
+{
+"title": "Cristo Redentor",
+"description": "Uma estátua de Jesus Cristo em estilo Art Déco",
+"country": "Brasil",
+"options": ["Brasil", "Argentina", "Portugal", "México"]
+},
+{
+"title": "Castelo de Praga",
+"description": "Um complexo de castelo que data do século IX",
+"country": "República Tcheca",
+"options": ["República Tcheca", "Polônia", "Hungria", "Áustria"]
+},
+{
+"title": "Mesquita Hassan II",
+"description": "Possui o segundo minarete mais alto do mundo",
+"country": "Marrocos",
+"options": ["Marrocos", "Argélia", "Tunísia", "Egito"]
+}
+]
+},
     "dashboardDescription": "Insights e estatísticas sobre seu histórico de viagens e planos",
     "lastUpdated": "Última atualização:",
     "refreshData": "Atualizar Dados",
@@ -2093,6 +2492,106 @@
     "needToBeLoggedIn": "Vous devez être connecté pour voir vos voyages",
     "goToHome": "Aller à l'accueil",
     "dashboardTitle": "Tableau de Bord Analytique de Voyage",
+
+
+"landmarks": {
+"easy": [
+{
+"title": "Tour Eiffel",
+"description": "Une célèbre tour à treillis en fer sur le Champ de Mars",
+"country": "France",
+"options": ["France", "Italie", "Espagne", "Allemagne"]
+},
+{
+"title": "Statue de la Liberté",
+"description": "Un cadeau de la France symbolisant la liberté et la démocratie",
+"country": "États-Unis",
+"options": ["États-Unis", "Canada", "Royaume-Uni", "Australie"]
+},
+{
+"title": "Parthénon",
+"description": "Un temple antique dédié à la déesse Athéna",
+"country": "Grèce",
+"options": ["Grèce", "Italie", "Turquie", "Égypte"]
+},
+{
+"title": "Taj Mahal",
+"description": "Un mausolée en marbre blanc-ivoire construit par Shah Jahan",
+"country": "Inde",
+"options": ["Inde", "Pakistan", "Népal", "Bangladesh"]
+},
+{
+"title": "Statues Moaï",
+"description": "D'énormes têtes de pierre créées par le peuple Rapa Nui",
+"country": "Chili",
+"options": ["Chili", "Pérou", "Mexique", "Brésil"]
+}
+],
+"medium": [
+{
+"title": "Château de Neuschwanstein",
+"description": "Un palais du XIXe siècle de style néo-roman",
+"country": "Allemagne",
+"options": ["Allemagne", "Autriche", "Suisse", "France"]
+},
+{
+"title": "Sanctuaire Fushimi Inari",
+"description": "Célèbre pour ses milliers de portiques torii vermillon",
+"country": "Japon",
+"options": ["Japon", "Chine", "Corée du Sud", "Thaïlande"]
+},
+{
+"title": "Sagrada Familia",
+"description": "Une basilique inachevée conçue par Antoni Gaudí",
+"country": "Espagne",
+"options": ["Espagne", "Italie", "Portugal", "France"]
+},
+{
+"title": "Colisée",
+"description": "Amphithéâtre antique et le plus grand jamais construit",
+"country": "Italie",
+"options": ["Italie", "Grèce", "Turquie", "Espagne"]
+},
+{
+"title": "Opéra de Sydney",
+"description": "Un centre d'arts du spectacle à plusieurs salles",
+"country": "Australie",
+"options": ["Australie", "Nouvelle-Zélande", "Canada", "Royaume-Uni"]
+}
+],
+"hard": [
+{
+"title": "Pétra",
+"description": "Une cité archéologique célèbre pour son architecture taillée dans la roche",
+"country": "Jordanie",
+"options": ["Jordanie", "Syrie", "Liban", "Irak"]
+},
+{
+"title": "Angkor Wat",
+"description": "Le plus grand monument religieux du monde",
+"country": "Cambodge",
+"options": ["Cambodge", "Thaïlande", "Vietnam", "Laos"]
+},
+{
+"title": "Christ Rédempteur",
+"description": "Une statue de Jésus-Christ en style Art déco",
+"country": "Brésil",
+"options": ["Brésil", "Argentine", "Portugal", "Mexique"]
+},
+{
+"title": "Château de Prague",
+"description": "Un complexe de château datant du IXe siècle",
+"country": "République tchèque",
+"options": ["République tchèque", "Pologne", "Hongrie", "Autriche"]
+},
+{
+"title": "Mosquée Hassan II",
+"description": "Possède le deuxième minaret le plus haut du monde",
+"country": "Maroc",
+"options": ["Maroc", "Algérie", "Tunisie", "Égypte"]
+}
+]
+},
     "dashboardDescription": "Aperçus et statistiques sur votre historique de voyages et vos plans",
     "lastUpdated": "Dernière mise à jour :",
     "refreshData": "Actualiser les Données",
@@ -2545,6 +3044,106 @@
     "needToBeLoggedIn": "Devi accedere per vedere i tuoi viaggi",
     "goToHome": "Vai alla Home",
     "dashboardTitle": "Dashboard Analitica Viaggi",
+
+    "landmarks": {
+"easy": [
+{
+"title": "Torre Eiffel",
+"description": "Una famosa torre a traliccio in ferro sul Campo di Marte",
+"country": "Francia",
+"options": ["Francia", "Italia", "Spagna", "Germania"]
+},
+{
+"title": "Statua della Libertà",
+"description": "Un dono dalla Francia che simboleggia libertà e democrazia",
+"country": "Stati Uniti",
+"options": ["Stati Uniti", "Canada", "Regno Unito", "Australia"]
+},
+{
+"title": "Partenone",
+"description": "Un antico tempio dedicato alla dea Atena",
+"country": "Grecia",
+"options": ["Grecia", "Italia", "Turchia", "Egitto"]
+},
+{
+"title": "Taj Mahal",
+"description": "Un mausoleo in marmo bianco-avorio costruito da Shah Jahan",
+"country": "India",
+"options": ["India", "Pakistan", "Nepal", "Bangladesh"]
+},
+{
+"title": "Statue Moai",
+"description": "Enormi teste di pietra create dal popolo Rapa Nui",
+"country": "Cile",
+"options": ["Cile", "Perù", "Messico", "Brasile"]
+}
+],
+"medium": [
+{
+"title": "Castello di Neuschwanstein",
+"description": "Un palazzo del XIX secolo in stile revival romanico",
+"country": "Germania",
+"options": ["Germania", "Austria", "Svizzera", "Francia"]
+},
+{
+"title": "Santuario Fushimi Inari",
+"description": "Famoso per le sue migliaia di porte torii vermiglie",
+"country": "Giappone",
+"options": ["Giappone", "Cina", "Corea del Sud", "Tailandia"]
+},
+{
+"title": "Sagrada Familia",
+"description": "Una basilica incompiuta progettata da Antoni Gaudí",
+"country": "Spagna",
+"options": ["Spagna", "Italia", "Portogallo", "Francia"]
+},
+{
+"title": "Colosseo",
+"description": "Anfiteatro antico e il più grande mai costruito",
+"country": "Italia",
+"options": ["Italia", "Grecia", "Turchia", "Spagna"]
+},
+{
+"title": "Opera di Sydney",
+"description": "Un centro di arti performative con più sedi",
+"country": "Australia",
+"options": ["Australia", "Nuova Zelanda", "Canada", "Regno Unito"]
+}
+],
+"hard": [
+{
+"title": "Petra",
+"description": "Una città archeologica famosa per la sua architettura scavata nella roccia",
+"country": "Giordania",
+"options": ["Giordania", "Siria", "Libano", "Iraq"]
+},
+{
+"title": "Angkor Wat",
+"description": "Il più grande monumento religioso del mondo",
+"country": "Cambogia",
+"options": ["Cambogia", "Tailandia", "Vietnam", "Laos"]
+},
+{
+"title": "Cristo Redentore",
+"description": "Una statua di Gesù Cristo in stile Art Déco",
+"country": "Brasile",
+"options": ["Brasile", "Argentina", "Portogallo", "Messico"]
+},
+{
+"title": "Castello di Praga",
+"description": "Un complesso di castello risalente al IX secolo",
+"country": "Repubblica Ceca",
+"options": ["Repubblica Ceca", "Polonia", "Ungheria", "Austria"]
+},
+{
+"title": "Moschea Hassan II",
+"description": "Ha il secondo minareto più alto del mondo",
+"country": "Marocco",
+"options": ["Marocco", "Algeria", "Tunisia", "Egitto"]
+}
+]
+},
+
     "dashboardDescription": "Approfondimenti e statistiche sulla tua storia di viaggi e i tuoi piani",
     "lastUpdated": "Ultimo aggiornamento:",
     "refreshData": "Aggiorna Dati",
