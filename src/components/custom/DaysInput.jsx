@@ -25,6 +25,14 @@ const DaysInput = ({
   const getDaysInMonth = (month, year) => {
     return new Date(year, month + 1, 0).getDate();
   };
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   const generateRandomDates = (month, year, days) => {
     if (!days) return;
@@ -145,7 +153,7 @@ const DaysInput = ({
             </div>
             {startDate && !useDates && (
               <p className="text-gray-300 mt-2 text-sm">
-                {`${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`}
+                {`${formatDate(startDate)} - ${formatDate(endDate)}`}
               </p>
             )}
           </div>
