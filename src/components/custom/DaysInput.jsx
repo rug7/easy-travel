@@ -12,14 +12,29 @@ const DaysInput = ({
   setStartDate,
   endDate,
   setEndDate,
+  language,
 }) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+  const getTranslatedMonths = () => {
+    return [
+      translate("months.january"),
+      translate("months.february"),
+      translate("months.march"),
+      translate("months.april"),
+      translate("months.may"),
+      translate("months.june"),
+      translate("months.july"),
+      translate("months.august"),
+      translate("months.september"),
+      translate("months.october"),
+      translate("months.november"),
+      translate("months.december")
+    ];
+  };
+    const translatedMonths = getTranslatedMonths();
+
 
   // Get number of days in selected month
   const getDaysInMonth = (month, year) => {
@@ -123,7 +138,7 @@ const DaysInput = ({
               {translate("numberOfDays")}
             </button>
             <div className="flex gap-2 mt-3">
-            <input
+              <input
                 type="number"
                 value={numDays}
                 onChange={handleDaysChange}
@@ -143,13 +158,12 @@ const DaysInput = ({
                 }`}
                 disabled={useDates}
               >
-                {months.map((month, index) => (
+                {translatedMonths.map((month, index) => (
                   <option key={index} value={index}>
                     {month}
                   </option>
                 ))}
               </select>
-              
             </div>
             {startDate && !useDates && (
               <p className="text-gray-300 mt-2 text-sm">
@@ -182,6 +196,61 @@ const DaysInput = ({
                 }`}
                 isClearable
                 disabled={!useDates}
+                // Add localization for DatePicker
+                locale={language}
+                // Optional: Customize month names in the datepicker
+                renderCustomHeader={({
+                  date,
+                  changeYear,
+                  changeMonth,
+                  decreaseMonth,
+                  increaseMonth,
+                  prevMonthButtonDisabled,
+                  nextMonthButtonDisabled,
+                }) => (
+                  <div className="flex justify-between px-2 py-2">
+                    <button
+                      onClick={decreaseMonth}
+                      disabled={prevMonthButtonDisabled}
+                      type="button"
+                      className="bg-gray-700 rounded-full p-1"
+                    >
+                      {"<"}
+                    </button>
+                    <select
+                      value={date.getFullYear()}
+                      onChange={({ target: { value } }) => changeYear(value)}
+                      className="bg-gray-700 text-white rounded px-2"
+                    >
+                      {Array.from({ length: 10 }, (_, i) => selectedYear - 5 + i).map(
+                        (option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        )
+                      )}
+                    </select>
+                    <select
+                      value={date.getMonth()}
+                      onChange={({ target: { value } }) => changeMonth(value)}
+                      className="bg-gray-700 text-white rounded px-2"
+                    >
+                      {translatedMonths.map((option, i) => (
+                        <option key={i} value={i}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={increaseMonth}
+                      disabled={nextMonthButtonDisabled}
+                      type="button"
+                      className="bg-gray-700 rounded-full p-1"
+                    >
+                      {">"}
+                    </button>
+                  </div>
+                )}
               />
             </div>
           </div>

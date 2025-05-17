@@ -55,9 +55,158 @@
     "it": "Amici"
   }
 },
- 
+
   "en": {
-    
+    "questions":[{
+      "question": "Which city is known as the 'City of Canals'?",
+      "options": ["Amsterdam", "Venice", "Bangkok", "Stockholm"],
+      "correctAnswer": "Venice"
+    },
+    {
+      "question": "The Great Barrier Reef is located in which country?",
+      "options": ["Brazil", "Thailand", "Australia", "Mexico"],
+      "correctAnswer": "Australia"
+    },
+    {
+      "question": "Which of these is NOT one of the Seven Wonders of the Modern World?",
+      "options": ["Taj Mahal", "Eiffel Tower", "Machu Picchu", "Colosseum"],
+      "correctAnswer": "Eiffel Tower"
+    },
+    {
+      "question": "What is the capital city of Japan?",
+      "options": ["Seoul", "Beijing", "Tokyo", "Bangkok"],
+      "correctAnswer": "Tokyo"
+    },
+    {
+      "question": "Which ocean is the largest?",
+      "options": ["Atlantic", "Indian", "Arctic", "Pacific"],
+      "correctAnswer": "Pacific"
+    },
+    {
+      "question": "The ancient city of Petra is located in which country?",
+      "options": ["Egypt", "Jordan", "Turkey", "Greece"],
+      "correctAnswer": "Jordan"
+    },
+    {
+      "question": "Which mountain is the tallest in the world?",
+      "options": ["K2", "Mount Everest", "Kilimanjaro", "Matterhorn"],
+      "correctAnswer": "Mount Everest"
+    },
+    {
+      "question": "What is the currency of Thailand?",
+      "options": ["Yen", "Baht", "Rupee", "Yuan"],
+      "correctAnswer": "Baht"
+    },
+    {
+      "question": "Which desert is the largest in the world?",
+      "options": ["Gobi", "Kalahari", "Sahara", "Antarctic"],
+      "correctAnswer": "Antarctic"
+    },
+    {
+      "question": "The Louvre Museum is located in which city?",
+      "options": ["Rome", "Paris", "London", "Madrid"],
+      "correctAnswer": "Paris"
+    },
+    {
+      "question": "Which country has the most UNESCO World Heritage Sites?",
+      "options": ["Italy", "China", "Spain", "France"],
+      "correctAnswer": "Italy"
+    },
+    {
+      "question": "The Northern Lights are also known as?",
+      "options": ["Aurora Borealis", "Aurora Australis", "Solar Winds", "Celestial Lights"],
+      "correctAnswer": "Aurora Borealis"
+    },
+    {
+      "question": "Which is the smallest country in the world?",
+      "options": ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
+      "correctAnswer": "Vatican City"
+    },
+    {
+      "question": "The Alhambra palace is located in which country?",
+      "options": ["Portugal", "Spain", "Morocco", "Turkey"],
+      "correctAnswer": "Spain"
+    },
+    {
+      "question": "Which river is the longest in the world?",
+      "options": ["Amazon", "Nile", "Yangtze", "Mississippi"],
+      "correctAnswer": "Nile"
+    },
+    {
+      "question": "The Dead Sea is bordered by which two countries?",
+      "options": ["Israel and Jordan", "Egypt and Sudan", "Turkey and Syria", "Iran and Iraq"],
+      "correctAnswer": "Israel and Jordan"
+    },
+    {
+      "question": "Which city is famous for its Carnival celebration?",
+      "options": ["Rio de Janeiro", "Buenos Aires", "Lima", "Caracas"],
+      "correctAnswer": "Rio de Janeiro"
+    },
+    {
+      "question": "The Great Wall of China is approximately how long?",
+      "options": ["5,000 km", "13,000 km", "21,000 km", "30,000 km"],
+      "correctAnswer": "21,000 km"
+    },
+    {
+      "question": "Which country is known as the 'Land of a Thousand Lakes'?",
+      "options": ["Sweden", "Norway", "Finland", "Iceland"],
+      "correctAnswer": "Finland"
+    },
+    {
+      "question": "The Sistine Chapel is located in which city?",
+      "options": ["Rome", "Vatican City", "Florence", "Milan"],
+      "correctAnswer": "Vatican City"
+    },
+    {
+      "question": "Which is the deepest lake in the world?",
+      "options": ["Lake Superior", "Lake Tanganyika", "Lake Baikal", "Lake Victoria"],
+      "correctAnswer": "Lake Baikal"
+    },
+    {
+      "question": "The Serengeti National Park is located in which country?",
+      "options": ["Kenya", "Tanzania", "South Africa", "Botswana"],
+      "correctAnswer": "Tanzania"
+    },
+    {
+      "question": "Which European city is known as the 'City of a Hundred Spires'?",
+      "options": ["Vienna", "Budapest", "Prague", "Warsaw"],
+      "correctAnswer": "Prague"
+    },
+    {
+      "question": "The Galapagos Islands belong to which country?",
+      "options": ["Colombia", "Peru", "Ecuador", "Chile"],
+      "correctAnswer": "Ecuador"
+    },
+    {
+      "question": "Which is the highest waterfall in the world?",
+      "options": ["Niagara Falls", "Victoria Falls", "Angel Falls", "Iguazu Falls"],
+      "correctAnswer": "Angel Falls"
+    },
+    {
+      "question": "The Blue Mosque is located in which city?",
+      "options": ["Cairo", "Istanbul", "Tehran", "Dubai"],
+      "correctAnswer": "Istanbul"
+    },
+    {
+      "question": "Which country is home to the most volcanoes?",
+      "options": ["Japan", "Indonesia", "Italy", "Iceland"],
+      "correctAnswer": "Indonesia"
+    },
+    {
+      "question": "The Acropolis is located in which city?",
+      "options": ["Rome", "Athens", "Istanbul", "Alexandria"],
+      "correctAnswer": "Athens"
+    },
+    {
+      "question": "Which is the largest island in the Mediterranean Sea?",
+      "options": ["Cyprus", "Crete", "Sicily", "Sardinia"],
+      "correctAnswer": "Sicily"
+    },
+    {
+      "question": "The Panama Canal connects which two oceans?",
+      "options": ["Atlantic and Pacific", "Pacific and Indian", "Atlantic and Arctic", "Indian and Southern"],
+      "correctAnswer": "Atlantic and Pacific"
+    }],
     "pleaseCompletePreferences": "Please complete all preferences before generating suggestions",
     "pleaseSelectDestination": "Please select a destination or use Help Me Decide",
     "pleaseCompleteAllFields": "Please complete all required fields",
@@ -340,6 +489,7 @@
 }
 ]
 },
+
   
     
 
@@ -619,6 +769,156 @@
 
   },
   "he": {
+     "questions":[{
+      "question": "איזו עיר ידועה בתור 'עיר התעלות'?",
+      "options": ["אמסטרדם", "ונציה", "בנגקוק", "שטוקהולם"],
+      "correctAnswer": "ונציה"
+    },
+    {
+      "question": "שונית המחסום הגדולה נמצאת באיזו מדינה?",
+      "options": ["ברזיל", "תאילנד", "אוסטרליה", "מקסיקו"],
+      "correctAnswer": "אוסטרליה"
+    },
+    {
+      "question": "איזה מאלה אינו אחד משבעת פלאי העולם המודרני?",
+      "options": ["טאג' מהאל", "מגדל אייפל", "מאצ'ו פיצ'ו", "קולוסיאום"],
+      "correctAnswer": "מגדל אייפל"
+    },
+    {
+      "question": "מהי בירת יפן?",
+      "options": ["סיאול", "בייג'ינג", "טוקיו", "בנגקוק"],
+      "correctAnswer": "טוקיו"
+    },
+    {
+      "question": "איזה אוקיינוס הוא הגדול ביותר?",
+      "options": ["אטלנטי", "הודי", "ארקטי", "פסיפי"],
+      "correctAnswer": "פסיפי"
+    },
+    {
+      "question": "העיר העתיקה פטרה נמצאת באיזו מדינה?",
+      "options": ["מצרים", "ירדן", "טורקיה", "יוון"],
+      "correctAnswer": "ירדן"
+    },
+    {
+      "question": "איזה הר הוא הגבוה ביותר בעולם?",
+      "options": ["K2", "הר אוורסט", "קילימנג'רו", "מטרהורן"],
+      "correctAnswer": "הר אוורסט"
+    },
+    {
+      "question": "מהו המטבע של תאילנד?",
+      "options": ["ין", "באט", "רופי", "יואן"],
+      "correctAnswer": "באט"
+    },
+    {
+      "question": "איזה מדבר הוא הגדול ביותר בעולם?",
+      "options": ["גובי", "קלהרי", "סהרה", "אנטארקטי"],
+      "correctAnswer": "אנטארקטי"
+    },
+    {
+      "question": "מוזיאון הלובר נמצא באיזו עיר?",
+      "options": ["רומא", "פריז", "לונדון", "מדריד"],
+      "correctAnswer": "פריז"
+    },
+    {
+      "question": "לאיזו מדינה יש הכי הרבה אתרי מורשת עולמית של אונסק\"ו?",
+      "options": ["איטליה", "סין", "ספרד", "צרפת"],
+      "correctAnswer": "איטליה"
+    },
+    {
+      "question": "הזוהר הצפוני ידוע גם בשם?",
+      "options": ["אורורה בוראליס", "אורורה אוסטרליס", "רוחות סולאריות", "אורות שמימיים"],
+      "correctAnswer": "אורורה בוראליס"
+    },
+    {
+      "question": "איזו היא המדינה הקטנה ביותר בעולם?",
+      "options": ["מונקו", "הוותיקן", "סן מרינו", "ליכטנשטיין"],
+      "correctAnswer": "הוותיקן"
+    },
+    {
+      "question": "ארמון אלהמברה נמצא באיזו מדינה?",
+      "options": ["פורטוגל", "ספרד", "מרוקו", "טורקיה"],
+      "correctAnswer": "ספרד"
+    },
+    {
+      "question": "איזה נהר הוא הארוך ביותר בעולם?",
+      "options": ["אמזון", "נילוס", "יאנגצה", "מיסיסיפי"],
+      "correctAnswer": "נילוס"
+    },
+    {
+      "question": "ים המלח גובל בין אילו שתי מדינות?",
+      "options": ["ישראל וירדן", "מצרים וסודן", "טורקיה וסוריה", "איראן ועיראק"],
+      "correctAnswer": "ישראל וירדן"
+    },
+    {
+      "question": "איזו עיר מפורסמת בחגיגות הקרנבל שלה?",
+      "options": ["ריו דה ז'נירו", "בואנוס איירס", "לימה", "קראקס"],
+      "correctAnswer": "ריו דה ז'נירו"
+    },
+    {
+      "question": "החומה הסינית הגדולה היא באורך של בערך?",
+      "options": ["5,000 ק\"מ", "13,000 ק\"מ", "21,000 ק\"מ", "30,000 ק\"מ"],
+      "correctAnswer": "21,000 ק\"מ"
+    },
+    {
+      "question": "איזו מדינה ידועה בתור 'ארץ אלף האגמים'?",
+      "options": ["שבדיה", "נורבגיה", "פינלנד", "איסלנד"],
+      "correctAnswer": "פינלנד"
+    },
+    {
+      "question": "הקפלה הסיסטינית נמצאת באיזו עיר?",
+      "options": ["רומא", "וותיקן", "פירנצה", "מילאנו"],
+      "correctAnswer": "וותיקן"
+    },
+    {
+      "question": "איזה אגם הוא העמוק ביותר בעולם?",
+      "options": ["אגם סופריור", "אגם טנגנייקה", "אגם בייקל", "אגם ויקטוריה"],
+      "correctAnswer": "אגם בייקל"
+    },
+    {
+      "question": "הפארק הלאומי סרנגטי נמצא באיזו מדינה?",
+      "options": ["קניה", "טנזניה", "דרום אפריקה", "בוצואנה"],
+      "correctAnswer": "טנזניה"
+    },
+    {
+      "question": "איזו עיר אירופאית ידועה בתור 'עיר מאה המגדלים'?",
+      "options": ["וינה", "בודפשט", "פראג", "ורשה"],
+      "correctAnswer": "פראג"
+    },
+    {
+      "question": "איי גלפגוס שייכים לאיזו מדינה?",
+      "options": ["קולומביה", "פרו", "אקוודור", "צ'ילה"],
+      "correctAnswer": "אקוודור"
+    },
+    {
+      "question": "איזה מפל הוא הגבוה ביותר בעולם?",
+      "options": ["מפלי הניאגרה", "מפלי ויקטוריה", "מפלי אנחל", "מפלי איגואסו"],
+      "correctAnswer": "מפלי אנחל"
+    },
+    {
+      "question": "המסגד הכחול נמצא באיזו עיר?",
+      "options": ["קהיר", "איסטנבול", "טהרן", "דובאי"],
+      "correctAnswer": "איסטנבול"
+    },
+    {
+      "question": "באיזו מדינה יש הכי הרבה הרי געש?",
+      "options": ["יפן", "אינדונזיה", "איטליה", "איסלנד"],
+      "correctAnswer": "אינדונזיה"
+    },
+    {
+      "question": "האקרופוליס נמצא באיזו עיר?",
+      "options": ["רומא", "אתונה", "איסטנבול", "אלכסנדריה"],
+      "correctAnswer": "אתונה"
+    },
+    {
+      "question": "איזה האי הגדול ביותר בים התיכון?",
+      "options": ["קפריסין", "כרתים", "סיציליה", "סרדיניה"],
+      "correctAnswer": "סיציליה"
+    },
+    {
+      "question": "תעלת פנמה מחברת בין אילו שני אוקיינוסים?",
+      "options": ["אטלנטי ופסיפי", "פסיפי והודי", "אטלנטי וארקטי", "הודי ודרומי"],
+      "correctAnswer": "אטלנטי ופסיפי"
+    }],
     "heroTitle": "ההרפתקה הבאה שלך ממתינה",
     "heroDescription": "תכננו טיולים מותאמים אישית בקלות עם יעדים, פעילויות ותקציבים לפי ההעדפות שלכם. טיול החלומות שלכם במרחק כמה קליקים בלבד.",
     "planTripButton": "תכננו את הטיול עכשיו",
@@ -917,8 +1217,8 @@
 "options": ["מרוקו", "אלג'יריה", "תוניסיה", "מצרים"]
 }
 ]
-}
-  ,
+},
+    
 
     "dashboardDescription": "תובנות וסטטיסטיקות על היסטוריית הנסיעות והתוכניות שלך",
     "lastUpdated": "עדכון אחרון:",
@@ -1173,6 +1473,157 @@
 }
   },
   "es": {
+
+    "questions":[{
+      "question": "¿Qué ciudad es conocida como la 'Ciudad de los Canales'?",
+      "options": ["Ámsterdam", "Venecia", "Bangkok", "Estocolmo"],
+      "correctAnswer": "Venecia"
+    },
+    {
+      "question": "¿En qué país se encuentra la Gran Barrera de Coral?",
+      "options": ["Brasil", "Tailandia", "Australia", "México"],
+      "correctAnswer": "Australia"
+    },
+    {
+      "question": "¿Cuál de estos NO es una de las Siete Maravillas del Mundo Moderno?",
+      "options": ["Taj Mahal", "Torre Eiffel", "Machu Picchu", "Coliseo"],
+      "correctAnswer": "Torre Eiffel"
+    },
+    {
+      "question": "¿Cuál es la capital de Japón?",
+      "options": ["Seúl", "Pekín", "Tokio", "Bangkok"],
+      "correctAnswer": "Tokio"
+    },
+    {
+      "question": "¿Cuál es el océano más grande?",
+      "options": ["Atlántico", "Índico", "Ártico", "Pacífico"],
+      "correctAnswer": "Pacífico"
+    },
+    {
+      "question": "¿En qué país se encuentra la antigua ciudad de Petra?",
+      "options": ["Egipto", "Jordania", "Turquía", "Grecia"],
+      "correctAnswer": "Jordania"
+    },
+    {
+      "question": "¿Cuál es la montaña más alta del mundo?",
+      "options": ["K2", "Monte Everest", "Kilimanjaro", "Matterhorn"],
+      "correctAnswer": "Monte Everest"
+    },
+    {
+      "question": "¿Cuál es la moneda de Tailandia?",
+      "options": ["Yen", "Baht", "Rupia", "Yuan"],
+      "correctAnswer": "Baht"
+    },
+    {
+      "question": "¿Cuál es el desierto más grande del mundo?",
+      "options": ["Gobi", "Kalahari", "Sahara", "Antártico"],
+      "correctAnswer": "Antártico"
+    },
+    {
+      "question": "¿En qué ciudad se encuentra el Museo del Louvre?",
+      "options": ["Roma", "París", "Londres", "Madrid"],
+      "correctAnswer": "París"
+    },
+    {
+      "question": "¿Qué país tiene más sitios Patrimonio de la Humanidad de la UNESCO?",
+      "options": ["Italia", "China", "España", "Francia"],
+      "correctAnswer": "Italia"
+    },
+    {
+      "question": "¿Las Luces del Norte también son conocidas como?",
+      "options": ["Aurora Boreal", "Aurora Austral", "Vientos Solares", "Luces Celestiales"],
+      "correctAnswer": "Aurora Boreal"
+    },
+    {
+      "question": "¿Cuál es el país más pequeño del mundo?",
+      "options": ["Mónaco", "Ciudad del Vaticano", "San Marino", "Liechtenstein"],
+      "correctAnswer": "Ciudad del Vaticano"
+    },
+    {
+      "question": "¿En qué país se encuentra el palacio de la Alhambra?",
+      "options": ["Portugal", "España", "Marruecos", "Turquía"],
+      "correctAnswer": "España"
+    },
+    {
+      "question": "¿Cuál es el río más largo del mundo?",
+      "options": ["Amazonas", "Nilo", "Yangtsé", "Mississippi"],
+      "correctAnswer": "Nilo"
+    },
+    {
+      "question": "¿El Mar Muerto está bordeado por qué dos países?",
+      "options": ["Israel y Jordania", "Egipto y Sudán", "Turquía y Siria", "Irán e Irak"],
+      "correctAnswer": "Israel y Jordania"
+    },
+    {
+      "question": "¿Qué ciudad es famosa por su celebración del Carnaval?",
+      "options": ["Río de Janeiro", "Buenos Aires", "Lima", "Caracas"],
+      "correctAnswer": "Río de Janeiro"
+    },
+    {
+      "question": "¿La Gran Muralla China tiene aproximadamente qué longitud?",
+      "options": ["5.000 km", "13.000 km", "21.000 km", "30.000 km"],
+      "correctAnswer": "21.000 km"
+    },
+    {
+      "question": "¿Qué país es conocido como la 'Tierra de los Mil Lagos'?",
+      "options": ["Suecia", "Noruega", "Finlandia", "Islandia"],
+      "correctAnswer": "Finlandia"
+    },
+    {
+      "question": "¿En qué ciudad se encuentra la Capilla Sixtina?",
+      "options": ["Roma", "Ciudad del Vaticano", "Florencia", "Milán"],
+      "correctAnswer": "Ciudad del Vaticano"
+    },
+    {
+      "question": "¿Cuál es el lago más profundo del mundo?",
+      "options": ["Lago Superior", "Lago Tanganica", "Lago Baikal", "Lago Victoria"],
+      "correctAnswer": "Lago Baikal"
+    },
+    {
+      "question": "¿En qué país se encuentra el Parque Nacional del Serengueti?",
+      "options": ["Kenia", "Tanzania", "Sudáfrica", "Botsuana"],
+      "correctAnswer": "Tanzania"
+    },
+    {
+      "question": "¿Qué ciudad europea es conocida como la 'Ciudad de las Cien Torres'?",
+      "options": ["Viena", "Budapest", "Praga", "Varsovia"],
+      "correctAnswer": "Praga"
+    },
+    {
+      "question": "¿Las Islas Galápagos pertenecen a qué país?",
+      "options": ["Colombia", "Perú", "Ecuador", "Chile"],
+      "correctAnswer": "Ecuador"
+    },
+    {
+      "question": "¿Cuál es la cascada más alta del mundo?",
+      "options": ["Cataratas del Niágara", "Cataratas Victoria", "Salto Ángel", "Cataratas del Iguazú"],
+      "correctAnswer": "Salto Ángel"
+    },
+    {
+      "question": "¿En qué ciudad se encuentra la Mezquita Azul?",
+      "options": ["El Cairo", "Estambul", "Teherán", "Dubái"],
+      "correctAnswer": "Estambul"
+    },
+    {
+      "question": "¿Qué país tiene más volcanes?",
+      "options": ["Japón", "Indonesia", "Italia", "Islandia"],
+      "correctAnswer": "Indonesia"
+    },
+    {
+      "question": "¿En qué ciudad se encuentra la Acrópolis?",
+      "options": ["Roma", "Atenas", "Estambul", "Alejandría"],
+      "correctAnswer": "Atenas"
+    },
+    {
+      "question": "¿Cuál es la isla más grande del Mar Mediterráneo?",
+      "options": ["Chipre", "Creta", "Sicilia", "Cerdeña"],
+      "correctAnswer": "Sicilia"
+    },
+    {
+      "question": "¿El Canal de Panamá conecta qué dos océanos?",
+      "options": ["Atlántico y Pacífico", "Pacífico e Índico", "Atlántico y Ártico", "Índico y Austral"],
+      "correctAnswer": "Atlántico y Pacífico"
+    }],
     "heroTitle": "Tu próxima aventura te espera",
     "heroDescription": "Planifica fácilmente viajes personalizados con destinos, actividades y presupuestos adaptados a tus preferencias. Tu viaje soñado está a solo unos clics.",
     "planTripButton": "Planifica tu viaje ahora",
@@ -1475,6 +1926,10 @@
 }
 ]
 },
+
+    
+
+
     "dashboardDescription": "Información y estadísticas sobre tu historial de viajes y planes",
     "lastUpdated": "Última actualización:",
     "refreshData": "Actualizar Datos",
@@ -1729,6 +2184,156 @@
 }
   },
   "pt": {
+     "questions":[ {
+      "question": "Qual cidade é conhecida como a 'Cidade dos Canais'?",
+      "options": ["Amsterdã", "Veneza", "Bangkok", "Estocolmo"],
+      "correctAnswer": "Veneza"
+    },
+    {
+      "question": "A Grande Barreira de Coral está localizada em qual país?",
+      "options": ["Brasil", "Tailândia", "Austrália", "México"],
+      "correctAnswer": "Austrália"
+    },
+    {
+      "question": "Qual destes NÃO é uma das Sete Maravilhas do Mundo Moderno?",
+      "options": ["Taj Mahal", "Torre Eiffel", "Machu Picchu", "Coliseu"],
+      "correctAnswer": "Torre Eiffel"
+    },
+    {
+      "question": "Qual é a capital do Japão?",
+      "options": ["Seul", "Pequim", "Tóquio", "Bangkok"],
+      "correctAnswer": "Tóquio"
+    },
+    {
+      "question": "Qual é o maior oceano?",
+      "options": ["Atlântico", "Índico", "Ártico", "Pacífico"],
+      "correctAnswer": "Pacífico"
+    },
+    {
+      "question": "A antiga cidade de Petra está localizada em qual país?",
+      "options": ["Egito", "Jordânia", "Turquia", "Grécia"],
+      "correctAnswer": "Jordânia"
+    },
+    {
+      "question": "Qual é a montanha mais alta do mundo?",
+      "options": ["K2", "Monte Everest", "Kilimanjaro", "Matterhorn"],
+      "correctAnswer": "Monte Everest"
+    },
+    {
+      "question": "Qual é a moeda da Tailândia?",
+      "options": ["Iene", "Baht", "Rúpia", "Yuan"],
+      "correctAnswer": "Baht"
+    },
+    {
+      "question": "Qual é o maior deserto do mundo?",
+      "options": ["Gobi", "Kalahari", "Saara", "Antártico"],
+      "correctAnswer": "Antártico"
+    },
+    {
+      "question": "O Museu do Louvre está localizado em qual cidade?",
+      "options": ["Roma", "Paris", "Londres", "Madrid"],
+      "correctAnswer": "Paris"
+    },
+    {
+      "question": "Qual país tem mais Patrimônios Mundiais da UNESCO?",
+      "options": ["Itália", "China", "Espanha", "França"],
+      "correctAnswer": "Itália"
+    },
+    {
+      "question": "A Aurora Boreal também é conhecida como?",
+      "options": ["Aurora Boreal", "Aurora Austral", "Ventos Solares", "Luzes Celestes"],
+      "correctAnswer": "Aurora Boreal"
+    },
+    {
+      "question": "Qual é o menor país do mundo?",
+      "options": ["Mônaco", "Cidade do Vaticano", "San Marino", "Liechtenstein"],
+      "correctAnswer": "Cidade do Vaticano"
+    },
+    {
+      "question": "O Palácio de Alhambra está localizado em qual país?",
+      "options": ["Portugal", "Espanha", "Marrocos", "Turquia"],
+      "correctAnswer": "Espanha"
+    },
+    {
+      "question": "Qual é o rio mais longo do mundo?",
+      "options": ["Amazonas", "Nilo", "Yangtze", "Mississippi"],
+      "correctAnswer": "Nilo"
+    },
+    {
+      "question": "O Mar Morto faz fronteira com quais dois países?",
+      "options": ["Israel e Jordânia", "Egito e Sudão", "Turquia e Síria", "Irã e Iraque"],
+      "correctAnswer": "Israel e Jordânia"
+    },
+    {
+      "question": "Qual cidade é famosa por sua celebração de Carnaval?",
+      "options": ["Rio de Janeiro", "Buenos Aires", "Lima", "Caracas"],
+      "correctAnswer": "Rio de Janeiro"
+    },
+    {
+      "question": "A Grande Muralha da China tem aproximadamente qual comprimento?",
+      "options": ["5.000 km", "13.000 km", "21.000 km", "30.000 km"],
+      "correctAnswer": "21.000 km"
+    },
+    {
+      "question": "Qual país é conhecido como a 'Terra dos Mil Lagos'?",
+      "options": ["Suécia", "Noruega", "Finlândia", "Islândia"],
+      "correctAnswer": "Finlândia"
+    },
+    {
+      "question": "A Capela Sistina está localizada em qual cidade?",
+      "options": ["Roma", "Cidade do Vaticano", "Florença", "Milão"],
+      "correctAnswer": "Cidade do Vaticano"
+    },
+    {
+      "question": "Qual é o lago mais profundo do mundo?",
+      "options": ["Lago Superior", "Lago Tanganica", "Lago Baikal", "Lago Vitória"],
+      "correctAnswer": "Lago Baikal"
+    },
+    {
+      "question": "O Parque Nacional do Serengeti está localizado em qual país?",
+      "options": ["Quênia", "Tanzânia", "África do Sul", "Botsuana"],
+      "correctAnswer": "Tanzânia"
+    },
+    {
+      "question": "Qual cidade europeia é conhecida como a 'Cidade das Cem Torres'?",
+      "options": ["Viena", "Budapeste", "Praga", "Varsóvia"],
+      "correctAnswer": "Praga"
+    },
+    {
+      "question": "As Ilhas Galápagos pertencem a qual país?",
+      "options": ["Colômbia", "Peru", "Equador", "Chile"],
+      "correctAnswer": "Equador"
+    },
+    {
+      "question": "Qual é a cachoeira mais alta do mundo?",
+      "options": ["Cataratas do Niágara", "Cataratas Vitória", "Salto Angel", "Cataratas do Iguaçu"],
+      "correctAnswer": "Salto Angel"
+    },
+    {
+      "question": "A Mesquita Azul está localizada em qual cidade?",
+      "options": ["Cairo", "Istambul", "Teerã", "Dubai"],
+      "correctAnswer": "Istambul"
+    },
+    {
+      "question": "Qual país tem mais vulcões?",
+      "options": ["Japão", "Indonésia", "Itália", "Islândia"],
+      "correctAnswer": "Indonésia"
+    },
+    {
+      "question": "A Acrópole está localizada em qual cidade?",
+      "options": ["Roma", "Atenas", "Istambul", "Alexandria"],
+      "correctAnswer": "Atenas"
+    },
+    {
+      "question": "Qual é a maior ilha do Mar Mediterrâneo?",
+      "options": ["Chipre", "Creta", "Sicília", "Sardenha"],
+      "correctAnswer": "Sicília"
+    },
+    {
+      "question": "O Canal do Panamá conecta quais dois oceanos?",
+      "options": ["Atlântico e Pacífico", "Pacífico e Índico", "Atlântico e Ártico", "Índico e Antártico"],
+      "correctAnswer": "Atlântico e Pacífico"
+    }],
     "heroTitle": "Sua próxima aventura espera por você",
     "heroDescription": "Planeje viagens personalizadas com destinos, atividades e orçamentos adaptados às suas preferências. Sua viagem dos sonhos está a apenas alguns cliques.",
     "planTripButton": "Planeje sua viagem agora",
@@ -2038,6 +2643,8 @@
 }
 ]
 },
+
+   
     "dashboardDescription": "Insights e estatísticas sobre seu histórico de viagens e planos",
     "lastUpdated": "Última atualização:",
     "refreshData": "Atualizar Dados",
@@ -2285,6 +2892,156 @@
 }
   },
   "fr": {
+    "questions":[ {
+      "question": "Quelle ville est connue comme la 'Ville des Canaux' ?",
+      "options": ["Amsterdam", "Venise", "Bangkok", "Stockholm"],
+      "correctAnswer": "Venise"
+    },
+    {
+      "question": "La Grande Barrière de Corail se trouve dans quel pays ?",
+      "options": ["Brésil", "Thaïlande", "Australie", "Mexique"],
+      "correctAnswer": "Australie"
+    },
+    {
+      "question": "Lequel de ces monuments N'EST PAS une des Sept Merveilles du Monde Moderne ?",
+      "options": ["Taj Mahal", "Tour Eiffel", "Machu Picchu", "Colisée"],
+      "correctAnswer": "Tour Eiffel"
+    },
+    {
+      "question": "Quelle est la capitale du Japon ?",
+      "options": ["Séoul", "Pékin", "Tokyo", "Bangkok"],
+      "correctAnswer": "Tokyo"
+    },
+    {
+      "question": "Quel est le plus grand océan ?",
+      "options": ["Atlantique", "Indien", "Arctique", "Pacifique"],
+      "correctAnswer": "Pacifique"
+    },
+    {
+      "question": "L'ancienne ville de Pétra se trouve dans quel pays ?",
+      "options": ["Égypte", "Jordanie", "Turquie", "Grèce"],
+      "correctAnswer": "Jordanie"
+    },
+    {
+      "question": "Quelle est la plus haute montagne du monde ?",
+      "options": ["K2", "Mont Everest", "Kilimandjaro", "Cervin"],
+      "correctAnswer": "Mont Everest"
+    },
+    {
+      "question": "Quelle est la monnaie de la Thaïlande ?",
+      "options": ["Yen", "Baht", "Roupie", "Yuan"],
+      "correctAnswer": "Baht"
+    },
+    {
+      "question": "Quel est le plus grand désert du monde ?",
+      "options": ["Gobi", "Kalahari", "Sahara", "Antarctique"],
+      "correctAnswer": "Antarctique"
+    },
+    {
+      "question": "Le musée du Louvre se trouve dans quelle ville ?",
+      "options": ["Rome", "Paris", "Londres", "Madrid"],
+      "correctAnswer": "Paris"
+    },
+    {
+      "question": "Quel pays possède le plus de sites classés au patrimoine mondial de l'UNESCO ?",
+      "options": ["Italie", "Chine", "Espagne", "France"],
+      "correctAnswer": "Italie"
+    },
+    {
+      "question": "Les aurores boréales sont aussi connues sous le nom de ?",
+      "options": ["Aurora Borealis", "Aurora Australis", "Vents Solaires", "Lumières Célestes"],
+      "correctAnswer": "Aurora Borealis"
+    },
+    {
+      "question": "Quel est le plus petit pays du monde ?",
+      "options": ["Monaco", "Vatican", "Saint-Marin", "Liechtenstein"],
+      "correctAnswer": "Vatican"
+    },
+    {
+      "question": "Le palais de l'Alhambra se trouve dans quel pays ?",
+      "options": ["Portugal", "Espagne", "Maroc", "Turquie"],
+      "correctAnswer": "Espagne"
+    },
+    {
+      "question": "Quel est le plus long fleuve du monde ?",
+      "options": ["Amazone", "Nil", "Yangtsé", "Mississippi"],
+      "correctAnswer": "Nil"
+    },
+    {
+      "question": "La Mer Morte est bordée par quels deux pays ?",
+      "options": ["Israël et Jordanie", "Égypte et Soudan", "Turquie et Syrie", "Iran et Irak"],
+      "correctAnswer": "Israël et Jordanie"
+    },
+    {
+      "question": "Quelle ville est célèbre pour son carnaval ?",
+      "options": ["Rio de Janeiro", "Buenos Aires", "Lima", "Caracas"],
+      "correctAnswer": "Rio de Janeiro"
+    },
+    {
+      "question": "La Grande Muraille de Chine fait environ quelle longueur ?",
+      "options": ["5 000 km", "13 000 km", "21 000 km", "30 000 km"],
+      "correctAnswer": "21 000 km"
+    },
+    {
+      "question": "Quel pays est connu comme le 'Pays des Mille Lacs' ?",
+      "options": ["Suède", "Norvège", "Finlande", "Islande"],
+      "correctAnswer": "Finlande"
+    },
+    {
+      "question": "La Chapelle Sixtine se trouve dans quelle ville ?",
+      "options": ["Rome", "Vatican", "Florence", "Milan"],
+      "correctAnswer": "Vatican"
+    },
+    {
+      "question": "Quel est le lac le plus profond du monde ?",
+      "options": ["Lac Supérieur", "Lac Tanganyika", "Lac Baïkal", "Lac Victoria"],
+      "correctAnswer": "Lac Baïkal"
+    },
+    {
+      "question": "Le Parc National du Serengeti se trouve dans quel pays ?",
+      "options": ["Kenya", "Tanzanie", "Afrique du Sud", "Botswana"],
+      "correctAnswer": "Tanzanie"
+    },
+    {
+      "question": "Quelle ville européenne est connue comme la 'Ville aux Cent Clochers' ?",
+      "options": ["Vienne", "Budapest", "Prague", "Varsovie"],
+      "correctAnswer": "Prague"
+    },
+    {
+      "question": "Les îles Galápagos appartiennent à quel pays ?",
+      "options": ["Colombie", "Pérou", "Équateur", "Chili"],
+      "correctAnswer": "Équateur"
+    },
+    {
+      "question": "Quelle est la plus haute chute d'eau du monde ?",
+      "options": ["Chutes du Niagara", "Chutes Victoria", "Saut de l'Ange", "Chutes d'Iguazu"],
+      "correctAnswer": "Saut de l'Ange"
+    },
+    {
+      "question": "La Mosquée Bleue se trouve dans quelle ville ?",
+      "options": ["Le Caire", "Istanbul", "Téhéran", "Dubaï"],
+      "correctAnswer": "Istanbul"
+    },
+    {
+      "question": "Quel pays abrite le plus de volcans ?",
+      "options": ["Japon", "Indonésie", "Italie", "Islande"],
+      "correctAnswer": "Indonésie"
+    },
+    {
+      "question": "L'Acropole se trouve dans quelle ville ?",
+      "options": ["Rome", "Athènes", "Istanbul", "Alexandrie"],
+      "correctAnswer": "Athènes"
+    },
+    {
+      "question": "Quelle est la plus grande île de la Méditerranée ?",
+      "options": ["Chypre", "Crète", "Sicile", "Sardaigne"],
+      "correctAnswer": "Sicile"
+    },
+    {
+      "question": "Le Canal de Panama relie quels deux océans ?",
+      "options": ["Atlantique et Pacifique", "Pacifique et Indien", "Atlantique et Arctique", "Indien et Austral"],
+      "correctAnswer": "Atlantique et Pacifique"
+    }],
     "heroTitle": "Votre prochaine aventure vous attend",
     "heroDescription": "Planifiez facilement des voyages personnalisés avec des destinations, des activités et des budgets adaptés à vos préférences. Votre voyage de rêve est à quelques clics.",
     "planTripButton": "Planifiez votre voyage maintenant",
@@ -2592,6 +3349,10 @@
 }
 ]
 },
+
+    
+
+
     "dashboardDescription": "Aperçus et statistiques sur votre historique de voyages et vos plans",
     "lastUpdated": "Dernière mise à jour :",
     "refreshData": "Actualiser les Données",
@@ -2838,6 +3599,156 @@
 }
   },
   "it": {
+      "questions":[ {
+      "question": "Quale città è conosciuta come la 'Città dei Canali'?",
+      "options": ["Amsterdam", "Venezia", "Bangkok", "Stoccolma"],
+      "correctAnswer": "Venezia"
+    },
+    {
+      "question": "La Grande Barriera Corallina si trova in quale paese?",
+      "options": ["Brasile", "Thailandia", "Australia", "Messico"],
+      "correctAnswer": "Australia"
+    },
+    {
+      "question": "Quale di questi NON è una delle Sette Meraviglie del Mondo Moderno?",
+      "options": ["Taj Mahal", "Torre Eiffel", "Machu Picchu", "Colosseo"],
+      "correctAnswer": "Torre Eiffel"
+    },
+    {
+      "question": "Qual è la capitale del Giappone?",
+      "options": ["Seoul", "Pechino", "Tokyo", "Bangkok"],
+      "correctAnswer": "Tokyo"
+    },
+    {
+      "question": "Quale oceano è il più grande?",
+      "options": ["Atlantico", "Indiano", "Artico", "Pacifico"],
+      "correctAnswer": "Pacifico"
+    },
+    {
+      "question": "L'antica città di Petra si trova in quale paese?",
+      "options": ["Egitto", "Giordania", "Turchia", "Grecia"],
+      "correctAnswer": "Giordania"
+    },
+    {
+      "question": "Qual è la montagna più alta del mondo?",
+      "options": ["K2", "Monte Everest", "Kilimanjaro", "Cervino"],
+      "correctAnswer": "Monte Everest"
+    },
+    {
+      "question": "Qual è la valuta della Thailandia?",
+      "options": ["Yen", "Baht", "Rupia", "Yuan"],
+      "correctAnswer": "Baht"
+    },
+    {
+      "question": "Qual è il deserto più grande del mondo?",
+      "options": ["Gobi", "Kalahari", "Sahara", "Antartico"],
+      "correctAnswer": "Antartico"
+    },
+    {
+      "question": "Il museo del Louvre si trova in quale città?",
+      "options": ["Roma", "Parigi", "Londra", "Madrid"],
+      "correctAnswer": "Parigi"
+    },
+    {
+      "question": "Quale paese ha più siti patrimonio dell'UNESCO?",
+      "options": ["Italia", "Cina", "Spagna", "Francia"],
+      "correctAnswer": "Italia"
+    },
+    {
+      "question": "Le aurore boreali sono anche conosciute come?",
+      "options": ["Aurora Borealis", "Aurora Australis", "Venti Solari", "Luci Celesti"],
+      "correctAnswer": "Aurora Borealis"
+    },
+    {
+      "question": "Qual è il paese più piccolo del mondo?",
+      "options": ["Monaco", "Città del Vaticano", "San Marino", "Liechtenstein"],
+      "correctAnswer": "Città del Vaticano"
+    },
+    {
+      "question": "Il palazzo dell'Alhambra si trova in quale paese?",
+      "options": ["Portogallo", "Spagna", "Marocco", "Turchia"],
+      "correctAnswer": "Spagna"
+    },
+    {
+      "question": "Qual è il fiume più lungo del mondo?",
+      "options": ["Amazzoni", "Nilo", "Yangtze", "Mississippi"],
+      "correctAnswer": "Nilo"
+    },
+    {
+      "question": "Il Mar Morto è circondato da quali due paesi?",
+      "options": ["Israele e Giordania", "Egitto e Sudan", "Turchia e Siria", "Iran e Iraq"],
+      "correctAnswer": "Israele e Giordania"
+    },
+    {
+      "question": "Quale città è famosa per il suo Carnevale?",
+      "options": ["Rio de Janeiro", "Buenos Aires", "Lima", "Caracas"],
+      "correctAnswer": "Rio de Janeiro"
+    },
+    {
+      "question": "La Grande Muraglia Cinese è lunga circa quanto?",
+      "options": ["5.000 km", "13.000 km", "21.000 km", "30.000 km"],
+      "correctAnswer": "21.000 km"
+    },
+    {
+      "question": "Quale paese è conosciuto come la 'Terra dei Mille Laghi'?",
+      "options": ["Svezia", "Norvegia", "Finlandia", "Islanda"],
+      "correctAnswer": "Finlandia"
+    },
+    {
+      "question": "La Cappella Sistina si trova in quale città?",
+      "options": ["Roma", "Città del Vaticano", "Firenze", "Milano"],
+      "correctAnswer": "Città del Vaticano"
+    },
+    {
+      "question": "Qual è il lago più profondo del mondo?",
+      "options": ["Lago Superiore", "Lago Tanganica", "Lago Baikal", "Lago Vittoria"],
+      "correctAnswer": "Lago Baikal"
+    },
+    {
+      "question": "Il Parco Nazionale del Serengeti si trova in quale paese?",
+      "options": ["Kenya", "Tanzania", "Sudafrica", "Botswana"],
+      "correctAnswer": "Tanzania"
+    },
+    {
+      "question": "Quale città europea è conosciuta come la 'Città delle Cento Torri'?",
+      "options": ["Vienna", "Budapest", "Praga", "Varsavia"],
+      "correctAnswer": "Praga"
+    },
+    {
+      "question": "Le Isole Galapagos appartengono a quale paese?",
+      "options": ["Colombia", "Perù", "Ecuador", "Cile"],
+      "correctAnswer": "Ecuador"
+    },
+    {
+      "question": "Qual è la cascata più alta del mondo?",
+      "options": ["Cascate del Niagara", "Cascate Vittoria", "Salto Angel", "Cascate Iguazu"],
+      "correctAnswer": "Salto Angel"
+    },
+    {
+      "question": "La Moschea Blu si trova in quale città?",
+      "options": ["Cairo", "Istanbul", "Tehran", "Dubai"],
+      "correctAnswer": "Istanbul"
+    },
+    {
+      "question": "Quale paese ha più vulcani?",
+      "options": ["Giappone", "Indonesia", "Italia", "Islanda"],
+      "correctAnswer": "Indonesia"
+    },
+    {
+      "question": "L'Acropoli si trova in quale città?",
+      "options": ["Roma", "Atene", "Istanbul", "Alessandria"],
+      "correctAnswer": "Atene"
+    },
+    {
+      "question": "Qual è l'isola più grande del Mar Mediterraneo?",
+      "options": ["Cipro", "Creta", "Sicilia", "Sardegna"],
+      "correctAnswer": "Sicilia"
+    },
+    {
+      "question": "Il Canale di Panama collega quali due oceani?",
+      "options": ["Atlantico e Pacifico", "Pacifico e Indiano", "Atlantico e Artico", "Indiano e Australe"],
+      "correctAnswer": "Atlantico e Pacifico"
+    }],
     "heroTitle": "La tua prossima avventura ti aspetta",
     "heroDescription": "Pianifica facilmente viaggi personalizzati con destinazioni, attività e budget adattati alle tue preferenze. Il viaggio dei tuoi sogni è a pochi clic di distanza.",
     "planTripButton": "Pianifica il tuo viaggio ora",
@@ -3143,6 +4054,8 @@
 }
 ]
 },
+    
+
 
     "dashboardDescription": "Approfondimenti e statistiche sulla tua storia di viaggi e i tuoi piani",
     "lastUpdated": "Ultimo aggiornamento:",

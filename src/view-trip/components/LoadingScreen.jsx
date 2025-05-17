@@ -397,172 +397,43 @@ const WorldExplorerQuiz = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [gameComplete, setGameComplete] = useState(false);
-  const [shuffledQuestions, setShuffledQuestions] = useState([]); // Store shuffled questions
+  const [questions, setQuestions] = useState([]);
   const { translate, language } = useLanguage();
   const isRTL = language === "he";
 
-
-  
-  // Travel quiz questions
-  const questions = [
-    {
-      question: "Which city is known as the 'City of Canals'?",
-      options: ["Amsterdam", "Venice", "Bangkok", "Stockholm"],
-      correctAnswer: "Venice"
-    },
-    {
-      question: "The Great Barrier Reef is located in which country?",
-      options: ["Brazil", "Thailand", "Australia", "Mexico"],
-      correctAnswer: "Australia"
-    },
-    {
-      question: "Which of these is NOT one of the Seven Wonders of the Modern World?",
-      options: ["Taj Mahal", "Eiffel Tower", "Machu Picchu", "Colosseum"],
-      correctAnswer: "Eiffel Tower"
-    },
-    {
-      question: "What is the capital city of Japan?",
-      options: ["Seoul", "Beijing", "Tokyo", "Bangkok"],
-      correctAnswer: "Tokyo"
-    },
-    {
-      question: "Which ocean is the largest?",
-      options: ["Atlantic", "Indian", "Arctic", "Pacific"],
-      correctAnswer: "Pacific"
-    },
-    {
-      question: "The ancient city of Petra is located in which country?",
-      options: ["Egypt", "Jordan", "Turkey", "Greece"],
-      correctAnswer: "Jordan"
-    },
-    {
-      question: "Which mountain is the tallest in the world?",
-      options: ["K2", "Mount Everest", "Kilimanjaro", "Matterhorn"],
-      correctAnswer: "Mount Everest"
-    },
-    {
-      question: "What is the currency of Thailand?",
-      options: ["Yen", "Baht", "Rupee", "Yuan"],
-      correctAnswer: "Baht"
-    },
-    {
-      question: "Which desert is the largest in the world?",
-      options: ["Gobi", "Kalahari", "Sahara", "Antarctic"],
-      correctAnswer: "Antarctic"
-    },
-    {
-      question: "The Louvre Museum is located in which city?",
-      options: ["Rome", "Paris", "London", "Madrid"],
-      correctAnswer: "Paris"
-    },
-    {
-      question: "Which country has the most UNESCO World Heritage Sites?",
-      options: ["Italy", "China", "Spain", "France"],
-      correctAnswer: "Italy"
-    },
-    {
-      question: "The Northern Lights are also known as?",
-      options: ["Aurora Borealis", "Aurora Australis", "Solar Winds", "Celestial Lights"],
-      correctAnswer: "Aurora Borealis"
-    },
-    {
-      question: "Which is the smallest country in the world?",
-      options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
-      correctAnswer: "Vatican City"
-    },
-    {
-      question: "The Alhambra palace is located in which country?",
-      options: ["Portugal", "Spain", "Morocco", "Turkey"],
-      correctAnswer: "Spain"
-    },
-    {
-      question: "Which river is the longest in the world?",
-      options: ["Amazon", "Nile", "Yangtze", "Mississippi"],
-      correctAnswer: "Nile"
-    },
-    {
-      question: "The Dead Sea is bordered by which two countries?",
-      options: ["Israel and Jordan", "Egypt and Sudan", "Turkey and Syria", "Iran and Iraq"],
-      correctAnswer: "Israel and Jordan"
-    },
-    {
-      question: "Which city is famous for its Carnival celebration?",
-      options: ["Rio de Janeiro", "Buenos Aires", "Lima", "Caracas"],
-      correctAnswer: "Rio de Janeiro"
-    },
-    {
-      question: "The Great Wall of China is approximately how long?",
-      options: ["5,000 km", "13,000 km", "21,000 km", "30,000 km"],
-      correctAnswer: "21,000 km"
-    },
-    {
-      question: "Which country is known as the 'Land of a Thousand Lakes'?",
-      options: ["Sweden", "Norway", "Finland", "Iceland"],
-      correctAnswer: "Finland"
-    },
-    {
-      question: "The Sistine Chapel is located in which city?",
-      options: ["Rome", "Vatican City", "Florence", "Milan"],
-      correctAnswer: "Vatican City"
-    },
-    {
-      question: "Which is the deepest lake in the world?",
-      options: ["Lake Superior", "Lake Tanganyika", "Lake Baikal", "Lake Victoria"],
-      correctAnswer: "Lake Baikal"
-    },
-    {
-      question: "The Serengeti National Park is located in which country?",
-      options: ["Kenya", "Tanzania", "South Africa", "Botswana"],
-      correctAnswer: "Tanzania"
-    },
-    {
-      question: "Which European city is known as the 'City of a Hundred Spires'?",
-      options: ["Vienna", "Budapest", "Prague", "Warsaw"],
-      correctAnswer: "Prague"
-    },
-    {
-      question: "The Galapagos Islands belong to which country?",
-      options: ["Colombia", "Peru", "Ecuador", "Chile"],
-      correctAnswer: "Ecuador"
-    },
-    {
-      question: "Which is the highest waterfall in the world?",
-      options: ["Niagara Falls", "Victoria Falls", "Angel Falls", "Iguazu Falls"],
-      correctAnswer: "Angel Falls"
-    },
-    {
-      question: "The Blue Mosque is located in which city?",
-      options: ["Cairo", "Istanbul", "Tehran", "Dubai"],
-      correctAnswer: "Istanbul"
-    },
-    {
-      question: "Which country is home to the most volcanoes?",
-      options: ["Japan", "Indonesia", "Italy", "Iceland"],
-      correctAnswer: "Indonesia"
-    },
-    {
-      question: "The Acropolis is located in which city?",
-      options: ["Rome", "Athens", "Istanbul", "Alexandria"],
-      correctAnswer: "Athens"
-    },
-    {
-      question: "Which is the largest island in the Mediterranean Sea?",
-      options: ["Cyprus", "Crete", "Sicily", "Sardinia"],
-      correctAnswer: "Sicily"
-    },
-    {
-      question: "The Panama Canal connects which two oceans?",
-      options: ["Atlantic and Pacific", "Pacific and Indian", "Atlantic and Arctic", "Indian and Southern"],
-      correctAnswer: "Atlantic and Pacific"
+  useEffect(() => {
+    if (gameActive) {
+      const newQuestions = getQuestions();
+      setQuestions(newQuestions);
     }
-  ];
-  
-  // Function to shuffle questions
-  const shuffleQuestions = () => {
-    // Clone the questions array
-    const shuffled = [...questions];
+  }, [language, gameActive]);
+
+  const getQuestions = () => {
+    // Access questions directly from the translations object
+    // The structure appears to be different than what your code expects
+    try {
+      // Looking at your JSON structure, questions are directly under the language key
+      const questionsArray = translate(`questions`);
+      
+      if (!Array.isArray(questionsArray) || questionsArray.length === 0) {
+        console.log('Questions not found or empty array, falling back to English');
+        // Fallback to English questions
+        const englishQuestions = translate("en.questions") || [];
+        return shuffleQuestions(englishQuestions);
+      }
+      
+      return shuffleQuestions(questionsArray);
+    } catch (error) {
+      console.error('Error in getQuestions:', error);
+      return [];
+    }
+  };
+
+  // Helper function to shuffle questions
+  const shuffleQuestions = (questions) => {
+    if (!Array.isArray(questions)) return [];
     
-    // Fisher-Yates shuffle algorithm
+    const shuffled = [...questions];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -570,17 +441,22 @@ const WorldExplorerQuiz = () => {
     
     return shuffled;
   };
-  
   // Start the game
-  const startGame = () => {
-    setShuffledQuestions(shuffleQuestions()); // Shuffle questions when starting
+ const startGame = () => {
+  const newQuestions = getQuestions();
+  console.log('Starting game with questions:', newQuestions);
+  if (newQuestions.length > 0) {
+    setQuestions(newQuestions);
     setGameActive(true);
     setCurrentQuestion(0);
     setScore(0);
     setShowAnswer(false);
     setSelectedAnswer(null);
     setGameComplete(false);
-  };
+  } else {
+    console.error('No questions available to start game');
+  }
+};
   
   // Handle answer selection
   const handleAnswerSelect = (answer) => {
@@ -589,13 +465,13 @@ const WorldExplorerQuiz = () => {
     setSelectedAnswer(answer);
     setShowAnswer(true);
     
-    if (answer === shuffledQuestions[currentQuestion].correctAnswer) {
+    if (answer === questions[currentQuestion].correctAnswer) {
       setScore(prev => prev + 1);
     }
     
     // Move to next question after delay
     setTimeout(() => {
-      if (currentQuestion < shuffledQuestions.length - 1) {
+      if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(prev => prev + 1);
         setShowAnswer(false);
         setSelectedAnswer(null);
@@ -620,7 +496,7 @@ const WorldExplorerQuiz = () => {
             <span>
               {translate("loadingScreen.worldExplorer.questionCount")
                 .replace("{0}", currentQuestion + 1)
-                .replace("{1}", shuffledQuestions.length)}
+                .replace("{1}", questions.length)}
             </span>
             <span>
               {translate("loadingScreen.worldExplorer.score").replace("{0}", score)}
@@ -649,14 +525,14 @@ const WorldExplorerQuiz = () => {
           <p className="text-lg text-white mb-3" style={{ direction: isRTL ? "rtl" : "ltr" }}>
             {translate("loadingScreen.worldExplorer.yourScore")
               .replace("{0}", score)
-              .replace("{1}", shuffledQuestions.length)}
+              .replace("{1}", questions.length)}
           </p>
           <p className="text-gray-300 mb-4" style={{ direction: isRTL ? "rtl" : "ltr" }}>
-            {score === shuffledQuestions.length 
+            {score === questions.length 
               ? translate("loadingScreen.worldExplorer.feedback.perfect")
-              : score >= shuffledQuestions.length * 0.7 
+              : score >= questions.length * 0.7 
                 ? translate("loadingScreen.worldExplorer.feedback.great")
-                : score >= shuffledQuestions.length * 0.5 
+                : score >= questions.length * 0.5 
                   ? translate("loadingScreen.worldExplorer.feedback.good")
                   : translate("loadingScreen.worldExplorer.feedback.needsPractice")}
           </p>
@@ -670,21 +546,21 @@ const WorldExplorerQuiz = () => {
         </div>
       )}
       
-      {gameActive && shuffledQuestions.length > 0 && (
+      {gameActive && questions.length > 0 && (
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg border border-gray-700/50">
           <p className="text-white text-xl font-medium mb-6" style={{ direction: isRTL ? "rtl" : "ltr" }}>
-            {shuffledQuestions[currentQuestion].question}
+            {questions[currentQuestion].question}
           </p>
           <div className="space-y-3 mt-4">
-          {shuffledQuestions[currentQuestion].options.map((option, index) => (
+          {questions[currentQuestion].options.map((option, index) => (
               <button
                 key={index}
                 className={`w-full p-4 text-left rounded-xl transition-all text-lg ${
                   selectedAnswer === option
-                    ? option === shuffledQuestions[currentQuestion].correctAnswer
+                    ? option === questions[currentQuestion].correctAnswer
                       ? 'bg-gradient-to-r from-green-600 to-green-700 text-white font-medium'
                       : 'bg-gradient-to-r from-red-600 to-red-700 text-white font-medium'
-                    : showAnswer && option === shuffledQuestions[currentQuestion].correctAnswer
+                    : showAnswer && option === questions[currentQuestion].correctAnswer
                       ? 'bg-gradient-to-r from-green-600 to-green-700 text-white font-medium'
                       : 'bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-600 hover:to-gray-700'
                 }`}
