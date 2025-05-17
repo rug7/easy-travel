@@ -141,19 +141,21 @@ function Header() {
         
         // Store user data
         localStorage.setItem('user', JSON.stringify(userInfo.data));
-        toast.success('Successfully signed in!');
+        toast.success(translate("successfullySignedIn"));
+
         setOpenDialog(false);
         
         // Refresh the page to update UI
         window.location.reload();
       } catch (error) {
         console.error('Error fetching user profile:', error);
-        toast.error('Failed to get user information');
+        toast.error(translate("failedToGetUserInfo"));
+
       }
     },
     onError: (error) => {
       console.error('Login Failed:', error);
-      toast.error('Google login failed');
+      toast.error(translate("googleLoginFailed"));
     }
   });
 
@@ -308,7 +310,7 @@ function Header() {
   const handleLogout = () => {
     googleLogout();
     localStorage.clear();
-    toast.success('Successfully logged out');
+toast.success(translate("successfullyLoggedOut"));
     window.location.reload();
   };
   const handleLanguageChange = (e) => {

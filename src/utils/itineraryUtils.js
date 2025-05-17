@@ -715,7 +715,9 @@ The response must exactly match this structure:
                 }
               };
               
-              toast.success(`Suggested destination: ${suggestionData.destination}, ${suggestionData.country}`);
+              toast.success(translate("suggestedDestination")
+  .replace("{0}", suggestionData.destination)
+  .replace("{1}", suggestionData.country));
               setGenerationProgress(prev => ({ ...prev, destination: true }));
             } catch (error) {
               console.error("Error in AI destination selection:", error);

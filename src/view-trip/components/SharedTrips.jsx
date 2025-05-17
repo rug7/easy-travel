@@ -368,7 +368,7 @@ function SharedTrips() {
       setTrips(validTrips);
       setTripImages(images);
     } catch (err) {
-      toast.error('Failed to load shared trips.');
+      toast.error(translate("failedToLoadSharedTrips"));
       console.error(err);
     } finally {
       setLoading(false);
@@ -395,10 +395,11 @@ function SharedTrips() {
       
       // Update local state
       setTrips(trips.filter(trip => trip.sharedId !== sharedId));
-      toast.success('Trip removed from shared trips');
+      toast.success(translate("tripRemovedFromShared"));
     } catch (error) {
       console.error('Error deleting shared trip:', error);
-      toast.error('Failed to remove trip');
+      toast.error(translate("failedToRemoveTrip"));
+
     } finally {
       setDeleting(null);
     }
@@ -437,11 +438,11 @@ function SharedTrips() {
       // Update the addedTrips set
       setAddedTrips(prev => new Set([...prev, trip.id]));
       
-      toast.success('Trip added to your trips successfully!');
+toast.success(translate("tripAddedSuccessfully"));
       
     } catch (error) {
       console.error('Error adding trip to my trips:', error);
-      toast.error('Failed to add trip to your collection');
+toast.error(translate("failedToAddTrip"));
     } finally {
       setAdding(null);
     }

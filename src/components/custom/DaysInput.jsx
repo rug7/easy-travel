@@ -16,6 +16,7 @@ const DaysInput = ({
 }) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  
 
   const getTranslatedMonths = () => {
     return [
