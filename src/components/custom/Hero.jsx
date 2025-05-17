@@ -1,4 +1,6 @@
 import React, { useState,useEffect } from 'react';
+import { useFeedback } from '@/context/FeedbackContext';
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -47,13 +49,15 @@ function Hero() {
   const isRTL = language === "he";
   const [isLoading, setIsLoading] = useState(true);
   const [testimonials, setTestimonials] = useState([]);
+    const { latestFeedback } = useFeedback(); // Add this
 
 
-  useEffect(() => {
+
+   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
         const feedbackRef = collection(db, 'feedback');
-        const q = query(feedbackRef, orderBy('rating', 'desc'), limit(5));
+        const q = query(feedbackRef, orderBy('rating', 'desc'), limit(100));
         const snapshot = await getDocs(q);
         const realTestimonials = snapshot.docs.map(doc => doc.data());
         
@@ -68,6 +72,18 @@ function Hero() {
     
     fetchTestimonials();
   }, []);
+    // Add this new useEffect to update testimonials when new feedback is submitted
+  useEffect(() => {
+    if (latestFeedback) {
+      // Add the new feedback to the beginning of the testimonials array
+      setTestimonials(prev => {
+        // Create a new array with the latest feedback at the beginning
+        const updated = [latestFeedback, ...prev];
+        // Only keep the top 5 testimonials
+        return updated.slice(0, 5);
+      });
+    }
+  }, [latestFeedback]);
 
   // Modify your testimonials section to include star ratings
 const StarRating = ({ rating }) => {
