@@ -197,14 +197,29 @@ const handleFeedbackSubmitted = (newFeedback) => {
     // Return class names for default mode
     return {};
   };
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  
+  try {
+    // Handle both ISO strings and Date objects
     const date = new Date(dateString);
+    
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      console.error('Invalid date:', dateString);
+      return '';
+    }
+    
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
+    
     return `${day}/${month}/${year}`;
-  };
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return '';
+  }
+};
 
 
   return (
@@ -341,7 +356,7 @@ const handleFeedbackSubmitted = (newFeedback) => {
               </div>
               <p className="text-gray-300 text-lg mb-4">"{testimonial.feedback}"</p>
               <div className="text-gray-400 text-sm">
-                {formatDate(new Date(testimonial.createdAt).toLocaleDateString())}
+                {formatDate(testimonial.createdAt)}
               </div>
             </div>
           </SwiperSlide>

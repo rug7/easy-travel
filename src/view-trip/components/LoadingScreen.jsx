@@ -45,8 +45,9 @@ const GuessTheCountryGame = () => {
   const [gameComplete, setGameComplete] = useState(false);
   const [level, setLevel] = useState('easy'); // 'easy', 'medium', 'hard'
   const [questions, setQuestions] = useState([]); // Store shuffled questions
+  const [shuffledOptions, setShuffledOptions] = useState([]); // Add this state
   const { translate, language } = useLanguage();
-const isRTL = language === "he";
+  const isRTL = language === "he";
 
   
   // Landmarks data with placeholder images
@@ -164,46 +165,58 @@ const isRTL = language === "he";
     ]
   };
 
-useEffect(() => {
-  if (gameActive) {
-    setQuestions(getQuestions(level));
-  }
-}, [language]);
+  useEffect(() => {
+    if (gameActive) {
+      setQuestions(getQuestions(level));
+    }
+  }, [language]);
+
+  // Shuffle options when question changes
+  useEffect(() => {
+    if (gameActive && questions.length > 0 && questions[currentQuestion]) {
+      const options = [...questions[currentQuestion].options];
+      for (let i = options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [options[i], options[j]] = [options[j], options[i]];
+      }
+      setShuffledOptions(options);
+    }
+  }, [currentQuestion, gameActive, questions]);
   
   // Get questions based on difficulty level and shuffle them
-const getQuestions = (difficulty) => {
-  // Get the questions for the selected difficulty
-  const questions = [...landmarks[difficulty]].map(item => {
-    // Find matching landmark in translations
-    const translatedLandmark = translate(`landmarks.${difficulty}`)?.[findLandmarkIndex(item, difficulty)];
+  const getQuestions = (difficulty) => {
+    // Get the questions for the selected difficulty
+    const questions = [...landmarks[difficulty]].map(item => {
+      // Find matching landmark in translations
+      const translatedLandmark = translate(`landmarks.${difficulty}`)?.[findLandmarkIndex(item, difficulty)];
+      
+      // If translation exists, use it; otherwise, fall back to original
+      return {
+        landmark: item.landmark, // Keep original image URL
+        title: translatedLandmark?.title || item.title,
+        description: translatedLandmark?.description || item.description,
+        country: translatedLandmark?.country || item.country,
+        options: translatedLandmark?.options || item.options
+      };
+    });
     
-    // If translation exists, use it; otherwise, fall back to original
-    return {
-      landmark: item.landmark, // Keep original image URL
-      title: translatedLandmark?.title || item.title,
-      description: translatedLandmark?.description || item.description,
-      country: translatedLandmark?.country || item.country,
-      options: translatedLandmark?.options || item.options
-    };
-  });
-  
-  // Shuffle the questions using Fisher-Yates algorithm
-  for (let i = questions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [questions[i], questions[j]] = [questions[j], questions[i]];
-  }
-  
-  return questions;
-};
+    // Shuffle the questions using Fisher-Yates algorithm
+    for (let i = questions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
+    
+    return questions;
+  };
 
-// Helper function to find the index of a landmark in the translations
-const findLandmarkIndex = (originalLandmark, difficulty) => {
-  // Find the index of the original English landmark
-  const index = landmarks[difficulty].findIndex(
-    item => item.title === originalLandmark.title
-  );
-  return index;
-};
+  // Helper function to find the index of a landmark in the translations
+  const findLandmarkIndex = (originalLandmark, difficulty) => {
+    // Find the index of the original English landmark
+    const index = landmarks[difficulty].findIndex(
+      item => item.title === originalLandmark.title
+    );
+    return index;
+  };
   
   // Initialize game
   const startGame = (difficulty = level) => {
@@ -243,8 +256,8 @@ const findLandmarkIndex = (originalLandmark, difficulty) => {
 
   
   return (
-<div className="w-full max-w-xl mx-auto bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 lg:p-6 shadow-xl border border-gray-700/50">
-<div className="text-center mb-4">
+    <div className="w-full max-w-xl mx-auto bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 lg:p-6 shadow-xl border border-gray-700/50">
+      <div className="text-center mb-4">
         <h3 className="text-lg font-medium text-white" style={{ direction: isRTL ? "rtl" : "ltr" }}>
           {translate("loadingScreen.guessCountry.title")}
         </h3>
@@ -364,10 +377,10 @@ const findLandmarkIndex = (originalLandmark, difficulty) => {
           </p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-          {questions[currentQuestion].options.map((option, index) => (
+            {shuffledOptions.map((option, index) => (
               <button
-                key={index}
-                className={`p-4 text-center rounded-xl transition-all text-lg" ${
+                key={option} // Use option as key to maintain consistency
+                className={`p-4 text-center rounded-xl transition-all text-lg ${
                   selectedAnswer === option
                     ? option === questions[currentQuestion].country
                       ? 'bg-gradient-to-r from-green-600 to-green-700 text-white font-medium'

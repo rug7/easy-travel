@@ -447,10 +447,7 @@ const activityImageData = {
             "https://images.unsplash.com/photo-1613059312885-8a758073461b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             ""
         ],
-        "shopping":[
-            "https://images.unsplash.com/photo-1481437156560-3205f6a55735?q=80&w=2095&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            ""
-        ],
+        
 
         // Urban Exploration
         "city":[
@@ -1612,8 +1609,6 @@ const isRTL = language === "he";
                 "lake": { category: "nature", subcategory: "lake" },
                 "stream": { category: "nature", subcategory: "river" },
                 "desert": { category: "nature", subcategory: "desert" },
-                "canyon": { category: "nature", subcategory: "canyon" },
-                "cave": { category: "nature", subcategory: "cave" },
                 "countryside": { category: "nature", subcategory: "countryside" },
                 "landscape": { category: "nature", subcategory: "landscape" },
                 "scenic": { category: "nature", subcategory: "landscape" },
